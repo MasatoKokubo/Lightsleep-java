@@ -1,0 +1,121 @@
+
+/* Followings are additional for LightSleep. */
+pre, code, tt, dt code, table tr td dt code {
+	font-family: Consolas, monospace;
+}
+
+i {
+	font-style: italic;
+	color: #666666;
+}
+
+b, b i, .code {
+	font-family: Consolas, monospace;
+	font-weight: bold;
+	color: #0055DD;
+}
+
+.title {
+	font-family: Verdana, sans-serif;
+	font-weight: bold;
+}
+
+.indent {
+	margin-left: 20px;
+}
+
+.blankline {
+	margin-top: -6px;
+	margin-bottom: -6px;
+}
+
+.parameter {
+	color: #CC2222;
+	background-color: #F7EEFF;
+	border-radius: 4px;
+	padding: 2px 3px 2px 3px;
+}
+
+.selection {
+	color: #0055DD;
+	font-weight: bold;
+}
+
+.copyright {
+	font-family: Verdana, sans-serif;
+    font-size: 14px;
+	font-style: italic;
+	color: #666666;
+	text-align: center;
+	margin-top: 110px;
+}
+
+.sampleTitle {
+	margin: 10px 0px -4px 12px;
+	font-family: Verdana, sans-serif;
+	font-weight: bold;
+}
+
+.sampleTitle span {
+	background-color: #F8981D;
+	padding: 3px 6px 3px 6px;
+    font-size: 12px;
+}
+
+.sampleCode {
+	margin: 8px 8px 12px 8px;
+	padding: 8px 0px 8px 12px;
+	font-family: Consolas, monospace;
+	color: #333399;
+	background-color: #F0F0F0;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #AAAAAA;
+}
+
+.sampleCode pre {
+    font-size: 13px;
+}
+
+ul.additinal {
+	margin: 4px 0px 0px 8px;
+	padding: 0px 0px 0px 0px;
+	list-style-type: disc;
+}
+
+ol.additinal {
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	list-style-type: decimal;
+}
+
+ul.additinal li, ol.additinal li {
+	margin: 2px 0px 6px 0px;
+}
+
+table.additinal {
+	margin: 8px;
+	border-collapse: collapse;
+	font-family: Verdana, sans-serif;
+	font-size: 10pt;
+}
+
+table.additinal tr th {
+	background-color: #E0E0E0;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #808080;
+	border-collapse: collapse;
+	padding: 4px;
+}
+
+table.additinal tr td {
+	background-color: #FFFFFF;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #808080;
+	border-collapse: collapse;
+	padding: 4px;
+}
+
+.ja {display: none;}
