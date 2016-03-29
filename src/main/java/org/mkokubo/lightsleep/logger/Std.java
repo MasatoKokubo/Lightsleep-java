@@ -1,32 +1,106 @@
 /*
-	StdOutLogger.java
+	Std.java
 	Copyright (c) 2016 Masato Kokubo
 */
 
 package org.mkokubo.lightsleep.logger;
 
+import java.io.PrintStream;
 import java.sql.Timestamp;
 import java.util.function.Supplier;
 
 /**
-	Outputs logs to the standard output.
+	Outputs logs to the standard output or error output.
 
 	@since 1.0.0
 	@author Masato Kokubo
 */
-public class StdOut implements Logger {
+public abstract class Std implements Logger {
+	public static abstract class Out extends Std {
+		public Out(Level level) {
+			super(System.out, level);
+		}
+
+		public static class Trace extends Out {
+			public Trace(String name) {super(Level.TRACE);}
+		}
+
+		public static class Debug extends Out {
+			public Debug(String name) {super(Level.DEBUG);}
+		}
+
+		public static class Info extends Out {
+			public Info (String name) {super(Level.INFO );}
+		}
+
+		public static class Warn extends Out {
+			public Warn (String name) {super(Level.WARN );}
+		}
+
+		public static class Error extends Out {
+			public Error(String name) {super(Level.ERROR);}
+		}
+
+		public static class Fatal extends Out {
+			public Fatal(String name) {super(Level.FATAL);}
+		}
+	}
+
+	public static abstract class Err extends Std {
+		public Err(Level level) {
+			super(System.err, level);
+		}
+
+		public static class Trace extends Err {
+			public Trace(String name) {super(Level.TRACE);}
+		}
+
+		public static class Debug extends Err {
+			public Debug(String name) {super(Level.DEBUG);}
+		}
+
+		public static class Info extends Err {
+			public Info (String name) {super(Level.INFO );}
+		}
+
+		public static class Warn extends Err {
+			public Warn (String name) {super(Level.WARN );}
+		}
+
+		public static class Error extends Err {
+			public Error(String name) {super(Level.ERROR);}
+		}
+
+		public static class Fatal extends Err {
+			public Fatal(String name) {super(Level.FATAL);}
+		}
+	}
+
+	// Level enum
+	protected enum Level {TRACE, DEBUG, INFO, WARN, ERROR, FATAL}
+
+	// The print stream
+	private PrintStream stream;
+
+	// The level
+	private Level level;
+
 	// The message format
 	private static String messageFormat = "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS.%1$tL %2$s ";
 
 	/**
-		Constructs a new <b>StdOut</b> with the specified name.
+		Constructs a new <b>Std</b> with the specified name.
 
-		@param name the name
+		@param stream the print stream
+		@param level the level
 
 		@throws NullPointerException <b>name</b> is <b>null</b>
 	*/
-	public StdOut(String name) {
-		if (name == null) throw new NullPointerException("StdOut.<init>: name == null");
+	protected Std(PrintStream stream, Level level) {
+		if (stream == null) throw new NullPointerException("Std.<init>: stream == null");
+		if (level == null) throw new NullPointerException("Std.<init>: level == null");
+		this.stream = stream;
+		this.level = level;
 	}
 
 	/**
@@ -35,10 +109,11 @@ public class StdOut implements Logger {
 		@param level the level
 		@param message a message
 	*/
-	private void println(String level, String message) {
-		System.out.println(
-			String.format(messageFormat, new Timestamp(System.currentTimeMillis()), level)
-			+ message);
+	private void println(Level level, String message) {
+		if (level.compareTo(this.level) >= 0)
+			stream.println(
+				String.format(messageFormat, new Timestamp(System.currentTimeMillis()), level)
+				+ message);
 	}
 
 	/**
@@ -48,7 +123,7 @@ public class StdOut implements Logger {
 		@param message a message
 		@param t a Throwable
 	*/
-	private void println(String level, String message, Throwable t) {
+	private void println(Level level, String message, Throwable t) {
 		println(level, message + " " + t.toString());
 	}
 
@@ -57,7 +132,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void trace(String message) {
-		println("TRACE", message);
+		println(Level.TRACE, message);
 	}
 
 	/**
@@ -65,7 +140,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void debug(String message) {
-		println("DEBUG", message);
+		println(Level.DEBUG, message);
 	}
 
 	/**
@@ -73,7 +148,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void info(String message) {
-		println("INFO ", message);
+		println(Level.INFO, message);
 	}
 
 	/**
@@ -81,7 +156,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void warn(String message) {
-		println("WARN ", message);
+		println(Level.WARN, message);
 	}
 
 	/**
@@ -89,7 +164,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void error(String message) {
-		println("ERROR", message);
+		println(Level.ERROR, message);
 	}
 
 	/**
@@ -97,7 +172,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void fatal(String message) {
-		println("FATAL", message);
+		println(Level.FATAL, message);
 	}
 
 	/**
@@ -105,7 +180,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void trace(String message, Throwable t) {
-		println("TRACE", message, t);
+		println(Level.TRACE, message, t);
 	}
 
 	/**
@@ -113,7 +188,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void debug(String message, Throwable t) {
-		println("DEBUG", message, t);
+		println(Level.DEBUG, message, t);
 	}
 
 	/**
@@ -121,7 +196,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void info(String message, Throwable t) {
-		println("INFO ",message, t);
+		println(Level.INFO,message, t);
 	}
 
 	/**
@@ -129,7 +204,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void warn(String message, Throwable t) {
-		println("WARN ", message, t);
+		println(Level.WARN, message, t);
 	}
 
 	/**
@@ -137,7 +212,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void error(String message, Throwable t) {
-		println("ERROR", message, t);
+		println(Level.ERROR, message, t);
 	}
 
 	/**
@@ -145,7 +220,7 @@ public class StdOut implements Logger {
 	*/
 	@Override
 	public void fatal(String message, Throwable t) {
-		println("FATAL", message, t);
+		println(Level.FATAL, message, t);
 	}
 
 	/**

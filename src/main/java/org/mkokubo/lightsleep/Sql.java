@@ -66,7 +66,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	private static final Logger logger = LoggerFactory.getLogger(Sql.class);
 
 	// The version resource
-	private static final String version = new Resource("version").get("version");
+	private static final String version = new Resource("lightsleep-version").get("version");
 
 	// Cass resources
 	private static final Resource resource = new Resource(Sql.class);
@@ -131,7 +131,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	private static Database database;
 
 	static {
-		logger.info("Lightsleep version " + version + " / logger: " + LoggerFactory.loggerClass.getSimpleName());
+		logger.info("Lightsleep version " + version + " / logger: " + LoggerFactory.loggerClass.getCanonicalName());
 	}
 
 	/**
@@ -154,12 +154,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (database == null) throw new NullPointerException("Sql.database: database == null");
 
 		Sql.database = database;
-		logger.info(MessageFormat.format(messageDatabaseHandler, database.getClass().getName()));
+		logger.info(MessageFormat.format(messageDatabaseHandler, database.getClass().getCanonicalName()));
 	}
 
 	//  Initialize the database handler
 	static {
-		String databaseName = Resource.globalResource.get("database", "Standard");
+		String databaseName = Resource.globalResource.get("Database", "Standard");
 		if (databaseName.indexOf('.') < 0)
 			databaseName = Database.class.getPackage().getName() + '.' + databaseName;
 
@@ -203,12 +203,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (supplier == null) throw new NullPointerException("Sql.connectionSupplier: supplier == null");
 
 		connectionSupplier = supplier;
-		logger.info(MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getName()));
+		logger.info(MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getCanonicalName()));
 	}
 
 	// Initialize the connection supplier
 	static {
-		String supplierName = Resource.globalResource.get("connectionSupplier", "JdbcConnection");
+		String supplierName = Resource.globalResource.get("ConnectionSupplier", "JdbcConnection");
 		if (supplierName.indexOf('.') < 0)
 			supplierName = ConnectionSupplier.class.getPackage().getName() + '.' + supplierName;
 

@@ -81,7 +81,7 @@ logger = Log4j
 @SuppressWarnings("unchecked")
 public class LoggerFactory {
 	// The logger class
-	public static Class<? extends Logger> loggerClass = StdOut.class;
+	public static Class<? extends Logger> loggerClass;
 
 	// The logger map
 	private static final Map<String, Logger> loggerMap = new LinkedHashMap<>();
@@ -91,9 +91,9 @@ public class LoggerFactory {
 		Logger logger = null;
 
 		Resource globalResource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
-		loggerName = globalResource.get("logger", null);
+		loggerName = globalResource.get("Logger", null);
 		if (loggerName != null) {
-			if (loggerName.indexOf('.') < 0)
+			if (loggerName.indexOf('.') < 0 && !loggerName.startsWith("Std."))
 				loggerName = Logger.class.getPackage().getName() + '.' + loggerName;
 
 			// Checks whether there is a Logger class that is specified in the property
@@ -102,11 +102,12 @@ public class LoggerFactory {
 				logger = getLogger(loggerClass, LoggerFactory.class);
 			}
 			catch (Exception e) {
-				loggerClass = StdOut.class;
 			}
 		}
 
 		if (logger == null) {
+			loggerClass = Std.Out.Info.class;
+
 			try {
 				logger = getLogger(loggerClass, LoggerFactory.class);
 			}

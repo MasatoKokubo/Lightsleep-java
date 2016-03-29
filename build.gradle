@@ -13,7 +13,6 @@ dependencies {
 //	compile 'org.slf4j:slf4j-api:1.7.12'
 
 	compile files(
-		'../../DebugTrace/DebugTrace/build/libs/debugtrace-1.8.0.jar',
 		'C:/Java/apache-log4j-2.3-bin/log4j-1.2-api-2.3.jar',
 		'C:/Java/apache-log4j-2.3-bin/log4j-api-2.3.jar',
 		'C:/Java/slf4j-1.7.12/slf4j-api-1.7.12.jar',

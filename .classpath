@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Java/apache-log4j-2.3-bin/log4j-api-2.3.jar"/>
-	<classpathentry kind="lib" path="Z:/Develop/Java2/DebugTrace/DebugTrace/build/libs/debugtrace-1.8.0.jar"/>
-	<classpathentry kind="lib" path="C:/Java/apache-log4j-2.3-bin/log4j-1.2-api-2.3.jar"/>
-	<classpathentry kind="lib" path="C:/Java/slf4j-1.7.12/slf4j-api-1.7.12.jar"/>
-	<classpathentry kind="lib" path="C:/Java/jdbc/ojdbc7_g.jar"/>
-	<classpathentry kind="lib" path="C:/Java/jdbc/postgresql-9.4-1201.jdbc41.jar"/>
-	<classpathentry kind="lib" path="C:/Java/jdbc/sqljdbc41.jar"/>
+	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
