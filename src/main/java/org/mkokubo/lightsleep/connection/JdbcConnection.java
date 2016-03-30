@@ -54,13 +54,25 @@ public class JdbcConnection implements ConnectionSupplier {
 		@see #JdbcConnection(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	*/
 	public JdbcConnection() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	/**
 		Constructs a new <b>JdbcConnection</b>.
+		Use values specified in the lightsleep.properties file as the connection information.
+
+		@see #JdbcConnection(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+
+		@param url2 the additional URL of the database to be connected
+	*/
+	public JdbcConnection(String url2) {
+		this(null, null, url2, null, null);
+	}
+
+	/**
+		Constructs a new <b>JdbcConnection</b>.<br>
 		If <b>driver</b>, <b>url</b>, <b>user</b>, <b>password</b> is null,
-		uses each of the values that have been specified in the lightsleep.properties file.
+		uses each of the value that have been specified in the lightsleep.properties file.<br>
 
 		@param driver the class name of the JDBC driver
 		@param url the URL of the database to be connected
@@ -68,15 +80,33 @@ public class JdbcConnection implements ConnectionSupplier {
 		@param password the password when connecting to the database
 	*/
 	public JdbcConnection(String driver, String url, String user, String password) {
+		this(driver, url, null, user, password);
+	}
+
+	/**
+		Constructs a new <b>JdbcConnection</b>.<br>
+		If <b>driver</b>, <b>url</b>, <b>user</b>, <b>password</b> is null,
+		uses each of the value that have been specified in the lightsleep.properties file.<br>
+		If <b>url2</b> is not null, it is appended to <b>url</b>.
+
+		@param driver the class name of the JDBC driver
+		@param url the URL of the database to be connected
+		@param url2 the additional URL
+		@param user the user name to use when connecting to a database
+		@param password the password when connecting to the database
+	*/
+	public JdbcConnection(String driver, String url, String url2, String user, String password) {
 		if (logger.isInfoEnabled())
 			logger.info(new StringBuilder()
 				.append("JdbcConnection.<init>: argument driver: ").append(driver)
 				.append(", url: ").append(url)
+				.append(", url2: ").append(url2)
 				.append(", user: ").append(user)
 				.toString());
 
 		properties = Resource.globalResource.getProperties("JdbcConnection");
 
+		// driver
 		if (driver == null) {
 			driver = properties.getProperty("driver");
 			if (logger.isInfoEnabled())
@@ -91,21 +121,23 @@ public class JdbcConnection implements ConnectionSupplier {
 				Class.forName(driver);
 			}
 			catch (Throwable e) {
-				logger.fatal("JdbcConnection.init:", e);
+				logger.fatal("JdbcConnection.<init>:", e);
 			}
 		}
 
-		if (url == null) {
-			url =  properties.getProperty("url");
-			if (logger.isInfoEnabled())
-				logger.info("JdbcConnection.<init>: properties url: " + url);
-		}
-		this.url = url;
+		// url
+		if (url == null)
+			url = properties.getProperty("url");
+		this.url = (url == null ? "" : url) + (url2 == null ? "" : url2);
+		if (logger.isInfoEnabled())
+			logger.info("JdbcConnection.<init>: url: " + this.url);
 		properties.remove("url");
 
+		// user
 		if (user != null)
 			properties.setProperty("user", user);
 
+		// password
 		if (password != null)
 			properties.setProperty("password", password);
 

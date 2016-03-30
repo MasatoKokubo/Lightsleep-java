@@ -43,8 +43,18 @@ public class JdbcConnection implements ConnectionSupplier {
 
 	/**
 		<b>JdbcConnection</b> を構築します。<br>
+		lightsleep.properties ファイルで指定された値を接続情報として使用します。
+		<b>url2</b> が null ではない場合、lightsleep.properties ファイルから取得した url に追加されます。
+
+		@param url2 追加用の URL
+	*/
+	public JdbcConnection(String url2) {
+	}
+
+	/**
+		<b>JdbcConnection</b> を構築します。<br>
 		<b>driver</b>, <b>url</b>, <b>user</b>, <b>password</b> が
-		<b>null</b> の場合、lightsleep.properties ファイルで指定されたそれぞれの値を使用します。
+		<b>null</b> の場合、lightsleep.properties ファイルで指定されたそれぞれの値を使用します。<br>
 
 		@param driver JDBCドライバのクラス名
 		@param url 接続するデータベースの URL
@@ -52,6 +62,21 @@ public class JdbcConnection implements ConnectionSupplier {
 		@param password データベースに接続する時のパスワード
 	*/
 	public JdbcConnection(String driver, String url, String user, String password) {
+	}
+
+	/**
+		<b>JdbcConnection</b> を構築します。<br>
+		<b>driver</b>, <b>url2</b>, <b>user</b>, <b>password</b> が
+		<b>null</b> の場合、lightsleep.properties ファイルで指定されたそれぞれの値を使用します。<br>
+		<b>url2</b> が null ではない場合、<b>url</b> に追加されます。
+
+		@param driver JDBCドライバのクラス名
+		@param url 接続するデータベースの URL
+		@param url2 追加用の URL
+		@param user データベースに接続する時のユーザー名
+		@param password データベースに接続する時のパスワード
+	*/
+	public JdbcConnection(String driver, String url, String url2, String user, String password) {
 	}
 
 	/**

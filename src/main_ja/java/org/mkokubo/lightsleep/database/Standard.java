@@ -22,7 +22,31 @@ import org.mkokubo.lightsleep.Sql;
 	<table class="additinal">
 		<caption>登録されている {@code TypeConverter} オブジェクト</caption>
 		<tr><th>変換元データ型</th><th>変換先データ型</th></tr>
+
+		<tr><td>java.sql.Date</td><td rowspan="4">String</td></tr>
+		<tr><td>Time         </td></tr>
+		<tr><td>Timestamp    </td></tr>
+		<tr><td>Clob         </td></tr>
+
+		<tr><td>Blob         </td><td>byte[]</td></tr>
+
+		<tr><td>Long         </td><td rowspan="4">java.sql.Date</td></tr>
+		<tr><td>Time         </td></tr>
+		<tr><td>Timestamp    </td></tr>
+		<tr><td>String       </td></tr>
+
+		<tr><td>Long         </td><td rowspan="4">Time</td></tr>
+		<tr><td>java.sql.Date</td></tr>
+		<tr><td>Timestamp    </td></tr>
+		<tr><td>String       </td></tr>
+
+		<tr><td>Long         </td><td rowspan="4">Timestamp</td></tr>
+		<tr><td>java.sql.Date</td></tr>
+		<tr><td>Time         </td></tr>
+		<tr><td>String       </td></tr>
+
 		<tr><td>boolean       </td><td>{@linkplain org.mkokubo.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
+
 		<tr><td>Byte          </td><td rowspan="15">{@linkplain org.mkokubo.lightsleep.component.SqlString}</td></tr>
 		<tr><td>Short         </td></tr>
 		<tr><td>Integer       </td></tr>

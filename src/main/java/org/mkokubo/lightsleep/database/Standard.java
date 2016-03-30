@@ -6,9 +6,14 @@ package org.mkokubo.lightsleep.database;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +37,31 @@ import org.mkokubo.lightsleep.helper.TypeConverter;
 	<table class="additinal">
 		<caption>TypeConverter objects that are registered</caption>
 		<tr><th>Source data type</th><th>Destination data type</th></tr>
+
+		<tr><td>java.sql.Date </td><td rowspan="4">String</td></tr>
+		<tr><td>Time          </td></tr>
+		<tr><td>Timestamp     </td></tr>
+		<tr><td>Clob          </td></tr>
+
+		<tr><td>Blob          </td><td>byte[]</td></tr>
+
+		<tr><td>Long          </td><td rowspan="4">java.sql.Date</td></tr>
+		<tr><td>Time          </td></tr>
+		<tr><td>Timestamp     </td></tr>
+		<tr><td>String        </td></tr>
+
+		<tr><td>Long          </td><td rowspan="4">Time</td></tr>
+		<tr><td>java.sql.Date </td></tr>
+		<tr><td>Timestamp     </td></tr>
+		<tr><td>String        </td></tr>
+
+		<tr><td>Long          </td><td rowspan="4">Timestamp</td></tr>
+		<tr><td>java.sql.Date </td></tr>
+		<tr><td>Time          </td></tr>
+		<tr><td>String        </td></tr>
+
 		<tr><td>boolean       </td><td>{@linkplain org.mkokubo.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
+
 		<tr><td>Byte          </td><td rowspan="15">{@linkplain org.mkokubo.lightsleep.component.SqlString}</td></tr>
 		<tr><td>Short         </td></tr>
 		<tr><td>Integer       </td></tr>
@@ -109,6 +138,8 @@ public class Standard implements Database {
 			else throw new ConvertException(String.class, object, Boolean.class, null);
 		});
 
+	private static final String timestampFormatString = "yyyy-MM-dd HH:mm:ss.SSS";
+
 	// The Standard instance
 	private static final Database instance = new Standard();
 
@@ -128,6 +159,140 @@ public class Standard implements Database {
 		Constructs a new <b>Standard</b>.
 	*/
 	protected Standard() {
+	// * -> String
+		// Date -> String
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Date.class, String.class, object -> object.toString())
+		);
+
+		// Time -> String
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Time.class, String.class, object -> object.toString())
+		);
+
+		// Timestamp -> String
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Timestamp.class, String.class, object ->
+				new SimpleDateFormat(timestampFormatString).format(object))
+		);
+
+		// Clob -> String
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Clob.class, String.class, object -> {
+				try {
+					long length = object.length();
+					if (length > Integer.MAX_VALUE)
+						throw new ConvertException(Clob.class, "length=" + length, String.class);
+					return object.getSubString(1L, (int)length);
+				}
+				catch (SQLException e) {
+					throw new ConvertException(Clob.class, object, String.class, null, e);
+				}
+			})
+		);
+
+	// * -> byte[]
+		// Blob -> byte[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Blob.class, byte[].class, object -> {
+				try {
+					long length = object.length();
+					if (length > Integer.MAX_VALUE)
+						throw new ConvertException(Blob.class, "length=" + length, byte[].class);
+					return object.getBytes(1L, (int)length);
+				}
+				catch (SQLException e) {
+					throw new ConvertException(Blob.class, object, byte[].class, null, e);
+				}
+			})
+		);
+
+	// * -> Date
+		// Long -> Date
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Long.class, Date.class, object -> new Date(object))
+		);
+
+		// Time -> Date
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Time.class, Date.class, object -> new Date(object.getTime()))
+		);
+
+		// Timestamp -> Date
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Timestamp.class, Date.class, object -> new Date(object.getTime()))
+		);
+
+		// String -> Date
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(String.class, Date.class, object -> {
+				try {
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+					return new Date(format.parse(object).getTime());
+				}
+				catch (ParseException e) {
+					throw new ConvertException(String.class, object, Date.class, e);
+				}
+			})
+		);
+
+	// * -> Time
+		// Long -> Time
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Long.class, Time.class, object -> new Time(object))
+		);
+
+		// Date -> Time
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Date.class, Time.class, object -> new Time(object.getTime()))
+		);
+
+		// Timestamp -> Time
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Timestamp.class, Time.class, object -> new Time(object.getTime()))
+		);
+
+		// String -> Time
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(String.class, Time.class, object -> {
+				try {
+					SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+					return new Time(format.parse(object).getTime());
+				}
+				catch (ParseException e) {
+					throw new ConvertException(String.class, object, Time.class, e);
+				}
+			})
+		);
+
+	// * -> Timestamp
+		// Long -> Timestamp
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Long.class, Timestamp.class, object -> new Timestamp(object))
+		);
+
+		// Date -> Timestamp
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Date.class, Timestamp.class, object -> new Timestamp(object.getTime()))
+		);
+
+		// Time -> Timestamp
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Time.class, Timestamp.class, object -> new Timestamp(object.getTime()))
+		);
+
+		// String -> Timestamp
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(String.class, Timestamp.class, object -> {
+				try {
+					return new Timestamp(new SimpleDateFormat(timestampFormatString).parse(object).getTime());
+				}
+				catch (ParseException e) {
+					throw new ConvertException(String.class, object, Timestamp.class, e);
+				}
+			})
+		);
+
 		// boolean -> FALSE, TRUE
 		TypeConverter.put(typeConverterMap, booleanToSqlFalseTrueConverter);
 

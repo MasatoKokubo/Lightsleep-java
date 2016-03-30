@@ -8,7 +8,143 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
-	データ型を変換するためのクラスです。
+	データ型を変換するためのクラスです。<br>
+
+	以下の <b>TypeConverter</b> オブジェクトが <b>typeConverterMap</b> に登録されています。<br>
+
+	<table class="additinal">
+		<caption>登録されている TypeConverter オブジェクト</caption>
+		<tr><th>変換元データ型   </th><th>変換先データ型</th></tr>
+
+		<tr><td>Byte             </td><td rowspan="10">Boolean</td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>String           </td></tr>
+
+		<tr><td>Boolean          </td><td rowspan="10">Byte</td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>String           </td></tr>
+
+		<tr><td>Boolean          </td><td rowspan="10">Short</td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>String           </td></tr>
+
+		<tr><td>Boolean          </td><td rowspan="10">Integer</td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>String           </td></tr>
+
+		<tr><td>Boolean          </td><td rowspan="10">Long</td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>String           </td></tr>
+
+		<tr><td>Boolean          </td><td rowspan="10">Float</td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>String           </td></tr>
+
+		<tr><td>Boolean          </td><td rowspan="10">Double</td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>String           </td></tr>
+
+		<tr><td>Boolean          </td><td rowspan="10">BigInteger</td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>String           </td></tr>
+
+		<tr><td>Boolean          </td><td rowspan="10">BigDecimal</td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>String           </td></tr>
+
+		<tr><td>Boolean          </td><td rowspan="10">Character</td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>String           </td></tr>
+
+		<tr><td>Object           </td><td rowspan="12">String</td></tr>
+		<tr><td>Boolean          </td></tr>
+		<tr><td>Byte             </td></tr>
+		<tr><td>Short            </td></tr>
+		<tr><td>Integer          </td></tr>
+		<tr><td>Long             </td></tr>
+		<tr><td>Float            </td></tr>
+		<tr><td>Double           </td></tr>
+		<tr><td>BigInteger       </td></tr>
+		<tr><td>BigDecimal       </td></tr>
+		<tr><td>Character        </td></tr>
+		<tr><td>Enum             </td></tr>
+	</table>
+
+	@see org.mkokubo.lightsleep.database.Standard
+	@see org.mkokubo.lightsleep.database.MySQL
+	@see org.mkokubo.lightsleep.database.Oracle
+	@see org.mkokubo.lightsleep.database.PostgreSQL
+	@see org.mkokubo.lightsleep.database.SQLServer
 
 	@since 1.0
 
@@ -173,163 +309,6 @@ public class TypeConverter<ST, DT> {
 
 	/**
 		データベースから取得した値をフィールドに格納する際のデータ変換に使用する <b>TypeConverter</b> マップです。<br>
-
-		以下の <b>TypeConverter</b> オブジェクトが登録されています。<br>
-
-		<table class="additinal">
-			<caption>登録されている TypeConverter オブジェクト</caption>
-			<tr><th>変換元データ型   </th><th>変換先データ型</th></tr>
-
-			<tr><td>Byte             </td><td rowspan="10">Boolean</td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Boolean          </td><td rowspan="10">Byte</td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Boolean          </td><td rowspan="10">Short</td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Boolean          </td><td rowspan="10">Integer</td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Boolean          </td><td rowspan="10">Long</td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Boolean          </td><td rowspan="10">Float</td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Boolean          </td><td rowspan="10">Double</td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Boolean          </td><td rowspan="10">BigInteger</td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Boolean          </td><td rowspan="10">BigDecimal</td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Boolean          </td><td rowspan="10">Character</td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Object           </td><td rowspan="16">String</td></tr>
-			<tr><td>Boolean          </td></tr>
-			<tr><td>Byte             </td></tr>
-			<tr><td>Short            </td></tr>
-			<tr><td>Integer          </td></tr>
-			<tr><td>Long             </td></tr>
-			<tr><td>Float            </td></tr>
-			<tr><td>Double           </td></tr>
-			<tr><td>BigInteger       </td></tr>
-			<tr><td>BigDecimal       </td></tr>
-			<tr><td>Character        </td></tr>
-			<tr><td>java.sql.Date    </td></tr>
-			<tr><td>Time             </td></tr>
-			<tr><td>Timestamp        </td></tr>
-			<tr><td>Clob             </td></tr>
-			<tr><td>Enum             </td></tr>
-
-			<tr><td>Blob             </td><td>byte[]</td></tr>
-
-			<tr><td>Long             </td><td rowspan="4">java.sql.Date</td></tr>
-			<tr><td>Time             </td></tr>
-			<tr><td>Timestamp        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Long             </td><td rowspan="4">Time</td></tr>
-			<tr><td>java.sql.Date    </td></tr>
-			<tr><td>Timestamp        </td></tr>
-			<tr><td>String           </td></tr>
-
-			<tr><td>Long             </td><td rowspan="4">Timestamp</td></tr>
-			<tr><td>java.sql.Date    </td></tr>
-			<tr><td>Time             </td></tr>
-			<tr><td>String           </td></tr>
-		</table>
-
-		@see org.mkokubo.lightsleep.database.Standard
-		@see org.mkokubo.lightsleep.database.MySQL
-		@see org.mkokubo.lightsleep.database.Oracle
-		@see org.mkokubo.lightsleep.database.PostgreSQL
-		@see org.mkokubo.lightsleep.database.SQLServer
 	*/
 	public static final Map<String, TypeConverter<?, ?>> typeConverterMap = null;
 }

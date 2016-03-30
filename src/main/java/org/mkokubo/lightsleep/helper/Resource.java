@@ -6,7 +6,6 @@ package org.mkokubo.lightsleep.helper;
 
 import java.lang.reflect.Array;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -340,19 +339,6 @@ public class Resource {
 	*/
 	private String toIndexedKey(String key, int index) {
 		return key + "." + index;
-	}
-
-	/**
-		Appends <b>index</b> and <b>suffix</b> to <b>key</b>.
-
-		@param key the key
-		@param index the index
-		@param suffix the suffix
-
-		@return a key appended <b>index</b> and <b>suffix</b>
-	*/
-	private String toIndexedKey(String key, int index, String suffix) {
-		return key + "." + index + suffix;
 	}
 
 	/**

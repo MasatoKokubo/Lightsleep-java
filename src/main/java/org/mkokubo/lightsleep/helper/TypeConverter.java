@@ -6,15 +6,7 @@ package org.mkokubo.lightsleep.helper;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -142,7 +134,7 @@ import org.mkokubo.lightsleep.logger.LoggerFactory;
 		<tr><td>Character        </td></tr>
 		<tr><td>String           </td></tr>
 
-		<tr><td>Object           </td><td rowspan="16">String</td></tr>
+		<tr><td>Object           </td><td rowspan="12">String</td></tr>
 		<tr><td>Boolean          </td></tr>
 		<tr><td>Byte             </td></tr>
 		<tr><td>Short            </td></tr>
@@ -153,28 +145,7 @@ import org.mkokubo.lightsleep.logger.LoggerFactory;
 		<tr><td>BigInteger       </td></tr>
 		<tr><td>BigDecimal       </td></tr>
 		<tr><td>Character        </td></tr>
-		<tr><td>java.sql.Date    </td></tr>
-		<tr><td>Time             </td></tr>
-		<tr><td>Timestamp        </td></tr>
-		<tr><td>Clob             </td></tr>
 		<tr><td>Enum             </td></tr>
-
-		<tr><td>Blob             </td><td>byte[]</td></tr>
-
-		<tr><td>Long             </td><td rowspan="4">java.sql.Date</td></tr>
-		<tr><td>Time             </td></tr>
-		<tr><td>Timestamp        </td></tr>
-		<tr><td>String           </td></tr>
-
-		<tr><td>Long             </td><td rowspan="4">Time</td></tr>
-		<tr><td>java.sql.Date    </td></tr>
-		<tr><td>Timestamp        </td></tr>
-		<tr><td>String           </td></tr>
-
-		<tr><td>Long             </td><td rowspan="4">Timestamp</td></tr>
-		<tr><td>java.sql.Date    </td></tr>
-		<tr><td>Time             </td></tr>
-		<tr><td>String           </td></tr>
 	</table>
 
 	@see org.mkokubo.lightsleep.database.Standard
@@ -539,8 +510,6 @@ public class TypeConverter<ST, DT> {
 
 	// BigInteger.valueOf(Character.MAX_VALUE)
 	private static final BigInteger bigIntegerCharacterMax = BigInteger.valueOf(Character.MAX_VALUE);
-
-	private static final String timestampFormatString = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	/**
 		A <b>TypeConverter</b> map
@@ -1394,143 +1363,9 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(Character.class, String.class, object -> object.toString())
 		);
 
-		// Date -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date.class, String.class, object -> object.toString())
-		);
-
-		// Time -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, String.class, object -> object.toString())
-		);
-
-		// Timestamp -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp.class, String.class, object ->
-				new SimpleDateFormat(timestampFormatString).format(object))
-		);
-
-		// Clob -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Clob.class, String.class, object -> {
-				try {
-					long length = object.length();
-					if (length > Integer.MAX_VALUE)
-						throw new ConvertException(Clob.class, "length=" + length, String.class);
-					return object.getSubString(1L, (int)length);
-				}
-				catch (SQLException e) {
-					throw new ConvertException(Clob.class, object, String.class, null, e);
-				}
-			})
-		);
-
 		// Enum -> String
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Enum.class, String.class, object -> object.toString())
-		);
-
-
-	// * -> byte[]
-		// Blob -> byte[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Blob.class, byte[].class, object -> {
-				try {
-					long length = object.length();
-					if (length > Integer.MAX_VALUE)
-						throw new ConvertException(Blob.class, "length=" + length, byte[].class);
-					return object.getBytes(1L, (int)length);
-				}
-				catch (SQLException e) {
-					throw new ConvertException(Blob.class, object, byte[].class, null, e);
-				}
-			})
-		);
-
-	// * -> Date
-		// Long -> Date
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Long.class, Date.class, object -> new Date(object))
-		);
-
-		// Time -> Date
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, Date.class, object -> new Date(object.getTime()))
-		);
-
-		// Timestamp -> Date
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp.class, Date.class, object -> new Date(object.getTime()))
-		);
-
-		// String -> Date
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String.class, Date.class, object -> {
-				try {
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-					return new Date(format.parse(object).getTime());
-				}
-				catch (ParseException e) {
-					throw new ConvertException(String.class, object, Date.class, e);
-				}
-			})
-		);
-
-	// * -> Time
-		// Long -> Time
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Long.class, Time.class, object -> new Time(object))
-		);
-
-		// Date -> Time
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date.class, Time.class, object -> new Time(object.getTime()))
-		);
-
-		// Timestamp -> Time
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp.class, Time.class, object -> new Time(object.getTime()))
-		);
-
-		// String -> Time
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String.class, Time.class, object -> {
-				try {
-					SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-					return new Time(format.parse(object).getTime());
-				}
-				catch (ParseException e) {
-					throw new ConvertException(String.class, object, Time.class, e);
-				}
-			})
-		);
-
-	// * -> Timestamp
-		// Long -> Timestamp
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Long.class, Timestamp.class, object -> new Timestamp(object))
-		);
-
-		// Date -> Timestamp
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date.class, Timestamp.class, object -> new Timestamp(object.getTime()))
-		);
-
-		// Time -> Timestamp
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, Timestamp.class, object -> new Timestamp(object.getTime()))
-		);
-
-		// String -> Timestamp
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String.class, Timestamp.class, object -> {
-				try {
-					return new Timestamp(new SimpleDateFormat(timestampFormatString).parse(object).getTime());
-				}
-				catch (ParseException e) {
-					throw new ConvertException(String.class, object, Timestamp.class, e);
-				}
-			})
 		);
 	}
 }

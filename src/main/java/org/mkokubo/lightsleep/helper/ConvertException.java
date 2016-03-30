@@ -38,7 +38,7 @@ public class ConvertException extends RuntimeException {
 	private Object destin;
 
 	/**
-		ConvertException を構築します。
+		Constructs a new <b>ConvertException</b>.
 	*/
 	public ConvertException() {
 	}

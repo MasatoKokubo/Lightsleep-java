@@ -1367,6 +1367,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (parameters == null) throw new NullPointerException("Sql.executeQuery: parameters == null");
 		if (consumer == null) throw new NullPointerException("Sql.executeQuery: consumer == null");
 
+		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
+
 		// Prepares SQL
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			//  Sets the parameter values
@@ -1380,8 +1382,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 				else
 					statement.setObject(index + 1, parameter);
 			}
-
-			logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
 
 			// Executes SQL
 			long execTimeBefore = System.nanoTime(); // Time of before execution
@@ -1451,6 +1451,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (sql == null) throw new NullPointerException("Sql.executeUpdate: sql == null");
 		if (parameters == null) throw new NullPointerException("Sql.executeUpdate: parameters == null");
 
+		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
+
 		// Prepares SQL
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			//  Sets the parameter values
@@ -1464,8 +1466,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 				else
 					statement.setObject(index + 1, parameter);
 			}
-
-			logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
 
 			// Executes SQL
 			long execTimeBefore = System.nanoTime(); // Time of before execution
