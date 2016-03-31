@@ -45,6 +45,18 @@ import org.mkokubo.lightsleep.Sql;
 		<tr><td>Time         </td></tr>
 		<tr><td>String       </td></tr>
 
+		<tr><td rowspan="11">java.sql.Array</td><td>boolean[]   </td></tr>
+		<tr>                                    <td>byte[]      </td></tr>
+		<tr>                                    <td>short[]     </td></tr>
+		<tr>                                    <td>int[]       </td></tr>
+		<tr>                                    <td>long[]      </td></tr>
+		<tr>                                    <td>double[]    </td></tr>
+		<tr>                                    <td>BigDecimal[]</td></tr>
+		<tr>                                    <td>String[]    </td></tr>
+		<tr>                                    <td>Date[]      </td></tr>
+		<tr>                                    <td>Time[]      </td></tr>
+		<tr>                                    <td>Timestamp[] </td></tr>
+
 		<tr><td>boolean       </td><td>{@linkplain org.mkokubo.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
 
 		<tr><td>Byte          </td><td rowspan="15">{@linkplain org.mkokubo.lightsleep.component.SqlString}</td></tr>

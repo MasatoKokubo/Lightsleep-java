@@ -60,6 +60,18 @@ import org.mkokubo.lightsleep.helper.TypeConverter;
 		<tr><td>Time          </td></tr>
 		<tr><td>String        </td></tr>
 
+		<tr><td rowspan="11">java.sql.Array</td><td>boolean[]   </td></tr>
+		<tr>                                    <td>byte[]      </td></tr>
+		<tr>                                    <td>short[]     </td></tr>
+		<tr>                                    <td>int[]       </td></tr>
+		<tr>                                    <td>long[]      </td></tr>
+		<tr>                                    <td>double[]    </td></tr>
+		<tr>                                    <td>BigDecimal[]</td></tr>
+		<tr>                                    <td>String[]    </td></tr>
+		<tr>                                    <td>Date[]      </td></tr>
+		<tr>                                    <td>Time[]      </td></tr>
+		<tr>                                    <td>Timestamp[] </td></tr>
+
 		<tr><td>boolean       </td><td>{@linkplain org.mkokubo.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
 
 		<tr><td>Byte          </td><td rowspan="15">{@linkplain org.mkokubo.lightsleep.component.SqlString}</td></tr>
@@ -293,6 +305,249 @@ public class Standard implements Database {
 			})
 		);
 
+	// java.sql.Array -> *[]
+		// java.sql.Array -> boolean[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, boolean[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof boolean[])
+						return (boolean[])array;
+
+					else if (array instanceof Boolean[]) {
+						boolean[] result = new boolean[((Boolean[])array).length];
+						for (int index = 0; index < result.length; ++index)
+							result[index] = ((Boolean[])array)[index];
+						return result;
+					}
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, boolean[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, boolean[].class);
+			})
+		);
+
+		// java.sql.Array -> byte[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, byte[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof byte[])
+						return (byte[])array;
+
+					else if (array instanceof Byte[]) {
+						byte[] result = new byte[((Byte[])array).length];
+						for (int index = 0; index < result.length; ++index)
+							result[index] = ((Byte[])array)[index];
+						return result;
+					}
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, byte[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, byte[].class);
+			})
+		);
+
+		// java.sql.Array -> short[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, short[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof short[])
+						return (short[])array;
+
+					else if (array instanceof Short[]) {
+						short[] result = new short[((Short[])array).length];
+						for (int index = 0; index < result.length; ++index)
+							result[index] = ((Short[])array)[index];
+						return result;
+					}
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, short[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, short[].class);
+			})
+		);
+
+		// java.sql.Array -> int[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, int[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof int[])
+						return (int[])array;
+
+					else if (array instanceof Integer[]) {
+						int[] result = new int[((Integer[])array).length];
+						for (int index = 0; index < result.length; ++index)
+							result[index] = ((Integer[])array)[index];
+						return result;
+					}
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, int[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, int[].class);
+			})
+		);
+
+		// java.sql.Array -> long[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, long[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof long[])
+						return (long[])array;
+
+					else if (array instanceof Long[]) {
+						long[] result = new long[((Long[])array).length];
+						for (int index = 0; index < result.length; ++index)
+							result[index] = ((Long[])array)[index];
+						return result;
+					}
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, long[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, long[].class);
+			})
+		);
+
+		// java.sql.Array -> float[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, float[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof float[])
+						return (float[])array;
+
+					else if (array instanceof Float[]) {
+						float[] result = new float[((Float[])array).length];
+						for (int index = 0; index < result.length; ++index)
+							result[index] = ((Float[])array)[index];
+						return result;
+					}
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, float[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, float[].class);
+			})
+		);
+
+		// java.sql.Array -> double[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, double[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof double[])
+						return (double[])array;
+
+					else if (array instanceof Double[]) {
+						double[] result = new double[((Double[])array).length];
+						for (int index = 0; index < result.length; ++index)
+							result[index] = ((Double[])array)[index];
+						return result;
+					}
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, double[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, double[].class);
+			})
+		);
+
+		// java.sql.Array -> BigDecimal[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, BigDecimal[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof BigDecimal[])
+						return (BigDecimal[])array;
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, BigDecimal[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, BigDecimal[].class);
+			})
+		);
+
+		// java.sql.Array -> String[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, String[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof String[])
+						return (String[])array;
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, String[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, String[].class);
+			})
+		);
+
+		// java.sql.Array -> Date[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, Date[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof Date[])
+						return (Date[])array;
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, Date[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, Date[].class);
+			})
+		);
+
+		// java.sql.Array -> Time[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, Time[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof Time[])
+						return (Time[])array;
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, Time[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, Time[].class);
+			})
+		);
+
+		// java.sql.Array -> Timestamp[]
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, Timestamp[].class, object -> {
+				try {
+					Object array = object.getArray();
+					if (array instanceof Timestamp[])
+						return (Timestamp[])array;
+				}
+				catch (Exception e) {
+					throw new ConvertException(java.sql.Array.class, object, Timestamp[].class, e);
+				}
+
+				throw new ConvertException(java.sql.Array.class, object, Timestamp[].class);
+			})
+		);
+
+	// * -> SqlString.class
 		// boolean -> FALSE, TRUE
 		TypeConverter.put(typeConverterMap, booleanToSqlFalseTrueConverter);
 
