@@ -13,16 +13,10 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.Optional;
 
-import org.mkokubo.lightsleep.component.Condition;
-import org.mkokubo.lightsleep.component.GroupBy;
-import org.mkokubo.lightsleep.component.OrderBy;
-import org.mkokubo.lightsleep.connection.ConnectionSupplier;
-import org.mkokubo.lightsleep.database.Database;
-import org.mkokubo.lightsleep.helper.ColumnInfo;
-import org.mkokubo.lightsleep.helper.EntityInfo;
-import org.mkokubo.lightsleep.helper.JoinInfo;
-import org.mkokubo.lightsleep.helper.SqlColumnInfo;
-import org.mkokubo.lightsleep.helper.SqlEntityInfo;
+import org.mkokubo.lightsleep.component.*;
+import org.mkokubo.lightsleep.connection.*;
+import org.mkokubo.lightsleep.database.*;
+import org.mkokubo.lightsleep.helper.*;
 
 /**
 	SQL を構築および実行するためのクラスです。<br>
@@ -201,6 +195,51 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		@return columns メソッドで指定されたプロパティ名のセット
 	*/
 	public Set<String> getColumns() {
+		return null;
+	}
+
+	/**
+		プロパティ名に関連するカラムに式を関連付けします。<br>
+		式が空の場合、以前のこのプロパティ名の関連付けを解除します。
+
+		@param propertyName プロパティ名
+		@param expression 式
+
+		@return このオブジェクト
+
+		@throws NullPointerException <b>propertyName</b> または <b>expression</b> が <b>null</b> の場合
+	*/
+	public Sql<E> expression(String propertyName, Expression expression) {
+		return null;
+	}
+
+	/**
+		プロパティ名に関連するカラムに式を関連付けします。<br>
+		式が空の場合、以前のこのプロパティ名の関連付けを解除します。
+
+		@param propertyName プロパティ名
+		@param content 式の文字列内容
+		@param arguments 式に埋め込む引数配列
+
+		@return このオブジェクト
+
+		@throws NullPointerException <b>propertyName</b>, <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+	*/
+	public Sql<E> expression(String propertyName, String content, Object... arguments) {
+		return null;
+	}
+
+	/**
+		プロパティ名に関連する式を返します。<br>
+		関連する式がない場合は、<b>Expression.EMPTY</b> を返します。
+
+		@param propertyName プロパティ名
+
+		@return プロパティ名に関連する式または <b>Expression.EMPTY</b>
+
+		@throws NullPointerException <b>propertyName</b> が <b>null</b> の場合
+	*/
+	public Expression getExpression(String propertyName) {
 		return null;
 	}
 

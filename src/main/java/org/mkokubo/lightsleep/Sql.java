@@ -13,6 +13,7 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -96,6 +97,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	// The select columns
 	private Set<String> columns = new HashSet<>();
+
+	// The expression map (property name : expression)
+	private Map<String, Expression> expressionMap = new HashMap<>();
 
 	// The join informations
 	private List<JoinInfo<?>> joinInfos = new ArrayList<>();
@@ -373,6 +377,60 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	*/
 	public Set<String> getColumns() {
 		return columns;
+	}
+
+	/**
+		Associates <b>expression</b> to the column related to <b>propertyName</b>.<br>
+		If <b>expression</b> is empty, releases the previous association of <b>propertyName</b>.
+
+		@param propertyName the property name
+		@param expression the expression
+
+		@return this object
+
+		@throws NullPointerException if <b>propertyName</b> or <b>expression</b> is <b>null</b>
+	*/
+	public Sql<E> expression(String propertyName, Expression expression) {
+		if (expression == null) throw new NullPointerException("Sql.expression: expression == null");
+
+		if (expression.content().isEmpty())
+			expressionMap.remove(propertyName);
+		else
+			expressionMap.put(propertyName, expression);
+
+		return this;
+	}
+
+	/**
+		Associates the expression to the column related to <b>propertyName</b>.<br>
+		If the expression is empty, releases the previous association of <b>propertyName</b>.
+
+		@param propertyName the property name
+		@param content the content of the expression
+		@param arguments the arguments of the expression
+
+		@return this object
+
+		@throws NullPointerException if <b>propertyName</b>, <b>content</b> or <b>arguments</b> is <b>null</b>
+	*/
+	public Sql<E> expression(String propertyName, String content, Object... arguments) {
+		return expression(propertyName, new Expression(content, arguments));
+	}
+
+	/**
+		Returns the expression associated <b>propertyName</b> or <b>Expression.EMPTY</b> if not associated.
+
+		@param propertyName the property name
+
+		@return the expression associated <b>propertyName</b> or <b>Expression.EMPTY</b>
+
+		@throws NullPointerException if <b>propertyName</b> is <b>null</b>
+	*/
+	public Expression getExpression(String propertyName) {
+		// checks propertyName
+	//	entityInfo.getColumnInfo(propertyName);
+
+		return expressionMap.getOrDefault(propertyName, Expression.EMPTY);
 	}
 
 	/**

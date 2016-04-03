@@ -43,7 +43,7 @@ public class Expression implements Condition {
 		Constructs a new <b>Expression</b>.
 
 		@param content the content of the expression
-		@param arguments the arguments
+		@param arguments the arguments of the expression
 
 		@throws NullPointerException <b>content</b> or <b>arguments</b> is <b>null</b>
 	*/
@@ -189,12 +189,15 @@ public class Expression implements Condition {
 						continue;
 
 					} else {
-						// Converts to a column name
-						ColumnInfo columnInfo = entityInfo.getColumnInfo(propertyName);
-						if (columnInfo != null) {
-							// Found a column information
+						ColumnInfo columnInfo = null;
+
+						try {
+							// Converts to a column name
+							columnInfo = entityInfo.getColumnInfo(propertyName);
 							buff.append(columnInfo.getColumnName(sql.tableAlias()));
 							continue;
+						}
+						catch (IllegalArgumentException e) {
 						}
 
 						// Try with the table alias
@@ -205,11 +208,13 @@ public class Expression implements Condition {
 							if (sqlEntityInfo != null) {
 								// Found an entity information of the table alias
 								String propertyName2 = propertyName.substring(chIndex + 1);
-								columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
-								if (columnInfo != null) {
-									// Found a column information
+
+								try {
+									columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
 									buff.append(columnInfo.getColumnName(sqlEntityInfo.tableAlias()));
 									continue;
+								}
+								catch (IllegalArgumentException e) {
 								}
 							}
 						}
@@ -222,11 +227,12 @@ public class Expression implements Condition {
 							if (sqlEntityInfo != null) {
 								// Found an entity information of the table alias
 								String propertyName2 = propertyName.substring(chIndex + 1);
-								columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
-								if (columnInfo != null) {
-									// Found a column information
+								try {
+									columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
 									buff.append(columnInfo.getColumnAlias(sqlEntityInfo.tableAlias()));
 									continue;
+								}
+								catch (IllegalArgumentException e) {
 								}
 							}
 						}

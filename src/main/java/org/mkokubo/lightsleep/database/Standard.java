@@ -24,6 +24,7 @@ import org.mkokubo.lightsleep.helper.ConvertException;
 import org.mkokubo.lightsleep.helper.Resource;
 import org.mkokubo.lightsleep.Sql;
 import org.mkokubo.lightsleep.component.Condition;
+import org.mkokubo.lightsleep.component.Expression;
 import org.mkokubo.lightsleep.component.SqlString;
 import org.mkokubo.lightsleep.helper.TypeConverter;
 
@@ -694,7 +695,9 @@ public class Standard implements Database {
 			StringBuilder buff = new StringBuilder();
 			String[] delimiter = new String[] {""};
 			sql.selectedJoinSqlColumnInfoStream()
-				.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
+				.filter(sqlColumnInfo -> {
+					return sqlColumnInfo.columnInfo().selectable();
+				})
 				.forEach(sqlColumnInfo -> {
 					buff.append(delimiter[0]);
 					delimiter[0] = ", ";
@@ -704,7 +707,12 @@ public class Standard implements Database {
 					String columnName  = columnInfo.getColumnName (tableAlias);
 					String columnAlias = columnInfo.getColumnAlias(tableAlias);
 
-					if (columnInfo.selectExpression().isEmpty()) {
+					// gets expression
+					Expression expression = sql.getExpression(columnInfo.propertyName());
+					if (expression.isEmpty())
+						expression = columnInfo.selectExpression();
+
+					if (expression.isEmpty()) {
 						if (!sql.getGroupBy().isEmpty()) buff.append("MIN(");
 
 						// No expression ->  column name
@@ -718,7 +726,7 @@ public class Standard implements Database {
 
 					} else {
 						// Given expression
-						buff.append(columnInfo.selectExpression().toString(sql, parameters));
+						buff.append(expression.toString(sql, parameters));
 
 						//  column alias
 						buff.append(" AS ").append(columnAlias);
@@ -810,8 +818,13 @@ public class Standard implements Database {
 		sql.columnInfoStream()
 			.filter(columnInfo -> columnInfo.insertable())
 			.forEach(columnInfo -> {
+				// gets expression
+				Expression expression = sql.getExpression(columnInfo.propertyName());
+				if (expression.isEmpty())
+					expression = columnInfo.insertExpression();
+
 				buff.append(delimiter[0])
-					.append(columnInfo.insertExpression().toString(sql, parameters));
+					.append(expression.toString(sql, parameters));
 				delimiter[0] = ", ";
 			});
 		buff.append(")");
@@ -836,10 +849,15 @@ public class Standard implements Database {
 		sql.selectedColumnInfoStream()
 			.filter(columnInfo -> !columnInfo.isKey() && columnInfo.updatable())
 			.forEach(columnInfo -> {
+				// gets expression
+				Expression expression = sql.getExpression(columnInfo.propertyName());
+				if (expression.isEmpty())
+					expression = columnInfo.updateExpression();
+
 				buff.append(delimiter[0])
 					.append(columnInfo.columnName())
 					.append(" = ")
-					.append(columnInfo.updateExpression().toString(sql, parameters));
+					.append(expression.toString(sql, parameters));
 				delimiter[0] = ", ";
 			});
 

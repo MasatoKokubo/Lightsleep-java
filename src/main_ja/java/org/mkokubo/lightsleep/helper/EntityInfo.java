@@ -60,6 +60,7 @@ public class EntityInfo<E> {
 		@return カラム情報
 
 		@throws NullPointerException <b>propertyName</b> が <b>null</b> の場合
+		@throws IllegalArgumentException プロパティ名に関連するカラム情報が見つからない場合
 	*/
 	public ColumnInfo getColumnInfo(String propertyName) {
 		return null;

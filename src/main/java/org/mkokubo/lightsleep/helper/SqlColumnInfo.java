@@ -4,6 +4,7 @@
 */
 package org.mkokubo.lightsleep.helper;
 
+
 /**
 	Has a table alias and a column information.
 
@@ -65,20 +66,10 @@ public class SqlColumnInfo {
 	public boolean matches(String name) {
 		boolean result = false;
 
-		String prefix = "";
-		if (!tableAlias.isEmpty()) {
-			int dotIndex = name.indexOf('.');
-			if (dotIndex >= 0) {
-				prefix = name.substring(0, dotIndex);
-				name = name.substring(dotIndex + 1);
-			}
-		}
+		if (name.startsWith(tableAlias + '.'))
+			name = name.substring(tableAlias.length() + 1);
 
-		result = prefix.equals(tableAlias)
-				&& (name.endsWith("*")
-					? columnInfo.propertyName().startsWith(name.substring(0, name.length() - 1))
-					: columnInfo.propertyName().equals(name)
-				);
+		result = name.equals("*") || columnInfo.propertyName().equals(name);
 
 		return result;
 	}
