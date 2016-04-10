@@ -21,7 +21,7 @@ Transaction.execute(connection -> {
     Person person = new Sql<>(Person.class)
         .where("{name.last } = {}", "Kokubo")
           .and("{name.first} = {}", "Masato")
-        .select(connection).orElseThrow(() -> {throw new NotFoundException();});
+        .select(connection).orElseThrow(() -> new NotFoundException());
 });
 ```
 
