@@ -19,11 +19,11 @@ import org.mkokubo.lightsleep.helper.TypeConverter;
 */
 public interface Database {
 	/**
-		Returns whether the <b>OFFSET</b> of the specified is valid in the SELECT SQL.
+		Returns whether support <b>OFFSET</b> and <b>LIMIT</b> in the SELECT SQL.
 
-		@return <b>true</b> if the <b>OFFSET</b> of the specified is valid, <b>false</b> otherwise
+		@return <b>true</b> if support <b>OFFSET</b> and <b>LIMIT</b>, <b>false</b> otherwise
 	*/
-	default boolean isEnableOffset() {
+	default boolean supportsOffsetLimit() {
 		return false;
 	}
 

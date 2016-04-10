@@ -125,8 +125,8 @@ public class ConvertException extends RuntimeException {
 		@param cause the cause
 	*/
 	private static String toString(Class<?> sourceType, Object source, Class<?> destinType, Object destin, Throwable cause) {
-		String sourceTypeName = sourceType.getName();
-		String destinTypeName = destinType.getName();
+		String sourceTypeName = sourceType.getCanonicalName();
+		String destinTypeName = destinType.getCanonicalName();
 		String sourceString = Utils.toLogString(source);
 
 		return 

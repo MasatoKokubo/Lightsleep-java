@@ -42,7 +42,7 @@ public class MySQL extends Standard {
 		{@inheritDoc}
 	*/
 	@Override
-	public boolean isEnableOffset() {
+	public boolean supportsOffsetLimit() {
 		return true;
 	}
 }

@@ -23,27 +23,9 @@ import org.mkokubo.lightsleep.Sql;
 		<caption>登録されている {@code TypeConverter} オブジェクト</caption>
 		<tr><th>変換元データ型</th><th>変換先データ型</th></tr>
 
-		<tr><td>java.sql.Date</td><td rowspan="4">String</td></tr>
-		<tr><td>Time         </td></tr>
-		<tr><td>Timestamp    </td></tr>
-		<tr><td>Clob         </td></tr>
+		<tr><td>Clob          </td><td>String</td></tr>
 
-		<tr><td>Blob         </td><td>byte[]</td></tr>
-
-		<tr><td>Long         </td><td rowspan="4">java.sql.Date</td></tr>
-		<tr><td>Time         </td></tr>
-		<tr><td>Timestamp    </td></tr>
-		<tr><td>String       </td></tr>
-
-		<tr><td>Long         </td><td rowspan="4">Time</td></tr>
-		<tr><td>java.sql.Date</td></tr>
-		<tr><td>Timestamp    </td></tr>
-		<tr><td>String       </td></tr>
-
-		<tr><td>Long         </td><td rowspan="4">Timestamp</td></tr>
-		<tr><td>java.sql.Date</td></tr>
-		<tr><td>Time         </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Blob          </td><td>byte[]</td></tr>
 
 		<tr><td rowspan="11">java.sql.Array</td><td>boolean[]   </td></tr>
 		<tr>                                    <td>byte[]      </td></tr>
@@ -57,23 +39,34 @@ import org.mkokubo.lightsleep.Sql;
 		<tr>                                    <td>Time[]      </td></tr>
 		<tr>                                    <td>Timestamp[] </td></tr>
 
-		<tr><td>boolean       </td><td>{@linkplain org.mkokubo.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
+		<tr><td>Boolean        </td><td>{@linkplain org.mkokubo.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
 
-		<tr><td>Byte          </td><td rowspan="15">{@linkplain org.mkokubo.lightsleep.component.SqlString}</td></tr>
-		<tr><td>Short         </td></tr>
-		<tr><td>Integer       </td></tr>
-		<tr><td>Long          </td></tr>
-		<tr><td>Float         </td></tr>
-		<tr><td>Double        </td></tr>
-		<tr><td>BigInteger    </td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>String        </td></tr>
-		<tr><td>Character     </td></tr>
-		<tr><td>java.sql.Date </td></tr>
-		<tr><td>Time          </td></tr>
-		<tr><td>Timestamp     </td></tr>
-		<tr><td>byte[]        </td></tr>
-		<tr><td>Enum          </td></tr>
+		<tr><td>Character      </td><td rowspan="26">{@linkplain org.mkokubo.lightsleep.component.SqlString}</td></tr>
+		<tr><td>Byte           </td></tr>
+		<tr><td>Short          </td></tr>
+		<tr><td>Integer        </td></tr>
+		<tr><td>Long           </td></tr>
+		<tr><td>Float          </td></tr>
+		<tr><td>Double         </td></tr>
+		<tr><td>BigDecimal     </td></tr>
+		<tr><td>String         </td></tr>
+		<tr><td>java.sql.Date  </td></tr>
+		<tr><td>Time           </td></tr>
+		<tr><td>Timestamp      </td></tr>
+		<tr><td>boolean[]      </td></tr>
+		<tr><td>char[]         </td></tr>
+		<tr><td>byte[]         </td></tr>
+		<tr><td>short[]        </td></tr>
+		<tr><td>int[]          </td></tr>
+		<tr><td>long[]         </td></tr>
+		<tr><td>float[]        </td></tr>
+		<tr><td>double[]       </td></tr>
+		<tr><td>BigDecimal[]   </td></tr>
+		<tr><td>String[]       </td></tr>
+		<tr><td>java.sql.Date[]</td></tr>
+		<tr><td>Time[]         </td></tr>
+		<tr><td>Timestamp[]    </td></tr>
+		<tr><td>Enum           </td></tr>
 	</table>
 
 	@since 1.0.0

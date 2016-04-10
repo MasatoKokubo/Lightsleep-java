@@ -19,11 +19,11 @@ import org.mkokubo.lightsleep.helper.TypeConverter;
 */
 public interface Database {
 	/**
-		SELECT SQL で <b>OFFSET</b> の指定が有効かどうかを返します。
+		SELECT SQL で <b>OFFSET</b> と <b>OFFSET</b> をサポートしているかどうかを返します。
 
-		@return <b>OFFSET</b> の指定が有効なら <b>true</b>、そうでなければ <b>false</b>
+		@return <b>OFFSET</b>  と <b>OFFSET</b> をサポートしているなら <b>true</b>、そうでなければ <b>false</b>
 	*/
-	default boolean isEnableOffset() {
+	default boolean supportsOffsetLimit() {
 		return false;
 	}
 

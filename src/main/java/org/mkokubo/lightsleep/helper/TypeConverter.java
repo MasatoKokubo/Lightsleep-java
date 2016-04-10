@@ -5,8 +5,11 @@
 package org.mkokubo.lightsleep.helper;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.text.DecimalFormat;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,128 +27,125 @@ import org.mkokubo.lightsleep.logger.LoggerFactory;
 		<caption>TypeConverter objects that are registered</caption>
 		<tr><th>Source Data Type</th><th>Destination Data Type</th></tr>
 
-		<tr><td>Byte             </td><td rowspan="10">Boolean</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Byte         </td><td rowspan="9">Boolean</td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>String       </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Byte</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean      </td><td rowspan="9">Byte</td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>String       </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Short</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean      </td><td rowspan="9">Short</td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>String       </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Integer</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean      </td><td rowspan="9">Integer</td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>String       </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Long</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean      </td><td rowspan="9">Long</td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>String       </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Float</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean      </td><td rowspan="9">Float</td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>String       </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Double</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean      </td><td rowspan="9">Double</td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>String       </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">BigInteger</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean      </td><td rowspan="9">BigDecimal</td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>String       </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">BigDecimal</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean      </td><td rowspan="9">Character</td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>String       </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Character</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Object       </td><td rowspan="14">String</td></tr>
+		<tr><td>Boolean      </td></tr>
+		<tr><td>Byte         </td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>java.sql.Date</td></tr>
+		<tr><td>Time         </td></tr>
+		<tr><td>Timestamp    </td></tr>
+		<tr><td>Enum         </td></tr>
 
-		<tr><td>Object           </td><td rowspan="12">String</td></tr>
-		<tr><td>Boolean          </td></tr>
-		<tr><td>Byte             </td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>Enum             </td></tr>
+		<tr><td>Long         </td><td rowspan="4">java.sql.Date</td></tr>
+		<tr><td>Time         </td></tr>
+		<tr><td>Timestamp    </td></tr>
+		<tr><td>String       </td></tr>
+
+		<tr><td>Long         </td><td rowspan="4">Time</td></tr>
+		<tr><td>java.sql.Date</td></tr>
+		<tr><td>Timestamp    </td></tr>
+		<tr><td>String       </td></tr>
+
+		<tr><td>Long         </td><td rowspan="4">Timestamp</td></tr>
+		<tr><td>java.sql.Date</td></tr>
+		<tr><td>Time         </td></tr>
+		<tr><td>String       </td></tr>
 	</table>
 
 	@see org.mkokubo.lightsleep.database.Standard
@@ -161,6 +161,9 @@ public class TypeConverter<ST, DT> {
 	// The logger
 	private static final Logger logger = LoggerFactory.getLogger(TypeConverter.class);
 
+	// The string of Timestamp format
+	private static final String timestampFormatString = "yyyy-MM-dd HH:mm:ss.SSS";
+
 	// The source data type
 	private final Class<ST> sourceType;
 
@@ -168,7 +171,7 @@ public class TypeConverter<ST, DT> {
 	private final Class<DT> destinType;
 
 	// The function for converting
-	private final Function<? super ST, ? extends DT> function;
+	private final Function<ST, DT> function;
 
 	// The key when stored in the map
 	private final String key;
@@ -190,7 +193,10 @@ public class TypeConverter<ST, DT> {
 		if (sourceType == null) throw new NullPointerException("TypeConverter.key: sourceType == null");
 		if (destinType == null) throw new NullPointerException("TypeConverter.key: destinType == null");
 
-		String key = sourceType.getCanonicalName() + "->" + destinType.getCanonicalName();
+		String key =
+			  (Utils.toClassType(sourceType)).getCanonicalName()
+			+ "->"
+			+ (Utils.toClassType(destinType)).getCanonicalName();
 		return key;
 	}
 
@@ -213,7 +219,7 @@ public class TypeConverter<ST, DT> {
 
 			typeConverterMap.put(typeConverter.key, typeConverter);
 
-			logger.info(() -> "TypeConverter.put: " + typeConverter + (overwrite ? " (overwrite)" : ""));
+			logger.debug(() -> "TypeConverter.put: " + typeConverter + (overwrite ? " (overwrite)" : ""));
 		});
 	}
 
@@ -255,11 +261,11 @@ public class TypeConverter<ST, DT> {
 
 		if (typeConverter == null) {
 			// can not find
-			TypeConverter<? super ST, DT> typeConverter2 = search(typeConverterMap, sourceType, destinType);
+			TypeConverter<ST, DT> typeConverter2 = search(typeConverterMap, sourceType, destinType);
 
 			if (typeConverter2 != null) {
 				// found
-				TypeConverter<ST, DT> typeConverter3= new TypeConverter<>(sourceType, destinType, typeConverter2.function());
+				TypeConverter<ST, DT> typeConverter3 = new TypeConverter<>(sourceType, destinType, typeConverter2.function());
 				typeConverterMap.put(key, typeConverter3);
 
 				logger.info(() -> "TypeConverter.put: " + typeConverter3 + " (key: " + key + ")");
@@ -270,8 +276,8 @@ public class TypeConverter<ST, DT> {
 
 		if (typeConverter == null) {
 			logger.error("TypeConverter.get: search("+ TypeConverter.key(sourceType, destinType) + ") = null"
-				+ ", sourceType: " + sourceType.getName()
-				+ ", destinType: " + destinType.getName()
+				+ ", sourceType: " + sourceType.getCanonicalName()
+				+ ", destinType: " + destinType.getCanonicalName()
 				);
 		}
 
@@ -304,15 +310,15 @@ public class TypeConverter<ST, DT> {
 		@throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is <b>null</b>
 	*/
 	@SuppressWarnings("unchecked")
-	private static <ST, DT> TypeConverter<? super ST, DT> search(
+	private static <ST, DT> TypeConverter<ST, DT> search(
 			Map<String, TypeConverter<?, ?>> typeConverterMap,
-			Class<ST> sourceType, Class<DT> destinType) {
+			Class<? super ST> sourceType, Class<? extends DT> destinType) {
 		logger.debug(() ->
 			"TypeConverter.search: sourceType: " + Utils.toLogString(sourceType)
 			+ ", destinType: " + Utils.toLogString(destinType));
 
 		String key = TypeConverter.key(sourceType, destinType);
-		TypeConverter<? super ST, DT> typeConverter = (TypeConverter<? super ST, DT>)typeConverterMap.get(key);
+		TypeConverter<ST, DT> typeConverter = (TypeConverter<ST, DT>)typeConverterMap.get(key);
 
 		if (typeConverter == null) {
 			// can not find
@@ -398,7 +404,7 @@ public class TypeConverter<ST, DT> {
 
 		@throws NullPointerException if <b>sourceType</b>, <b>destinType</b> or <b>function</b> is <b>null</b>
 	*/
-	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, ? extends DT> function) {
+	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<ST, DT> function) {
 		if (function == null) throw new NullPointerException("TypeConverter.<init>: function == null");
 
 		this.sourceType = sourceType;
@@ -431,7 +437,7 @@ public class TypeConverter<ST, DT> {
 
 		@return the function for converting
 	*/
-	public Function<? super ST, ? extends DT> function() {
+	public Function<ST, DT> function() {
 		return function;
 	}
 
@@ -480,36 +486,6 @@ public class TypeConverter<ST, DT> {
 	public String toString() {
 		return key;
 	}
-
-	// BigInteger.valueOf(Byte.MIN_VALUE)
-	private static final BigInteger bigIntegerByteMin = BigInteger.valueOf(Byte.MIN_VALUE);
-
-	// BigInteger.valueOf(Byte.MAX_VALUE)
-	private static final BigInteger bigIntegerByteMax = BigInteger.valueOf(Byte.MAX_VALUE);
-
-	// BigInteger.valueOf(Short.MIN_VALUE)
-	private static final BigInteger bigIntegerShortMin = BigInteger.valueOf(Short.MIN_VALUE);
-
-	// BigInteger.valueOf(Short.MAX_VALUE)
-	private static final BigInteger bigIntegerShortMax = BigInteger.valueOf(Short.MAX_VALUE);
-
-	// BigInteger.valueOf(Integer.MIN_VALUE)
-	private static final BigInteger bigIntegerIntegerMin = BigInteger.valueOf(Integer.MIN_VALUE);
-
-	// BigInteger.valueOf(Integer.MAX_VALUE)
-	private static final BigInteger bigIntegerIntegerMax = BigInteger.valueOf(Integer.MAX_VALUE);
-
-	// BigInteger.valueOf(Long.MIN_VALUE)
-	private static final BigInteger bigIntegerLongMin = BigInteger.valueOf(Long.MIN_VALUE);
-
-	// BigInteger.valueOf(Long.MAX_VALUE)
-	private static final BigInteger bigIntegerLongMax = BigInteger.valueOf(Long.MAX_VALUE);
-
-	// BigInteger.valueOf(Character.MIN_VALUE)
-	private static final BigInteger bigIntegerCharacterMin = BigInteger.valueOf(Character.MIN_VALUE);
-
-	// BigInteger.valueOf(Character.MAX_VALUE)
-	private static final BigInteger bigIntegerCharacterMax = BigInteger.valueOf(Character.MAX_VALUE);
 
 	/**
 		A <b>TypeConverter</b> map
@@ -575,16 +551,6 @@ public class TypeConverter<ST, DT> {
 				if (value == 0.0D) return false;
 				if (value == 1.0D) return true;
 				throw new ConvertException(Double.class, object, Boolean.class);
-			})
-		);
-
-		// BigInteger -> Boolean
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigInteger.class, Boolean.class, object -> {
-				BigInteger bigInteger = object;
-				if (bigInteger.compareTo(BigInteger.ZERO) == 0) return false;
-				if (bigInteger.compareTo(BigInteger.ONE ) == 0) return true;
-				throw new ConvertException(BigInteger.class, object, Boolean.class);
 			})
 		);
 
@@ -673,15 +639,6 @@ public class TypeConverter<ST, DT> {
 			})
 		);
 
-		// BigInteger -> Byte
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigInteger.class, Byte.class, object -> {
-				if (object.compareTo(bigIntegerByteMin) < 0 || object.compareTo(bigIntegerByteMax) > 0)
-					throw new ConvertException(BigInteger.class, object, Byte.class);
-				return (byte)object.intValue();
-			})
-		);
-
 		// BigDecimal -> Byte
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(BigDecimal.class, Byte.class, object -> {
@@ -767,15 +724,6 @@ public class TypeConverter<ST, DT> {
 			})
 		);
 
-		// BigInteger -> Short
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigInteger.class, Short.class, object -> {
-				if (object.compareTo(bigIntegerShortMin) < 0 || object.compareTo(bigIntegerShortMax) > 0)
-					throw new ConvertException(BigInteger.class, object, Short.class);
-				return (short)object.intValue();
-			})
-		);
-
 		// BigDecimal -> Short
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(BigDecimal.class, Short.class, object -> {
@@ -851,15 +799,6 @@ public class TypeConverter<ST, DT> {
 			})
 		);
 
-		// BigInteger -> Integer
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigInteger.class, Integer.class, object -> {
-				if (object.compareTo(bigIntegerIntegerMin) < 0 || object.compareTo(bigIntegerIntegerMax) > 0)
-					throw new ConvertException(BigInteger.class, object, Integer.class);
-				return object.intValue();
-			})
-		);
-
 		// BigDecimal -> Integer
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(BigDecimal.class, Integer.class, object -> {
@@ -930,15 +869,6 @@ public class TypeConverter<ST, DT> {
 			})
 		);
 
-		// BigInteger -> Long
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigInteger.class, Long.class, object -> {
-				if (object.compareTo(bigIntegerLongMin) < 0 || object.compareTo(bigIntegerLongMax) > 0)
-					throw new ConvertException(BigInteger.class, object, Long.class);
-				return object.longValue();
-			})
-		);
-
 		// BigDecimal -> Long
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(BigDecimal.class, Long.class, object -> {
@@ -999,11 +929,6 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(Double.class, Float.class, object -> (float)(double)object)
 		);
 
-		// BigInteger -> Float
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigInteger.class, Float.class, object -> object.floatValue())
-		);
-
 		// BigDecimal -> Float
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(BigDecimal.class, Float.class, object -> object.floatValue())
@@ -1057,11 +982,6 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(Float.class, Double.class, object -> (double)(float)object)
 		);
 
-		// BigInteger -> Double
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigInteger.class, Double.class, object -> object.doubleValue())
-		);
-
 		// BigDecimal -> Double
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(BigDecimal.class, Double.class, object -> object.doubleValue())
@@ -1080,83 +1000,6 @@ public class TypeConverter<ST, DT> {
 				}
 				catch (NumberFormatException e) {
 					throw new ConvertException(String.class, object, Double.class, null, e);
-				}
-			})
-		);
-
-	// * -> BigInteger
-		// Boolean -> BigInteger
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Boolean.class, BigInteger.class, object -> object ? BigInteger.ONE : BigInteger.ZERO)
-		);
-
-		// Byte -> BigInteger
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Byte.class, BigInteger.class, object -> BigInteger.valueOf((long)(byte)object))
-		);
-
-		// Short -> BigInteger
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Short.class, BigInteger.class, object -> BigInteger.valueOf((long)(short)object))
-		);
-
-		// Integer -> BigInteger
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Integer.class, BigInteger.class, object -> BigInteger.valueOf((long)(int)object))
-		);
-
-		// Long -> BigInteger
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Long.class, BigInteger.class, object -> BigInteger.valueOf((long)object))
-		);
-
-		// Float -> BigInteger
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Float.class, BigInteger.class, object -> {
-				try {
-					return new BigInteger(new DecimalFormat("0.#").format((float)object));
-				}
-				catch (NumberFormatException e) {
-					throw new ConvertException(Float.class, object, BigInteger.class, null, e);
-				}
-			})
-		);
-
-		// Double -> BigInteger
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Double.class, BigInteger.class, object -> {
-				try {
-					return new BigInteger(new DecimalFormat("0.#").format((double)object));
-				}
-				catch (NumberFormatException e) {
-					throw new ConvertException(Double.class, object, BigInteger.class, null, e);
-				}
-			})
-		);
-
-		// BigDecimal -> BigInteger
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigDecimal.class, BigInteger.class, object -> {
-				BigInteger bigInteger = object.toBigInteger();
-				if (!new BigDecimal(bigInteger).equals(object))
-					throw new ConvertException(BigDecimal.class, object, BigInteger.class, bigInteger);
-				return bigInteger;
-			})
-		);
-
-		// Character -> BigInteger
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Character.class, BigInteger.class, object -> BigInteger.valueOf((long)(char)object))
-		);
-
-		// String -> BigInteger
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String.class, BigInteger.class, object -> {
-				try {
-					return new BigInteger(object);
-				}
-				catch (NumberFormatException e) {
-					throw new ConvertException(String.class, object, BigInteger.class, null, e);
 				}
 			})
 		);
@@ -1195,11 +1038,6 @@ public class TypeConverter<ST, DT> {
 		// Double -> BigDecimal
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Double.class, BigDecimal.class, object -> BigDecimal.valueOf(object))
-		);
-
-		// BigInteger -> BigDecimal
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigInteger.class, BigDecimal.class, object -> new BigDecimal(object))
 		);
 
 		// Character -> BigDecimal
@@ -1274,15 +1112,6 @@ public class TypeConverter<ST, DT> {
 			})
 		);
 
-		// BigInteger -> Character
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigInteger.class, Character.class, object -> {
-				if (object.compareTo(bigIntegerCharacterMin) < 0 || object.compareTo(bigIntegerCharacterMax) > 0)
-					throw new ConvertException(BigInteger.class, object, Character.class);
-				return (char)object.intValue();
-			})
-		);
-
 		// BigDecimal -> Character
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(BigDecimal.class, Character.class, object -> {
@@ -1348,11 +1177,6 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(Double.class, String.class, object -> String.valueOf(object))
 		);
 
-		// BigInteger -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigInteger.class, String.class, object -> object.toString())
-		);
-
 		// BigDecimal -> String
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(BigDecimal.class, String.class, object -> object.toPlainString())
@@ -1363,9 +1187,111 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(Character.class, String.class, object -> object.toString())
 		);
 
+		// Date -> String
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Date.class, String.class, object -> object.toString())
+		);
+
+		// Time -> String
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Time.class, String.class, object -> object.toString())
+		);
+
+		// Timestamp -> String
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Timestamp.class, String.class, object ->
+				new SimpleDateFormat(timestampFormatString).format(object))
+		);
+
 		// Enum -> String
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Enum.class, String.class, object -> object.toString())
+		);
+
+	// * -> Date
+		// Long -> Date
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Long.class, Date.class, object -> new Date(object))
+		);
+
+		// Time -> Date
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Time.class, Date.class, object -> new Date(object.getTime()))
+		);
+
+		// Timestamp -> Date
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Timestamp.class, Date.class, object -> new Date(object.getTime()))
+		);
+
+		// String -> Date
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(String.class, Date.class, object -> {
+				try {
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+					return new Date(format.parse(object).getTime());
+				}
+				catch (ParseException e) {
+					throw new ConvertException(String.class, object, Date.class, e);
+				}
+			})
+		);
+
+	// * -> Time
+		// Long -> Time
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Long.class, Time.class, object -> new Time(object))
+		);
+
+		// Date -> Time
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Date.class, Time.class, object -> new Time(object.getTime()))
+		);
+
+		// Timestamp -> Time
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Timestamp.class, Time.class, object -> new Time(object.getTime()))
+		);
+
+		// String -> Time
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(String.class, Time.class, object -> {
+				try {
+					SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+					return new Time(format.parse(object).getTime());
+				}
+				catch (ParseException e) {
+					throw new ConvertException(String.class, object, Time.class, e);
+				}
+			})
+		);
+
+	// * -> Timestamp
+		// Long -> Timestamp
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Long.class, Timestamp.class, object -> new Timestamp(object))
+		);
+
+		// Date -> Timestamp
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Date.class, Timestamp.class, object -> new Timestamp(object.getTime()))
+		);
+
+		// Time -> Timestamp
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Time.class, Timestamp.class, object -> new Timestamp(object.getTime()))
+		);
+
+		// String -> Timestamp
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(String.class, Timestamp.class, object -> {
+				try {
+					return new Timestamp(new SimpleDateFormat(timestampFormatString).parse(object).getTime());
+				}
+				catch (ParseException e) {
+					throw new ConvertException(String.class, object, Timestamp.class, e);
+				}
+			})
 		);
 	}
 }

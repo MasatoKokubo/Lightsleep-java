@@ -391,6 +391,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		@throws NullPointerException if <b>propertyName</b> or <b>expression</b> is <b>null</b>
 	*/
 	public Sql<E> expression(String propertyName, Expression expression) {
+		if (propertyName == null) throw new NullPointerException("Sql.expression: propertyName == null");
 		if (expression == null) throw new NullPointerException("Sql.expression: expression == null");
 
 		if (expression.content().isEmpty())
@@ -427,8 +428,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		@throws NullPointerException if <b>propertyName</b> is <b>null</b>
 	*/
 	public Expression getExpression(String propertyName) {
-		// checks propertyName
-	//	entityInfo.getColumnInfo(propertyName);
+		if (propertyName == null) throw new NullPointerException("Sql.expression: propertyName == null");
 
 		return expressionMap.getOrDefault(propertyName, Expression.EMPTY);
 	}
@@ -1451,7 +1451,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			//  for offset
 			int rowOffset = getOffset();
 			int rowLimit = getLimit();
-			if (rowOffset > 0 && !getDatabase().isEnableOffset()) {
+			if (rowOffset > 0 && !getDatabase().supportsOffsetLimit()) {
 				//  Offset value was specified and cannot create SQL using 'OFFSET'
 				if (resultSetType == ResultSet.TYPE_FORWARD_ONLY) {
 					//  Skip rows for offset value

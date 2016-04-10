@@ -16,128 +16,125 @@ import java.util.function.Function;
 		<caption>登録されている TypeConverter オブジェクト</caption>
 		<tr><th>変換元データ型   </th><th>変換先データ型</th></tr>
 
-		<tr><td>Byte             </td><td rowspan="10">Boolean</td></tr>
+		<tr><td>Byte             </td><td rowspan="9">Boolean</td></tr>
 		<tr><td>Short            </td></tr>
 		<tr><td>Integer          </td></tr>
 		<tr><td>Long             </td></tr>
 		<tr><td>Float            </td></tr>
 		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
 		<tr><td>BigDecimal       </td></tr>
 		<tr><td>Character        </td></tr>
 		<tr><td>String           </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Byte</td></tr>
+		<tr><td>Boolean          </td><td rowspan="9">Byte</td></tr>
 		<tr><td>Short            </td></tr>
 		<tr><td>Integer          </td></tr>
 		<tr><td>Long             </td></tr>
 		<tr><td>Float            </td></tr>
 		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
 		<tr><td>BigDecimal       </td></tr>
 		<tr><td>Character        </td></tr>
 		<tr><td>String           </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Short</td></tr>
+		<tr><td>Boolean          </td><td rowspan="9">Short</td></tr>
 		<tr><td>Short            </td></tr>
 		<tr><td>Integer          </td></tr>
 		<tr><td>Long             </td></tr>
 		<tr><td>Float            </td></tr>
 		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
 		<tr><td>BigDecimal       </td></tr>
 		<tr><td>Character        </td></tr>
 		<tr><td>String           </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Integer</td></tr>
+		<tr><td>Boolean          </td><td rowspan="9">Integer</td></tr>
 		<tr><td>Short            </td></tr>
 		<tr><td>Integer          </td></tr>
 		<tr><td>Long             </td></tr>
 		<tr><td>Float            </td></tr>
 		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
 		<tr><td>BigDecimal       </td></tr>
 		<tr><td>Character        </td></tr>
 		<tr><td>String           </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Long</td></tr>
+		<tr><td>Boolean          </td><td rowspan="9">Long</td></tr>
 		<tr><td>Short            </td></tr>
 		<tr><td>Integer          </td></tr>
 		<tr><td>Long             </td></tr>
 		<tr><td>Float            </td></tr>
 		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
 		<tr><td>BigDecimal       </td></tr>
 		<tr><td>Character        </td></tr>
 		<tr><td>String           </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Float</td></tr>
+		<tr><td>Boolean          </td><td rowspan="9">Float</td></tr>
 		<tr><td>Short            </td></tr>
 		<tr><td>Integer          </td></tr>
 		<tr><td>Long             </td></tr>
 		<tr><td>Float            </td></tr>
 		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
 		<tr><td>BigDecimal       </td></tr>
 		<tr><td>Character        </td></tr>
 		<tr><td>String           </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Double</td></tr>
+		<tr><td>Boolean          </td><td rowspan="9">Double</td></tr>
 		<tr><td>Short            </td></tr>
 		<tr><td>Integer          </td></tr>
 		<tr><td>Long             </td></tr>
 		<tr><td>Float            </td></tr>
 		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
 		<tr><td>BigDecimal       </td></tr>
 		<tr><td>Character        </td></tr>
 		<tr><td>String           </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">BigInteger</td></tr>
+		<tr><td>Boolean          </td><td rowspan="9">BigDecimal</td></tr>
 		<tr><td>Short            </td></tr>
 		<tr><td>Integer          </td></tr>
 		<tr><td>Long             </td></tr>
 		<tr><td>Float            </td></tr>
 		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
 		<tr><td>BigDecimal       </td></tr>
 		<tr><td>Character        </td></tr>
 		<tr><td>String           </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">BigDecimal</td></tr>
+		<tr><td>Boolean          </td><td rowspan="9">Character</td></tr>
 		<tr><td>Short            </td></tr>
 		<tr><td>Integer          </td></tr>
 		<tr><td>Long             </td></tr>
 		<tr><td>Float            </td></tr>
 		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
 		<tr><td>BigDecimal       </td></tr>
 		<tr><td>Character        </td></tr>
 		<tr><td>String           </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="10">Character</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Object       </td><td rowspan="14">String</td></tr>
+		<tr><td>Boolean      </td></tr>
+		<tr><td>Byte         </td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>BigDecimal   </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>java.sql.Date</td></tr>
+		<tr><td>Time         </td></tr>
+		<tr><td>Timestamp    </td></tr>
+		<tr><td>Enum         </td></tr>
 
-		<tr><td>Object           </td><td rowspan="12">String</td></tr>
-		<tr><td>Boolean          </td></tr>
-		<tr><td>Byte             </td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigInteger       </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>Enum             </td></tr>
+		<tr><td>Long         </td><td rowspan="4">java.sql.Date</td></tr>
+		<tr><td>Time         </td></tr>
+		<tr><td>Timestamp    </td></tr>
+		<tr><td>String       </td></tr>
+
+		<tr><td>Long         </td><td rowspan="4">Time</td></tr>
+		<tr><td>java.sql.Date</td></tr>
+		<tr><td>Timestamp    </td></tr>
+		<tr><td>String       </td></tr>
+
+		<tr><td>Long         </td><td rowspan="4">Timestamp</td></tr>
+		<tr><td>java.sql.Date</td></tr>
+		<tr><td>Time         </td></tr>
+		<tr><td>String       </td></tr>
 	</table>
 
 	@see org.mkokubo.lightsleep.database.Standard
