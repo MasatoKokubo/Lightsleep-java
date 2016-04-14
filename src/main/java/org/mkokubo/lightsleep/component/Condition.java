@@ -70,14 +70,15 @@ public interface Condition extends SqlComponent {
 		@param <SE> the entity class corresponding to table of the subquery.
 
 		@param content the content of the subquery condition.
+		@param outerSql the <b>Sql</b> object of the outer query
 		@param subSql the <b>Sql</b> of the subquery condition.
 
 		@return a new subquery condition
 
-		@throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+		@throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
 	*/
-	static <SE> Condition of(String content, Sql<SE> subSql) {
-		return new SubqueryCondition<SE>(new Expression(content), subSql);
+	static <E, SE> Condition of(String content, Sql<E> outerSql, Sql<SE> subSql) {
+		return new SubqueryCondition<SE>(new Expression(content), outerSql, subSql);
 	}
 
 	/**
@@ -132,14 +133,15 @@ public interface Condition extends SqlComponent {
 		@param <SE> the entity class corresponding to table of the subquery.
 
 		@param content the content of the subquery condition.
+		@param outerSql the <b>Sql</b> object of the outer query
 		@param subSql the <b>Sql</b> of the subquery condition.
 
 		@return this OR the subquery condition
 
-		@throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+		@throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
 	*/
-	default <SE> Condition and(String content, Sql<SE> subSql) {
-		return and(of(content, subSql));
+	default <E, SE> Condition and(String content, Sql<E> outerSql, Sql<SE> subSql) {
+		return and(of(content, outerSql, subSql));
 	}
 
 	/**
@@ -185,13 +187,14 @@ public interface Condition extends SqlComponent {
 		@param <SE> the entity class corresponding to table of the subquery.
 
 		@param content the content of the subquery condition.
+		@param outerSql the <b>Sql</b> object of the outer query
 		@param subSql the <b>Sql</b> of the subquery condition.
 
 		@return this OR the subquery condition
 
-		@throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+		@throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
 	*/
-	default <SE> Condition or(String content, Sql<SE> subSql) {
-		return or(of(content, subSql));
+	default <E, SE> Condition or(String content, Sql<E> outerSql, Sql<SE> subSql) {
+		return or(of(content, outerSql, subSql));
 	}
 }

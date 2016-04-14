@@ -33,6 +33,9 @@ public class Expression implements Condition {
 	/** The empty expression */
 	public static final Expression EMPTY = new Expression("");
 
+	/** The default expression */
+	public static final Expression DEFAULT = new Expression("DEFAULT");
+
 	// The content
 	private final String content;
 

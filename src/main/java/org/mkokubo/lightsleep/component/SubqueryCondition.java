@@ -27,16 +27,19 @@ public class SubqueryCondition<SE> implements Condition {
 		Constructs a new <b>SubqueryCondition</b>.
 
 		@param expression expression of the left part from the SELECT statement of the subquery
-		@param subSql <b>Sql</b> object for the subquery
+		@param outerSql the <b>Sql</b> object of the outer query
+		@param subSql the <b>Sql</b> object for the subquery
 
 		@throws NullPointerException if <b>expression</b> or <b>subSql</b> is <b>null</b>
 	*/
-	public SubqueryCondition(Expression expression, Sql<SE> subSql) {
+	public <E> SubqueryCondition(Expression expression, Sql<E> outerSql, Sql<SE> subSql) {
 		if (expression == null) throw new NullPointerException("SubqueryCondition.<init>: expression == null");
+		if (outerSql == null) throw new NullPointerException("SubqueryCondition.<init>: outerSql == null");
 		if (subSql == null) throw new NullPointerException("SubqueryCondition.<init>: subSql == null");
 
 		this.expression = expression;
 		this.subSql = subSql;
+		subSql.addSqlEntityInfo(outerSql);
 	}
 
 	/**

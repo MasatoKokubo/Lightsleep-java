@@ -469,7 +469,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-		Add an information of the table that join with <b>OUTER JOIN</b>.
+		Add an information of the table that join with <b>LEFT OUTER JOIN</b>.
 
 		@param <JE> the entity class that relateed to the table to join
 
@@ -481,12 +481,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 		@throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
 	*/
-	public <JE> Sql<E> outerJoin(Class<JE> entityClass, String tableAlias, Condition on) {
-		return join(JoinInfo.JoinType.OUTER, entityClass, tableAlias, on);
+	public <JE> Sql<E> leftJoin(Class<JE> entityClass, String tableAlias, Condition on) {
+		return join(JoinInfo.JoinType.LEFT, entityClass, tableAlias, on);
 	}
 
 	/**
-		Add an information of the table that join with <b>OUTER JOIN</b>.
+		Add an information of the table that join with <b>LEFT OUTER JOIN</b>.
 
 		@param <JE> the entity class that relateed to the table to join
 
@@ -499,12 +499,48 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 		@throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is <b>null</b>
 	*/
-	public <JE> Sql<E> outerJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
-		return join(JoinInfo.JoinType.OUTER, entityClass, tableAlias, Condition.of(on, arguments));
+	public <JE> Sql<E> leftJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
+		return join(JoinInfo.JoinType.LEFT, entityClass, tableAlias, Condition.of(on, arguments));
 	}
 
 	/**
-		Add an information of the table that join with <b>INNER JOIN</b> or <b>OUTER JOIN</b>.
+	Add an information of the table that join with <b>RIGHT OUTER JOIN</b>.
+
+	@param <JE> the entity class that relateed to the table to join
+
+	@param entityClass the entity class that relateed to the table to join
+	@param tableAlias the alias of the table to join
+	@param on the join condition
+
+	@return this object
+
+	@throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
+*/
+public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, Condition on) {
+	return join(JoinInfo.JoinType.RIGHT, entityClass, tableAlias, on);
+}
+
+/**
+	Add an information of the table that join with <b>RIGHT OUTER JOIN</b>.
+
+	@param <JE> the entity class that relateed to the table to join
+
+	@param entityClass the entity class that relateed to the table to join
+	@param tableAlias the alias of the table to join
+	@param on the join condition
+	@param arguments the arguments of the join condition
+
+	@return this object
+
+	@throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is <b>null</b>
+*/
+public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
+	return join(JoinInfo.JoinType.RIGHT, entityClass, tableAlias, Condition.of(on, arguments));
+}
+
+	/**
+		Add an information of the table that join with
+		<b>INNER JOIN</b>, <b>LEFT OUTER JOIN</b> or <b>RIGHT OUTER JOIN</b>.
 
 		@param <JE> the entity class that relateed to the table to join
 
@@ -585,14 +621,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		@param <SE> the entity class of the subquery
 
 		@param content the content of the SubqueryCondition
+		@param outerSql the <b>Sql</b> object of the outer query
 		@param subSql the Sql object of the SubqueryCondition
 
 		@return this object
 
-		@throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+		@throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
 	*/
-	public <SE> Sql<E> where(String content, Sql<SE> subSql) {
-		where = Condition.of(content, subSql);
+	public <SE> Sql<E> where(String content, Sql<E> outerSql, Sql<SE> subSql) {
+		where = Condition.of(content, outerSql, subSql);
 		return this;
 	}
 
@@ -650,14 +687,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		@param <SE> the entity class of the subquery
 
 		@param content the content of the SubqueryCondition
+		@param outerSql the <b>Sql</b> object of the outer query
 		@param subSql the Sql object of the SubqueryCondition
 
 		@return this object
 
-		@throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+		@throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
 	*/
-	public <SE> Sql<E> and(String content, Sql<SE> subSql) {
-		return and(Condition.of(content, subSql));
+	public <SE> Sql<E> and(String content, Sql<E> outerSql, Sql<SE> subSql) {
+		return and(Condition.of(content, outerSql, subSql));
 	}
 
 	/**
@@ -705,14 +743,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		@param <SE> the entity class of the subquery
 
 		@param content the content of the SubqueryCondition
+		@param outerSql the <b>Sql</b> object of the outer query
 		@param subSql the Sql object of the SubqueryCondition
 
 		@return this object
 
-		@throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+		@throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
 	*/
-	public <SE> Sql<E> or(String content, Sql<SE> subSql) {
-		return or(Condition.of(content, subSql));
+	public <SE> Sql<E> or(String content, Sql<E> outerSql, Sql<SE> subSql) {
+		return or(Condition.of(content, outerSql, subSql));
 	}
 
 	/**
@@ -776,14 +815,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		@param <SE> the entity class of the subquery
 
 		@param content the content of the SubqueryCondition
+		@param outerSql the <b>Sql</b> object of the outer query
 		@param subSql the Sql object of the SubqueryCondition
 
 		@return this object
 
-		@throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+		@throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
 	*/
-	public <SE> Sql<E> having(String content, Sql<SE> subSql) {
-		having = Condition.of(content, subSql);
+	public <SE> Sql<E> having(String content, Sql<E> outerSql, Sql<SE> subSql) {
+		having = Condition.of(content, outerSql, subSql);
 		return this;
 	}
 
@@ -938,12 +978,18 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 		@param sqlEntityInfo the SqlEntityInfo object.
 	*/
-	private void addSqlEntityInfo(SqlEntityInfo<?> sqlEntityInfo) {
+	public void addSqlEntityInfo(SqlEntityInfo<?> sqlEntityInfo) {
 		if (sqlEntityInfoMap.containsKey(sqlEntityInfo.tableAlias()))
 			throw new IllegalArgumentException(MessageFormat.format(messageTableAliasUsed,
 				sqlEntityInfo.tableAlias(), sqlEntityInfo.entityInfo().entityClass().getName()));
 
 		sqlEntityInfoMap.put(sqlEntityInfo.tableAlias(), sqlEntityInfo);
+
+		if (sqlEntityInfo instanceof Sql) {
+			((Sql<?>)sqlEntityInfo).sqlEntityInfoMap.values().stream()
+				.filter(sqlEntityInfo2 -> sqlEntityInfo2 != sqlEntityInfo)
+				.forEach(sqlEntityInfo2 -> addSqlEntityInfo(sqlEntityInfo2));
+		}
 	}
 
 	/**

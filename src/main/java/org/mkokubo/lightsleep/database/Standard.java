@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,18 +58,14 @@ import org.mkokubo.lightsleep.helper.Utils;
 
 		<tr><td>Boolean        </td><td>{@linkplain org.mkokubo.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
 
-		<tr><td>Character      </td><td rowspan="26">{@linkplain org.mkokubo.lightsleep.component.SqlString}</td></tr>
-		<tr><td>Byte           </td></tr>
-		<tr><td>Short          </td></tr>
-		<tr><td>Integer        </td></tr>
-		<tr><td>Long           </td></tr>
-		<tr><td>Float          </td></tr>
-		<tr><td>Double         </td></tr>
+		<tr><td>Object         </td><td rowspan="22">{@linkplain org.mkokubo.lightsleep.component.SqlString}</td></tr>
+		<tr><td>Character      </td></tr>
 		<tr><td>BigDecimal     </td></tr>
 		<tr><td>String         </td></tr>
 		<tr><td>java.sql.Date  </td></tr>
 		<tr><td>Time           </td></tr>
 		<tr><td>Timestamp      </td></tr>
+		<tr><td>Enum           </td></tr>
 		<tr><td>boolean[]      </td></tr>
 		<tr><td>char[]         </td></tr>
 		<tr><td>byte[]         </td></tr>
@@ -82,8 +79,7 @@ import org.mkokubo.lightsleep.helper.Utils;
 		<tr><td>java.sql.Date[]</td></tr>
 		<tr><td>Time[]         </td></tr>
 		<tr><td>Timestamp[]    </td></tr>
-
-		<tr><td>Enum           </td></tr>
+		<tr><td>Iterable       </td></tr>
 	</table>
 
 	@since 1.0.0
@@ -163,6 +159,7 @@ public class Standard implements Database {
 	/**
 		Constructs a new <b>Standard</b>.
 	*/
+	@SuppressWarnings("unchecked")
 	protected Standard() {
 		// Clob -> String
 		TypeConverter.put(typeConverterMap,
@@ -256,38 +253,13 @@ public class Standard implements Database {
 		);
 
 	// * -> SqlString
-		// Boolean -> FALSE, TRUE
+		// Object -> SqlString
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Object.class, SqlString.class, object -> new SqlString(object.toString()))
+		);
+
+		// Boolean -> SqlString(FALSE, TRUE)
 		TypeConverter.put(typeConverterMap, booleanToSqlFalseTrueConverter);
-
-		// Byte -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Byte.class, SqlString.class, object -> new SqlString(String.valueOf(object)))
-		);
-
-		// Short -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Short.class, SqlString.class, object -> new SqlString(String.valueOf(object)))
-		);
-
-		// Integer -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Integer.class, SqlString.class, object -> new SqlString(String.valueOf(object)))
-		);
-
-		// Long -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Long.class, SqlString.class, object -> new SqlString(String.valueOf(object)))
-		);
-
-		// Float -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Float.class, SqlString.class, object -> new SqlString(String.valueOf(object)))
-		);
-
-		// Double -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Double.class, SqlString.class, object -> new SqlString(String.valueOf(object)))
-		);
 
 		// BigDecimal -> SqlString
 		TypeConverter.put(typeConverterMap,
@@ -336,6 +308,14 @@ public class Standard implements Database {
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Timestamp.class, SqlString.class, object ->
 				new SqlString("TIMESTAMP'" + object + '\''))
+		);
+
+		// Enum -> String -> SqlString
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Enum.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Enum.class, String.class).function()
+				.andThen(TypeConverter.get(typeConverterMap, String.class, SqlString.class).function())
+			)
 		);
 
 		// boolean[] -> SqlString
@@ -415,18 +395,41 @@ public class Standard implements Database {
 				toSqlString(object, Timestamp.class))
 		);
 
-		// Enum -> String -> SqlString
+		// Iterable -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Enum.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Enum.class, String.class).function()
-				.andThen(TypeConverter.get(typeConverterMap, String.class, SqlString.class).function())
-			)
+			new TypeConverter<>(Iterable.class, SqlString.class, object -> {
+				Iterator<Object> iterator = object.iterator();
+				Class<?> beforeElementType = null;
+				Function<Object, SqlString> function = null;
+
+				StringBuilder buff = new StringBuilder("(");
+
+				for (int index = 0; iterator.hasNext(); ++index) {
+					if (index > 0) buff.append(",");
+					Object element = iterator.next();
+					if (element == null)
+						buff.append("NULL");
+					else {
+						Class<?> elementType = element.getClass();
+						if (elementType != beforeElementType) {
+							function = (Function<Object, SqlString>)
+								TypeConverter.get(typeConverterMap, elementType, SqlString.class).function();
+							beforeElementType = elementType;
+						}
+						buff.append(function.apply(element).content());
+					}
+				}
+
+				buff.append(')');
+				return new SqlString(buff.toString());
+			})
 		);
+
 	}
 
 	// Converts an Array to a primitive java array
 	@SuppressWarnings("unchecked")
-	private <AT, CT> AT toArray(java.sql.Array object, Class<AT> arrayType, Class<CT> componentType) {
+	protected <AT, CT> AT toArray(java.sql.Array object, Class<AT> arrayType, Class<CT> componentType) {
 		try {
 			Object array = object.getArray();
 			if (arrayType.isInstance(array))
@@ -457,7 +460,7 @@ public class Standard implements Database {
 
 	// Converts an array to a String
 	@SuppressWarnings("unchecked")
-	private <CT> SqlString toSqlString(Object array, Class<CT> componentType) {
+	protected <CT> SqlString toSqlString(Object array, Class<CT> componentType) {
 		Function<CT, SqlString> function =
 			TypeConverter.get(typeConverterMap, componentType, SqlString.class).function();
 		StringBuilder buff = new StringBuilder("ARRAY[");
@@ -621,6 +624,10 @@ public class Standard implements Database {
 		// INSERT INTO table name
 		buff.append("INSERT INTO ").append(sql.entityInfo().tableName());
 
+		// table alias
+		if (!sql.tableAlias().isEmpty())
+			buff.append(" ").append(sql.tableAlias());
+
 		// ( column name, ...
 		buff.append(" (");
 		String[] delimiter = new String[] {""};
@@ -658,9 +665,12 @@ public class Standard implements Database {
 	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
-
 		// UPDATE table name
 		buff.append("UPDATE ").append(sql.entityInfo().tableName());
+
+		// table alias
+		if (!sql.tableAlias().isEmpty())
+			buff.append(" ").append(sql.tableAlias());
 
 		// SET column name =  value, ...
 		buff.append(" SET ");
@@ -675,7 +685,7 @@ public class Standard implements Database {
 
 				buff.append(delimiter[0])
 					.append(columnInfo.columnName())
-					.append(" = ")
+					.append("=")
 					.append(expression.toString(sql, parameters));
 				delimiter[0] = ", ";
 			});
@@ -696,6 +706,10 @@ public class Standard implements Database {
 
 		// DELETE FROM table name
 		buff.append("DELETE FROM ").append(sql.entityInfo().tableName());
+
+		// table alias
+		if (!sql.tableAlias().isEmpty())
+			buff.append(" ").append(sql.tableAlias());
 
 		// WHERE ...
 		if (sql.getWhere() != Condition.ALL)

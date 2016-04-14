@@ -5,19 +5,42 @@
 package org.mkokubo.lightsleep.helper;
 
 import java.math.BigDecimal;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 
+import org.mkokubo.lightsleep.component.SqlString;
 import org.mkokubo.lightsleep.logger.Logger;
 import org.mkokubo.lightsleep.logger.LoggerFactory;
 
+/*
+		<tr><td>Boolean      </td></tr>
+		<tr><td>Byte         </td></tr>
+		<tr><td>Short        </td></tr>
+		<tr><td>Integer      </td></tr>
+		<tr><td>Long         </td></tr>
+		<tr><td>Float        </td></tr>
+		<tr><td>Double       </td></tr>
+		<tr><td>Character    </td></tr>
+		<tr><td>java.sql.Date</td></tr>
+		<tr><td>Time         </td></tr>
+		<tr><td>Enum         </td></tr>
+*/
 /**
 	A class to convert data types.<br>
 
@@ -27,125 +50,111 @@ import org.mkokubo.lightsleep.logger.LoggerFactory;
 		<caption>TypeConverter objects that are registered</caption>
 		<tr><th>Source Data Type</th><th>Destination Data Type</th></tr>
 
-		<tr><td>Byte         </td><td rowspan="9">Boolean</td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>BigDecimal   </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Byte          </td><td rowspan="9">Boolean</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean      </td><td rowspan="9">Byte</td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>BigDecimal   </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Byte</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean      </td><td rowspan="9">Short</td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>BigDecimal   </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Short</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean      </td><td rowspan="9">Integer</td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>BigDecimal   </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Integer</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean      </td><td rowspan="9">Long</td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>BigDecimal   </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Long</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean      </td><td rowspan="9">Float</td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>BigDecimal   </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Float</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean      </td><td rowspan="9">Double</td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>BigDecimal   </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Double</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean      </td><td rowspan="9">BigDecimal</td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>BigDecimal   </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">BigDecimal</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean      </td><td rowspan="9">Character</td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>BigDecimal   </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Character</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Object       </td><td rowspan="14">String</td></tr>
-		<tr><td>Boolean      </td></tr>
-		<tr><td>Byte         </td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>BigDecimal   </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>java.sql.Date</td></tr>
-		<tr><td>Time         </td></tr>
-		<tr><td>Timestamp    </td></tr>
-		<tr><td>Enum         </td></tr>
+		<tr><td>Object        </td><td rowspan="3">String</td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Timestamp     </td></tr>
 
-		<tr><td>Long         </td><td rowspan="4">java.sql.Date</td></tr>
-		<tr><td>Time         </td></tr>
-		<tr><td>Timestamp    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Long          </td><td rowspan="3">java.sql.Date</td></tr>
+		<tr><td>java.util.Date</td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Long         </td><td rowspan="4">Time</td></tr>
-		<tr><td>java.sql.Date</td></tr>
-		<tr><td>Timestamp    </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Long          </td><td rowspan="3">Time</td></tr>
+		<tr><td>java.util.Date</td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Long         </td><td rowspan="4">Timestamp</td></tr>
-		<tr><td>java.sql.Date</td></tr>
-		<tr><td>Time         </td></tr>
-		<tr><td>String       </td></tr>
+		<tr><td>Long          </td><td rowspan="3">Timestamp</td></tr>
+		<tr><td>java.util.Date</td></tr>
+		<tr><td>String        </td></tr>
 	</table>
 
 	@see org.mkokubo.lightsleep.database.Standard
@@ -160,6 +169,40 @@ import org.mkokubo.lightsleep.logger.LoggerFactory;
 public class TypeConverter<ST, DT> {
 	// The logger
 	private static final Logger logger = LoggerFactory.getLogger(TypeConverter.class);
+
+	// Well known classes
+	private static final Set<Class<?>> wellKnownClasses = new HashSet<>();
+	static {
+		wellKnownClasses.add(Boolean.class);
+		wellKnownClasses.add(Character.class);
+		wellKnownClasses.add(Byte.class);
+		wellKnownClasses.add(Short.class);
+		wellKnownClasses.add(Integer.class);
+		wellKnownClasses.add(Long.class);
+		wellKnownClasses.add(Float.class);
+		wellKnownClasses.add(Double.class);
+		wellKnownClasses.add(BigDecimal.class);
+		wellKnownClasses.add(String.class);
+		wellKnownClasses.add(Date.class);
+		wellKnownClasses.add(Time.class);
+		wellKnownClasses.add(Timestamp.class);
+		wellKnownClasses.add(BigDecimal[].class);
+		wellKnownClasses.add(String[].class);
+		wellKnownClasses.add(Date[].class);
+		wellKnownClasses.add(Time[].class);
+		wellKnownClasses.add(Timestamp[].class);
+		wellKnownClasses.add(Clob.class);
+		wellKnownClasses.add(Blob.class);
+		wellKnownClasses.add(Enum.class);
+		wellKnownClasses.add(Array.class);
+		wellKnownClasses.add(Iterable.class);
+		wellKnownClasses.add(ArrayList.class);
+		wellKnownClasses.add(LinkedList.class);
+		wellKnownClasses.add(HashSet.class);
+		wellKnownClasses.add(LinkedHashSet.class);
+		wellKnownClasses.add(TreeSet.class);
+		wellKnownClasses.add(SqlString.class);
+	}
 
 	// The string of Timestamp format
 	private static final String timestampFormatString = "yyyy-MM-dd HH:mm:ss.SSS";
@@ -193,10 +236,15 @@ public class TypeConverter<ST, DT> {
 		if (sourceType == null) throw new NullPointerException("TypeConverter.key: sourceType == null");
 		if (destinType == null) throw new NullPointerException("TypeConverter.key: destinType == null");
 
-		String key =
-			  (Utils.toClassType(sourceType)).getCanonicalName()
-			+ "->"
-			+ (Utils.toClassType(destinType)).getCanonicalName();
+		sourceType = Utils.toClassType(sourceType);
+		destinType = Utils.toClassType(destinType);
+
+		String sourceTypeName = wellKnownClasses.contains(sourceType)
+			? sourceType.getSimpleName() : sourceType.getCanonicalName();
+		String destinTypeName = wellKnownClasses.contains(destinType)
+			? destinType.getSimpleName() : destinType.getCanonicalName();
+
+		String key = sourceTypeName + "->" + destinTypeName;
 		return key;
 	}
 
@@ -1142,59 +1190,9 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(Object.class, String.class, object -> object.toString())
 		);
 
-		// Boolean -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Boolean.class, String.class, object -> object ? "true" : "false")
-		);
-
-		// Byte -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Byte.class, String.class, object -> String.valueOf(object))
-		);
-
-		// Short -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Short.class, String.class, object -> String.valueOf(object))
-		);
-
-		// Integer -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Integer.class, String.class, object -> String.valueOf(object))
-		);
-
-		// Long -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Long.class, String.class, object -> String.valueOf(object))
-		);
-
-		// Float -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Float.class, String.class, object -> String.valueOf(object))
-		);
-
-		// Double -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Double.class, String.class, object -> String.valueOf(object))
-		);
-
 		// BigDecimal -> String
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(BigDecimal.class, String.class, object -> object.toPlainString())
-		);
-
-		// Character -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Character.class, String.class, object -> object.toString())
-		);
-
-		// Date -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date.class, String.class, object -> object.toString())
-		);
-
-		// Time -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, String.class, object -> object.toString())
 		);
 
 		// Timestamp -> String
@@ -1203,25 +1201,15 @@ public class TypeConverter<ST, DT> {
 				new SimpleDateFormat(timestampFormatString).format(object))
 		);
 
-		// Enum -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Enum.class, String.class, object -> object.toString())
-		);
-
 	// * -> Date
 		// Long -> Date
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Long.class, Date.class, object -> new Date(object))
 		);
 
-		// Time -> Date
+		// java.util.Date -> java.sql.Date
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, Date.class, object -> new Date(object.getTime()))
-		);
-
-		// Timestamp -> Date
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp.class, Date.class, object -> new Date(object.getTime()))
+			new TypeConverter<>(java.util.Date.class, Date.class, object -> new Date(object.getTime()))
 		);
 
 		// String -> Date
@@ -1243,14 +1231,9 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(Long.class, Time.class, object -> new Time(object))
 		);
 
-		// Date -> Time
+		// java.util.Date -> Time
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date.class, Time.class, object -> new Time(object.getTime()))
-		);
-
-		// Timestamp -> Time
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp.class, Time.class, object -> new Time(object.getTime()))
+			new TypeConverter<>(java.util.Date.class, Time.class, object -> new Time(object.getTime()))
 		);
 
 		// String -> Time
@@ -1272,14 +1255,9 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(Long.class, Timestamp.class, object -> new Timestamp(object))
 		);
 
-		// Date -> Timestamp
+		// java.util.Date -> Timestamp
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date.class, Timestamp.class, object -> new Timestamp(object.getTime()))
-		);
-
-		// Time -> Timestamp
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, Timestamp.class, object -> new Timestamp(object.getTime()))
+			new TypeConverter<>(java.util.Date.class, Timestamp.class, object -> new Timestamp(object.getTime()))
 		);
 
 		// String -> Timestamp
