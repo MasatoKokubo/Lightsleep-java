@@ -67,6 +67,7 @@ public interface Condition extends SqlComponent {
 	/**
 		Returns a new subquery condition.
 
+		@param <E> the entity class corresponding to table of the outer sql.
 		@param <SE> the entity class corresponding to table of the subquery.
 
 		@param content the content of the subquery condition.
@@ -130,6 +131,7 @@ public interface Condition extends SqlComponent {
 		@see And
 		@see SubqueryCondition
 
+		@param <E> the entity class corresponding to table of the outer sql.
 		@param <SE> the entity class corresponding to table of the subquery.
 
 		@param content the content of the subquery condition.
@@ -184,6 +186,7 @@ public interface Condition extends SqlComponent {
 		@see Or
 		@see SubqueryCondition
 
+		@param <E> the entity class corresponding to table of the outer sql.
 		@param <SE> the entity class corresponding to table of the subquery.
 
 		@param content the content of the subquery condition.

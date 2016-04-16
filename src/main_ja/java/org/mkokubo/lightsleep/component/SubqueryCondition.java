@@ -20,12 +20,15 @@ public class SubqueryCondition<SE> implements Condition {
 	/**
 		<b>SubqueryCondition</b> を構築します。
 
+		@param <E> 外側のクエリの対象テーブルに対応するエンティティ・クラス
+
 		@param expression サブクエリの SELECT 文より左部分の式
+		@param outerSql 外側の Sql オブジェクト
 		@param subSql サブクエリ用の <b>Sql</b> オブジェクト
 
-		@throws NullPointerException <b>expression</b> または <b>subSql</b> が <b>null</b> の場合
+		@throws NullPointerException <b>expression</b>, <b>outerSql</b> または <b>subSql</b> が <b>null</b> の場合
 	*/
-	public SubqueryCondition(Expression expression, Sql<SE> subSql) {
+	public <E> SubqueryCondition(Expression expression, Sql<E> outerSql, Sql<SE> subSql) {
 	}
 
 	/**

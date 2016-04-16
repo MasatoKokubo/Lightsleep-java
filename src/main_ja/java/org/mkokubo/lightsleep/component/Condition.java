@@ -70,16 +70,18 @@ public interface Condition extends SqlComponent {
 
 		@see SubqueryCondition
 
+		@param <E> 外側のクエリの対象テーブルに対応するエンティティ・クラス
 		@param <SE> サブクエリの対象テーブルに対応するエンティティ・クラス
 
 		@param content サブクエリの SELECT 文より左部分の式の文字列内容
+		@param outerSql 外側の Sql オブジェクト
 		@param subSql サブクエリ用の Sql オブジェクト
 
 		@return サブクエリ条件
 
-		@throws NullPointerException <b>content</b> または <b>subSql</b> が <b>null</b> の場合
+		@throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が <b>null</b> の場合
 	*/
-	static <SE> Condition of(String content, Sql<SE> subSql) {
+	static <E, SE> Condition of(String content, Sql<E> outerSql, Sql<SE> subSql) {
 		return null;
 	}
 
@@ -132,16 +134,18 @@ public interface Condition extends SqlComponent {
 		@see And
 		@see SubqueryCondition
 
+		@param <E> 外側のクエリの対象テーブルに対応するエンティティ・クラス
 		@param <SE> サブクエリの対象テーブルに対応するエンティティ・クラス
 
 		@param content サブクエリの SELECT 文より左部分の式の文字列内容
+		@param outerSql 外側の Sql オブジェクト
 		@param subSql サブクエリ用の Sql オブジェクト
 
 		@return この条件 AND 指定の条件
 
-		@throws NullPointerException <b>content</b> または <b>subSql</b> が <b>null</b> の場合
+		@throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が <b>null</b> の場合
 	*/
-	default <SE> Condition and(String content, Sql<SE> subSql) {
+	default <E, SE> Condition and(String content, Sql<E> outerSql, Sql<SE> subSql) {
 		return null;
 	}
 
@@ -183,16 +187,18 @@ public interface Condition extends SqlComponent {
 		@see Or
 		@see SubqueryCondition
 
+		@param <E> 外側のクエリの対象テーブルに対応するエンティティ・クラス
 		@param <SE> サブクエリの対象テーブルに対応するエンティティ・クラス
 
 		@param content サブクエリの SELECT 文より左部分の式の文字列内容
+		@param outerSql 外側の Sql オブジェクト
 		@param subSql サブクエリ用の Sql オブジェクト
 
 		@return この条件 OR 指定の条件
 
-		@throws NullPointerException <b>content</b> または <b>subSql</b> が <b>null</b> の場合
+		@throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が <b>null</b> の場合
 	*/
-	default <SE> Condition or(String content, Sql<SE> subSql) {
+	default <E, SE> Condition or(String content, Sql<E> outerSql, Sql<SE> subSql) {
 		return null;
 	}
 }

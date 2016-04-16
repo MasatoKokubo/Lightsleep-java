@@ -279,7 +279,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-		<b>OUTER JOIN</b> で結合するテーブルの情報を追加します。
+		<b>LEFT OUTER JOIN</b> で結合するテーブルの情報を追加します。
 
 		@param <JE> 結合するエンティティ・クラス
 
@@ -291,12 +291,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 		@throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が <b>null</b> の場合
 	*/
-	public <JE> Sql<E> outerJoin(Class<JE> entityClass, String tableAlias, Condition on) {
+	public <JE> Sql<E> leftJoin(Class<JE> entityClass, String tableAlias, Condition on) {
 		return null;
 	}
 
 	/**
-		<b>OUTER JOIN</b> で結合するテーブルの情報を追加します。
+		<b>LEFT OUTER JOIN</b> で結合するテーブルの情報を追加します。
 
 		@param <JE> 結合するエンティティ・クラス
 
@@ -309,7 +309,42 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 		@throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が <b>null</b> の場合
 	*/
-	public <JE> Sql<E> outerJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
+	public <JE> Sql<E> leftJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
+		return null;
+	}
+
+	/**
+		<b>RIGHT OUTER JOIN</b> で結合するテーブルの情報を追加します。
+
+		@param <JE> 結合するエンティティ・クラス
+
+		@param entityClass 結合するエンティティ・クラス
+		@param tableAlias 結合するテーブルの別名
+		@param on 結合条件
+
+		@return このオブジェクト
+
+		@throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が <b>null</b> の場合
+	*/
+	public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, Condition on) {
+		return null;
+	}
+
+	/**
+		<b>RIGHT OUTER JOIN</b> で結合するテーブルの情報を追加します。
+
+		@param <JE> 結合するエンティティ・クラス
+
+		@param entityClass 結合するエンティティ・クラス
+		@param tableAlias 結合するテーブルの別名
+		@param on 結合条件式
+		@param arguments 結合条件式の引数
+
+		@return このオブジェクト
+
+		@throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が <b>null</b> の場合
+	*/
+	public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return null;
 	}
 
@@ -376,7 +411,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 		@throws NullPointerException <b>content</b> または <b>subSql</b> が <b>null</b> の場合
 
-		@see org.mkokubo.lightsleep.component.Condition#of(java.lang.String, Sql)
+		@see org.mkokubo.lightsleep.component.Condition#of(java.lang.String, Sql, Sql)
 	*/
 	public <SE> Sql<E> where(String content, Sql<SE> subSql) {
 		return this;
@@ -433,7 +468,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 		@return このオブジェクト
 
-		@see org.mkokubo.lightsleep.component.Condition#of(java.lang.String, Sql)
+		@see org.mkokubo.lightsleep.component.Condition#of(java.lang.String, Sql, Sql)
 	*/
 	public <SE> Sql<E> and(String content, Sql<SE> subSql) {
 		return this;
@@ -483,7 +518,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 		@throws NullPointerException <b>content</b> または <b>subSql</b> が <b>null</b> の場合
 
-		@see org.mkokubo.lightsleep.component.Condition#of(java.lang.String, Sql)
+		@see org.mkokubo.lightsleep.component.Condition#of(java.lang.String, Sql, Sql)
 	*/
 	public <SE> Sql<E> or(String content, Sql<SE> subSql) {
 		return this;
@@ -668,6 +703,31 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
+		<b>condition</b> が true なら<b>action</b> を実行します。
+
+		@param condition 条件
+		@param action <b>condition</b> が true の場合に実行するアクション
+
+		@return このオブジェクト
+	*/
+	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action) {
+		return this;
+	}
+
+	/**
+		<b>condition</b> が true なら<b>action</b> を実行し、そうでなければ <b>elseAction</b> を実行します。
+
+		@param condition 条件
+		@param action <b>condition</b> が true の場合に実行するアクション
+		@param elseAction <b>condition</b> が false の場合に実行するアクション
+
+		@return このオブジェクト
+	*/
+	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction) {
+		return this;
+	}
+
+	/**
 		指定のテーブル別名に対応する <b>SqlEntityInfo</b> オブジェクトを返します。
 
 		@param tableAlias テーブル別名
@@ -678,6 +738,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	*/
 	public SqlEntityInfo<?> getSqlEntityInfo(String tableAlias) {
 		return null;
+	}
+
+	/**
+		SqlEntityInfo オブジェクトを追加します。
+
+		@param sqlEntityInfo SqlEntityInfo オブジェクト
+	*/
+	public void addSqlEntityInfo(SqlEntityInfo<?> sqlEntityInfo) {
 	}
 
 	/**

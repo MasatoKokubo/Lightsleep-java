@@ -41,18 +41,14 @@ import org.mkokubo.lightsleep.Sql;
 
 		<tr><td>Boolean        </td><td>{@linkplain org.mkokubo.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
 
-		<tr><td>Character      </td><td rowspan="26">{@linkplain org.mkokubo.lightsleep.component.SqlString}</td></tr>
-		<tr><td>Byte           </td></tr>
-		<tr><td>Short          </td></tr>
-		<tr><td>Integer        </td></tr>
-		<tr><td>Long           </td></tr>
-		<tr><td>Float          </td></tr>
-		<tr><td>Double         </td></tr>
+		<tr><td>Object         </td><td rowspan="22">{@linkplain org.mkokubo.lightsleep.component.SqlString}</td></tr>
+		<tr><td>Character      </td></tr>
 		<tr><td>BigDecimal     </td></tr>
 		<tr><td>String         </td></tr>
 		<tr><td>java.sql.Date  </td></tr>
 		<tr><td>Time           </td></tr>
 		<tr><td>Timestamp      </td></tr>
+		<tr><td>Enum           </td></tr>
 		<tr><td>boolean[]      </td></tr>
 		<tr><td>char[]         </td></tr>
 		<tr><td>byte[]         </td></tr>
@@ -66,7 +62,7 @@ import org.mkokubo.lightsleep.Sql;
 		<tr><td>java.sql.Date[]</td></tr>
 		<tr><td>Time[]         </td></tr>
 		<tr><td>Timestamp[]    </td></tr>
-		<tr><td>Enum           </td></tr>
+		<tr><td>Iterable       </td></tr>
 	</table>
 
 	@since 1.0.0

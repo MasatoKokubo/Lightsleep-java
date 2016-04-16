@@ -19,6 +19,9 @@ public class Expression implements Condition {
 	/** 空の式 */
 	public static final Expression empty = null;
 
+	/** デフォルト値の式 */
+	public static final Expression DEFAULT = new Expression("DEFAULT");
+
 	/**
 		Expression を構築します。
 

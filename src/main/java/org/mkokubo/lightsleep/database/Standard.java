@@ -483,7 +483,8 @@ public class Standard implements Database {
 		buff.append(subSelectSql(sql, parameters));
 
 		// ORDER BY ...
-		buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+		if (!sql.getOrderBy().isEmpty())
+			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
 
 		if (supportsOffsetLimit()) {
 			// LIMIT ...
@@ -501,7 +502,7 @@ public class Standard implements Database {
 
 			// NO WAIT
 			if (sql.isNoWait())
-				buff.append(" /* NO WAIT (unsupported) */");
+				buff.append(" NO WAIT");
 		}
 
 		return buff.toString();
@@ -694,6 +695,14 @@ public class Standard implements Database {
 		if (sql.getWhere() != Condition.ALL)
 			buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
 
+		// ORDER BY ...
+		if (!sql.getOrderBy().isEmpty())
+			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+
+		// LIMIT ...
+		if (sql.getLimit() != Integer.MAX_VALUE)
+			buff.append(" LIMIT ").append(sql.getLimit());
+
 		return buff.toString();
 	}
 
@@ -714,6 +723,14 @@ public class Standard implements Database {
 		// WHERE ...
 		if (sql.getWhere() != Condition.ALL)
 			buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
+
+		// ORDER BY ...
+		if (!sql.getOrderBy().isEmpty())
+			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+
+		// LIMIT ...
+		if (sql.getLimit() != Integer.MAX_VALUE)
+			buff.append(" LIMIT ").append(sql.getLimit());
 
 		return buff.toString();
 	}

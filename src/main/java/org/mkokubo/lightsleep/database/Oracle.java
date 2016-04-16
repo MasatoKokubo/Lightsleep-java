@@ -143,29 +143,4 @@ public class Oracle extends Standard {
 			})
 		);
 	}
-
-	/**
-		{@inheritDoc}
-	*/
-	@Override
-	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
-		StringBuilder buff = new StringBuilder();
-
-		// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-		buff.append(subSelectSql(sql, parameters));
-
-		// ORDER BY ...
-		buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
-
-		// FOR UPDATE
-		if (sql.isForUpdate()) {
-			buff.append(" FOR UPDATE");
-
-			// NO WAIT
-			if (sql.isNoWait())
-				buff.append(" NO WAIT");
-		}
-
-		return buff.toString();
-	}
 }

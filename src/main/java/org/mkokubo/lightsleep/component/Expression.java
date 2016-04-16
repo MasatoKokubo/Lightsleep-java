@@ -33,7 +33,7 @@ public class Expression implements Condition {
 	/** The empty expression */
 	public static final Expression EMPTY = new Expression("");
 
-	/** The default expression */
+	/** The default value expression */
 	public static final Expression DEFAULT = new Expression("DEFAULT");
 
 	// The content

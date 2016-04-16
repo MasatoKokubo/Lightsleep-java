@@ -28,19 +28,6 @@ import org.mkokubo.lightsleep.component.SqlString;
 import org.mkokubo.lightsleep.logger.Logger;
 import org.mkokubo.lightsleep.logger.LoggerFactory;
 
-/*
-		<tr><td>Boolean      </td></tr>
-		<tr><td>Byte         </td></tr>
-		<tr><td>Short        </td></tr>
-		<tr><td>Integer      </td></tr>
-		<tr><td>Long         </td></tr>
-		<tr><td>Float        </td></tr>
-		<tr><td>Double       </td></tr>
-		<tr><td>Character    </td></tr>
-		<tr><td>java.sql.Date</td></tr>
-		<tr><td>Time         </td></tr>
-		<tr><td>Enum         </td></tr>
-*/
 /**
 	A class to convert data types.<br>
 

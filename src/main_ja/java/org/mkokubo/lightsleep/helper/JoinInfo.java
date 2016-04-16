@@ -22,8 +22,11 @@ public class JoinInfo<JE> implements SqlEntityInfo<JE> {
 		/** INNER JOIN */
 		INNER(" INNER JOIN "),
 
-		/** OUTER JOIN */
-		OUTER(" OUTER JOIN ");
+		/** LEFT OUTER JOIN */
+		LEFT(" LEFT OUTER JOIN "),
+
+		/** RIGHT OUTER JOIN */
+		RIGHT(" RIGHT OUTER JOIN ");
 
 		private JoinType(String sql) {
 		}

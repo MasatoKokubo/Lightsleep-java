@@ -45,12 +45,4 @@ public class Oracle extends Standard {
 	*/
 	protected Oracle() {
 	}
-
-	/**
-		{@inheritDoc}
-	*/
-	@Override
-	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
-		return null;
-	}
 }
