@@ -93,7 +93,7 @@ public class LoggerFactory {
 		Resource globalResource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
 		loggerName = globalResource.get("Logger", null);
 		if (loggerName != null) {
-			if (loggerName.indexOf('.') < 0 && !loggerName.startsWith("Std."))
+			if (loggerName.indexOf('.') < 0)
 				loggerName = Logger.class.getPackage().getName() + '.' + loggerName;
 
 			// Checks whether there is a Logger class that is specified in the property

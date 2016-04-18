@@ -134,7 +134,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	private static Database database;
 
 	static {
-		logger.info("Lightsleep version " + version + " / logger: " + LoggerFactory.loggerClass.getCanonicalName());
+		logger.info("Lightsleep " + version + " / logger: " + LoggerFactory.loggerClass.getName());
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (database == null) throw new NullPointerException("Sql.database: database == null");
 
 		Sql.database = database;
-		logger.info(MessageFormat.format(messageDatabaseHandler, database.getClass().getCanonicalName()));
+		logger.info(MessageFormat.format(messageDatabaseHandler, database.getClass().getName()));
 	}
 
 	//  Initialize the database handler
@@ -206,7 +206,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (supplier == null) throw new NullPointerException("Sql.connectionSupplier: supplier == null");
 
 		connectionSupplier = supplier;
-		logger.info(MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getCanonicalName()));
+		logger.info(MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getName()));
 	}
 
 	// Initialize the connection supplier
