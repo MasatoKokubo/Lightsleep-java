@@ -22,7 +22,7 @@ dependencies {
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
-version             = '1.0.0-snapshot-20160418'
+version             = '1.0.0'
 project.archivesBaseName = 'lightsleep'
 
 compileJava {
@@ -48,7 +48,7 @@ jar {
 		attributes	'Implementation-Title'    : project.name,
 					'Implementation-Version'  : version,
 					'Implementation-Vendor'   : 'Masato Kokubo',
-					'Implementation-Vendor-Id': 'org.mkokubo'
+					'Implementation-Vendor-Id': 'masatokokubo.jp'
 	}
 }
 
@@ -107,8 +107,10 @@ javadoc_ja.doLast {
 task zip(type: Zip) {
 	classifier = 'bin'
 
-	into('/'     , {from 'build/libs'})
-	into('/'     , {from 'LICENSE.txt', 'README.md', 'README_ja.md'})
-	into('doc'   , {from 'build/docs/javadoc'})
-	into('doc_ja', {from 'build/docs/javadoc_ja'})
+	into('/'         , {from 'build/libs'})
+	into('/'         , {from 'LICENSE.txt'})
+	into('/'         , {from 'README.md', 'Tutorial.md', 'Manual.md'})
+	into('/'         , {from 'README_ja.md', 'Tutorial_ja.md', 'Manual_ja.md'})
+	into('javadoc'   , {from 'build/docs/javadoc'})
+	into('javadoc_ja', {from 'build/docs/javadoc_ja'})
 }

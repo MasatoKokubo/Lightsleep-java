@@ -1,34 +1,37 @@
 Lightsleep
 ===========
 
-Lightsleep is a class library for the persistence of the database.
-It is a different approach from the Persistence API.
-It does not support Java 7 previously because of incorporating functional programming introduced from Java 8.
-It is easy to learn because of the number of classes is small.
+Lightsleep is a database persistence library of lightweight, supports later Java 8.
+
+#### Features
+
+- Lightsleep is not an implementation of Persistence API. It is a new API using the lambda function and Optional class that was introduced in Java 8.
+- Libraries other than the Java runtime is not required, it can also be used from Java programs, such as batch processing.
+- XML configuration file is not required.
+- Because of the small number of classes and methods that have been implemented, it is easy to learn.
 
 #### Supported DBMS
 
-* MySQL
-* Oracle Database
-* PostgreSQL
-* SQL Server
-* DBMSs that conforms to the standard SQL
+- MySQL
+- Oracle Database
+- PostgreSQL
+- SQL Server
+- DBMSs that conforms to the standard SQL
 
-#### Example
+#### How to Use
 
-```java
-Transaction.execute(connection -> {
-    Person person = new Sql<>(Person.class)
-        .where("{name.last } = {}", "Kokubo")
-          .and("{name.first} = {}", "Masato")
-        .select(connection).orElseThrow(() -> new NotFoundException());
-});
-```
+1. Download the latest release of the archive files (lightsleep-X.X.X.zip).
+1. Unzip the downloaded archive file and copy jar file (lightsleep-X.X.X.jar) to any folder.
+1. Include this jar file to class path.
 
 #### License
 
 The MIT License (MIT)
 
 *&copy; 2016 Masato Kokubo*
+
+[Tutorial](Tutorial.md)
+
+[Manual](Manual.md)
 
 [Japanese](README_ja.md)
