@@ -8,14 +8,14 @@ repositories {
 }
 
 dependencies {
-//	compile 'org.apache.logging.log4j:log4j-api:2.3'
-//	compile 'log4j:log4j:1.2.17'
-//	compile 'org.slf4j:slf4j-api:1.7.12'
+	compile 'org.apache.logging.log4j:log4j-api:2.6.1'
+	compile 'log4j:log4j:1.2.17'
+	compile 'org.slf4j:slf4j-api:1.7.21'
 
 	compile files(
-		'C:/Java/apache-log4j-2.3-bin/log4j-1.2-api-2.3.jar',
-		'C:/Java/apache-log4j-2.3-bin/log4j-api-2.3.jar',
-		'C:/Java/slf4j-1.7.12/slf4j-api-1.7.12.jar',
+//		'C:/Java/apache-log4j-2.6.1-bin/log4j-1.2-api-2.6.1.jar',
+//		'C:/Java/apache-log4j-2.6.1-bin/log4j-api-2.6.1.jar',
+//		'C:/Java/slf4j-1.7.21/slf4j-api-1.7.21.jar',
 		'C:/Java/jdbc/ojdbc7_g.jar'
 	)
 }
