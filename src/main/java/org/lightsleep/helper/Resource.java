@@ -342,6 +342,27 @@ public class Resource {
 	}
 
 	/**
+		Returns this as a <b>Properties</b>.<br>
+
+		@eince 1.1.0
+
+		@return Properties a Properties object
+	*/
+	public Properties getProperties() {
+		Properties properties = new Properties();
+
+		if (resourceBundle != null) {
+			Enumeration<String> keys = resourceBundle.getKeys();
+
+			while (keys.hasMoreElements()) {
+				String key = keys.nextElement();
+				properties.setProperty(key, get(key));
+			}
+		}
+		return properties;
+	}
+
+	/**
 		Returns a <b>Properties</b> associated with <b>baseKey</b>.<br>
 		Ex.)<br>
 		<br>

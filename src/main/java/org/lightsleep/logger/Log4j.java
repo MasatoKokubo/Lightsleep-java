@@ -7,6 +7,7 @@ package org.lightsleep.logger;
 
 import java.util.function.Supplier;
 import org.apache.log4j.LogManager;
+import org.apache.log4j.Level;
 
 /**
 	Outputs logs using
@@ -209,7 +210,10 @@ public class Log4j implements Logger {
 	*/
 	@Override
 	public boolean isWarnEnabled() {
-		return logger.isWarnEnabled();
+	// 1.1.0
+	//	return logger.isWarnEnabled();
+		return logger.isEnabledFor(Level.WARN);
+	////
 	}
 
 	/**
@@ -217,7 +221,10 @@ public class Log4j implements Logger {
 	*/
 	@Override
 	public boolean isErrorEnabled() {
-		return logger.isErrorEnabled();
+	// 1.1.0
+	//	return logger.isErrorEnabled();
+		return logger.isEnabledFor(Level.ERROR);
+	////
 	}
 
 	/**
@@ -225,6 +232,9 @@ public class Log4j implements Logger {
 	*/
 	@Override
 	public boolean isFatalEnabled() {
-		return logger.isFatalEnabled();
+	// 1.1.0
+	//	return logger.isFatalEnabled();
+		return logger.isEnabledFor(Level.FATAL);
+	////
 	}
 }

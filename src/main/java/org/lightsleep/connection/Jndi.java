@@ -1,5 +1,5 @@
 /*
-	JndiConnection.java
+	Jndi.java
 	Copyright (c) 2016 Masato Kokubo
 */
 package org.lightsleep.connection;
@@ -18,8 +18,7 @@ import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
 
 /**
-	<b>JndiConnection</b> is used when you want to use the data source
-	to get by JNDI (Java Naming and Directory Interface) API.<br>
+	Gets a data source using JNDI (Java Naming and Directory Interface) API.<br>
 	Refers to the following properties of lightsleep.properties file.
 
 	<div class="BlankLine">&nbsp;</div>
@@ -27,15 +26,15 @@ import org.lightsleep.logger.LoggerFactory;
 	<table class="additinal">
 		<caption>References in lightsleep.properties</caption>
 		<tr><th>Property Name</th><th>Content</th></tr>
-		<tr><td>JndiConnection.dataSource</td><td>The resource name of the data source</td></tr>
+		<tr><td>dataSource</td><td>The resource name of the data source</td></tr>
 	</table>
 
-	@since 1.0.0
+	@since 1.1.0
 	@author Masato Kokubo
 */
-public class JndiConnection implements ConnectionSupplier {
+public class Jndi implements ConnectionSupplier {
 	// The logger
-	private static final Logger logger = LoggerFactory.getLogger(JndiConnection.class);
+	private static final Logger logger = LoggerFactory.getLogger(Jndi.class);
 
 	// The data source name
 	private String dataSourceName;
@@ -44,17 +43,17 @@ public class JndiConnection implements ConnectionSupplier {
 	private DataSource dataSource;
 
 	/**
-		Constructs a new <b>JndiConnection</b>.
+		Constructs a new <b>Jndi</b>.
 		Use values specified in the lightsleep.properties file as the connection information.
 
-		@see #JndiConnection(java.lang.String)
+		@see #Jndi(java.lang.String)
 	*/
-	public JndiConnection() {
+	public Jndi() {
 		this(null);
 	}
 
 	/**
-		Constructs a new <b>JndiConnection</b>.<br>
+		Constructs a new <b>Jndi</b>.<br>
 
 		Looks up the data source uses the string of <b>"java:/comp/env/" + dataSourceName</b>.
 		If <b>dataSourceName</b> is <b>null</b>,
@@ -62,8 +61,8 @@ public class JndiConnection implements ConnectionSupplier {
 
 		@param dataSourceName ther data source name (null permit)
 	*/
-	public JndiConnection(String dataSourceName) {
-		logger.debug(() -> "JndiConnection.<init>: dataSourceName=" + dataSourceName);
+	public Jndi(String dataSourceName) {
+		logger.debug(() -> "Jndi.<init>: dataSourceName=" + dataSourceName);
 
 		this.dataSourceName = dataSourceName;
 		lookup();
@@ -77,28 +76,27 @@ public class JndiConnection implements ConnectionSupplier {
 			try {
 				if (dataSourceName == null) {
 					// If the data source name is not specified, gets it from properties.
-					dataSourceName = Resource.globalResource.get("JndiConnection.dataSource");
+					dataSourceName = Resource.globalResource.get("dataSource");
 					if (dataSourceName == null) {
-						logger.fatal("JndiConnection.lookup: property JndiConnection.dataSource: " + dataSourceName);
+						logger.error("Jndi.lookup: property dataSource: " + dataSourceName);
 						break block;
 					}
 				}
 
-				if (logger.isDebugEnabled())
-					logger.debug(() -> "JndiConnection.lookup: property JndiConnection.dataSource: " + dataSourceName);
+				logger.debug(() -> "Jndi.lookup: property dataSource: " + dataSourceName);
 
 				// Gets a new Context
 				Context initContext = new InitialContext();
 
 				// Creates a string for lookup
 				String lookupStr = "java:/comp/env/" + dataSourceName;
-				logger.info(() -> "JndiConnection.lookup: lookup string=" + lookupStr);
+				logger.debug(() -> "Jndi.lookup: lookup string=" + lookupStr);
 
 				// Do lookup
 				dataSource = (DataSource)initContext.lookup(lookupStr);
 			}
 			catch (NamingException e) {
-				logger.fatal("JndiConnection.lookup: dataSourceName=" + dataSourceName, e);
+				logger.error("Jndi.lookup: dataSourceName=" + dataSourceName, e);
 				break block;
 			}
 		}

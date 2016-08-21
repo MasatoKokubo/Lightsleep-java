@@ -28,7 +28,7 @@ import org.lightsleep.component.Expression;
 import org.lightsleep.component.GroupBy;
 import org.lightsleep.component.OrderBy;
 import org.lightsleep.connection.ConnectionSupplier;
-import org.lightsleep.connection.JdbcConnection;
+import org.lightsleep.connection.Jdbc;
 import org.lightsleep.database.Database;
 import org.lightsleep.database.Standard;
 import org.lightsleep.entity.Composite;
@@ -212,7 +212,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	// Initialize the connection supplier
 	static {
-		String supplierName = Resource.globalResource.get("ConnectionSupplier", "JdbcConnection");
+		String supplierName = Resource.globalResource.get("ConnectionSupplier", "Jdbc");
 		if (supplierName.indexOf('.') < 0)
 			supplierName = ConnectionSupplier.class.getPackage().getName() + '.' + supplierName;
 
@@ -222,7 +222,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		}
 		catch (ClassNotFoundException e) {
 			logger.error(MessageFormat.format(messageConnectionSupplierNotFound, supplierName), e);
-			supplierClass = JdbcConnection.class;
+			supplierClass = Jdbc.class;
 		}
 
 		try {

@@ -17,13 +17,13 @@ import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.lightsleep.Sql;
 import org.lightsleep.entity.NonColumn;
 import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
@@ -38,7 +38,7 @@ import org.lightsleep.logger.LoggerFactory;
 */
 public class Accessor<T> {
 	// The logger
-	private static final Logger logger = LoggerFactory.getLogger(Sql.class);
+	private static final Logger logger = LoggerFactory.getLogger(Accessor.class);
 
 	// Class Resources
 	private static final Resource resource = new Resource(Accessor.class);
@@ -286,7 +286,7 @@ public class Accessor<T> {
 		for (String getterPrefix : getterPrefixes) {
 			String getterName = getterPrefix.isEmpty()
 				? fieldName
-				: getterPrefix + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+				: getterPrefix + fieldName.substring(0, 1).toUpperCase(Locale.ENGLISH) + fieldName.substring(1);
 			try {
 				getterMethod = objectClass.getMethod(getterName);
 				if (getterMethod.getReturnType() == fieldType)
@@ -316,7 +316,7 @@ public class Accessor<T> {
 		for (String setterPrefix : setterPrefixes) {
 			String setterName = setterPrefix.isEmpty()
 				? fieldName
-				: setterPrefix + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+				: setterPrefix + fieldName.substring(0, 1).toUpperCase(Locale.ENGLISH) + fieldName.substring(1);
 			try {
 				setterMethod = objectClass.getMethod(setterName, fieldType);
 				break;
@@ -343,7 +343,7 @@ public class Accessor<T> {
 		Returns a list of property names of accessible all fields.<br>
 		If not nested, the property name is the same as the field name.
 		Otherwise, it is the name that connected each field with a period.
-		(ex. <b>name.first</b>)
+		(e.g. <b>name.first</b>)
 
 		@return a list of property names
 	*/
@@ -355,7 +355,7 @@ public class Accessor<T> {
 		Returns a list of property names of the accessible value type of the field.
 		If not nested, the property name is the same as the field name.
 		Otherwise, it is the name that connected each field with a period.
-		(ex. <b>name.first</b>)<br>
+		(e.g. <b>name.first</b>)<br>
 
 		Value type is one of the following.<br>
 

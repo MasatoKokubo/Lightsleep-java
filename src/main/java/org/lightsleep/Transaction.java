@@ -33,6 +33,8 @@ public interface Transaction {
 
 	// Class resources
 	static final Resource resource = new Resource(Transaction.class);
+	static final String messageGet      = resource.get("messageGet");
+	static final String messageClose    = resource.get("messageClose");
 	static final String messageStart    = resource.get("messageStart");
 	static final String messageEnd      = resource.get("messageEnd");
 	static final String messageCommit   = resource.get("messageCommit");
@@ -72,10 +74,24 @@ public interface Transaction {
 		boolean committed = false;
 		try {
 			// Gets a connection
+			long beforeGetTime = System.nanoTime(); // The time before getConnectionSupplier.get
 			connection = Sql.getConnectionSupplier().get();
+			long afterGetTime = System.nanoTime(); // The time after getConnectionSupplier.get
+
+			if (logger.isDebugEnabled()) {
+				double time = (afterGetTime - beforeGetTime) / 1_000_000.0;
+				DecimalFormat timeFormat = new DecimalFormat();
+				timeFormat.setMinimumFractionDigits(0);
+				timeFormat.setMaximumFractionDigits(3);
+				logger.debug(
+					Sql.getDatabase().getClass().getSimpleName()
+					+ "/" + Sql.getConnectionSupplier().getClass().getSimpleName()
+					+ ": " + MessageFormat.format(messageGet, timeFormat.format(time))
+				);
+			}
 
 			// Logging of the transaction start
-			logger.info(() -> Sql.getDatabase().getClass().getSimpleName() + ": " + messageStart);
+			logger.debug(() -> Sql.getDatabase().getClass().getSimpleName() + ": " + messageStart);
 
 			// Execute the transaction body
 			transaction.executeBody(connection);
@@ -88,7 +104,21 @@ public interface Transaction {
 			logger.info(messageEnd);
 
 			// Closes the connection
+			long beforeCloseTime = System.nanoTime(); // The time before getConnectionSupplier.get
 			connection.close();
+			long afterCloseTime = System.nanoTime(); // The time after getConnectionSupplier.get
+
+			if (logger.isDebugEnabled()) {
+				double time = (afterCloseTime - beforeCloseTime) / 1_000_000.0;
+				DecimalFormat timeFormat = new DecimalFormat();
+				timeFormat.setMinimumFractionDigits(0);
+				timeFormat.setMaximumFractionDigits(3);
+				logger.debug(
+					Sql.getDatabase().getClass().getSimpleName()
+					+ "/" + Sql.getConnectionSupplier().getClass().getSimpleName()
+					+ ": " + MessageFormat.format(messageClose, timeFormat.format(time))
+				);
+			}
 		}
 		catch (Throwable e) {
 			logger.error("", e);
@@ -133,16 +163,16 @@ public interface Transaction {
 		try {
 			if (!connection.getAutoCommit()) {
 				// Is not not auto-commit
-				long execTimeBefore = System.nanoTime(); // The time before execution
+				long beforeExecTime = System.nanoTime(); // The time before execution
 				connection.commit();
-				long execTimeAfter = System.nanoTime(); // The time after execution
+				long afterExecTime = System.nanoTime(); // The time after execution
 
-				if (logger.isInfoEnabled()) {
-					double execTime = (execTimeAfter - execTimeBefore) / 1_000_000.0;
+				if (logger.isDebugEnabled()) {
+					double time = (afterExecTime - beforeExecTime) / 1_000_000.0;
 					DecimalFormat timeFormat = new DecimalFormat();
 					timeFormat.setMinimumFractionDigits(0);
 					timeFormat.setMaximumFractionDigits(3);
-					logger.info(Sql.getDatabase().getClass().getSimpleName() + ": " + MessageFormat.format(messageCommit, timeFormat.format(execTime)));
+					logger.debug(Sql.getDatabase().getClass().getSimpleName() + ": " + MessageFormat.format(messageCommit, timeFormat.format(time)));
 				}
 			}
 		}
@@ -163,16 +193,16 @@ public interface Transaction {
 		try {
 			if (!connection.getAutoCommit()) {
 				// Is not not auto-commit
-				long execTimeBefore = System.nanoTime(); // The time before execution
+				long beforeExecTime = System.nanoTime(); // The time before execution
 				connection.rollback();
-				long execTimeAfter = System.nanoTime(); // The time after execution
+				long afterExecTime = System.nanoTime(); // The time after execution
 
-				if (logger.isInfoEnabled()) {
-					double execTime = (execTimeAfter - execTimeBefore) / 1_000_000.0;
+				if (logger.isDebugEnabled()) {
+					double time = (afterExecTime - beforeExecTime) / 1_000_000.0;
 					DecimalFormat timeFormat = new DecimalFormat();
 					timeFormat.setMinimumFractionDigits(0);
 					timeFormat.setMaximumFractionDigits(3);
-					logger.info(Sql.getDatabase().getClass().getSimpleName() + ": " + MessageFormat.format(messageRollback, timeFormat.format(execTime)));
+					logger.debug(Sql.getDatabase().getClass().getSimpleName() + ": " + MessageFormat.format(messageRollback, timeFormat.format(time)));
 				}
 			}
 		}

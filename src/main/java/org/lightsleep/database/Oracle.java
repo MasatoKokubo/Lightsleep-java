@@ -10,9 +10,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.List;
 
-import org.lightsleep.Sql;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.ConvertException;
 import org.lightsleep.helper.TypeConverter;
