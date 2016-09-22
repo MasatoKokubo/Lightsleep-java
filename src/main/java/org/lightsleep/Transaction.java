@@ -45,9 +45,9 @@ public interface Transaction {
 
 		@param connection the database connection
 
-		@throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
+		@throws Exception if an error occurred
 	*/
-	void executeBody(Connection connection);
+	void executeBody(Connection connection) throws Exception;
 
 	/**
 		Executes the transaction in the following order.<br>
@@ -176,10 +176,9 @@ public interface Transaction {
 				}
 			}
 		}
-		catch (Error            e) {throw e;}
 		catch (RuntimeException e) {throw e;}
 		catch (SQLException     e) {throw new RuntimeSQLException(e);}
-		catch (Throwable        e) {new RuntimeException(e);}
+		catch (Exception        e) {new RuntimeException(e);}
 	}
 
 	/**
@@ -206,9 +205,8 @@ public interface Transaction {
 				}
 			}
 		}
-		catch (Error            e) {throw e;}
 		catch (RuntimeException e) {throw e;}
 		catch (SQLException     e) {throw new RuntimeSQLException(e);}
-		catch (Throwable        e) {new RuntimeException(e);}
+		catch (Exception        e) {new RuntimeException(e);}
 	}
 }

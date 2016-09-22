@@ -342,9 +342,9 @@ public class Resource {
 	}
 
 	/**
-		Returns this as a <b>Properties</b>.<br>
+		Returns this as a <b>Properties</b>.
 
-		@eince 1.1.0
+		@since 1.1.0
 
 		@return Properties a Properties object
 	*/

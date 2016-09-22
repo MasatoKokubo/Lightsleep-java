@@ -4,15 +4,9 @@
 */
 package org.lightsleep.connection;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
-import org.lightsleep.RuntimeSQLException;
-import org.lightsleep.logger.Logger;
-import org.lightsleep.logger.LoggerFactory;
 
 /**
 	Gets <b>Connection</b> objects using
@@ -22,14 +16,8 @@ import org.lightsleep.logger.LoggerFactory;
 	@author Masato Kokubo
 */
 public class TomcatCP extends AbstractConnectionSupplier {
-	// The logger
-	private static final Logger logger = LoggerFactory.getLogger(TomcatCP.class);
-
-	// The data source
-	private DataSource dataSource;
-
 	/**
-		Constructs a new <b>Jdbc</b>.
+		Constructs a new <b>TomcatCP</b>.
 		Use values specified in the lightsleep.properties
 		file as the connection information.
 	*/
@@ -39,7 +27,7 @@ public class TomcatCP extends AbstractConnectionSupplier {
 	/**
 		Constructs a new <b>TomcatCP</b>.<br>
 		Use values specified in the lightsleep.properties and
-		<i>&lt<b>resourceName<b>&gt<i>.properties
+		<i>&lt;<b>resourceName</b>&gt;</i>.properties
 		file as the connection information.
 
 		@param resourceName the resource name
@@ -52,32 +40,17 @@ public class TomcatCP extends AbstractConnectionSupplier {
 		{@inheritDoc}
 	*/
 	@Override
-	protected void init() {
-		logger.debug(() -> "TomcatCP.<init>: properties: " + properties);
+	protected DataSource getDataSource() {
+		logger.debug(() -> "TomcatCP.getDataSource: properties: " + properties);
 
 		try {
-			dataSource = new DataSourceFactory().createDataSource(properties);
-			logger.debug(() -> "TomcatCP.<init>: dataSource = " + dataSource);
+			DataSource dataSource = new DataSourceFactory().createDataSource(properties);
+			logger.debug(() -> "TomcatCP.getDataSource: dataSource = " + dataSource);
+			return dataSource;
 		}
 		catch (Exception e) {
-			logger.error("TomcatCP.<init>:", e);
+			logger.error("TomcatCP.getDataSource:", e);
 		}
-	}
-
-	/**
-		{@inheritDoc}
-
-		@throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
-	*/
-	@Override
-	public Connection get() {
-		try {
-			Connection connection = dataSource.getConnection();
-			connection.setAutoCommit(false);
-			return connection;
-		}
-		catch (SQLException e) {
-			throw new RuntimeSQLException(e);
-		}
+		return null;
 	}
 }

@@ -135,50 +135,50 @@ public class Person {
 #### 3. プロパティ・ファイルの準備
 
 下記の lightsleep.properties を作成します。
-JdbcConnection.url, JdbcConnection.user および JdbcConnection.password の値は、使用するデータベース環境に合わせて変更してください。
+url, user および password の値は、使用するデータベース環境に合わせて変更してください。
 
 ```properties:lightsleep.properties
 # for MySQL
-Logger                  = Std$Out$Info
-Database                = MySQL
-ConnectionSupplier      = JdbcConnection
-JdbcConnection.driver   = com.mysql.jdbc.Driver
-JdbcConnection.url      = jdbc:mysql://mysql57/test
-JdbcConnection.user     = test
-JdbcConnection.password = test
+Logger             = Std$Out$Info
+Database           = MySQL
+ConnectionSupplier = Jdbc
+driver             = com.mysql.jdbc.Driver
+url                = jdbc:mysql://MySQL57/test
+user               = test
+password           = _test_
 ```
 
 ```properties:lightsleep.properties
 # for Oracle
-Logger                  = Std$Out$Info
-Database                = Oracle
-ConnectionSupplier      = JdbcConnection
-JdbcConnection.driver   = oracle.jdbc.driver.OracleDriver
-JdbcConnection.url      = jdbc:oracle:thin:@Oracle121:1521:test
-JdbcConnection.user     = test
-JdbcConnection.password = test
+Logger             = Std$Out$Info
+Database           = Oracle
+ConnectionSupplier = Jdbc
+driver             = oracle.jdbc.driver.OracleDriver
+url                = jdbc:oracle:thin:@Oracle121:1521:test
+user               = test
+password           = _test_
 ```
 
 ```properties:lightsleep.properties
 # for PostgreSQL
-Logger                  = Std$Out$Info
-Database                = PostgreSQL
-ConnectionSupplier      = JdbcConnection
-JdbcConnection.driver   = org.postgresql.Driver
-JdbcConnection.url      = jdbc:mysql://Postgres94/test
-JdbcConnection.user     = test
-JdbcConnection.password = test
+Logger             = Std$Out$Info
+Database           = PostgreSQL
+ConnectionSupplier = Jdbc
+driver             = org.postgresql.Driver
+url                = jdbc:mysql://Postgres95/test
+user               = test
+password           = _test_
 ```
 
 ```properties:lightsleep.properties
 # for SQL Server
-Logger                  = Std$Out$Info
-Database                = SQLServer
-ConnectionSupplier      = JdbcConnection
-JdbcConnection.driver   = com.microsoft.sqlserver.jdbc.SQLServerDriver
-JdbcConnection.url      = jdbc:sqlserver://sqlserver120;Database=test
-JdbcConnection.user     = test
-JdbcConnection.password = test
+Logger             = Std$Out$Info
+Database           = SQLServer
+ConnectionSupplier = Jdbc
+driver             = com.microsoft.sqlserver.jdbc.SQLServerDriver
+url                = jdbc:sqlserver://SQLServer13;Database=test
+user               = test
+password           = _test_
 ```
 
 #### 4. データの取得

@@ -139,9 +139,20 @@ public class Resource {
 		return null;
 	}
 
+
 	/**
-		指定されたベースキーの <b>Properties</b> オブジェクトを返します。
-		このインスタンスのリソースのみを対象とし、親リソースからの取得は行いません。<br>
+		自身を <b>Properties</b> として返します。
+
+		@since 1.1.0
+
+		@return Properties オブジェクト
+	*/
+	public Properties getProperties() {
+		return null;
+	}
+
+	/**
+		指定されたベースキーの <b>Properties</b> を返します。
 		例)<br>
 		<br>
 

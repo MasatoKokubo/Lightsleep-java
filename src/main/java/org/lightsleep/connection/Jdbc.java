@@ -4,13 +4,13 @@
 */
 package org.lightsleep.connection;
 
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 
-import org.lightsleep.RuntimeSQLException;
-import org.lightsleep.logger.Logger;
-import org.lightsleep.logger.LoggerFactory;
+import javax.sql.DataSource;
 
 /**
 	Gets <b>Connection</b> objects using the
@@ -36,9 +36,6 @@ import org.lightsleep.logger.LoggerFactory;
 	@author Masato Kokubo
 */
 public class Jdbc extends AbstractConnectionSupplier {
-	// The logger
-	private static final Logger logger = LoggerFactory.getLogger(Jdbc.class);
-
 	// The URL
 	private String url;
 
@@ -48,30 +45,27 @@ public class Jdbc extends AbstractConnectionSupplier {
 		file as the connection information.
 	*/
 	public Jdbc() {
+		init();
 	}
 
 	/**
 		Constructs a new <b>Jdbc</b>.
 		Use values specified in the lightsleep.properties and
-		<i>&lt<b>resourceName<b>&gt<i>.properties
+		<i>&lt;<b>resourceName</b>&gt;</i>.properties
 		file as the connection information.
 
 		@param resourceName the resource name
 	*/
 	public Jdbc(String resourceName) {
 		super(resourceName);
+		init();
 	}
 
-	/**
-		{@inheritDoc}
-	*/
-	@Override
-	protected void init() {
+	private void init() {
 		logger.debug(() -> "Jdbc.<init>: properties: " + properties);
 
 		// driver
 		String driver = properties.getProperty("driver");
-		properties.remove("driver");
 
 		if (driver == null) {
 			logger.error("Jdbc.<init>: property driver = null");
@@ -86,23 +80,60 @@ public class Jdbc extends AbstractConnectionSupplier {
 
 		// url
 		url = properties.getProperty("url");
-		properties.remove("url");
 	}
 
 	/**
 		{@inheritDoc}
-
-		@throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	*/
 	@Override
-	public Connection get() {
-		try {
-			Connection connection = DriverManager.getConnection(url, properties);
-			connection.setAutoCommit(false);
-			return connection;
-		}
-		catch (SQLException e) {
-			throw new RuntimeSQLException(e);
-		}
+	protected DataSource getDataSource() {
+		logger.debug(() -> "Jdbc.getDataSource: properties: " + properties);
+
+		return new DataSource() {
+			@Override
+			public PrintWriter getLogWriter() throws SQLException {
+				return null;
+			}
+
+			@Override
+			public void setLogWriter(PrintWriter out) throws SQLException {
+			}
+
+			@Override
+			public void setLoginTimeout(int seconds) throws SQLException {
+			}
+
+			@Override
+			public int getLoginTimeout() throws SQLException {
+				return 0;
+			}
+
+			@Override
+			public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+				return null;
+			}
+
+			@Override
+			public <T> T unwrap(Class<T> iface) throws SQLException {
+				return null;
+			}
+
+			@Override
+			public boolean isWrapperFor(Class<?> iface) throws SQLException {
+				return false;
+			}
+
+			@Override
+			public Connection getConnection() throws SQLException {
+				Connection connection = DriverManager.getConnection(url, properties);
+				connection.setAutoCommit(false);
+				return connection;
+			}
+
+			@Override
+			public Connection getConnection(String username, String password) throws SQLException {
+				return null;
+			}
+		};
 	}
 }

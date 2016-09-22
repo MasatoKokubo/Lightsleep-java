@@ -218,35 +218,89 @@ Transaction.execute(connection -> {
 });
 ```
 
-トランザクション中に例外がスローされた場合は、Transaction.rollback メソッドが実行され、
-そうでなければ Transaction.commit メソッドが実行されます。
+トランザクション中に例外がスローされた場合は、```Transaction.rollback``` メソッドが実行され、
+そうでなければ ```Transaction.commit``` メソッドが実行されます。
 
 ### 3. コネクション・サプライヤー
-データベース・コネクション(java.sql.Connection) の取得は、Transaction.execute メソッド内で行われます。
+データベース・コネクション(```java.sql.Connection```) の取得は、```Transaction.execute``` メソッド内で行われます。
 Lightsleep にはコネクションを供給するクラスとして以下があります。
 
-1. org.lightsleep.connection.JdbcConnection
-1. org.lightsleep.connection.JndiConnection
+1. org.lightsleep.connection.C3p0
+1. org.lightsleep.connection.Dbcp
+1. org.lightsleep.connection.HikariCP
+1. org.lightsleep.connection.TomcatCP
+1. org.lightsleep.connection.Jdbc
+1. org.lightsleep.connection.Jndi
 
-JdbcConnection クラスは、java.sql.DriverManager.getConnection メソッドを使用してデータベース・コネクションを取得します。
-JndiConnection クラスは、JNDI (Java Naming and Directory Interface) を使用して取得したデータソース (javax.sql.DataSource) からデータベース・コネクションを取得します。
-
-コネクションを供給するクラスおよび接続に必要な情報 *lightsleep.properties* に定義してください。
+```C3p0```, ```Dbcp```, ```HikariCP```, ```TomcatCP``` クラスは、それぞれ対応するコネクション・プール・ライブラリを使用してデータベース・コネクションを取得します。  
+```JdbcConnection``` クラスは、```java.sql.DriverManager.getConnection``` メソッドを使用してデータベース・コネクションを取得します。  
+```JndiConnection``` クラスは、JNDI (Java Naming and Directory Interface) を使用して取得したデータソース (```javax.sql.DataSource```) からデータベース・コネクションを取得します。  
+コネクションを供給するクラスおよび接続に必要な情報 **lightsleep.properties** ファイルに定義してください。
 
 ```properties:lightsleep.properties
-# JdbcConnection
-ConnectionSupplier      = JdbcConnection
-JdbcConnection.driver   = (JDBC ドライバクラス)
-JdbcConnection.url      = (JDBC URL)
-JdbcConnection.user     = (データベース・ユーザー)
-JdbcConnection.password = (データベース・パスワード)
+# lightsleep.properties / C3p0 設定サンプル
+ConnectionSupplier = C3p0
+driver   = com.mysql.jdbc.Driver
+url      = jdbc:mysql://MySQL57/test
+user     = test
+password = _test_
+```
+
+```properties:c3p0.properties
+# c3p0.properties
+c3p0.initialPoolSize = 20
+c3p0.minPoolSize     = 10
+c3p0.maxPoolSize     = 30
 ```
 
 ```properties:lightsleep.properties
-# JndiConnection
-connectionSupplier        = JndiConnection
-JndiConnection.dataSource = jdbc/(データソース名)
+# lightsleep.properties / Dbcp 設定サンプル
+ConnectionSupplier = Dbcp
+driverClassName = oracle.jdbc.driver.OracleDriver
+url             = jdbc:oracle:thin:@Oracle121:1521:test
+username        = test
+password        = _test_
+initialSize     = 20
+maxTotal        = 30
 ```
+
+```properties:lightsleep.properties
+# lightsleep.properties / HikariCP 設定サンプル
+ConnectionSupplier = HikariCP
+driverClassName = org.postgresql.Driver
+jdbcUrl         = jdbc:postgresql://Postgres95/test
+user            = test
+password        = _test_
+minimumIdle     = 10
+maximumPoolSize = 30
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / TomcatCP 設定サンプル
+ConnectionSupplier = TomcatCP
+driverClassName = com.microsoft.sqlserver.jdbc.SQLServerDriver
+url             = jdbc:sqlserver://SQLServer13;database=test
+username        = test
+password        = _test_
+initialSize     = 20
+maxActive       = 30
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / Jdbc 設定サンプル
+ConnectionSupplier      = Jdbc
+driver   = com.mysql.jdbc.Driver
+url      = jdbc:mysql://MySQL57/test
+user     = test
+password = _test_
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / Jndi 設定サンプル
+connectionSupplier = Jndi
+dataSource = jdbc/Sample
+```
+
 
 ### 4. SQLの実行
 SQLの実行は、Sql クラスの各種メソッドを使用し、Transaction.execute メソッドの引数のラムダ式内に定義します。

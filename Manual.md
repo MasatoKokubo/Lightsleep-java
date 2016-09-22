@@ -224,29 +224,83 @@ Otherwise, ```Transaction.commit``` method is called.
 Getting of database connection (```java.sql.Connection```) is done in the ```Transaction.execute``` method.
 Lightsleep has following classes to supply connections.
 
-1. org.lightsleep.connection.JdbcConnection
-1. org.lightsleep.connection.JndiConnection
+1. org.lightsleep.connection.C3p0
+1. org.lightsleep.connection.Dbcp
+1. org.lightsleep.connection.HikariCP
+1. org.lightsleep.connection.TomcatCP
+1. org.lightsleep.connection.Jdbc
+1. org.lightsleep.connection.Jndi
 
-```JdbcConnection``` class gets database connections using the ```java.sql.DriverManager.getConnection``` method.
-```JndiConnection``` class gets database connections from the data source (```javax.sql.DataSource```) that was obtained using JNDI (Java Naming and Directory Interface).
-Define the connection supplier class and information needed to connect in the *lightsleep.properties*.
+```C3p0```, ```Dbcp```, ```HikariCP``` and ```TomcatCP``` class gets database connectiona using the corresponding connection pool library.  
+```JdbcConnection``` class gets database connections using the ```java.sql.DriverManager.getConnection``` method.  
+```JndiConnection``` class gets database connections from the data source (```javax.sql.DataSource```) that was obtained using JNDI (Java Naming and Directory Interface).  
+Define the connection supplier class and information needed to connect in the **lightsleep.properties** file.
 
 ```properties:lightsleep.properties
-# JdbcConnection
-ConnectionSupplier      = JdbcConnection
-JdbcConnection.driver   = (JDBC Driver Class)
-JdbcConnection.url      = (JDBC URL)
-JdbcConnection.user     = (Database User)
-JdbcConnection.password = (Database Password)
+# lightsleep.properties / Example for C3p0
+ConnectionSupplier = C3p0
+driver   = com.mysql.jdbc.Driver
+url      = jdbc:mysql://MySQL57/test
+user     = test
+password = _test_
+```
+
+```properties:c3p0.properties
+# c3p0.properties
+c3p0.initialPoolSize = 20
+c3p0.minPoolSize     = 10
+c3p0.maxPoolSize     = 30
 ```
 
 ```properties:lightsleep.properties
-# JndiConnection
-connectionSupplier        = JndiConnection
-JndiConnection.dataSource = jdbc/(Data Source Name)
+# lightsleep.properties / Example for Dbcp
+ConnectionSupplier = Dbcp
+driverClassName = oracle.jdbc.driver.OracleDriver
+url             = jdbc:oracle:thin:@Oracle121:1521:test
+username        = test
+password        = _test_
+initialSize     = 20
+maxTotal        = 30
 ```
 
-### 4. SQLの実行
+```properties:lightsleep.properties
+# lightsleep.properties / Example for HikariCP
+ConnectionSupplier = HikariCP
+driverClassName = org.postgresql.Driver
+jdbcUrl         = jdbc:postgresql://Postgres95/test
+user            = test
+password        = _test_
+minimumIdle     = 10
+maximumPoolSize = 30
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / Example for TomcatCP
+ConnectionSupplier = TomcatCP
+driverClassName = com.microsoft.sqlserver.jdbc.SQLServerDriver
+url             = jdbc:sqlserver://SQLServer13;database=test
+username        = test
+password        = _test_
+initialSize     = 20
+maxActive       = 30
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / Example for Jdbc
+ConnectionSupplier      = Jdbc
+driver   = com.mysql.jdbc.Driver
+url      = jdbc:mysql://MySQL57/test
+user     = test
+password = _test_
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / Example for Jndi
+connectionSupplier = Jndi
+dataSource = jdbc/Sample
+```
+
+### 4. Execution of SQL
 Use the various methods of Sql class to execute SQLs and define it in the lambda expression argument of ```Transaction.execute``` method.
 
 #### 4-1. SELECT

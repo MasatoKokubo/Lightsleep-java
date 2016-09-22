@@ -28,7 +28,7 @@ public interface Transaction {
 
 		@param connection データベース・コネクション
 
-		@throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+		@throws RuntimeSQLException データベースのアクセス中に <b>SQLException</b> がスローされた場合
 	*/
 	void executeBody(Connection connection);
 
@@ -50,7 +50,7 @@ public interface Transaction {
 
 		@param transaction <b>Transaction</b> オブジェクト
 
-		@throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+		@throws RuntimeSQLException データベースのアクセス中に <b>SQLException</b> がスローされた場合
 	*/
 	static void execute(Transaction transaction) {
 	}
@@ -70,7 +70,7 @@ public interface Transaction {
 
 		@param connection データベース・コネクション
 
-		@throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+		@throws RuntimeSQLException データベースのアクセス中に <b>SQLException</b> がスローされた場合
 	*/
 	static void rollback(Connection connection) {
 	}

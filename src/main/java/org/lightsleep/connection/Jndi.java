@@ -4,18 +4,12 @@
 */
 package org.lightsleep.connection;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.lightsleep.RuntimeSQLException;
 import org.lightsleep.helper.Resource;
-import org.lightsleep.logger.Logger;
-import org.lightsleep.logger.LoggerFactory;
 
 /**
 	Gets a data source using JNDI (Java Naming and Directory Interface) API.<br>
@@ -32,15 +26,9 @@ import org.lightsleep.logger.LoggerFactory;
 	@since 1.1.0
 	@author Masato Kokubo
 */
-public class Jndi implements ConnectionSupplier {
-	// The logger
-	private static final Logger logger = LoggerFactory.getLogger(Jndi.class);
-
+public class Jndi extends AbstractConnectionSupplier {
 	// The data source name
 	private String dataSourceName;
-
-	//  THe data source
-	private DataSource dataSource;
 
 	/**
 		Constructs a new <b>Jndi</b>.
@@ -49,7 +37,6 @@ public class Jndi implements ConnectionSupplier {
 		@see #Jndi(java.lang.String)
 	*/
 	public Jndi() {
-		this(null);
 	}
 
 	/**
@@ -65,59 +52,38 @@ public class Jndi implements ConnectionSupplier {
 		logger.debug(() -> "Jndi.<init>: dataSourceName=" + dataSourceName);
 
 		this.dataSourceName = dataSourceName;
-		lookup();
-	}
-
-	/**
-		Do lookup.
-	*/
-	private void lookup() {
-		block: {
-			try {
-				if (dataSourceName == null) {
-					// If the data source name is not specified, gets it from properties.
-					dataSourceName = Resource.globalResource.get("dataSource");
-					if (dataSourceName == null) {
-						logger.error("Jndi.lookup: property dataSource: " + dataSourceName);
-						break block;
-					}
-				}
-
-				logger.debug(() -> "Jndi.lookup: property dataSource: " + dataSourceName);
-
-				// Gets a new Context
-				Context initContext = new InitialContext();
-
-				// Creates a string for lookup
-				String lookupStr = "java:/comp/env/" + dataSourceName;
-				logger.debug(() -> "Jndi.lookup: lookup string=" + lookupStr);
-
-				// Do lookup
-				dataSource = (DataSource)initContext.lookup(lookupStr);
-			}
-			catch (NamingException e) {
-				logger.error("Jndi.lookup: dataSourceName=" + dataSourceName, e);
-				break block;
-			}
-		}
 	}
 
 	/**
 		{@inheritDoc}
-
-		@throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	*/
 	@Override
-	public Connection get() {
+	protected DataSource getDataSource() {
 		try {
-			if (dataSource == null)
-				lookup();
+			if (dataSourceName == null) {
+				// If the data source name is not specified, gets it from properties.
+				dataSourceName = Resource.globalResource.get("dataSource");
+				if (dataSourceName == null) {
+					logger.error("Jndi.getDataSource: property dataSource: " + dataSourceName);
+					return null;
+				}
+			}
 
-			Connection connection = dataSource.getConnection();
-			return connection;
+			logger.debug(() -> "Jndi.getDataSource: property dataSource: " + dataSourceName);
+
+			// Gets a new Context
+			Context initContext = new InitialContext();
+
+			// Creates a string for lookup
+			String lookupStr = "java:/comp/env/" + dataSourceName;
+			logger.debug(() -> "Jndi.lookup: lookup string=" + lookupStr);
+
+			// Do lookup
+			DataSource dataSource = (DataSource)initContext.lookup(lookupStr);
+			return dataSource;
 		}
-		catch (SQLException e) {
-			throw new RuntimeSQLException(e);
+		catch (NamingException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
