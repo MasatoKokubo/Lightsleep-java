@@ -18,11 +18,16 @@ Lightsleep は、軽量のデータベース永続化ライブラリで、Java 8
 - SQL Server
 - 標準SQL準拠DBMS
 
-#### 利用方法
+#### *build.gradle* での記述例
 
-1. 最新リリースのアーカイブ・ファイル (lightsleep-X.X.X.zip) をダウンロードしてください。
-1. ダウンロードしたアーカイブ・ファイルを解凍して中にあるjarファイル (lightsleep-X.X.X.jar) をどこかのフォルダにコピーしてください。
-1. クラスパスにこの jar ファイルを含めてください。
+	repositories {
+	    jcenter()
+	}
+
+	dependencies {
+	    compile 'org.lightsleep:lightsleep:1.1.+'
+	}
+
 
 #### ライセンス
 

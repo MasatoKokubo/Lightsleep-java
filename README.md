@@ -18,11 +18,15 @@ Lightsleep is a database persistence library of lightweight, supports later Java
 - SQL Server
 - DBMSs that conforms to the standard SQL
 
-#### How to Use
+#### Description example in *build.gradle*
 
-1. Download the latest release of the archive files (lightsleep-X.X.X.zip).
-1. Unzip the downloaded archive file and copy jar file (lightsleep-X.X.X.jar) to any folder.
-1. Include this jar file to class path.
+	repositories {
+	    jcenter()
+	}
+
+	dependencies {
+	    compile 'org.lightsleep:lightsleep:1.1.+'
+	}
 
 #### License
 

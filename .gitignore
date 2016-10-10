@@ -16,3 +16,4 @@ bin/
 build/
 build_back.gradle
 *.java_
+*.gradle_

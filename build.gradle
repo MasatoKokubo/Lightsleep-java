@@ -1,36 +1,52 @@
-// Copyright (c) 2016 Masato Kokubo
+// (c) 2016 Masato Kokubo
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
+	}
+}
 
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 apply plugin: 'java'
-apply plugin: 'eclipse'
 
 repositories {
-    mavenCentral()
+	jcenter()
 }
 
 dependencies {
-	compile 'org.apache.logging.log4j:log4j-api:2.6.2'
-	compile 'log4j:log4j:1.2.17'
-	compile 'org.slf4j:slf4j-api:1.7.21'
-	compile 'org.apache.commons:commons-dbcp2:2.1.1'
-	compile 'org.apache.tomcat:tomcat-jdbc:8.5.4'
-	compile 'com.mchange:c3p0:0.9.5.2'
-	compile 'com.zaxxer:HikariCP:2.4.7'
+	compile 'log4j:log4j:1.2.+'
+	compile 'org.apache.logging.log4j:log4j-api:2.6.+'
+	compile 'org.slf4j:slf4j-api:1.7.+'
 
-	compile files(
-		'C:/Java/jdbc/ojdbc7_g.jar'
-	)
+	compile 'com.mchange:c3p0:0.9.5.+'
+	compile 'com.zaxxer:HikariCP:2.4.+'
+	compile 'org.apache.commons:commons-dbcp2:2.1.+'
+	compile 'org.apache.tomcat:tomcat-jdbc:8.5.+'
+
+	compile 'com.hynnet:oracle-driver-ojdbc:12.1.0.+'
 }
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
+group               = 'org.lightsleep'
+archivesBaseName    = 'lightsleep'
 version             = '1.1.0'
-project.archivesBaseName = 'lightsleep'
 
 compileJava {
 	options.encoding     = 'UTF-8'
 	options.deprecation  = true
 	options.debug        = true
 	options.compilerArgs = ['-Xlint']
+}
+
+compileTestJava {
+	options.encoding     = compileJava.options.encoding
+	options.deprecation  = compileJava.options.deprecation
+	options.debug        = compileJava.options.debug
+	options.compilerArgs = compileJava.options.compilerArgs
 }
 
 task compileJava_ja(type:JavaCompile) {
@@ -49,7 +65,7 @@ jar {
 		attributes	'Implementation-Title'    : project.name,
 					'Implementation-Version'  : version,
 					'Implementation-Vendor'   : 'Masato Kokubo',
-					'Implementation-Vendor-Id': 'masatokokubo.jp'
+					'Implementation-Vendor-Id': 'jp.masatokokubo'
 	}
 }
 
@@ -114,4 +130,66 @@ task zip(type: Zip) {
 	into('/'         , {from 'README_ja.md', 'Tutorial_ja.md', 'Manual_ja.md'})
 	into('javadoc'   , {from 'build/docs/javadoc'})
 	into('javadoc_ja', {from 'build/docs/javadoc_ja'})
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'source'
+
+	manifest {
+		attributes	'Implementation-Title'    : project.name,
+					'Implementation-Version'  : version,
+					'Implementation-Vendor'   : 'Masato Kokubo',
+					'Implementation-Vendor-Id': 'jp.masatokokubo'
+	}
+
+	into('/org', {from 'src/main/java/org'})
+}
+
+task javadocJar(type: Jar, dependsOn:javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+artifacts {
+	archives jar
+	archives sourcesJar
+	archives javadocJar
+}
+
+publishing {
+	publications {
+		mavenPublication(MavenPublication) {
+//			from components.java
+			groupId    group
+			artifactId archivesBaseName
+			version    version
+		}
+	}
+}
+
+bintray {
+	user = project.hasProperty('bintray_user') ? bintray_user : ''
+	key  = project.hasProperty('bintray_api_key') ? bintray_api_key : ''
+	configurations = ['archives']
+	publications   = ['mavenPublication']
+
+//	dryRun = true
+
+	pkg {
+		repo            = 'maven'
+		name            = 'Lightsleep'
+		websiteUrl      = 'https://github.com/MasatoKokubo/Lightsleep-java'
+		issueTrackerUrl = 'https://github.com/MasatoKokubo/Lightsleep-java/issues'
+		vcsUrl          = 'https://github.com/MasatoKokubo/Lightsleep-java.git'
+		licenses        = ['MIT']
+		version {
+			name           = project.version
+			released       = new Date()
+			vcsTag         = project.version
+			gpg {
+				sign       = true
+				passphrase = project.hasProperty('bintray_gpg_password') ? bintray_gpg_password : ''
+			}
+		}
+	}
 }
