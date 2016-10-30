@@ -10,8 +10,19 @@ import javax.sql.DataSource;
 import com.mchange.v2.c3p0.DataSources;
 
 /**
-	Gets <b>Connection</b> objects using
-	<a href="http://www.mchange.com/projects/c3p0/" target="c3p0">c3p0</a>.
+	Gets database connections using
+	<a href="http://www.mchange.com/projects/c3p0/" target="c3p0">c3p0 JDBC Connection Pool</a>.
+	That refer to the following properties of lightsleep.properties file.
+
+	<div class="blankline">&nbsp;</div>
+
+	<table class="additinal">
+		<caption>References in lightsleep.properties</caption>
+		<tr><th>Property Name</th><th>Content</th></tr>
+		<tr><td>url     </td><td>The URL of the database to be connected</td></tr>
+		<tr><td>user    </td><td>The user name to use when connecting to a database</td></tr>
+		<tr><td>password</td><td>The password to use when connecting to the database</td></tr>
+	</table>
 
 	@since 1.1.0
 	@author Masato Kokubo
@@ -26,17 +37,19 @@ public class C3p0 extends AbstractConnectionSupplier {
 	public C3p0() {
 	}
 
-	/**
-		Constructs a new <b>C3p0</b>.<br>
-		Uses values specified in the lightsleep.properties and
-		<i>&lt;<b>resourceName</b>&gt;</i>.properties and (c3p0.properties or c3p0-config.xml)
-		file as the connection information.
-
-		@param resourceName additional resource name
-	*/
-	public C3p0(String resourceName) {
-		super(resourceName);
-	}
+// 1.2.0
+//	/**
+//		Constructs a new <b>C3p0</b>.<br>
+//		Uses values specified in the lightsleep.properties and
+//		<i>&lt;<b>resourceName</b>&gt;</i>.properties and (c3p0.properties or c3p0-config.xml)
+//		file as the connection information.
+//
+//		@param resourceName additional resource name
+//	*/
+//	public C3p0(String resourceName) {
+//		super(resourceName);
+//	}
+////
 
 	/**
 		{@inheritDoc}

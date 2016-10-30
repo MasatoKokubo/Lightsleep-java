@@ -14,8 +14,27 @@ import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.util.PropertyElf;
 
 /**
-	Gets <b>Connection</b> objects using
-	<a href="http://brettwooldridge.github.io/HikariCP/" target="Apache">HikariCP JDBC Connection Pool</a>.
+	Gets database connections using
+	<a href="http://brettwooldridge.github.io/HikariCP/" target="HikariCP">HikariCP JDBC Connection Pool</a>.
+	That refer to the following properties of lightsleep.properties file.
+
+	<div class="blankline">&nbsp;</div>
+
+	<table class="additinal">
+		<caption>References in lightsleep.properties</caption>
+		<tr><th>Property Name</th><th>Content</th></tr>
+		<tr><td>jdbcUrl </td><td>The URL of the database to be connected</td></tr>
+		<tr><td>username</td><td>The user name to use when connecting to a database</td></tr>
+		<tr><td>password</td><td>The password to use when connecting to the database</td></tr>
+		<tr>
+			<td><i>Other property names</i></td>
+			<td>
+				<a href="https://github.com/brettwooldridge/HikariCP#configuration-knobs-baby" target="HikariCP">
+					Other properties of HikariCP
+				</a>
+			</td>
+		</tr>
+	</table>
 
 	@since 1.1.0
 	@author Masato Kokubo
@@ -28,15 +47,17 @@ public class HikariCP extends AbstractConnectionSupplier {
 	public HikariCP() {
 	}
 
-	/**
-		Constructs a new <b>HikariCP</b>.<br>
-		Use values specified in the <i>&lt;<b>resourceName</b>&gt;</i>.properties file as the connection information.
-
-		@param resourceName the resource name
-	*/
-	public HikariCP(String resourceName) {
-		super(resourceName);
-	}
+// 1.2.0
+//	/**
+//		Constructs a new <b>HikariCP</b>.<br>
+//		Use values specified in the <i>&lt;<b>resourceName</b>&gt;</i>.properties file as the connection information.
+//
+//		@param resourceName the resource name
+//	*/
+//	public HikariCP(String resourceName) {
+//		super(resourceName);
+//	}
+////
 
 	/**
 		{@inheritDoc}

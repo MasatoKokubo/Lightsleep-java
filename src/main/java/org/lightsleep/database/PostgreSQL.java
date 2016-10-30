@@ -88,7 +88,10 @@ public class PostgreSQL extends Standard {
 					case '\n'    : buff.append("\\n" ); escaped = true; break; // 0A LF
 					case '\f'    : buff.append("\\f" ); escaped = true; break; // 0C FF
 					case '\r'    : buff.append("\\r" ); escaped = true; break; // 0D CR
-					case '\''    : buff.append("''"  ); escaped = true; break;
+				// 1.2.0
+				//	case '\''    : buff.append("''"  ); escaped = true; break;
+					case '\''    : buff.append("''"  ); break;
+				////
 					case '\\'    : buff.append("\\\\"); escaped = true; break;
 					default      : buff.append(ch    ); break;
 					}

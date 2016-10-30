@@ -13,6 +13,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.lightsleep.RuntimeSQLException;
+import org.lightsleep.database.Database;
 import org.lightsleep.helper.Resource;
 import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
@@ -48,18 +49,25 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 		Use values specified in the lightsleep.properties file as the connection information.
 	*/
 	public AbstractConnectionSupplier() {
+	// 1.2.0
+		properties.remove(Logger.class.getSimpleName());
+		properties.remove(Database.class.getSimpleName());
+		properties.remove(ConnectionSupplier.class.getSimpleName());
+	////
 	}
 
-	/**
-		Constructs a new <b>AbstractConnectionSupplier</b>.
-		Use values specified in the lightsleep.properties and
-		<i>&lt;<b>resourceName</b>&gt;</i>.properties file as the connection information.
-
-		@param resourceName the resource name
-	*/
-	public AbstractConnectionSupplier(String resourceName) {
-		properties.putAll(new Resource(resourceName).getProperties());
-	}
+// 1.2.0
+//	/**
+//		Constructs a new <b>AbstractConnectionSupplier</b>.
+//		Use values specified in the lightsleep.properties and
+//		<i>&lt;<b>resourceName</b>&gt;</i>.properties file as the connection information.
+//
+//		@param resourceName the resource name
+//	*/
+//	public AbstractConnectionSupplier(String resourceName) {
+//		properties.putAll(new Resource(resourceName).getProperties());
+//	}
+////
 
 	/**
 		Returns a data source.

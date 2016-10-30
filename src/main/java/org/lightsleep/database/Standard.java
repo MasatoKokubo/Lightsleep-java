@@ -633,6 +633,9 @@ public class Standard implements Database {
 		buff.append(" (");
 		String[] delimiter = new String[] {""};
 		sql.entityInfo().columnInfos().stream()
+		// 1.2.0
+			.filter(columnInfo -> columnInfo.insertable())
+		////
 			.forEach(columnInfo -> {
 				buff.append(delimiter[0])
 					.append(columnInfo.columnName());

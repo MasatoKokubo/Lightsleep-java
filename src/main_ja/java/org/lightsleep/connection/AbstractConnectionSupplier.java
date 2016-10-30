@@ -32,15 +32,17 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	public AbstractConnectionSupplier() {
 	}
 
-	/**
-		<b>AbstractConnectionSupplier</b> を構築します。
-		lightsleep.properties および <i>&lt;<b>resourceName</b>&gt;</i>.properties ファイル
-		の設定値を接続情報として使用します。
-
-		@param resourceName 追加のリソース名
-	*/
-	public AbstractConnectionSupplier(String resourceName) {
-	}
+// 1.2.0
+//	/**
+//		<b>AbstractConnectionSupplier</b> を構築します。
+//		lightsleep.properties および <i>&lt;<b>resourceName</b>&gt;</i>.properties ファイル
+//		の設定値を接続情報として使用します。
+//
+//		@param resourceName 追加のリソース名
+//	*/
+//	public AbstractConnectionSupplier(String resourceName) {
+//	}
+////
 
 	/**
 		データソースを返します。

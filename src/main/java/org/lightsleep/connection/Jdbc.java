@@ -13,7 +13,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import javax.sql.DataSource;
 
 /**
-	Gets <b>Connection</b> objects using the
+	Gets database connections using the
 	<b>DriverManager</b> class.<br>
 	That refer to the following properties of lightsleep.properties file.
 
@@ -22,10 +22,9 @@ import javax.sql.DataSource;
 	<table class="additinal">
 		<caption>References in lightsleep.properties</caption>
 		<tr><th>Property Name</th><th>Content</th></tr>
-		<tr><td>driver  </td><td>The class name of the JDBC driver</td></tr>
 		<tr><td>url     </td><td>The URL of the database to be connected</td></tr>
 		<tr><td>user    </td><td>The user name to use when connecting to a database</td></tr>
-		<tr><td>password</td><td>The password when connecting to the database</td></tr>
+		<tr><td>password</td><td>The password to use when connecting to the database</td></tr>
 		<tr>
 			<td><i>Other property names</i></td>
 			<td>Other properties to be used to get a connection from <b>DriverManager</b> class</td>
@@ -45,42 +44,50 @@ public class Jdbc extends AbstractConnectionSupplier {
 		file as the connection information.
 	*/
 	public Jdbc() {
-		init();
-	}
-
-	/**
-		Constructs a new <b>Jdbc</b>.
-		Use values specified in the lightsleep.properties and
-		<i>&lt;<b>resourceName</b>&gt;</i>.properties
-		file as the connection information.
-
-		@param resourceName the resource name
-	*/
-	public Jdbc(String resourceName) {
-		super(resourceName);
-		init();
-	}
-
-	private void init() {
+	// 1.2.0
+	//	init();
 		logger.debug(() -> "Jdbc.<init>: properties: " + properties);
-
-		// driver
-		String driver = properties.getProperty("driver");
-
-		if (driver == null) {
-			logger.error("Jdbc.<init>: property driver = null");
-		} else {
-			try {
-				Class.forName(driver);
-			}
-			catch (Exception e) {
-				logger.error("Jdbc.<init>:", e);
-			}
-		}
 
 		// url
 		url = properties.getProperty("url");
+	////
 	}
+
+// 1.2.0
+//	/**
+//		Constructs a new <b>Jdbc</b>.
+//		Use values specified in the lightsleep.properties and
+//		<i>&lt;<b>resourceName</b>&gt;</i>.properties
+//		file as the connection information.
+//
+//		@param resourceName the resource name
+//	*/
+//	public Jdbc(String resourceName) {
+//		super(resourceName);
+//		init();
+//	}
+//
+//	private void init() {
+//		logger.debug(() -> "Jdbc.<init>: properties: " + properties);
+//
+//		// driver
+//		String driver = properties.getProperty("driver");
+//
+//		if (driver == null) {
+//			logger.error("Jdbc.<init>: property driver = null");
+//		} else {
+//			try {
+//				Class.forName(driver);
+//			}
+//			catch (Exception e) {
+//				logger.error("Jdbc.<init>:", e);
+//			}
+//		}
+//
+//		// url
+//		url = properties.getProperty("url");
+//	}
+////
 
 	/**
 		{@inheritDoc}

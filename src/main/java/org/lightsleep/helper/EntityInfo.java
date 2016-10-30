@@ -85,13 +85,15 @@ public class EntityInfo<E> {
 
 			// @Column / the column name
 			Column column = field.getAnnotation(Column.class);
-			String columnName = column != null ? column.value(): field.getName();
+			String columnName = column != null ? column.value() : field.getName();
 
 			// @Key / is key?
 			boolean isKey = field.getAnnotation(Key.class) != null;
 
-			// @NonSelect / the expression to be used to create SELECT SQL
+			// @NonSelect
 			boolean nonSelect = field.getAnnotation(NonSelect.class) != null;
+
+			// @Select
 			Select select = field.getAnnotation(Select.class);
 			Expression selectExpression = nonSelect
 					? null
@@ -101,6 +103,8 @@ public class EntityInfo<E> {
 
 			// @NonInsert / the expression to be used to create INSERT SQL
 			boolean nonInsert = field.getAnnotation(NonInsert.class) != null;
+
+			// @Insert
 			Insert insert = field.getAnnotation(Insert.class);
 			Expression insertExpression = nonInsert
 						? null
@@ -108,8 +112,10 @@ public class EntityInfo<E> {
 							? new Expression("{#" + propertyName + "}")
 							: new Expression(insert.value());
 
-			// @NonUpdate / the expression to be used to create UPDATE SQL
+			// @NonUpdate
 			boolean nonUpdate = field.getAnnotation(NonUpdate.class) != null;
+
+			// @Update / the expression to be used to create UPDATE SQL
 			Update update = field.getAnnotation(Update.class);
 			Expression updateExpression = nonUpdate
 					? null

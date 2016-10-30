@@ -5,7 +5,7 @@ Lightsleep is a database persistence library of lightweight, supports later Java
 
 #### Features
 
-- Lightsleep is not an implementation of Persistence API. It is a new API using the lambda function and Optional class that was introduced in Java 8.
+- Lightsleep is not an implementation of Persistence API of J2EE. It is a new API using the lambda function and Optional class that was introduced in Java 8.
 - Libraries other than the Java runtime is not required, it can also be used from Java programs, such as batch processing.
 - XML configuration file is not required.
 - Because of the small number of classes and methods that have been implemented, it is easy to learn.
@@ -25,7 +25,7 @@ Lightsleep is a database persistence library of lightweight, supports later Java
 	}
 
 	dependencies {
-	    compile 'org.lightsleep:lightsleep:1.1.+'
+	    compile 'org.lightsleep:lightsleep:1.+'
 	}
 
 #### License

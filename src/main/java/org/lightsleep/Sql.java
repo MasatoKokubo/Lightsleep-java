@@ -163,7 +163,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	//  Initialize the database handler
 	static {
-		String databaseName = Resource.globalResource.get("Database", "Standard");
+	// 1.2.0
+	//	String databaseName = Resource.globalResource.get("Database", "Standard");
+		String databaseName = Resource.globalResource.get(Database.class.getSimpleName(), Standard.class.getSimpleName());
+	////
 		if (databaseName.indexOf('.') < 0)
 			databaseName = Database.class.getPackage().getName() + '.' + databaseName;
 
@@ -212,7 +215,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	// Initialize the connection supplier
 	static {
-		String supplierName = Resource.globalResource.get("ConnectionSupplier", "Jdbc");
+	// 1.2.0
+	//	String supplierName = Resource.globalResource.get("ConnectionSupplier", "Jdbc");
+		String supplierName = Resource.globalResource.get(ConnectionSupplier.class.getSimpleName(), Jdbc.class.getSimpleName());
+	////
 		if (supplierName.indexOf('.') < 0)
 			supplierName = ConnectionSupplier.class.getPackage().getName() + '.' + supplierName;
 

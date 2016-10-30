@@ -231,7 +231,7 @@ Lightsleep has following classes to supply connections.
 1. org.lightsleep.connection.Jdbc
 1. org.lightsleep.connection.Jndi
 
-```C3p0```, ```Dbcp```, ```HikariCP``` and ```TomcatCP``` class gets database connectiona using the corresponding connection pool library.  
+```C3p0```, ```Dbcp 2```, ```HikariCP``` and ```TomcatCP``` class gets database connectiona using the corresponding connection pool library.  
 ```JdbcConnection``` class gets database connections using the ```java.sql.DriverManager.getConnection``` method.  
 ```JndiConnection``` class gets database connections from the data source (```javax.sql.DataSource```) that was obtained using JNDI (Java Naming and Directory Interface).  
 Define the connection supplier class and information needed to connect in the **lightsleep.properties** file.
@@ -239,7 +239,6 @@ Define the connection supplier class and information needed to connect in the **
 ```properties:lightsleep.properties
 # lightsleep.properties / Example for C3p0
 ConnectionSupplier = C3p0
-driver   = com.mysql.jdbc.Driver
 url      = jdbc:mysql://MySQL57/test
 user     = test
 password = _test_
@@ -253,22 +252,20 @@ c3p0.maxPoolSize     = 30
 ```
 
 ```properties:lightsleep.properties
-# lightsleep.properties / Example for Dbcp
+# lightsleep.properties / Example for Dbcp 2
 ConnectionSupplier = Dbcp
-driverClassName = oracle.jdbc.driver.OracleDriver
-url             = jdbc:oracle:thin:@Oracle121:1521:test
-username        = test
-password        = _test_
-initialSize     = 20
-maxTotal        = 30
+url         = jdbc:oracle:thin:@Oracle121:1521:test
+username    = test
+password    = _test_
+initialSize = 20
+maxTotal    = 30
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / Example for HikariCP
 ConnectionSupplier = HikariCP
-driverClassName = org.postgresql.Driver
 jdbcUrl         = jdbc:postgresql://Postgres95/test
-user            = test
+username        = test
 password        = _test_
 minimumIdle     = 10
 maximumPoolSize = 30
@@ -277,18 +274,16 @@ maximumPoolSize = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / Example for TomcatCP
 ConnectionSupplier = TomcatCP
-driverClassName = com.microsoft.sqlserver.jdbc.SQLServerDriver
-url             = jdbc:sqlserver://SQLServer13;database=test
-username        = test
-password        = _test_
-initialSize     = 20
-maxActive       = 30
+url         = jdbc:sqlserver://SQLServer13;database=test
+username    = test
+password    = _test_
+initialSize = 20
+maxActive   = 30
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / Example for Jdbc
-ConnectionSupplier      = Jdbc
-driver   = com.mysql.jdbc.Driver
+ConnectionSupplier = Jdbc
 url      = jdbc:mysql://MySQL57/test
 user     = test
 password = _test_

@@ -232,7 +232,7 @@ Lightsleep にはコネクションを供給するクラスとして以下があ
 1. org.lightsleep.connection.Jdbc
 1. org.lightsleep.connection.Jndi
 
-```C3p0```, ```Dbcp```, ```HikariCP```, ```TomcatCP``` クラスは、それぞれ対応するコネクション・プール・ライブラリを使用してデータベース・コネクションを取得します。  
+```C3p0```, ```Dbcp 2```, ```HikariCP```, ```TomcatCP``` クラスは、それぞれ対応するコネクション・プール・ライブラリを使用してデータベース・コネクションを取得します。  
 ```JdbcConnection``` クラスは、```java.sql.DriverManager.getConnection``` メソッドを使用してデータベース・コネクションを取得します。  
 ```JndiConnection``` クラスは、JNDI (Java Naming and Directory Interface) を使用して取得したデータソース (```javax.sql.DataSource```) からデータベース・コネクションを取得します。  
 コネクションを供給するクラスおよび接続に必要な情報 **lightsleep.properties** ファイルに定義してください。
@@ -240,7 +240,6 @@ Lightsleep にはコネクションを供給するクラスとして以下があ
 ```properties:lightsleep.properties
 # lightsleep.properties / C3p0 設定サンプル
 ConnectionSupplier = C3p0
-driver   = com.mysql.jdbc.Driver
 url      = jdbc:mysql://MySQL57/test
 user     = test
 password = _test_
@@ -254,22 +253,20 @@ c3p0.maxPoolSize     = 30
 ```
 
 ```properties:lightsleep.properties
-# lightsleep.properties / Dbcp 設定サンプル
+# lightsleep.properties / Dbcp 2 設定サンプル
 ConnectionSupplier = Dbcp
-driverClassName = oracle.jdbc.driver.OracleDriver
-url             = jdbc:oracle:thin:@Oracle121:1521:test
-username        = test
-password        = _test_
-initialSize     = 20
-maxTotal        = 30
+url         = jdbc:oracle:thin:@Oracle121:1521:test
+username    = test
+password    = _test_
+initialSize = 20
+maxTotal    = 30
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / HikariCP 設定サンプル
 ConnectionSupplier = HikariCP
-driverClassName = org.postgresql.Driver
 jdbcUrl         = jdbc:postgresql://Postgres95/test
-user            = test
+username        = test
 password        = _test_
 minimumIdle     = 10
 maximumPoolSize = 30
@@ -278,7 +275,6 @@ maximumPoolSize = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / TomcatCP 設定サンプル
 ConnectionSupplier = TomcatCP
-driverClassName = com.microsoft.sqlserver.jdbc.SQLServerDriver
 url             = jdbc:sqlserver://SQLServer13;database=test
 username        = test
 password        = _test_
@@ -288,8 +284,7 @@ maxActive       = 30
 
 ```properties:lightsleep.properties
 # lightsleep.properties / Jdbc 設定サンプル
-ConnectionSupplier      = Jdbc
-driver   = com.mysql.jdbc.Driver
+ConnectionSupplier = Jdbc
 url      = jdbc:mysql://MySQL57/test
 user     = test
 password = _test_

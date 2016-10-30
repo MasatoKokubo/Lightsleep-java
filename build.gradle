@@ -17,23 +17,23 @@ repositories {
 }
 
 dependencies {
-	compile 'log4j:log4j:1.2.+'
-	compile 'org.apache.logging.log4j:log4j-api:2.6.+'
-	compile 'org.slf4j:slf4j-api:1.7.+'
+	compile 'log4j:log4j:1.+'
+	compile 'org.apache.logging.log4j:log4j-api:2.+'
+	compile 'org.slf4j:slf4j-api:1.+'
 
-	compile 'com.mchange:c3p0:0.9.5.+'
-	compile 'com.zaxxer:HikariCP:2.4.+'
-	compile 'org.apache.commons:commons-dbcp2:2.1.+'
-	compile 'org.apache.tomcat:tomcat-jdbc:8.5.+'
+	compile 'com.mchange:c3p0:0.+'
+	compile 'com.zaxxer:HikariCP:2.+'
+	compile 'org.apache.commons:commons-dbcp2:2.+'
+	compile 'org.apache.tomcat:tomcat-jdbc:8.+'
 
-	compile 'com.hynnet:oracle-driver-ojdbc:12.1.0.+'
+	compile 'com.hynnet:oracle-driver-ojdbc:12.+'
 }
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '1.1.0'
+version             = '1.2.0'
 
 compileJava {
 	options.encoding     = 'UTF-8'

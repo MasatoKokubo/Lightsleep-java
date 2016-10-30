@@ -71,7 +71,10 @@ public class EntityCondition<E> implements Condition {
 			.forEach(columnInfo -> {
 				String propertyName = columnInfo.propertyName();
 				String columnName = columnInfo.getColumnName(tableAlias);
-				condition[0] = condition[0].and(columnName + " = {}", accessor.getValue(entity, propertyName));
+			// 1.2.0
+			//	condition[0] = condition[0].and(columnName + " = {}", accessor.getValue(entity, propertyName));
+				condition[0] = condition[0].and(columnName + "={}", accessor.getValue(entity, propertyName));
+			////
 			});
 
 		return condition[0].toString(sql, parameters);

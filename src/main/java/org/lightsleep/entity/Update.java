@@ -19,5 +19,8 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 public @interface Update {
 	/** @return the expression */
-	String value() default "";
+// 1.2.0
+//	String value() default "";
+	String value();
+////
 }

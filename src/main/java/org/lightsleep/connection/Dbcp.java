@@ -9,8 +9,27 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
 
 /**
-	Gets <b>Connection</b> objects using
-	<a href="http://commons.apache.org/proper/commons-dbcp/" target="Apache">Apache Commons DBCP</a>.
+	Gets database connections using
+	<a href="http://commons.apache.org/proper/commons-dbcp/" target="Apache">Apache Commons DBCP 2</a>.
+	That refer to the following properties of lightsleep.properties file.
+
+	<div class="blankline">&nbsp;</div>
+
+	<table class="additinal">
+		<caption>References in lightsleep.properties</caption>
+		<tr><th>Property Name</th><th>Content</th></tr>
+		<tr><td>url     </td><td>The URL of the database to be connected</td></tr>
+		<tr><td>username</td><td>The user name to use when connecting to a database</td></tr>
+		<tr><td>password</td><td>The password to use when connecting to the database</td></tr>
+		<tr>
+			<td><i>Other property names</i></td>
+			<td>
+				<a href="http://commons.apache.org/proper/commons-dbcp/configuration.html" target="Apache">
+					Other properties of DBCP 2
+				</a>
+			</td>
+		</tr>
+	</table>
 
 	@since 1.1.0
 	@author Masato Kokubo
@@ -24,17 +43,19 @@ public class Dbcp extends AbstractConnectionSupplier {
 	public Dbcp() {
 	}
 
-	/**
-		Constructs a new <b>Dbcp</b>.<br>
-		Use values specified in the lightsleep.properties and
-		<i>&lt;<b>resourceName</b>&gt;</i>.properties
-		file as the connection information.
-
-		@param resourceName the resource name
-	*/
-	public Dbcp(String resourceName) {
-		super(resourceName);
-	}
+// 1.2.0
+//	/**
+//		Constructs a new <b>Dbcp</b>.<br>
+//		Use values specified in the lightsleep.properties and
+//		<i>&lt;<b>resourceName</b>&gt;</i>.properties
+//		file as the connection information.
+//
+//		@param resourceName the resource name
+//	*/
+//	public Dbcp(String resourceName) {
+//		super(resourceName);
+//	}
+////
 
 	/**
 		{@inheritDoc}
