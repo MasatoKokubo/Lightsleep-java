@@ -1,6 +1,6 @@
 /*
 	Dbcp.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.connection;
 
@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 	<div class="blankline">&nbsp;</div>
 
 	<table class="additinal">
-		<caption>lightsleep.properties の参照</caption>
+		<caption><span>lightsleep.properties の参照</span></caption>
 		<tr><th>プロパティ名</th><th>内 容</th></tr>
 		<tr><td>url     </td><td>接続するデータベースの URL</td></tr>
 		<tr><td>username</td><td>データベースに接続する時のユーザー名</td></tr>

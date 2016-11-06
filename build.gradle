@@ -1,4 +1,4 @@
-// (c) 2016 Masato Kokubo
+// (C) 2016 Masato Kokubo
 buildscript {
 	repositories {
 		jcenter()
@@ -33,7 +33,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '1.2.0'
+version             = '1.3.0'
 
 compileJava {
 	options.encoding     = 'UTF-8'

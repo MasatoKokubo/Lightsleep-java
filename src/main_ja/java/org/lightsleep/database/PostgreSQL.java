@@ -1,6 +1,6 @@
 /*
 	PostgreSQL.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.database;
 
@@ -13,7 +13,7 @@ package org.lightsleep.database;
 	の内容に加え以下の <b>TypeConverter</b> を追加した <b>TypeConverter</b> マップを持ちます。
 
 	<table class="additinal">
-		<caption>登録されている TypeConverter オブジェクト</caption>
+		<caption><span>登録されている TypeConverter オブジェクト</span></caption>
 		<tr><th>変換元データ型   </th><th>変換先データ型</th></tr>
 		<tr><td>boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
 		<tr><td>String </td><td>{@linkplain org.lightsleep.component.SqlString} (エスケープ・シーケンス対応)</td></tr>

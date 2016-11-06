@@ -1,6 +1,6 @@
 /*
 	TypeConverter.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.helper;
 
@@ -13,7 +13,7 @@ import java.util.function.Function;
 	以下の <b>TypeConverter</b> オブジェクトが <b>typeConverterMap</b> に登録されています。<br>
 
 	<table class="additinal">
-		<caption>登録されている TypeConverter オブジェクト</caption>
+		<caption><span>登録されている TypeConverter オブジェクト</span></caption>
 		<tr><th>変換元データ型   </th><th>変換先データ型</th></tr>
 
 		<tr><td>Byte             </td><td rowspan="9">Boolean</td></tr>

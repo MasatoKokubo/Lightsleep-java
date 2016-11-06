@@ -1,6 +1,6 @@
 /*
 	Oracle.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.database;
 
@@ -24,7 +24,7 @@ import org.lightsleep.helper.TypeConverter;
 	{@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
 
 	<table class="additinal">
-		<caption>TypeConverter objects that are registered</caption>
+		<caption><span>Registered TypeConverter objects</span></caption>
 		<tr><th>Source data type</th><th>Destination data type</th></tr>
 		<tr><td>boolean       </td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
 		<tr><td>String        </td><td rowspan="2">{@linkplain org.lightsleep.component.SqlString}</td></tr>

@@ -1,6 +1,6 @@
 /*
 	Transaction.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep;
 
@@ -16,12 +16,12 @@ import org.lightsleep.logger.LoggerFactory;
 /**
 	A functional interface to execute transactions.
 
-	<div class="sampleTitle"><span>An Example</span></div>
+	<div class="sampleTitle"><span>Example of use</span></div>
 <div class="sampleCode"><pre>
-Transaction.execute(connection -&gt; {
+<b>Transaction.execute(connection -&gt; {</b>
     new Sql&lt;&gt;(Person.class)
         .update(connection, person);
-});
+<b>});</b>
 </pre></div>
 
 	@author Masato Kokubo

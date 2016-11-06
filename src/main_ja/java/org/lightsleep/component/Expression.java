@@ -1,6 +1,6 @@
 /*
 	Expression.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.component;
 
@@ -63,7 +63,7 @@ public class Expression implements Condition {
 		{@inheritDoc}
 
 		<table class="additinal">
-			<caption>変換処理</caption>
+			<caption><span>変換処理</span></caption>
 			<tr>
 				<th>変換前文字列</th>
 				<th>変換後文字列</th>

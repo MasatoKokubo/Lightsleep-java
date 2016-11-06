@@ -1,6 +1,6 @@
 /*
 	Transaction.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep;
 
@@ -12,10 +12,10 @@ import java.sql.SQLException;
 
 	<div class="sampleTitle"><span>使用例</span></div>
 <div class="sampleCode"><pre>
-Transaction.execute(connection -&gt; {
+<b>Transaction.execute(connection -&gt; {</b>
     new Sql&lt;&gt;(Person.class)
         .update(connection, person);
-});
+<b>});</b>
 </pre></div>
 
 	@since 1.0

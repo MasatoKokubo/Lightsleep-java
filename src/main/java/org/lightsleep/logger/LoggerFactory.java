@@ -1,6 +1,6 @@
 /*
 	LoggerFactory.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 
 package org.lightsleep.logger;
@@ -30,7 +30,7 @@ logger = Log4j
 	are mapped as shown in the following table.
 
 	<table class="additinal">
-		<caption>Mappings of Log Levels</caption>
+		<caption><span>Mappings of Log Levels</span></caption>
 		<tr>
 			<th>This Class</th>
 			<th>Jdk</th>

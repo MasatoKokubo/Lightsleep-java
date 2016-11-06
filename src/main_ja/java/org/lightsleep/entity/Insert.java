@@ -1,16 +1,33 @@
 /*
 	Insert.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.entity;
 
 import java.lang.annotation.*;
 
 /**
-	INSERT SQL の挿入値の式を指定します。<br>
-	このアノテーションが指定された場合、フィールドの値は使用されません。
+	INSERT SQL で、フィールド値の代わりに使用される式を示します。
+
+	<div class="sampleTitle"><span>使用例</span></div>
+<div class="sampleCode"><pre>
+public class Contact {
+
+ <b>{@literal @}Insert("CURRENT_TIMESTAMP")</b>
+  public Timestamp created;
+
+ <b>{@literal @}Insert("CURRENT_TIMESTAMP")</b>
+  public Timestamp modified;
+</pre></div>
+
+	<div class="sampleTitle"><span>SQL</span></div>
+<div class="sampleCode"><pre>
+INSERT INTO Contact (..., <b>created</b>, <b>modified</b>) VALUES (..., <b>CURRENT_TIMESTAMP</b>, <b>CURRENT_TIMESTAMP</b>)
+</pre></div>
 
 	@since 1.0.0
+	@see InsertProperty
+	@see InsertProperties
 	@author Masato Kokubo
 */
 @Documented
@@ -19,5 +36,5 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 public @interface Insert {
 	/** @return 式 */
-	String value() default "";
+	String value();
 }

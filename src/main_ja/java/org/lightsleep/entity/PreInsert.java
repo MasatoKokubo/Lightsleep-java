@@ -1,6 +1,6 @@
 /*
 	PreInsert.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.entity;
 
@@ -12,6 +12,19 @@ import java.sql.Connection;
 	INSERT SQL 実行前に <b>preInsert</b> メソッドがコールされます。<br>
 
 	<b>preInsert</b> メソッドでは、プライマリー・キーの採番の実装等を行います。
+
+	<div class="sampleTitle"><span>Example of use</span></div>
+<div class="sampleCode"><pre>
+public class Contact implements <b>PreInsert</b> {
+
+ {@literal @}Override
+  <b>public int preInsert(Connection connection)</b> {
+    <i>// 挿入前に ID を採番</i>
+    id = NextId.getNewId(connection, Contact.class);
+    return 0;
+  }
+}
+</pre></div>
 
 	@since 1.0.0
 	@author Masato Kokubo

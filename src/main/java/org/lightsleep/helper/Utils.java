@@ -1,6 +1,6 @@
 /*
 	Utils.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.helper;
 
@@ -172,11 +172,18 @@ public class Utils {
 		E[] array = (E[])Array.newInstance(elementType, length);
 		try {
 			for (int index = 0; index < length; ++index)
-				array[index] = elementType.newInstance();
-			}
-		catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException(e);
+			// 1.3.0 for Java 9
+			//	array[index] = elementType.newInstance();
+				array[index] = elementType.getConstructor().newInstance();
+			////
 		}
+	// 1.3.0 for Java 9
+	//	catch (InstantiationException | IllegalAccessException e) {
+	//		throw new RuntimeException(e);
+	//	}
+		catch (RuntimeException e) {throw e;}
+		catch (Exception e) {throw new RuntimeException(e);}
+	////
 
 		return array;
 	}

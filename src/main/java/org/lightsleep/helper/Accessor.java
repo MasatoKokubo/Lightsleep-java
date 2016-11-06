@@ -1,6 +1,6 @@
 /*
 	Accessor.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.helper;
 
@@ -14,6 +14,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,6 +27,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.lightsleep.entity.NonColumn;
+import org.lightsleep.entity.NonColumnProperties;
+import org.lightsleep.entity.NonColumnProperty;
 import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
 
@@ -62,6 +66,10 @@ public class Accessor<T> {
 
 	// The list of the property names of the properties to be getting and setting the value
 	private final List<String> valuePropertyNames;
+
+// 1.3.0
+	private final Set<String> nonColumnSet = new HashSet<>();
+////
 
 	// Prefixes of getter methods
 	private static final String[] getterPrefixes = new String[]{"", "get", "is"};
@@ -105,6 +113,15 @@ public class Accessor<T> {
 		if (objectClass == null) throw new NullPointerException("Accessor.<init>: objectClass == null");
 
 		this.objectClass = objectClass;
+
+	// 1.3.0
+		// @NonColumnProperty, @NonColumnProperties
+		NonColumnProperty nonColumnProperty = objectClass.getAnnotation(NonColumnProperty.class);
+		if (nonColumnProperty != null) nonColumnSet.add(nonColumnProperty.value());
+		NonColumnProperties nonColumnProperties = objectClass.getAnnotation(NonColumnProperties.class);
+		if (nonColumnProperties != null)
+			Arrays.stream(nonColumnProperties.value()).forEach(annotation -> nonColumnSet.add(annotation.value()));
+	////
 
 		putToMaps(objectClass, "", null);
 
@@ -154,6 +171,9 @@ public class Accessor<T> {
 			String fieldName = field.getName();
 			Class<?> fieldType = field.getType();
 			String propertyName = basePropertyName + fieldName;
+		// 1.3.0
+			if (nonColumnSet.contains(propertyName)) continue;
+		////
 
 			// put to fieldMap
 			fieldMap.put(propertyName, field);

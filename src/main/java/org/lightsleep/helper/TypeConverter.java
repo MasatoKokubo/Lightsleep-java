@@ -1,6 +1,6 @@
 /*
 	TypeConverter.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.helper;
 
@@ -34,7 +34,7 @@ import org.lightsleep.logger.LoggerFactory;
 	Following <b>TypeConverter</b> objects has been registered in <b>typeConverterMap</b>.<br>
 
 	<table class="additinal">
-		<caption>TypeConverter objects that are registered</caption>
+		<caption><span>Registered TypeConverter objects</span></caption>
 		<tr><th>Source Data Type</th><th>Destination Data Type</th></tr>
 
 		<tr><td>Byte          </td><td rowspan="9">Boolean</td></tr>

@@ -1,6 +1,6 @@
 /*
 	Jndi.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.connection;
 
@@ -18,7 +18,7 @@ import org.lightsleep.helper.Resource;
 	<div class="BlankLine">&nbsp;</div>
 
 	<table class="additinal">
-		<caption>References in lightsleep.properties</caption>
+		<caption><span>References in lightsleep.properties</span></caption>
 		<tr><th>Property Name</th><th>Content</th></tr>
 		<tr><td>dataSource</td><td>The resource name of the data source</td></tr>
 	</table>

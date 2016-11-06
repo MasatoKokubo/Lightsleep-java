@@ -1,6 +1,6 @@
 /*
 	Sql.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep;
 
@@ -47,14 +47,19 @@ import org.lightsleep.logger.LoggerFactory;
 /**
 	The class to build and execute SQLs.
 
-	<div class="sampleTitle"><span>An Example that creates and executes SELECT SQL</span></div>
+	<div class="sampleTitle"><span>Example of use</span></div>
 <div class="sampleCode"><pre>
-List&gt;Person&gt; persons = new ArrayList&gt;&gt;();
+List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
 Transaction.execute(connection -&gt; {
-    new Sql&lt;&gt;(Person.class)
-        .where("{name.last} = {}", name)
-        .select(connection, persons::add);
+    new <b>Sql</b>&lt;&gt;(Contact.class)
+        .<b>where</b>("{familyName} = {}", "Smith")
+        .<b>select</b>(connection, contacts::add);
 });
+</pre></div>
+
+	<div class="sampleTitle"><span>SQL</span></div>
+<div class="sampleCode"><pre>
+SELECT contactId, familyName, givenName, ... FROM Contact WHERE familyName='Smith'
 </pre></div>
 
 	@param <E> the entity class corresponding to the main table
@@ -232,9 +237,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		}
 
 		try {
-			setConnectionSupplier(supplierClass.newInstance());
+		// 1.3.0 for Java 9
+			setConnectionSupplier(supplierClass.getConstructor().newInstance());
+		////
 		}
-		catch (InstantiationException | IllegalAccessException e) {
+	// 1.3.0 for Java 9
+	//	catch (InstantiationException | IllegalAccessException e) {
+		catch (Exception e) {
+	////
 			logger.error("", e);
 		}
 	}
@@ -1219,9 +1229,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			try {
 				count[0] = resultSet.getInt(1);
 			}
-			catch (Exception e) {
-				throw new RuntimeSQLException(e);
-			}
+		// 1.3.0
+		//	catch (Exception e) {throw new RuntimeSQLException(e);}
+			catch (SQLException e) {throw new RuntimeSQLException(e);}
+		////
 		});
 		return count[0];
 	}
@@ -1424,7 +1435,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			String tableAlias = sqlEntityInfo.tableAlias();
 			try {
 				// Create an entity object
-				T entity = entityInfo.entityClass().newInstance();
+			// 1.3.0 for Java 9
+			//	T entity = entityInfo.entityClass().newInstance();
+				T entity = entityInfo.entityClass().getConstructor().newInstance();
+			////
 
 				//  Column loop
 				sqlEntityInfo.selectedSqlColumnInfoStream(columns)
@@ -1441,9 +1455,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 							Object convertedValue = getDatabase().convert(value, Utils.toClassType(type));
 							entityInfo.accessor().setValue(entity, columnInfo.propertyName(), convertedValue);
 						}
-						catch (Exception e) {
-							throw new RuntimeSQLException(e);
-						}
+					// 1.3.0
+					//	catch (Exception e) {throw new RuntimeSQLException(e);}
+						catch (SQLException e) {throw new RuntimeSQLException(e);}
+					////
 					});
 
 				// After get
@@ -1453,9 +1468,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 				// Consumes the entity
 				consumer.accept(entity);
 			}
-			catch (InstantiationException | IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
+		// 1.3.0 for Java 9
+		//	catch (InstantiationException | IllegalAccessException e) {
+		//		throw new RuntimeException(e);
+		//	}
+			catch (RuntimeException e) {throw e;}
+			catch (Exception e) {throw new RuntimeException(e);}
 		};
 	}
 
@@ -1541,9 +1559,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 				logger.info(""); // Line feed of log
 			}
 		}
-		catch (SQLException e) {
-			throw new RuntimeSQLException(e);
-		}
+		catch (SQLException e) {throw new RuntimeSQLException(e);}
 	}
 
 	/**
@@ -1590,9 +1606,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 			return rowCount;
 		}
-		catch (SQLException e) {
-			throw new RuntimeSQLException(e);
-		}
+		catch (SQLException e) {throw new RuntimeSQLException(e);}
 	}
 
 	/**

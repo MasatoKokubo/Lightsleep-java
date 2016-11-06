@@ -1,6 +1,6 @@
 /*
 	Standard.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.database;
 
@@ -20,7 +20,7 @@ import org.lightsleep.Sql;
 	に以下の <b>TypeConverter</b> を追加した <b>TypeConverter</b> マップを持ちます。
 
 	<table class="additinal">
-		<caption>登録されている {@code TypeConverter} オブジェクト</caption>
+		<caption><span>登録されている TypeConverter オブジェクト</span></caption>
 		<tr><th>変換元データ型</th><th>変換先データ型</th></tr>
 
 		<tr><td>Clob          </td><td>String</td></tr>

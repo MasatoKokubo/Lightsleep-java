@@ -12,48 +12,48 @@ Create a table by doing one of the following SQL.
 ```sql:ddl_mysql.sql
 -- for MySQL
 CREATE TABLE Contact (
-    contactId   INT         NOT NULL,
-    lastName    VARCHAR(20)     NULL,
-    firstName   VARCHAR(20)     NULL,
+    id          INT         NOT NULL,
+    familyName  VARCHAR(20)     NULL,
+    givenName   VARCHAR(20)     NULL,
     birthday    DATE            NULL,
 
-    PRIMARY KEY(contactId)
+    PRIMARY KEY(id)
 );
 ```
 
 ```sql:ddl_oracle.sql
 -- for Oracle
 CREATE TABLE Contact (
-    contactId   NUMBER  ( 9)      NOT NULL,
-    lastName    VARCHAR2(20 CHAR) NOT NULL,
-    firstName   VARCHAR2(20 CHAR) NOT NULL,
+    id          NUMBER  ( 9)      NOT NULL,
+    familyName  VARCHAR2(20 CHAR) NOT NULL,
+    givenName   VARCHAR2(20 CHAR) NOT NULL,
     birthday    DATE                  NULL,
 
-    PRIMARY KEY(contactId)
+    PRIMARY KEY(id)
 );
 ```
 
 ```sql:ddl_postgresql.sql
 -- for PostgreSQL
 CREATE TABLE Contact (
-    contactId   INT         NOT NULL,
-    lastName    VARCHAR(20)     NULL,
-    firstName   VARCHAR(20)     NULL,
-    birthday    DATE            NULL,
+    id         INT         NOT NULL,
+    familyName VARCHAR(20)     NULL,
+    givenName  VARCHAR(20)     NULL,
+    birthday   DATE            NULL,
 
-    PRIMARY KEY(contactId)
+    PRIMARY KEY(id)
 );
 ```
 
 ```sql:ddl_sqlserver.sql
 -- for SQLServer
 CREATE TABLE Contact (
-    contactId   INT         NOT NULL,
-    lastName    VARCHAR(20)     NULL,
-    firstName   VARCHAR(20)     NULL,
-    birthday    DATE            NULL,
+    id         INT         NOT NULL,
+    familyName VARCHAR(20)     NULL,
+    givenName  VARCHAR(20)     NULL,
+    birthday   DATE            NULL,
 
-    PRIMARY KEY(contactId)
+    PRIMARY KEY(id)
 );
 ```
 
@@ -84,13 +84,13 @@ import org.lightsleep.entity.*;
 public class Contact {
     /** Contact ID */
     @Key
-    public Integer contactId;
+    public Integer id;
 
     /** First Name */
-    public String firstName;
+    public String givenName;
 
     /** Last Name */
-    public String lastName;
+    public String familyName;
 
     /** Birthday */
     public Date birthday;
@@ -168,7 +168,7 @@ public class Sample1 {
                 Contact contact = contacts.get(index);
                 System.out.println(
                     index
-                    + ": Name: " + contact.firstName + " " + contact.lastName
+                    + ": Name: " + contact.givenName + " " + contact.familyName
                     + ", Birthday: " + contact.birthday
                 );
             }

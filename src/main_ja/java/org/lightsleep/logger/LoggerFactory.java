@@ -1,6 +1,6 @@
 /*
 	LoggerFactory.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 
 package org.lightsleep.logger;
@@ -24,7 +24,7 @@ logger = Log4j
 	のログレベルは、次の表のようにマッピングされます。<br>
 
 	<table class="additinal">
-		<caption>ログレベルのマッピング</caption>
+		<caption><span>ログレベルのマッピング</span></caption>
 		<tr>
 			<th>本クラス</th>
 			<th>Jdk</th>

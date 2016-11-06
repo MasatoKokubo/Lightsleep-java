@@ -1,6 +1,6 @@
 /*
 	Sql.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep;
 
@@ -21,14 +21,19 @@ import org.lightsleep.helper.*;
 /**
 	SQL を構築および実行するためのクラスです。<br>
 
-	<div class="sampleTitle"><span>SELECT SQL の構築および実行例</span></div>
+	<div class="sampleTitle"><span>使用例</span></div>
 <div class="sampleCode"><pre>
-List&gt;Person&gt; persons = new ArrayList&gt;&gt;();
+List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
 Transaction.execute(connection -&gt; {
-    new Sql&lt;&gt;(Person.class)
-        .where("{name.last} = {}", name)
-        .select(connection, persons::add);
+    new <b>Sql</b>&lt;&gt;(Contact.class)
+        .<b>where</b>("{familyName} = {}", "Smith")
+        .<b>select</b>(connection, contacts::add);
 });
+</pre></div>
+
+	<div class="sampleTitle"><span>SQL</span></div>
+<div class="sampleCode"><pre>
+SELECT contactId, familyName, givenName, ... FROM Contact WHERE familyName='Smith'
 </pre></div>
 
 	@param <E> メイン・テーブルのエンティティ・クラス

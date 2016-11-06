@@ -1,6 +1,6 @@
 /*
 	Log4j2.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 
 package org.lightsleep.logger;

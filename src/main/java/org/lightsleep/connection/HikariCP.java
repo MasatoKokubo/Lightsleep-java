@@ -1,6 +1,6 @@
 /*
 	HikariCP.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.connection;
 
@@ -21,7 +21,7 @@ import com.zaxxer.hikari.util.PropertyElf;
 	<div class="blankline">&nbsp;</div>
 
 	<table class="additinal">
-		<caption>References in lightsleep.properties</caption>
+		<caption><span>References in lightsleep.properties</span></caption>
 		<tr><th>Property Name</th><th>Content</th></tr>
 		<tr><td>jdbcUrl </td><td>The URL of the database to be connected</td></tr>
 		<tr><td>username</td><td>The user name to use when connecting to a database</td></tr>

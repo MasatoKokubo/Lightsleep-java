@@ -1,6 +1,6 @@
 /*
 	Jdbc.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.connection;
 
@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 	<div class="blankline">&nbsp;</div>
 
 	<table class="additinal">
-		<caption>References in lightsleep.properties</caption>
+		<caption><span>References in lightsleep.properties</span></caption>
 		<tr><th>Property Name</th><th>Content</th></tr>
 		<tr><td>url     </td><td>The URL of the database to be connected</td></tr>
 		<tr><td>user    </td><td>The user name to use when connecting to a database</td></tr>

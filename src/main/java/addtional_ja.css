@@ -61,22 +61,27 @@ b, b i, .code {
 
 .sampleTitle {
 	margin: 10px 0px -4px 12px;
-	font-family: Verdana, sans-serif;
-	font-weight: bold;
 }
 
-.sampleTitle span {
+table.additinal caption {
+	margin: 0px 0px 4px 4px;
+	text-align: left;
+}
+
+.sampleTitle span, table.additinal caption span {
 	background-color: #F8981D;
-	padding: 3px 6px 3px 6px;
-    font-size: 12px;
+	padding: 2px 6px 2px 6px;
+	font-family: Verdana, sans-serif;
+    font-size: 11px;
+	font-weight: bold;
 }
 
 .sampleCode {
 	margin: 8px 8px 12px 8px;
-	padding: 8px 0px 8px 12px;
+	padding: 4px 0px 0px 12px;
 	font-family: Consolas, monospace;
-	color: #333399;
-	background-color: #F0F0F0;
+	color: #003399;
+	background-color: #F4F4F4;
 	border-style: solid;
 	border-width: 1px;
 	border-color: #AAAAAA;
@@ -84,6 +89,17 @@ b, b i, .code {
 
 .sampleCode pre {
     font-size: 13px;
+}
+
+.sampleCode pre b {
+	color: #3377FF;
+	background-color: #FFFFAA;
+	font-weight: normal;
+	padding: 1px 2px 1px 2px;
+}
+
+.sampleCode pre i {
+	color: #00AA00;
 }
 
 ul.additinal {
@@ -106,7 +122,7 @@ table.additinal {
 	margin: 8px;
 	border-collapse: collapse;
 	font-family: 'Meiryo UI', Verdana, sans-serif;
-	font-size: 10pt;
+    font-size: 12px;
 }
 
 table.additinal tr th {
@@ -125,6 +141,11 @@ table.additinal tr td {
 	border-color: #808080;
 	border-collapse: collapse;
 	padding: 4px;
+}
+
+.arrow {
+	margin: 4px 0px -6px 60px;
+	color: #DD4400;
 }
 
 .en {display: none;}

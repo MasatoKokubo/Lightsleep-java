@@ -1,15 +1,31 @@
 /*
 	Select.java
-	Copyright (c) 2016 Masato Kokubo
+	(C) 2016 Masato Kokubo
 */
 package org.lightsleep.entity;
 
 import java.lang.annotation.*;
 
 /**
-	Specifies a column expression instead of the column name of the SELECT SQL.
+	Indicates the expression instead of the column name in SELECT SQL.
+
+	<div class="sampleTitle"><span>Example of use</span></div>
+<div class="sampleCode"><pre>
+public class Contact {
+
+ <b>{@literal @}Select("(SELECT COUNT(*) FROM Phone WHERE contactId=Contact.id)")</b>
+ {@literal @}NonInsert {@literal @}NonUpdate
+  public short phoneCount;
+</pre></div>
+
+	<div class="sampleTitle"><span>SQL</span></div>
+<div class="sampleCode"><pre>
+SELECT ..., <b>(SELECT COUNT(*) FROM Phone WHERE contactId=Contact.id)</b>, ... FROM Contact WHERE ...
+</pre></div>
 
 	@since 1.0.0
+	@see SelectProperty
+	@see SelectProperties
 	@author Masato Kokubo
 */
 @Documented
