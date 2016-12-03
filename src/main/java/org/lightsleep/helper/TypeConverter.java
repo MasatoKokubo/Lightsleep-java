@@ -142,6 +142,11 @@ import org.lightsleep.logger.LoggerFactory;
 		<tr><td>Long          </td><td rowspan="3">Timestamp</td></tr>
 		<tr><td>java.util.Date</td></tr>
 		<tr><td>String        </td></tr>
+
+		<tr><td rowspan="4">Enum</td><td>Integer</td></tr>
+		<tr><td>Byte </td></tr>
+		<tr><td>Short</td></tr>
+		<tr><td>Long </td></tr>
 	</table>
 
 	@see org.lightsleep.database.Standard

@@ -13,98 +13,98 @@ import java.util.function.Function;
 	以下の <b>TypeConverter</b> オブジェクトが <b>typeConverterMap</b> に登録されています。<br>
 
 	<table class="additinal">
-		<caption><span>登録されている TypeConverter オブジェクト</span></caption>
-		<tr><th>変換元データ型   </th><th>変換先データ型</th></tr>
+		<caption><span>Registered TypeConverter objects</span></caption>
+		<tr><th>Source Data Type</th><th>Destination Data Type</th></tr>
 
-		<tr><td>Byte             </td><td rowspan="9">Boolean</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Byte          </td><td rowspan="9">Boolean</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="9">Byte</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Byte</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="9">Short</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Short</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="9">Integer</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Integer</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="9">Long</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Long</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="9">Float</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Float</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="9">Double</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Double</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="9">BigDecimal</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">BigDecimal</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
-		<tr><td>Boolean          </td><td rowspan="9">Character</td></tr>
-		<tr><td>Short            </td></tr>
-		<tr><td>Integer          </td></tr>
-		<tr><td>Long             </td></tr>
-		<tr><td>Float            </td></tr>
-		<tr><td>Double           </td></tr>
-		<tr><td>BigDecimal       </td></tr>
-		<tr><td>Character        </td></tr>
-		<tr><td>String           </td></tr>
+		<tr><td>Boolean       </td><td rowspan="9">Character</td></tr>
+		<tr><td>Short         </td></tr>
+		<tr><td>Integer       </td></tr>
+		<tr><td>Long          </td></tr>
+		<tr><td>Float         </td></tr>
+		<tr><td>Double        </td></tr>
+		<tr><td>BigDecimal    </td></tr>
+		<tr><td>Character     </td></tr>
+		<tr><td>String        </td></tr>
 
 		<tr><td>Object        </td><td rowspan="3">String</td></tr>
 		<tr><td>BigDecimal    </td></tr>
@@ -121,6 +121,11 @@ import java.util.function.Function;
 		<tr><td>Long          </td><td rowspan="3">Timestamp</td></tr>
 		<tr><td>java.util.Date</td></tr>
 		<tr><td>String        </td></tr>
+
+		<tr><td rowspan="4">Enum</td><td>Integer</td></tr>
+		<tr><td>Byte </td></tr>
+		<tr><td>Short</td></tr>
+		<tr><td>Long </td></tr>
 	</table>
 
 	@see org.lightsleep.database.Standard
