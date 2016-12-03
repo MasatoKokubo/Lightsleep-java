@@ -1258,5 +1258,37 @@ public class TypeConverter<ST, DT> {
 				}
 			})
 		);
+
+	// Enum -> *
+
+		// Enum -> Integer (since 1.4.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Enum.class, Integer.class, object -> object.ordinal())
+		);
+
+		// Enum -> Byte (since 1.4.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Enum.class, Byte.class,
+				TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
+				.andThen(TypeConverter.get(typeConverterMap, Integer.class, Byte.class).function())
+			)
+		);
+
+		// Enum -> Short (since 1.4.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Enum.class, Short.class,
+				TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
+				.andThen(TypeConverter.get(typeConverterMap, Integer.class, Short.class).function())
+			)
+		);
+
+		// Enum -> Long (since 1.4.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Enum.class, Long.class,
+				TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
+				.andThen(TypeConverter.get(typeConverterMap, Integer.class, Long.class).function())
+			)
+		);
+
 	}
 }
