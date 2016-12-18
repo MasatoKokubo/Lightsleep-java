@@ -102,6 +102,9 @@ public class Accessor<T> {
 		valueTypes.add(Date      .class);
 		valueTypes.add(Time      .class);
 		valueTypes.add(Timestamp .class);
+	// 1.4.0
+		valueTypes.add(java.util.Date.class);
+	////
 	}
 
 	/**

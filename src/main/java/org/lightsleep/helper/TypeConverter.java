@@ -127,9 +127,15 @@ import org.lightsleep.logger.LoggerFactory;
 		<tr><td>Character     </td></tr>
 		<tr><td>String        </td></tr>
 
-		<tr><td>Object        </td><td rowspan="3">String</td></tr>
+		<tr><td>Object        </td><td rowspan="6">String</td></tr>
 		<tr><td>BigDecimal    </td></tr>
+		<tr><td>java.uitl.Date<br><i>(since 1.4.0)</i></td></tr>
+		<tr><td>java.sql.Date<br><i>(since 1.4.0)</i></td></tr>
+		<tr><td>Time<br><i>(since 1.4.0)</i></td></tr>
 		<tr><td>Timestamp     </td></tr>
+
+		<tr><td>Long          </td><td rowspan="2">java.util.Date<br><i>(since 1.4.0)</i></td></tr>
+		<tr><td>String        </td></tr>
 
 		<tr><td>Long          </td><td rowspan="3">java.sql.Date</td></tr>
 		<tr><td>java.util.Date</td></tr>
@@ -143,7 +149,8 @@ import org.lightsleep.logger.LoggerFactory;
 		<tr><td>java.util.Date</td></tr>
 		<tr><td>String        </td></tr>
 
-		<tr><td rowspan="4">Enum</td><td>Integer</td></tr>
+		<tr><td rowspan="4">Enum<br><i>(since 1.4.0)</i></td>
+			<td>Integer</td></tr>
 		<tr><td>Byte </td></tr>
 		<tr><td>Short</td></tr>
 		<tr><td>Long </td></tr>
@@ -404,33 +411,34 @@ public class TypeConverter<ST, DT> {
 		@throws ConvertException if can not find the converter or the accuracy is lowered in the conversion
 	*/
 	@SuppressWarnings("unchecked")
-	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap,
-			ST source, Class<DT> destinType) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("TypeConverter.convert:");
-			logger.debug("    source: " + Utils.toLogString(source)
-				+ ", destinType: " + Utils.toLogString(destinType));
-		}
-
+	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
 		DT destin = null;
-		if (source != null) {
+		if (source == null) {
+			logger.debug(() -> "TypeConverter.convert: null -> null");
+		} else {
 			if (destinType.isInstance(source)) {
+				logger.debug(() -> "TypeConverter.convert: (" + Utils.toLogString(source) + " -> cast to " + Utils.toLogString(destinType));
 				destin = destinType.cast(source);
 			} else {
-				Class<ST> sourceType  = (Class<ST>)source.getClass();
-
+				Class<ST> sourceType = (Class<ST>)source.getClass();
 				TypeConverter<ST, DT> typeConverter = get(typeConverterMap, sourceType, destinType);
-
-				if (typeConverter == null)
+				if (typeConverter == null) {
+					logger.error("TypeConverter.convert: " + Utils.toLogString(source) + " -> (" + Utils.toLogString(destinType) + ")");
 					throw new ConvertException(sourceType, source, destinType);
+				}
 
-				destin = typeConverter.apply(source);
-				logger.debug(() -> "    typeConverter: " + typeConverter);
+				try {
+					destin = typeConverter.apply(source);
+				}
+				catch (RuntimeException e) {
+					logger.error("TypeConverter.convert: converter:" + typeConverter.key + ", " + Utils.toLogString(source) + " -> (" + Utils.toLogString(destinType) + ")");
+					throw e;
+				}
+
+				if (logger.isDebugEnabled())
+					logger.debug("TypeConverter.convert: converter:" + typeConverter.key + ", " + Utils.toLogString(source) + " -> " + Utils.toLogString(destin));
 			}
 		}
-
-		DT destinForLog = destin;
-		logger.debug(() -> "    result: " + Utils.toLogString(destinForLog));
 
 		return destin;
 	}
@@ -1187,14 +1195,49 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(BigDecimal.class, String.class, object -> object.toPlainString())
 		);
 
+		// java.util.Date -> String (since 1.4.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.util.Date.class, String.class, object ->
+				new Date(object.getTime()).toString())
+		);
+
+		// java.sql.Date -> String (since 1.4.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Date.class, String.class, object -> object.toString())
+		);
+
+		// Time -> String (since 1.4.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Time.class, String.class, object -> object.toString())
+		);
+
 		// Timestamp -> String
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Timestamp.class, String.class, object ->
 				new SimpleDateFormat(timestampFormatString).format(object))
 		);
 
-	// * -> Date
-		// Long -> Date
+	// * -> java.util.Date (since 1.4.0)
+		// Long -> java.util.Date
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Long.class, java.util.Date.class, object -> new java.util.Date(object))
+		);
+
+		// String -> java.util.Date (since 1.4.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(String.class, java.util.Date.class, object -> {
+				try {
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+					return new java.util.Date(format.parse(object).getTime());
+				}
+				catch (ParseException e) {
+					throw new ConvertException(String.class, object, Date.class, e);
+				}
+			})
+		);
+
+	// * -> java.sql.Date
+		// Long -> java.sql.Date
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Long.class, Date.class, object -> new Date(object))
 		);
@@ -1204,7 +1247,7 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(java.util.Date.class, Date.class, object -> new Date(object.getTime()))
 		);
 
-		// String -> Date
+		// String -> java.sql.Date
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, Date.class, object -> {
 				try {

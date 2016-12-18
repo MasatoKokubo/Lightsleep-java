@@ -27,24 +27,27 @@ import org.lightsleep.Sql;
 
 		<tr><td>Blob          </td><td>byte[]</td></tr>
 
-		<tr><td rowspan="11">java.sql.Array</td><td>boolean[]   </td></tr>
+		<tr><td rowspan="13">java.sql.Array</td><td>boolean[]   </td></tr>
 		<tr>                                    <td>byte[]      </td></tr>
 		<tr>                                    <td>short[]     </td></tr>
 		<tr>                                    <td>int[]       </td></tr>
 		<tr>                                    <td>long[]      </td></tr>
+		<tr>                                    <td>float[]     </td></tr>
 		<tr>                                    <td>double[]    </td></tr>
 		<tr>                                    <td>BigDecimal[]</td></tr>
 		<tr>                                    <td>String[]    </td></tr>
-		<tr>                                    <td>Date[]      </td></tr>
+		<tr>                                    <td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
+		<tr>                                    <td>java.sql.Date[]</td></tr>
 		<tr>                                    <td>Time[]      </td></tr>
 		<tr>                                    <td>Timestamp[] </td></tr>
 
 		<tr><td>Boolean        </td><td>{@linkplain org.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
 
-		<tr><td>Object         </td><td rowspan="22">{@linkplain org.lightsleep.component.SqlString}</td></tr>
+		<tr><td>Object         </td><td rowspan="24">{@linkplain org.lightsleep.component.SqlString}</td></tr>
 		<tr><td>Character      </td></tr>
 		<tr><td>BigDecimal     </td></tr>
 		<tr><td>String         </td></tr>
+		<tr><td>java.util.Date<br><i>(since 1.4.0)</i></td></tr>
 		<tr><td>java.sql.Date  </td></tr>
 		<tr><td>Time           </td></tr>
 		<tr><td>Timestamp      </td></tr>
@@ -59,6 +62,7 @@ import org.lightsleep.Sql;
 		<tr><td>double[]       </td></tr>
 		<tr><td>BigDecimal[]   </td></tr>
 		<tr><td>String[]       </td></tr>
+		<tr><td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
 		<tr><td>java.sql.Date[]</td></tr>
 		<tr><td>Time[]         </td></tr>
 		<tr><td>Timestamp[]    </td></tr>

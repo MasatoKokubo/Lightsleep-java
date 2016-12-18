@@ -29,7 +29,8 @@ import org.lightsleep.helper.TypeConverter;
 		<tr><td>boolean       </td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
 		<tr><td>String        </td><td rowspan="2">{@linkplain org.lightsleep.component.SqlString}</td></tr>
 		<tr><td>Time          </td></tr>
-		<tr><td rowspan="3">oracle.sql.TIMESTAMP</td><td>java.sql.Date     </td></tr>
+		<tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date<br><i>(since 1.4.0)</i></td></tr>
+		<tr>                                         <td>java.sql.Date     </td></tr>
 		<tr>                                         <td>java.sql.Time     </td></tr>
 		<tr>                                         <td>java.sql.Timestamp</td></tr>
 	</table>
@@ -103,6 +104,18 @@ public class Oracle extends Standard {
 			new TypeConverter<>(Time.class, SqlString.class, object ->
 				new SqlString("TO_TIMESTAMP('1970-01-01 " + object + "','YYYY-MM-DD HH24:MI:SS.FF3')")
 			)
+		);
+
+		// oracle.sql.TIMESTAMP -> java.util.Date (since 1.4.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(TIMESTAMP.class, java.util.Date.class, object -> {
+				try {
+					return new java.util.Date(object.dateValue().getTime());
+				}
+				catch (SQLException e) {
+					throw new ConvertException(e);
+				}
+			})
 		);
 
 		// oracle.sql.TIMESTAMP -> java.sql.Date

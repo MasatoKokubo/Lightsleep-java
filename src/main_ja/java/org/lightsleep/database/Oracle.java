@@ -22,7 +22,8 @@ import org.lightsleep.Sql;
 		<tr><td>boolean       </td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
 		<tr><td>String        </td><td rowspan="2">{@linkplain org.lightsleep.component.SqlString}</td></tr>
 		<tr><td>Time          </td></tr>
-		<tr><td rowspan="3">oracle.sql.TIMESTAMP</td><td>java.sql.Date     </td></tr>
+		<tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date<br><i>(since 1.4.0)</i></td></tr>
+		<tr>                                         <td>java.sql.Date     </td></tr>
 		<tr>                                         <td>java.sql.Time     </td></tr>
 		<tr>                                         <td>java.sql.Timestamp</td></tr>
 	</table>

@@ -106,9 +106,15 @@ import java.util.function.Function;
 		<tr><td>Character     </td></tr>
 		<tr><td>String        </td></tr>
 
-		<tr><td>Object        </td><td rowspan="3">String</td></tr>
+		<tr><td>Object        </td><td rowspan="6">String</td></tr>
 		<tr><td>BigDecimal    </td></tr>
+		<tr><td>java.uitl.Date<br><i>(since 1.4.0)</i></td></tr>
+		<tr><td>java.sql.Date<br><i>(since 1.4.0)</i></td></tr>
+		<tr><td>Time<br><i>(since 1.4.0)</i></td></tr>
 		<tr><td>Timestamp     </td></tr>
+
+		<tr><td>Long          </td><td rowspan="2">java.util.Date<br><i>(since 1.4.0)</i></td></tr>
+		<tr><td>String        </td></tr>
 
 		<tr><td>Long          </td><td rowspan="3">java.sql.Date</td></tr>
 		<tr><td>java.util.Date</td></tr>
@@ -122,7 +128,8 @@ import java.util.function.Function;
 		<tr><td>java.util.Date</td></tr>
 		<tr><td>String        </td></tr>
 
-		<tr><td rowspan="4">Enum</td><td>Integer</td></tr>
+		<tr><td rowspan="4">Enum<br><i>(since 1.4.0)</i></td>
+			<td>Integer</td></tr>
 		<tr><td>Byte </td></tr>
 		<tr><td>Short</td></tr>
 		<tr><td>Long </td></tr>
