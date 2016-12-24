@@ -33,7 +33,7 @@ import org.lightsleep.logger.LoggerFactory;
 
 	Following <b>TypeConverter</b> objects has been registered in <b>typeConverterMap</b>.<br>
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>Registered TypeConverter objects</span></caption>
 		<tr><th>Source Data Type</th><th>Destination Data Type</th></tr>
 

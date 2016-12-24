@@ -29,7 +29,7 @@ logger = Log4j
 	<b>Jdk</b>, <b>Log4j</b>, <b>Log4j2</b> and <b>SLF4J</b>
 	are mapped as shown in the following table.
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>Mappings of Log Levels</span></caption>
 		<tr>
 			<th>This Class</th>

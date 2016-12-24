@@ -6,6 +6,7 @@ package org.lightsleep.connection;
 
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
@@ -20,7 +21,7 @@ import com.zaxxer.hikari.util.PropertyElf;
 
 	<div class="blankline">&nbsp;</div>
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>References in lightsleep.properties</span></caption>
 		<tr><th>Property Name</th><th>Content</th></tr>
 		<tr><td>jdbcUrl </td><td>The URL of the database to be connected</td></tr>
@@ -60,11 +61,25 @@ public class HikariCP extends AbstractConnectionSupplier {
 ////
 
 	/**
+		Constructs a new <b>HikariCP</b>.
+		Use values specified in the lightsleep.properties file as the connection information.
+
+		@param modifier a consumer to modify the properties
+
+		@since 1.5.0
+	*/
+	public HikariCP(Consumer<Properties> modifier) {
+		super(modifier);
+	}
+
+	/**
 		{@inheritDoc}
 	*/
 	@Override
 	protected DataSource getDataSource() {
-		logger.debug(() -> "HikariCP.getDataSource: properties: " + properties);
+	// 1.5.0
+	//	logger.debug(() -> "HikariCP.getDataSource: properties: " + properties);
+	////
 
 		try {
 			// Gets HikariCP properties to the properties2.

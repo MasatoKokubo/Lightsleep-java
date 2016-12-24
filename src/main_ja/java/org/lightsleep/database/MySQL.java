@@ -12,7 +12,7 @@ package org.lightsleep.database;
 	{@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}
 	に以下の <b>TypeConverter</b> を追加した <b>TypeConverter</b> マップを持ちます。
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>登録されている TypeConverter オブジェクト</span></caption>
 		<tr><th>変換元データ型</th><th>変換先データ型</th></tr>
 		<tr><td >boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>

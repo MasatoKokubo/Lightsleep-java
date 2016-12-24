@@ -23,7 +23,7 @@ logger = Log4j
 	<b>Jdk</b>, <b>Log4j</b>, <b>Log4j2</b> および <b>SLF4J</b>
 	のログレベルは、次の表のようにマッピングされます。<br>
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>ログレベルのマッピング</span></caption>
 		<tr>
 			<th>本クラス</th>

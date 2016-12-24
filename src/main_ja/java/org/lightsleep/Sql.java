@@ -708,7 +708,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-		<b>condition</b> が true なら<b>action</b> を実行します。
+		<b>condition</b> が true なら <b>action</b> を実行します。
 
 		@param condition 条件
 		@param action <b>condition</b> が true の場合に実行するアクション
@@ -720,7 +720,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-		<b>condition</b> が true なら<b>action</b> を実行し、そうでなければ <b>elseAction</b> を実行します。
+		<b>condition</b> が true なら <b>action</b> を実行し、そうでなければ <b>elseAction</b> を実行します。
 
 		@param condition 条件
 		@param action <b>condition</b> が true の場合に実行するアクション

@@ -139,6 +139,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	// The database handler
 	private static Database database;
 
+	// The connection supplier
+	private static ConnectionSupplier connectionSupplier;
+
+	// Recently generated SQL @since 1.5.0
+	private String sql;
+
 	static {
 		logger.info("Lightsleep " + version + " / logger: " + LoggerFactory.loggerClass.getName());
 	}
@@ -160,10 +166,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		@throws NullPointerException if <b>database</b> is <b>null</b>
 	*/
 	public static void setDatabase(Database database) {
-		if (database == null) throw new NullPointerException("Sql.database: database == null");
+		if (database == null) throw new NullPointerException("Sql.setDatabase: database == null");
 
 		Sql.database = database;
-		logger.info(MessageFormat.format(messageDatabaseHandler, database.getClass().getName()));
+		logger.info(() -> MessageFormat.format(messageDatabaseHandler, Sql.database.getClass().getName()));
 	}
 
 	//  Initialize the database handler
@@ -192,9 +198,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		}
 	}
 
-	// Connection supplier
-	private static ConnectionSupplier connectionSupplier;
-
 	/**
 		Returns the connection supplier.
 
@@ -212,10 +215,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		@throws NullPointerException if <b>supplier</b> is <b>null</b>
 	*/
 	public static void setConnectionSupplier(ConnectionSupplier supplier) {
-		if (supplier == null) throw new NullPointerException("Sql.connectionSupplier: supplier == null");
+		if (supplier == null) throw new NullPointerException("Sql.setConnectionSupplier: supplier == null");
 
 		connectionSupplier = supplier;
-		logger.info(MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getName()));
+		logger.debug(() -> MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getName()));
 	}
 
 	// Initialize the connection supplier
@@ -1204,7 +1207,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		List<E> entities = new ArrayList<>();
 		select(connection, entity -> {
 			if (entities.size() > 0)
-				throw new ManyRowsException();
+			// 1.5.0
+			//	throw new ManyRowsException();
+				throw new ManyRowsException(sql);
+			////
 			entities.add(entity);
 		});
 		return entities.size() == 0 ? Optional.empty() : Optional.of(entities.get(0));
@@ -1494,6 +1500,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (parameters == null) throw new NullPointerException("Sql.executeQuery: parameters == null");
 		if (consumer == null) throw new NullPointerException("Sql.executeQuery: consumer == null");
 
+	// 1.5.0
+		this.sql = sql;
+	////
 		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
 
 		// Prepares SQL
@@ -1576,6 +1585,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (sql == null) throw new NullPointerException("Sql.executeUpdate: sql == null");
 		if (parameters == null) throw new NullPointerException("Sql.executeUpdate: parameters == null");
 
+	// 1.5.0
+		this.sql = sql;
+	////
 		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
 
 		// Prepares SQL

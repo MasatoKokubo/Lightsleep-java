@@ -17,7 +17,7 @@ import org.lightsleep.helper.Resource;
 
 	<div class="BlankLine">&nbsp;</div>
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>References in lightsleep.properties</span></caption>
 		<tr><th>Property Name</th><th>Content</th></tr>
 		<tr><td>dataSource</td><td>The resource name of the data source</td></tr>

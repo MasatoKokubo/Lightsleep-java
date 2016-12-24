@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
+import org.lightsleep.connection.ConnectionSupplier;
 import org.lightsleep.helper.Resource;
 import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
@@ -53,7 +54,7 @@ public interface Transaction {
 		Executes the transaction in the following order.<br>
 		<br>
 		<ol>
-			<li>Gets a database connection by calling <b>Sql.connectionSupplier</b>.</li>
+			<li>Gets a database connection by calling <b>Sql.getConnectionSupplier().get()</b>.</li>
 			<li>Calls <b>transaction.executeBody</b> method.</li>
 			<li>Commits the transaction.</li>
 			<li>Closes the database connection.</li>
@@ -67,16 +68,56 @@ public interface Transaction {
 
 		@param transaction a <b>Transaction</b> object
 
+		@throws NullPointerException if <b>transaction</b> is null
 		@throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	*/
 	static void execute(Transaction transaction) {
+		execute(Sql.getConnectionSupplier(), transaction);
+	}
+
+	/**
+		Executes the transaction in the following order.<br>
+		<br>
+		<ol>
+			<li>Gets a database connection by calling <b>connectionSupplier.get()</b>.</li>
+			<li>Calls <b>transaction.executeBody</b> method.</li>
+			<li>Commits the transaction.</li>
+			<li>Closes the database connection.</li>
+		</ol>
+		<br>
+
+		If an exception is thrown executing the transaction body, rollbacks rather than commit.<br>
+		<br>
+
+		Describe the transaction body in <b>transaction</b> using a lumbda expression.
+
+		@param connectionSupplier a <b>ConnectionSupplier</b> object
+		@param transaction a <b>Transaction</b> object
+
+		@throws NullPointerException if <b>connectionSupplier</b> or <b>transaction</b> is null
+		@throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
+
+		@since 1.5.0
+	*/
+// 1.5.0
+//	static void execute(Transaction transaction) {
+	static void execute(ConnectionSupplier connectionSupplier, Transaction transaction) {
+////
+		if (connectionSupplier == null)
+			throw new NullPointerException("Transaction.execute: connectionSupplier == null");
+		if (transaction == null)
+			throw new NullPointerException("Transaction.execute: transaction == null");
+
 		Connection connection = null;
 		boolean committed = false;
 		try {
 			// Gets a connection
-			long beforeGetTime = System.nanoTime(); // The time before getConnectionSupplier.get
-			connection = Sql.getConnectionSupplier().get();
-			long afterGetTime = System.nanoTime(); // The time after getConnectionSupplier.get
+			long beforeGetTime = System.nanoTime(); // The time before connectionSupplier.get
+		// 1.5.0
+		//	connection = Sql.getConnectionSupplier().get();
+			connection = connectionSupplier.get();
+		////
+			long afterGetTime = System.nanoTime(); // The time after connectionSupplier.get
 
 			if (logger.isDebugEnabled()) {
 				double time = (afterGetTime - beforeGetTime) / 1_000_000.0;
@@ -85,7 +126,10 @@ public interface Transaction {
 				timeFormat.setMaximumFractionDigits(3);
 				logger.debug(
 					Sql.getDatabase().getClass().getSimpleName()
-					+ "/" + Sql.getConnectionSupplier().getClass().getSimpleName()
+				// 1.5.0
+				//	+ "/" + Sql.getConnectionSupplier().getClass().getSimpleName()
+					+ "/" + connectionSupplier.getClass().getSimpleName()
+				////
 					+ ": " + MessageFormat.format(messageGet, timeFormat.format(time))
 				);
 			}
@@ -104,9 +148,9 @@ public interface Transaction {
 			logger.info(messageEnd);
 
 			// Closes the connection
-			long beforeCloseTime = System.nanoTime(); // The time before getConnectionSupplier.get
+			long beforeCloseTime = System.nanoTime(); // The time before connectionSupplier.get
 			connection.close();
-			long afterCloseTime = System.nanoTime(); // The time after getConnectionSupplier.get
+			long afterCloseTime = System.nanoTime(); // The time after connectionSupplier.get
 
 			if (logger.isDebugEnabled()) {
 				double time = (afterCloseTime - beforeCloseTime) / 1_000_000.0;
@@ -115,7 +159,10 @@ public interface Transaction {
 				timeFormat.setMaximumFractionDigits(3);
 				logger.debug(
 					Sql.getDatabase().getClass().getSimpleName()
-					+ "/" + Sql.getConnectionSupplier().getClass().getSimpleName()
+				// 1.5.0
+				//	+ "/" + Sql.getConnectionSupplier().getClass().getSimpleName()
+					+ "/" + connectionSupplier.getClass().getSimpleName()
+				////
 					+ ": " + MessageFormat.format(messageClose, timeFormat.format(time))
 				);
 			}

@@ -87,7 +87,7 @@ public class Expression implements Condition {
 	/**
 		{@inheritDoc}
 
-		<table class="additinal">
+		<table class="additional">
 			<caption><span>Conversion Process</span></caption>
 			<tr>
 				<th>String before convert</th>

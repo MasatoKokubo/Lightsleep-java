@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
@@ -50,10 +51,32 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	*/
 	public AbstractConnectionSupplier() {
 	// 1.2.0
+	// 1.5.0
+	//	properties.remove(Logger.class.getSimpleName());
+	//	properties.remove(Database.class.getSimpleName());
+	//	properties.remove(ConnectionSupplier.class.getSimpleName());
+		this(modifier -> {});
+	////
+	}
+
+	/**
+		Constructs a new <b>AbstractConnectionSupplier</b>.
+		Use values specified in the lightsleep.properties file as the connection information.
+
+		@param modifier a consumer to modify the properties
+
+		@since 1.5.0
+	*/
+	public AbstractConnectionSupplier(Consumer<Properties> modifier) {
+		if (modifier == null)
+			throw new NullPointerException(getClass().getSimpleName() + ".<init>: modifier == null");
+
 		properties.remove(Logger.class.getSimpleName());
 		properties.remove(Database.class.getSimpleName());
 		properties.remove(ConnectionSupplier.class.getSimpleName());
-	////
+		modifier.accept(properties);
+
+		logger.debug(() -> getClass().getSimpleName() + ".<init>: properties: " + this.properties);
 	}
 
 // 1.2.0

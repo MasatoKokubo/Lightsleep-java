@@ -15,7 +15,7 @@ import org.lightsleep.helper.TypeConverter;
 	with the following additional <b>TypeConverter</b> to
 	{@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>Registered TypeConverter objects</span></caption>
 		<tr><th>Source data type</th><th>Destination data type</th></tr>
 		<tr><td>boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>

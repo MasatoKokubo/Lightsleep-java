@@ -4,6 +4,8 @@
 */
 package org.lightsleep.connection;
 
+import java.util.Properties;
+import java.util.function.Consumer;
 import javax.sql.DataSource;
 
 /**
@@ -13,7 +15,7 @@ import javax.sql.DataSource;
 
 	<div class="blankline">&nbsp;</div>
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>lightsleep.properties の参照</span></caption>
 		<tr><th>プロパティ名</th><th>内 容</th></tr>
 		<tr><td>url     </td><td>接続するデータベースの URL</td></tr>
@@ -41,17 +43,17 @@ public class Dbcp extends AbstractConnectionSupplier {
 	public Dbcp() {
 	}
 
-// 1.2.0
-//	/**
-//		<b>Dbcp</b> を構築します。<br>
-//		lightsleep.properties および <i>&lt;<b>resourceName</b>&gt;</i>.properties
-//		ファイルで指定された値を設定情報として使用します。
-//
-//		@param resourceName 追加のリソース名
-//	*/
-//	public Dbcp(String resourceName) {
-//	}
-////
+	/**
+		<b>Dbcp</b> を構築します。<br>
+		lightsleep.properties
+		ファイルで指定された値を設定情報として使用します。
+
+		@param modifier properties を変更するコンシューマー
+
+		@since 1.5.0
+	*/
+	public Dbcp(Consumer<Properties> modifier) {
+	}
 
 	/**
 		{@inheritDoc}

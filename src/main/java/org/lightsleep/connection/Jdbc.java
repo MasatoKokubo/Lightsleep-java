@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Properties;
+import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
@@ -19,7 +21,7 @@ import javax.sql.DataSource;
 
 	<div class="blankline">&nbsp;</div>
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>References in lightsleep.properties</span></caption>
 		<tr><th>Property Name</th><th>Content</th></tr>
 		<tr><td>url     </td><td>The URL of the database to be connected</td></tr>
@@ -35,8 +37,10 @@ import javax.sql.DataSource;
 	@author Masato Kokubo
 */
 public class Jdbc extends AbstractConnectionSupplier {
-	// The URL
-	private String url;
+// 1.5.0
+//	// The URL
+//	private String url;
+////
 
 	/**
 		Constructs a new <b>Jdbc</b>.
@@ -46,10 +50,11 @@ public class Jdbc extends AbstractConnectionSupplier {
 	public Jdbc() {
 	// 1.2.0
 	//	init();
-		logger.debug(() -> "Jdbc.<init>: properties: " + properties);
-
-		// url
-		url = properties.getProperty("url");
+	// 1.5.0
+	//	logger.debug(() -> "Jdbc.<init>: properties: " + properties);
+	//
+	//	// url
+	//	url = properties.getProperty("url");
 	////
 	}
 
@@ -90,11 +95,26 @@ public class Jdbc extends AbstractConnectionSupplier {
 ////
 
 	/**
+		Constructs a new <b>Jdbc</b>.
+		Use values specified in the lightsleep.properties
+		file as the connection information.
+
+		@param modifier a consumer to modify the properties
+
+		@since 1.5.0
+	*/
+	public Jdbc(Consumer<Properties> modifier) {
+		super(modifier);
+	}
+
+	/**
 		{@inheritDoc}
 	*/
 	@Override
 	protected DataSource getDataSource() {
-		logger.debug(() -> "Jdbc.getDataSource: properties: " + properties);
+	// 1.5.0
+	//	logger.debug(() -> "Jdbc.getDataSource: properties: " + properties);
+	////
 
 		return new DataSource() {
 			@Override
@@ -132,6 +152,11 @@ public class Jdbc extends AbstractConnectionSupplier {
 
 			@Override
 			public Connection getConnection() throws SQLException {
+			// 1.5.0
+				String url = properties.getProperty("url");
+				if (url == null)
+					logger.error("Jdbc.<init>: property url == null");
+			////
 				Connection connection = DriverManager.getConnection(url, properties);
 				connection.setAutoCommit(false);
 				return connection;

@@ -6,6 +6,7 @@ package org.lightsleep.connection;
 
 import java.sql.Connection;
 import java.util.Properties;
+import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
@@ -32,17 +33,16 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	public AbstractConnectionSupplier() {
 	}
 
-// 1.2.0
-//	/**
-//		<b>AbstractConnectionSupplier</b> を構築します。
-//		lightsleep.properties および <i>&lt;<b>resourceName</b>&gt;</i>.properties ファイル
-//		の設定値を接続情報として使用します。
-//
-//		@param resourceName 追加のリソース名
-//	*/
-//	public AbstractConnectionSupplier(String resourceName) {
-//	}
-////
+	/**
+		<b>AbstractConnectionSupplier</b> を構築します。
+		lightsleep.properties ファイルの設定値を接続情報として使用します。
+
+		@param modifier properties を変更するコンシューマー
+
+		@since 1.5.0
+	*/
+	public AbstractConnectionSupplier(Consumer<Properties> modifier) {
+	}
 
 	/**
 		データソースを返します。

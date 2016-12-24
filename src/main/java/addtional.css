@@ -12,7 +12,6 @@ i {
 b, b i, .code {
 	font-family: Consolas, monospace;
 	font-weight: bold;
-	color: #3355DD;
 }
 
 .title {
@@ -54,16 +53,16 @@ b, b i, .code {
 	margin: 10px 0px -4px 12px;
 }
 
-table.additinal caption {
+table.additional caption {
 	margin: 0px 0px 4px 4px;
 	text-align: left;
 }
 
-.sampleTitle span, table.additinal caption span {
+.sampleTitle span, table.additional caption span {
 	background-color: #F8981D;
 	padding: 2px 6px 2px 6px;
 	font-family: Verdana, sans-serif;
-    font-size: 11px;
+    font-size: 12px;
 	font-weight: bold;
 }
 
@@ -71,7 +70,7 @@ table.additinal caption {
 	margin: 8px 8px 12px 8px;
 	padding: 4px 0px 0px 12px;
 	font-family: Consolas, monospace;
-	color: #003399;
+	color: #003388;
 	background-color: #F4F4F4;
 	border-style: solid;
 	border-width: 1px;
@@ -79,11 +78,11 @@ table.additinal caption {
 }
 
 .sampleCode pre {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .sampleCode pre b {
-	color: #3377FF;
+	color: #2266FF;
 	background-color: #FFFFAA;
 	font-weight: normal;
 	padding: 1px 2px 1px 2px;
@@ -93,30 +92,30 @@ table.additinal caption {
 	color: #00AA00;
 }
 
-ul.additinal {
+ul.additional {
 	margin: 4px 0px 0px 8px;
 	padding: 0px 0px 0px 0px;
 	list-style-type: disc;
 }
 
-ol.additinal {
+ol.additional {
 	margin: 0px 0px 0px 0px;
 	padding: 0px 0px 0px 0px;
 	list-style-type: decimal;
 }
 
-ul.additinal li, ol.additinal li {
+ul.additional li, ol.additional li {
 	margin: 2px 0px 6px 0px;
 }
 
-table.additinal {
+table.additional {
 	margin: 8px;
 	border-collapse: collapse;
 	font-family: Verdana, sans-serif;
     font-size: 12px;
 }
 
-table.additinal tr th {
+table.additional tr th {
 	background-color: #E0E0E0;
 	border-width: 1px;
 	border-style: solid;
@@ -125,7 +124,7 @@ table.additinal tr th {
 	padding: 4px;
 }
 
-table.additinal tr td {
+table.additional tr td {
 	background-color: #FFFFFF;
 	border-width: 1px;
 	border-style: solid;

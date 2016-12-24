@@ -4,6 +4,8 @@
 */
 package org.lightsleep.connection;
 
+import java.util.Properties;
+import java.util.function.Consumer;
 import javax.sql.DataSource;
 
 /**
@@ -13,7 +15,7 @@ import javax.sql.DataSource;
 
 	<div class="blankline">&nbsp;</div>
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>lightsleep.properties の参照</span></caption>
 		<tr><th>プロパティ名</th><th>内 容</th></tr>
 		<tr><td>url     </td><td>接続するデータベースの URL</td></tr>

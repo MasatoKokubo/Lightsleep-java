@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 	以下の <b>TypeConverter</b> オブジェクトが <b>typeConverterMap</b> に登録されています。<br>
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>Registered TypeConverter objects</span></caption>
 		<tr><th>Source Data Type</th><th>Destination Data Type</th></tr>
 

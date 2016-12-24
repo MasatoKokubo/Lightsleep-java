@@ -33,7 +33,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '1.4.0'
+version             = '1.5.0'
 
 compileJava {
 	options.encoding     = 'UTF-8'
@@ -76,7 +76,7 @@ javadoc {
 	options.windowTitle = "$project.name"
 	options.overview    = 'src/main/java/overview.html'
 	options.addBooleanOption('author', true)
-	options.addStringOption ('bottom', '<div class="copyright">&copy;2016 Masato Kokubo</div>')
+	options.addStringOption ('bottom', '<div class="copyright">&copy; 2016 Masato Kokubo</div>')
 }
 
 javadoc.doFirst {
@@ -101,7 +101,7 @@ task javadoc_ja(type:Javadoc) {
 	options.windowTitle = javadoc.options.windowTitle
 	options.overview    = 'src/main/java/overview_ja.html'
 	options.addBooleanOption('author', true)
-	options.addStringOption ('bottom', '<div class="copyright">&copy;2016 Masato Kokubo</div>')
+	options.addStringOption ('bottom', '<div class="copyright">&copy; 2016 Masato Kokubo</div>')
 
 	classpath      = javadoc.classpath
 	source         = fileTree('src/main_ja/java').include('**/*.java')
@@ -121,10 +121,12 @@ javadoc_ja.doLast {
 	}
 }
 
+build.dependsOn javadoc_ja
+
 task zip(type: Zip) {
 	classifier = 'bin'
 
-	into('/'         , {from 'build/libs'})
+	into('/'         , {from "build/libs/${archivesBaseName}-${version}.jar"})
 	into('/'         , {from 'LICENSE.txt'})
 	into('/'         , {from 'README.md', 'Tutorial.md', 'Manual.md'})
 	into('/'         , {from 'README_ja.md', 'Tutorial_ja.md', 'Manual_ja.md'})

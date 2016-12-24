@@ -4,6 +4,8 @@
 */
 package org.lightsleep.connection;
 
+import java.util.Properties;
+import java.util.function.Consumer;
 import javax.sql.DataSource;
 
 /**
@@ -13,7 +15,7 @@ import javax.sql.DataSource;
 
 	<div class="blankline">&nbsp;</div>
 
-	<table class="additinal">
+	<table class="additional">
 		<caption><span>lightsleep.properties の参照</span></caption>
 		<tr><th>プロパティ名</th><th>内 容</th></tr>
 		<tr><td>url     </td><td>接続するデータベースの URL</td></tr>
@@ -33,18 +35,17 @@ public class C3p0 extends AbstractConnectionSupplier {
 	public C3p0() {
 	}
 
-// 1.2.0
-//	/**
-//		<b>C3p0</b> を構築します。<br>
-//		lightsleep.properties, <i>&lt;<b>resourceName</b>&gt;</i>.properties
-//		および (c3p0.properties または c3p0-config.xml)
-//		ファイルで指定された値を設定情報として使用します。
-//
-//		@param resourceName 追加のリソース名
-//	*/
-//	public C3p0(String resourceName) {
-//	}
-////
+	/**
+		<b>C3p0</b> を構築します。<br>
+		lightsleep.properties および (c3p0.properties または c3p0-config.xml)
+		ファイルで指定された値を設定情報として使用します。
+
+		@param modifier properties を変更するコンシューマー
+
+		@since 1.5.0
+	*/
+	public C3p0(Consumer<Properties> modifier) {
+	}
 
 	/**
 		{@inheritDoc}

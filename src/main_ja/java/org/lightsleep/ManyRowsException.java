@@ -18,4 +18,14 @@ public class ManyRowsException extends RuntimeException {
 	*/
 	public ManyRowsException() {
 	}
+
+	/**
+		<b>ManyRowsException</b> を構築します。
+
+		@param message 詳細メッセージ
+
+		@since 1.5.0
+	*/
+	public ManyRowsException(String message) {
+	}
 }

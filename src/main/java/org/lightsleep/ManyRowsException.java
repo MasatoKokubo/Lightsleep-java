@@ -14,8 +14,19 @@ package org.lightsleep;
 @SuppressWarnings("serial")
 public class ManyRowsException extends RuntimeException {
 	/**
-		Constructs a new ManyRowsException.
+		Constructs a new <b>ManyRowsException</b>.
 	*/
 	public ManyRowsException() {
+	}
+
+	/**
+		Constructs a new <b>ManyRowsException</b>.
+
+		@param message the detail message
+
+		@since 1.5.0
+	*/
+	public ManyRowsException(String message) {
+		super(message);
 	}
 }
