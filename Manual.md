@@ -10,6 +10,8 @@ Specifies the table name associated with the class.
 If the table name is the same as the class name, you do not need to specify this annotation.
 
 ```java:Java
+import org.lightsleep.entity.*;
+
 @Table("Contact")
 public class Contact1 extends Contact {
    ...
@@ -19,6 +21,8 @@ public class Contact1 extends Contact {
 If you specify ```@Table("super")```, the class name of the superclass is the table name.
 
 ```java:Java
+import org.lightsleep.entity.*;
+
 @Table("super")
 public class Contact1 extends Contact {
    ...
@@ -105,12 +109,28 @@ If this annotation is specified, the value of the field is not used.
     public Timestamp modified;
 ```
 
+##### 1-1-11. XxxxxProperty Annotations
+
+ColumnProperty, NonColumnProperty, NonSelectProperty, NonInsertProperty, NonUpdateProperty, SelectProperty, InsertProperty and UpdateProperty are the same as the Column, NonColumn, NonSelect, NonInsert, NonUpdate, Select, Insert and Update annotations. They are specified for classes, not fields.
+
+These annotations are used when relating to fields defined in the superclass.
+
+```java:Java
+import org.lightsleep.entity.*;
+
+@Table("super")
+@ColumnProperty(property="familyName", column="family_name")
+public class Contact1 extends Contact {
+```
+
 ### 1-2. Interfaces that Entity Class to implement
 #### 1-2-1. PreInsert Interface
 If an entity class implements this interface, ```insert``` method of Sql class calls ```preInsert``` method of the entity before INSERT SQL execution.
 In ```preInsert``` method, do the implementation of the numbering of the primary key or etc.
 
 ```java:Java
+import org.lightsleep.entity.*;
+
 public class Contact implements PreInsert {
     @Key
     public String id;
@@ -131,6 +151,8 @@ However if ```update``` or ```delete``` method dose not have entity parameter, d
 If an entity is enclose another entity, by implementing this interface, You can perform SQL processing to the enclosed entity in conjunction the entity which encloses.
 
 ```java:Java
+import org.lightsleep.entity.*;
+
 @Table("super")
 public class ContactComposite extends Contact implements Composite {
     @NonColumn
@@ -140,7 +162,7 @@ public class ContactComposite extends Contact implements Composite {
     public void postSelect(Connection connection) {
         if (id > 0)
             new Sql<>(Phone.class)
-                .where("{contactId} = {}", id)
+                .where("{contactId}={}", id)
                 .orderBy("{childIndex}")
                 .select(connection, phones::add);
     }
@@ -169,7 +191,7 @@ public class ContactComposite extends Contact implements Composite {
     @Override
     public int postDelete(Connection connection) {
         int count += new Sql<>(Phone.class)
-            .where("{contactId} = {}", id)
+            .where("{contactId}={}", id)
             .delete(connection);
         return count;
     }
@@ -182,6 +204,8 @@ Define contents of the transaction by the argument ```transaction``` as a lambda
 The lambda expression is equivalent to the contents of ```Transaction.executeBody``` method and the argument of this method is a ```Connection```.
 
 ```java:Java
+import org.lightsleep.*;
+
 // A definition example of transaction
 Transaction.execute(connection -> {
     // Start of the transaction
@@ -214,9 +238,9 @@ Define the connection supplier class and information needed to connect in the **
 ```properties:lightsleep.properties
 # lightsleep.properties / Example for C3p0
 ConnectionSupplier = C3p0
-url      = jdbc:mysql://MySQL57/test
-user     = test
-password = _test_
+url                = jdbc:mysql://MySQL57/test
+user               = test
+password           = _test_
 ```
 
 ```properties:c3p0.properties
@@ -227,228 +251,235 @@ c3p0.maxPoolSize     = 30
 ```
 
 ```properties:lightsleep.properties
-# lightsleep.properties / Example for Dbcp 2
+# lightsleep.properties / Example for Dbcp
 ConnectionSupplier = Dbcp
-url         = jdbc:oracle:thin:@Oracle121:1521:test
-username    = test
-password    = _test_
-initialSize = 20
-maxTotal    = 30
+url                = jdbc:oracle:thin:@Oracle121:1521:test
+username           = test
+password           = _test_
+initialSize        = 20
+maxTotal           = 30
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / Example for HikariCP
 ConnectionSupplier = HikariCP
-jdbcUrl         = jdbc:postgresql://Postgres95/test
-username        = test
-password        = _test_
-minimumIdle     = 10
-maximumPoolSize = 30
+jdbcUrl            = jdbc:postgresql://Postgres95/test
+username           = test
+password           = _test_
+minimumIdle        = 10
+maximumPoolSize    = 30
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / Example for TomcatCP
 ConnectionSupplier = TomcatCP
-url         = jdbc:sqlserver://SQLServer13;database=test
-username    = test
-password    = _test_
-initialSize = 20
-maxActive   = 30
+url                = jdbc:sqlserver://SQLServer13;database=test
+username           = test
+password           = _test_
+initialSize        = 20
+maxActive          = 30
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / Example for Jdbc
 ConnectionSupplier = Jdbc
-url      = jdbc:mysql://MySQL57/test
-user     = test
-password = _test_
+url                = jdbc:mysql://MySQL57/test
+user               = test
+password           = _test_
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / Example for Jndi
-connectionSupplier = Jndi
-dataSource = jdbc/Sample
+ConnectionSupplier = Jndi
+dataSource         = jdbc/Sample
 ```
 
 ### 4. Execution of SQL
-Use the various methods of Sql class to execute SQLs and define it in the lambda expression argument of ```Transaction.execute``` method.
+Use the various methods of ```Sql``` class to execute SQLs and define it in the lambda expression argument of ```Transaction.execute``` method.
 
 #### 4-1. SELECT
 #### 4-1-1. SELECT / 1 row / Expression Condition
 
 ```java:Java
-Optional<Contact> contactOpt = new Sql<>(Contact.class)
-    .where("{id} = {}", id)
-    .select(connection);
-
-Contact contact = new Sql<>(Contact.class)
-    .where("{id} = {}", id)
-    .select(connection).orElse(null);
+Transaction.execute(connection -> {
+    Optional<Contact> contactOpt = new Sql<>(Contact.class)
+        .where("{id}={}", 1)
+        .select(connection);
+});
 ```
 
 ```sql:SQL
-SELECT id, familyName, givenName, ... FROM Contact WHERE id = '...'
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
 
 #### 4-1-2. SELECT / 1 row / Entity Condition
 
 ```java:Java
 Contact contact = new Contact();
-contact.id = id;
-Optional<Contact> contactOpt = new Sql<>(Contact.class)
-    .where(contact)
-    .select(connection);
+contact.id = 1;
+Transaction.execute(connection -> {
+    Optional<Contact> contactOpt = new Sql<>(Contact.class)
+        .where(contact)
+        .select(connection);
+});
 ```
 
 ```sql:SQL
-SELECT id, familyName, givenName, ... FROM Contact WHERE id = '...'
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
 
 #### 4-1-3. SELECT / Multiple rows / Expression Condition
 
 ```java:Java
-List<Contact> contact = new ArrayList<Contact>();
-new Sql<>(Contact.class)
-    .where("{familyName} = {}", familyName)
-    .select(connection, contact::add);
+List<Contact> contacts = new ArrayList<Contact>();
+Transaction.execute(connection ->
+    new Sql<>(Contact.class)
+        .where("{familyName}={}", "Apple")
+        .select(connection, contacts::add)
+);
 ```
 
 ```sql:SQL
-SELECT id, familyName, givenName, ... FROM Contact WHERE familyName = '...'
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
 ```
 
 #### 4-1-4. SELECT / Subquery Condition
 
 ```java:Java
-List<Contact> contact = new ArrayList<Contact>();
-new Sql<>(Contact.class, "PS")
-    .where("EXISTS",
-        new Sql<>(Phone.class, "PH")
-            .where("{PH.contactId} = {PS.id}")
-    )
-    .select(connection, contact::add);
+List<Contact> contacts = new ArrayList<Contact>();
+Transaction.execute(connection ->
+    new Sql<>(Contact.class, "C")
+        .where("EXISTS",
+            new Sql<>(Phone.class, "P")
+                .where("{P.contactId}={C.id}")
+        )
+        .select(connection, contacts::add)
+);
 ```
 
 ```sql:SQL
-SELECT PS.id AS PS_id,
-  PS.familyName AS PS_familyName,
-  PS.givenName AS PS_givenName,
-  ...
-  FROM Contact PS
-  WHERE EXISTS (SELECT * FROM Phone PH WHERE PH.contactId = PS.id)
+SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime FROM Contact C WHERE EXISTS (SELECT * FROM Phone P WHERE P.contactId=C.id)
 ```
 
-#### 4-1-5. SELECT Expression Condition / AND
+#### 4-1-5. SELECT / Expression Condition / AND
 
 ```java:Java
-List<Contact> contact = new ArrayList<Contact>();
-new Sql<>(Contact.class)
-    .where("{familyName} = {}", familyName)
-    .and  ("{givenName} = {}", givenName)
-    .select(connection, contact::add);
+List<Contact> contacts = new ArrayList<Contact>();
+Transaction.execute(connection ->
+    new Sql<>(Contact.class)
+        .where("{familyName}={}", "Apple")
+        .and  ("{givenName}={}", "Akane")
+        .select(connection, contacts::add)
+);
 ```
 
 ```sql:SQL
-SELECT id, familyName, givenName, ... FROM Contact
-  WHERE (familyName = '...' AND givenName = '...')
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE (familyName='Apple' AND givenName='Akane')
 ```
 
-#### 4-1-6. SELECT Expression Condition / OR
+#### 4-1-6. SELECT / Expression Condition / OR
 
 ```java:Java
-List<Contact> contact = new ArrayList<Contact>();
-new Sql<>(Contact.class)
-    .where("{familyName} = {}", familyName1)
-    .or   ("{familyName} = {}", familyName2)
-    .select(connection, contact::add);
+List<Contact> contacts = new ArrayList<Contact>();
+Transaction.execute(connection ->
+    new Sql<>(Contact.class)
+        .where("{familyName}={}", "Apple")
+        .or   ("{familyName}={}", "Orange")
+        .select(connection, contacts::add)
+);
 ```
 
 ```sql:SQL
-SELECT id, familyName, givenName, ... FROM Contact
-  WHERE (familyName = '...' OR familyName = '...')
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE (familyName='Apple' OR familyName='Orange')
 ```
 
-#### 4-1-7. SELECT Expression Condition / (A AND B) OR (C AND D)
+#### 4-1-7. SELECT / Expression Condition / (A AND B) OR (C AND D)
 
 ```java:Java
-List<Contact> contact = new ArrayList<Contact>();
-new Sql<>(Contact.class)
-    .where(Condition
-        .of ("{familyName} = {}", familyName1)
-        .and("{givenName} = {}", givenName1)
-    )
-    .or(Condition
-        .of ("{familyName} = {}", familyName2)
-        .and("{givenName} = {}", givenName2)
-    )
-    .select(connection, contact::add);
+List<Contact> contacts = new ArrayList<Contact>();
+Transaction.execute(connection ->
+    new Sql<>(Contact.class)
+        .where(Condition
+            .of ("{familyName}={}", "Apple")
+            .and("{givenName}={}", "Akane")
+        )
+        .or(Condition
+            .of ("{familyName}={}", "Orange")
+            .and("{givenName}={}", "Setoka")
+        )
+        .select(connection, contacts::add)
+);
 ```
 
 ```sql:SQL
-SELECT id, familyName, givenName, ... FROM Contact
-  WHERE ((familyName = '...' AND givenName = '...')
-    OR (familyName = '...' AND givenName = '...'))
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE ((familyName='Apple' AND givenName='Akane') OR (familyName='Orange' AND givenName='Setoka'))
 ```
 
 #### 4-1-8. SELECT / Select Columns
 
 ```java:Java
-List<Contact> contact = new ArrayList<Contact>();
-new Sql<>(Contact.class)
-    .where("{familyName} = {}", familyName)
-    .columns("familyName", "givenName")
-    .select(connection, contact::add);
+List<Contact> contacts = new ArrayList<Contact>();
+Transaction.execute(connection ->
+    new Sql<>(Contact.class)
+        .where("{familyName}={}", "Apple")
+        .columns("familyName", "givenName")
+        .select(connection, contacts::add)
+);
 ```
 
 ```sql:SQL
-SELECT familyName, givenName FROM Contact WHERE familyName = '...'
+SELECT familyName, givenName FROM Contact WHERE familyName='Apple'
 ```
 
 #### 4-1-9. SELECT / GROUP BY, HAVING
 
 ```java:Java
-List<Contact> contact = new ArrayList<Contact>();
-new Sql<>(Contact.class)
-    .columns("givenName")
-    .groupBy("{givenName}")
-    .having("COUNT({givenName}) = 2")
-    .select(connection, contact::add);
+List<Contact> contacts = new ArrayList<Contact>();
+Transaction.execute(connection ->
+    new Sql<>(Contact.class, "C")
+        .columns("familyName")
+        .groupBy("{familyName}")
+        .having("COUNT({familyName})>=2")
+        .select(connection, contacts::add)
+);
 ```
 
 ```sql:SQL
-SELECT MIN(givenName) FROM Contact GROUP BY givenName HAVING COUNT(givenName) = 2
+SELECT MIN(C.familyName) AS C_familyName FROM Contact C GROUP BY C.familyName HAVING COUNT(C.familyName)>=2
 ```
 
-#### 4-1-10. SELECT / OFFSET, LIMIT, ORDER BY
+#### 4-1-10. SELECT / ORDER BY, OFFSET, LIMIT
 
 ```java:Java
-List<Contact> contact = new ArrayList<Contact>();
-new Sql<>(Contact.class)
-    .orderBy("{familyName}")
-    .orderBy("{givenName}")
-    .orderBy("{id}")
-    .offset(100).limit(10)
-    .select(connection, contact::add);
+List<Contact> contacts = new ArrayList<Contact>();
+Transaction.execute(connection ->
+    new Sql<>(Contact.class)
+        .orderBy("{familyName}")
+        .orderBy("{givenName}")
+        .orderBy("{id}")
+        .offset(10).limit(5)
+        .select(connection, contacts::add)
+);
 ```
 
 ```sql:SQL
-SELECT id, familyName, givenName, ... FROM Contact
-  ORDER BY familyName ASC, givenName ASC, id ASC
-  LIMIT 10 OFFSET 100
+-- MySQL, PostgreSQL
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY familyName ASC, givenName ASC, id ASC LIMIT 5 OFFSET 10
 ```
 
 #### 4-1-11. SELECT / FOR UPDATE
 
 ```java:Java
-Optional<Contact> contactOpt = new Sql<>(Contact.class)
-    .where("{id} = {}", id)
-    .forUpdate()
-    .select(connection);
+Transaction.execute(connection -> {
+    Optional<Contact> contactOpt = new Sql<>(Contact.class)
+        .where("{id}={}", 1)
+        .forUpdate()
+        .select(connection);
+});
 ```
 
 ```sql:SQL
-SELECT id, familyName, givenName, birthday, ..., updated FROM Contact
-  WHERE id = '...' FOR UPDATE
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE
 ```
 
 #### 4-1-12. SELECT / INNER JOIN
@@ -456,74 +487,48 @@ SELECT id, familyName, givenName, birthday, ..., updated FROM Contact
 ```java:Java
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
-new Sql<>(Contact.class, "PS")
-    .innerJoin(Phone.class, "PH", "{PH.contactId} = {PS.id}")
-    .where("{PS.id} = {}", id)
-    .<Phone>select(connection, contacts::add, phones::add);
+Transaction.execute(connection ->
+    new Sql<>(Contact.class, "C")
+        .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
+        .where("{C.id}={}", 1)
+        .<Phone>select(connection, contacts::add, phones::add)
+);
 ```
 
 ```sql:SQL
-SELECT PS.id AS PS_id,
-  PS.familyName AS PS_familyName,
-  PS.givenName AS PS_givenName,
-  ...,
-  PH.contactId AS PH_contactId,
-  PH.childIndex AS PH_childIndex,
-  PH.content AS PH_content,
-  ...
-  FROM Contact PS
-  INNER JOIN Phone PH ON PH.contactId = PS.id
-  WHERE PS.id = '...'
+SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C INNER JOIN Phone P ON P.contactId=C.id WHERE C.id=1
 ```
 
 #### 4-1-13. SELECT / LEFT OUTER JOIN
-
 ```java:Java
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
-new Sql<>(Contact.class, "PS")
-    .leftJoin(Phone.class, "PH", "{PH.contactId} = {PS.id}")
-    .where("{PS.id} = {}", id)
-    .<Phone>select(connection, contacts::add, phones::add);
+Transaction.execute(connection ->
+	new Sql<>(Contact.class, "C")
+	    .leftJoin(Phone.class, "P", "{P.contactId}={C.id}")
+	    .where("{C.familyName}={}", "Apple")
+	    .<Phone>select(connection, contacts::add, phones::add)
+);
 ```
 
 ```sql:SQL
-SELECT PS.id AS PS_id,
-  PS.familyName AS PS_familyName,
-  PS.givenName AS PS_givenName,
-  ...,
-  PH.contactId AS PH_contactId,
-  PH.childIndex AS PH_childIndex,
-  PH.content AS PH_content,
-  ...
-  FROM Contact PS
-  LEFT OUTER JOIN Phone PH ON PH.contactId = PS.id
-  WHERE PS.id = '...'
+SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C LEFT OUTER JOIN Phone P ON P.contactId=C.id WHERE C.familyName='Apple'
 ```
 
-#### 4-1-13. SELECT / RIGHT OUTER JOIN
-
+#### 4-1-14. SELECT / RIGHT OUTER JOIN
 ```java:Java
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
-new Sql<>(Contact.class, "PS")
-    .rightJoin(Phone.class, "PH", "{PH.contactId} = {PS.id}")
-    .where("{PS.id} = {}", id)
-    .<Phone>select(connection, contacts::add, phones::add);
+Transaction.execute(connection ->
+    new Sql<>(Contact.class, "C")
+        .rightJoin(Phone.class, "P", "{P.contactId}={C.id}")
+        .where("{P.label}={}", "Main")
+        .<Phone>select(connection, contacts::add, phones::add)
+);
 ```
 
 ```sql:SQL
-SELECT PS.id AS PS_id,
-  PS.familyName AS PS_familyName,
-  PS.givenName AS PS_givenName,
-  ...,
-  PH.contactId AS PH_contactId,
-  PH.childIndex AS PH_childIndex,
-  PH.content AS PH_content,
-  ...
-  FROM Contact PS
-  RIGHT OUTER JOIN Phone PH ON PH.contactId = PS.id
-  WHERE PS.id = '...'
+SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C RIGHT OUTER JOIN Phone P ON P.contactId=C.id WHERE P.label='Main'
 ```
 
 #### 4-2. INSERT
@@ -531,121 +536,179 @@ SELECT PS.id AS PS_id,
 
 ```java:Java
 Contact contact = new Contact();
-...
-new Sql<>(Contact.class)
-    .insert(connection, contact);
+contact.id = 1;
+contact.familyName = "Apple";
+contact.givenName = "Akane";
+Calendar calendar = Calendar.getInstance();
+calendar.set(2001, 1-1, 1, 0, 0, 0);
+contact.birthday = new Date(calendar.getTimeInMillis())
+Transaction.execute(connection -> {
+    new Sql<>(Contact.class).insert(connection, contact));
 ```
 
 ```sql:SQL
-INSERT INTO Contact (id, familyName, givenName, ...) VALUES ('...', '...', '...', ...)
+INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', DATE'2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 #### 4-2-2. INSERT / Multiple rows
-
 ```java:Java
 List<Contact> contacts = new ArrayList<>();
-...
-new Sql<>(Contact.class)
-    .insert(connection, contacts);
+
+Contact contact = new Contact();
+contact.id = 2; contact.familyName = "Apple"; contact.givenName = "Yukari";
+Calendar calendar = Calendar.getInstance();
+calendar.set(2001, 1-1, 2, 0, 0, 0);
+contact.birthday = new Date(calendar.getTimeInMillis());
+contacts.add(contact);
+
+contact = new Contact();
+contact.id = 3; contact.familyName = "Apple"; contact.givenName = "Azusa";
+calendar = Calendar.getInstance();
+calendar.set(2001, 1-1, 3, 0, 0, 0);
+contact.birthday = new Date(calendar.getTimeInMillis());
+contacts.add(contact);
+
+Transaction.execute(connection ->
+    new Sql<>(Contact.class).insert(connection, contacts));
 ```
 
 ```sql:SQL
-INSERT INTO Contact (id, familyName, givenName, ...) VALUES ('...', '...', '...', ...)
-...
+INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', DATE'2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', DATE'2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 #### 4-3. UPDATE
-#### 4-3-3. UPDATE / 1 row
+#### 4-3-1. UPDATE / 1 row
+
 ```java:Java
-Contact contact = new Contact();
-...
-new Sql<>(Contact.class)
-    .update(connection, contact);
-```
-```sql:SQL
-UPDATE Contact SET familyName='...', givenName='...', ... WHERE id = '...'
+Transaction.execute(connection ->
+    new Sql<>(Contact.class)
+        .where("{id}={}", 1)
+        .select(connection)
+        .ifPresent(contact -> {
+            contact.givenName = "Akiyo";
+            new Sql<>(Contact.class).update(connection, contact);
+        })
+);
 ```
 
-#### 4-3-3. UPDATE / Multiple rows
-```java:Java
-List<Contact> contacts = new ArrayList<>();
-...
-new Sql<>(Contact.class)
-    .update(connection, contacts);
-```
 ```sql:SQL
-UPDATE Contact SET familyName='...', givenName='...', ... WHERE id = '...'
-UPDATE Contact SET familyName='...', givenName='...', ... WHERE id = '...'
-   ...
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
+UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
-#### 4-3-3. UPDATE / Specified Condition
+#### 4-3-2. UPDATE / Multiple rows
+
+```java:Java
+Transaction.execute(connection -> {
+    List<Contact> contacts = new ArrayList<>();
+    new Sql<>(Contact.class)
+        .where("{familyName}={}", "Apple")
+        .select(connection, contact -> {
+            contact.familyName = "Apfel";
+            contacts.add(contact);
+        });
+    new Sql<>(Contact.class).update(connection, contacts);
+});
+```
+
+```sql:SQL
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
+UPDATE Contact SET familyName='Apfel', givenName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday=DATE'2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
+UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday=DATE'2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
+```
+
+#### 4-3-3. UPDATE / Specified Condition, Select Columns
+
 ```java:Java
 Contact contact = new Contact();
-...
-new Sql<>(Contact.class)
-    .where("{familyName} = {}", familyName)
-    .update(connection, contact);
+contact.familyName = "Pomme";
+Transaction.execute(connection ->
+    new Sql<>(Contact.class)
+        .where("{familyName}={}", "Apfel")
+        .columns("familyName")
+        .update(connection, contact)
+);
 ```
+
 ```sql:SQL
-UPDATE Contact SET familyName='...', givenName='...', ... WHERE familyName = '...'
+UPDATE Contact SET familyName='Pomme' WHERE familyName='Apfel'
 ```
 
 #### 4-3-4. UPDATE / All rows
+
 ```java:Java
 Contact contact = new Contact();
-...
-new Sql<>(Contact.class)
-    .where(Condition.ALL)
-    .update(connection, contact);
+Transaction.execute(connection ->
+    new Sql<>(Contact.class)
+        .where(Condition.ALL)
+        .columns("birthday")
+        .update(connection, contact)
+);
 ```
+
 ```sql:SQL
-UPDATE Contact SET familyName='...', givenName='...', ...
+UPDATE Contact SET birthday=NULL
 ```
 
 #### 4-4. DELETE
 #### 4-4-1. DELETE / 1 row
 ```java:Java
-Contact contact = new Contact();
-...
-new Sql<>(Contact.class)
-    .delete(connection, contact);
+Transaction.execute(connection ->
+    new Sql<>(Contact.class)
+        .where("{id}={}", 1)
+        .select(connection)
+        .ifPresent(contact ->
+            new Sql<>(Contact.class).delete(connection, contact))
+);
 ```
+
 ```sql:SQL
-DELETE FROM Contact WHERE id = '...'
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
+DELETE FROM Contact WHERE id=1
 ```
 
 #### 4-4-2. DELETE / Multiple rows
 ```java:Java
-List<Contact> contacts = new ArrayList<>();
-...
-new Sql<>(Contact.class)
-    .delete(connection, contacts);
+Transaction.execute(connection -> {
+    List<Contact> contacts = new ArrayList<>();
+    new Sql<>(Contact.class)
+        .where("{familyName}={}", "Pomme")
+        .select(connection, contacts::add);
+    new Sql<>(Contact.class).delete(connection, contacts);
+});
 ```
+
 ```sql:SQL
-DELETE FROM Contact WHERE id = '...'
-DELETE FROM Contact WHERE id = '...'
-   ...
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Pomme'
+DELETE FROM Contact WHERE id=2
+DELETE FROM Contact WHERE id=3
 ```
 
 #### 4-4-3. DELETE / Specified Condition
 ```java:Java
-new Sql<>(Contact.class)
-    .where("{familyName} = {}", familyName)
-    .delete(connection);
+Transaction.execute(connection -> {
+    List<Contact> contacts = new ArrayList<>();
+    new Sql<>(Contact.class)
+        .where("{familyName}={}", "Pomme")
+        .select(connection, contacts::add);
+    new Sql<>(Contact.class).delete(connection, contacts);
+});
 ```
+
 ```sql:SQL
-DELETE FROM Contact WHERE familyName = '...'
+DELETE FROM Contact WHERE familyName='Orange'
 ```
 
 #### 4-4-4. DELETE / All rows
 ```java:Java
-new Sql<>(Contact.class)
-    .where(Condition.ALL)
-    .delete(connection);
+Transaction.execute(connection ->
+    new Sql<>(Phone.class).where(Condition.ALL).delete(connection));
 ```
+
 ```sql:SQL
-DELETE FROM Contact
+DELETE FROM Phone
 ```
 
 ### 5. Logging
