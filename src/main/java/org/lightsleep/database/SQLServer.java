@@ -163,7 +163,10 @@ public class SQLServer extends Standard {
 
 		// INNER / OUTER JOIN ...
 		if (!sql.getJoinInfos().isEmpty()) {
-			sql.getJoinInfos().stream()
+		// 1.5.1
+		//	sql.getJoinInfos().stream()
+			sql.getJoinInfos()
+		////
 				.forEach(joinInfo -> {
 					// INNER/OUTER JOIN table name
 					buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());

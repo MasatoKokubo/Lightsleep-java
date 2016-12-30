@@ -29,7 +29,7 @@ SELECT ..., <b>(SELECT COUNT(*) FROM Phone WHERE contactId=Contact.id)</b>, ... 
 	@author Masato Kokubo
 */
 @Documented
-@Inherited
+// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Select {

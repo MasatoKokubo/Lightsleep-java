@@ -112,7 +112,10 @@ public abstract class LogicalCondition implements Condition {
 				buff.append('(');
 
 			String[] delimiter = new String[] {""};
-			conditions.stream()
+		// 1.5.1
+		//	conditions.stream()
+			conditions
+		////
 				.forEach(condition -> {
 					buff.append(delimiter[0])
 						.append(condition.toString(sql, parameters));

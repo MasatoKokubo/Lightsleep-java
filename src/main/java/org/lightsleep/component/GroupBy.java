@@ -70,7 +70,10 @@ public class GroupBy implements SqlComponent {
 		if (elements.size() > 0) {
 			buff.append("GROUP BY ");
 			String[] delimiter = new String[] {""};
-			elements.stream().forEach(element -> {
+		// 1.5.1
+		//	elements.stream().forEach(element -> {
+			elements.forEach(element -> {
+		////
 				buff.append(delimiter[0]).append(element.toString(sql, parameters));
 				delimiter[0] = ", ";
 			});

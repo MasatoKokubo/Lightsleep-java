@@ -5,13 +5,18 @@
 package org.lightsleep.helper;
 
 import java.math.BigInteger;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Repeatable;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -293,7 +298,9 @@ public class Utils {
 		@param object the object (permit <b>null</b>)
 		@param type the type of the object (permit <b>null</b>)
 
-		@return  log 出力用の文字列表現
+		@return a string representation for the log output
+
+		@throws NullPointerException if <b>type</b> is <b>null</b>
 	*/
 	@SuppressWarnings("rawtypes")
 	private static String toLogString(Object object, Class<?> type) {
@@ -386,7 +393,7 @@ public class Utils {
 
 		@return the string buffer
 
-		@throws NullPointerException if type is <b>null</b>
+		@throws NullPointerException if <b>buff</b> or <b>type</b> is <b>null</b>
 	*/
 	@SuppressWarnings("rawtypes")
 	private static StringBuilder append(StringBuilder buff, Class<?> type, Object value) {
@@ -429,6 +436,8 @@ public class Utils {
 		@param ch a character
 
 		@return the string buffer
+
+		@throws NullPointerException if <b>buff</b> is <b>null</b>
 	*/
 	private static StringBuilder append(StringBuilder buff, char ch) {
 		if (ch >= ' ' && ch != '\u007F') {
@@ -455,9 +464,11 @@ public class Utils {
 		Appends a string representation of a string to the string buffer.
 
 		@param buff the string buffer
-		@param string 文字列
+		@param string the string
 
 		@return the string buffer
+
+		@throws NullPointerException if <b>buff</b> or <b>string</b> is <b>null</b>
 	*/
 	private static StringBuilder append(StringBuilder buff, String string) {
 		buff.append('"');
@@ -480,6 +491,8 @@ public class Utils {
 		@param chars an array of characters
 
 		@return the string buffer
+
+		@throws NullPointerException if <b>buff</b> or <b>chars</b> is <b>null</b>
 	*/
 	private static StringBuilder append(StringBuilder buff, char[] chars) {
 		buff.append('"');
@@ -502,6 +515,8 @@ public class Utils {
 		@param bytes an array of bytes
 
 		@return the string buffer
+
+		@throws NullPointerException if <b>buff</b> or <b>bytes</b> is <b>null</b>
 	*/
 	private static StringBuilder append(StringBuilder buff, byte[] bytes) {
 		buff.append('[');
@@ -534,6 +549,8 @@ public class Utils {
 		@param array an array
 
 		@return the string buffer
+
+		@throws NullPointerException if <b>buff</b> or <b>array</b> is <b>null</b>
 	*/
 	private static StringBuilder appendArray(StringBuilder buff, Object array) {
 		Class<?> componentType = array.getClass().getComponentType();
@@ -565,6 +582,8 @@ public class Utils {
 		@param iterable an <b>Iterable</b>
 
 		@return the string buffer
+
+		@throws NullPointerException if <b>buff</b> or <b>iterable</b> is <b>null</b>
 	*/
 	private static StringBuilder append(StringBuilder buff, Iterable<?> iterable) {
 		Iterator<?> iter = iterable.iterator();
@@ -591,6 +610,8 @@ public class Utils {
 		@param map a <b>Map</b>
 
 		@return the string buffer
+
+		@throws NullPointerException if <b>buff</b> or <b>map</b> is <b>null</b>
 	*/
 	private static <K,V> StringBuilder append(StringBuilder buff, Map<K,V> map) {
 		Iterator<Map.Entry<K,V>> iter = map.entrySet().iterator();
@@ -609,5 +630,50 @@ public class Utils {
 		buff.append(']');
 
 		return buff;
+	}
+
+	// #0014
+	/**
+		Returns annotations of the target class and its super class without Object class.
+
+		@param <A> the annotation type
+		@param clazz the target class
+		@param annotationClass the annotation class
+
+		@return a list of annotations
+
+		@throws NullPointerException if <b>clazz</b> or <b>annotationClass</b> is <b>null</b>
+
+		@since 1.5.1
+	*/
+	public static <A extends Annotation> List<A> getAnnotations(Class<?> clazz, Class<A> annotationClass) {
+		List<A> annotations = new ArrayList<>();
+		addAnnotations(annotations, clazz, annotationClass);
+		return annotations;
+	}
+
+	private static <A extends Annotation> void addAnnotations(List<A> annotations, Class<?> clazz, Class<A> annotationClass) {
+		if (clazz == Object.class) return;
+
+		addAnnotations(annotations, clazz.getSuperclass(), annotationClass);
+
+		A annotation = clazz.getAnnotation(annotationClass);
+		if (annotation != null)
+			annotations.add(annotation);
+
+		Repeatable repeatable = annotationClass.getAnnotation(Repeatable.class);
+		if (repeatable != null) {
+			Annotation repeatAnnotation = clazz.getAnnotation(repeatable.value());
+			if (repeatAnnotation != null) {
+				try {
+					@SuppressWarnings("unchecked")
+					A[] annotationArray = (A[])repeatAnnotation.annotationType().getMethod("value").invoke(repeatAnnotation);
+					Arrays.stream(annotationArray).forEach(ann -> annotations.add(ann));
+				}
+				catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
 	}
 }

@@ -30,7 +30,7 @@ SELECT ..., <b>(SELECT COUNT(*) FROM Phone P WHERE contactId=Contact.id)</b>, ..
 	@author Masato Kokubo
 */
 @Documented
-@Inherited
+// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(SelectProperties.class)
 @Target({ElementType.TYPE})

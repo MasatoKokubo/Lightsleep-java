@@ -31,7 +31,7 @@ UPDATE Contact ..., <b>updateCount=updateCount+1</b>, <b>modified=CURRENT_TIMEST
 	@author Masato Kokubo
 */
 @Documented
-@Inherited
+// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(UpdateProperties.class)
 @Target({ElementType.TYPE})

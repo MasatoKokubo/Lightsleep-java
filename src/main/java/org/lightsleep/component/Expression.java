@@ -241,7 +241,10 @@ public class Expression implements Condition {
 						}
 
 						// Not found any column information
-						logger.warn(MessageFormat.format(messagePropertyIsNotFound, propertyName, entityInfo.entityClass().getName()));
+					// 1.5.1
+					//	logger.warn(MessageFormat.format(messagePropertyIsNotFound, propertyName, entityInfo.entityClass().getName()));
+						logger.warn(MessageFormat.format(messagePropertyIsNotFound, entityInfo.entityClass().getName(), propertyName));
+					////
 						buff.append('{').append(propertyName).append('}');
 						continue;
 					}

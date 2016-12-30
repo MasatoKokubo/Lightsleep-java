@@ -52,7 +52,7 @@ public class ContactComposite extends Contact implements <b>Composite</b> {
     short[] childIndex = new short[1];
     <i>// Inserts phones</i>
     childIndex[0] = 1;
-    phones.stream().forEach(phone -&gt; {
+    phones.forEach(phone -&gt; {
       phone.contactId = id;
       phone.childIndex = childIndex[0]++;
     });

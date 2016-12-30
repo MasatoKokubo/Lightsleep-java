@@ -85,7 +85,10 @@ public class HikariCP extends AbstractConnectionSupplier {
 			// Gets HikariCP properties to the properties2.
 			Set<String> propertyNames = PropertyElf.getPropertyNames(HikariConfig.class);
 			Properties properties2 = new Properties();
-			propertyNames.stream()
+		// 1.5.1
+		//	propertyNames.stream()
+			propertyNames
+		////
 				.forEach(propertyName -> {
 					if (properties.containsKey(propertyName))
 						properties2.put(propertyName, properties.get(propertyName));

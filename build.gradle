@@ -33,7 +33,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '1.5.0'
+version             = '1.5.1'
 
 compileJava {
 	options.encoding     = 'UTF-8'

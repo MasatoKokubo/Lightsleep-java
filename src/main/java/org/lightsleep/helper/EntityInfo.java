@@ -5,7 +5,6 @@
 package org.lightsleep.helper;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -73,75 +72,115 @@ public class EntityInfo<E> {
 		}
 		this.tableName = tableName;
 
-	// 1.3.0
+// 1.3.0
 		// @KeyProperty, @KeyProperties
 		Set<String> keySet = new HashSet<>();
-		KeyProperty keyProperty = entityClass.getAnnotation(KeyProperty.class);
-		if (keyProperty != null) keySet.add(keyProperty.value());
-		KeyProperties keyProperties = entityClass.getAnnotation(KeyProperties.class);
+	// 1.5.1 #0014
+	//	KeyProperty keyProperty = entityClass.getAnnotation(KeyProperty.class);
+	//	if (keyProperty != null) keySet.add(keyProperty.value());
+	//	KeyProperties keyProperties = entityClass.getAnnotation(KeyProperties.class);
+	//	if (keyProperties != null)
+	//		Arrays.stream(keyProperties.value()).forEach(annotation -> keySet.add(annotation.value()));
+		List<KeyProperty> keyProperties = Utils.getAnnotations(entityClass, KeyProperty.class);
 		if (keyProperties != null)
-			Arrays.stream(keyProperties.value()).forEach(annotation -> keySet.add(annotation.value()));
+			keyProperties.forEach(annotation -> keySet.add(annotation.value()));
+	////
 
 		// @NonSelectProperty, @NonSelectProperties
+	// 1.5.1 #0014
 		Set<String> nonSelectSet = new HashSet<>();
-		NonSelectProperty nonSelectProperty = entityClass.getAnnotation(NonSelectProperty.class);
-		if (nonSelectProperty != null) nonSelectSet.add(nonSelectProperty.value());
-		NonSelectProperties nonSelectProperties = entityClass.getAnnotation(NonSelectProperties.class);
+	//	NonSelectProperty nonSelectProperty = entityClass.getAnnotation(NonSelectProperty.class);
+	//	if (nonSelectProperty != null) nonSelectSet.add(nonSelectProperty.value());
+	//	NonSelectProperties nonSelectProperties = entityClass.getAnnotation(NonSelectProperties.class);
+	//	if (nonSelectProperties != null)
+	//		Arrays.stream(nonSelectProperties.value()).forEach(annotation -> nonSelectSet.add(annotation.value()));
+		List<NonSelectProperty> nonSelectProperties = Utils.getAnnotations(entityClass, NonSelectProperty.class);
 		if (nonSelectProperties != null)
-			Arrays.stream(nonSelectProperties.value()).forEach(annotation -> nonSelectSet.add(annotation.value()));
+			nonSelectProperties.forEach(annotation -> nonSelectSet.add(annotation.value()));
+	////
 
 		// @NonInsertProperty, @NonInsertProperties
+	// 1.5.1 #0014
 		Set<String> nonInsertSet = new HashSet<>();
-		NonInsertProperty nonInsertProperty = entityClass.getAnnotation(NonInsertProperty.class);
-		if (nonInsertProperty != null) nonInsertSet.add(nonInsertProperty.value());
-		NonInsertProperties nonInsertProperties = entityClass.getAnnotation(NonInsertProperties.class);
+	//	NonInsertProperty nonInsertProperty = entityClass.getAnnotation(NonInsertProperty.class);
+	//	if (nonInsertProperty != null) nonInsertSet.add(nonInsertProperty.value());
+	//	NonInsertProperties nonInsertProperties = entityClass.getAnnotation(NonInsertProperties.class);
+	//	if (nonInsertProperties != null)
+	//		Arrays.stream(nonInsertProperties.value()).forEach(annotation -> nonInsertSet.add(annotation.value()));
+		List<NonInsertProperty> nonInsertProperties = Utils.getAnnotations(entityClass, NonInsertProperty.class);
 		if (nonInsertProperties != null)
-			Arrays.stream(nonInsertProperties.value()).forEach(annotation -> nonInsertSet.add(annotation.value()));
+			nonInsertProperties.forEach(annotation -> nonInsertSet.add(annotation.value()));
+	////
 
 		// @NonUpdateProperty, @NonUpdateProperties
+	// 1.5.1 #0014
 		Set<String> nonUpdateSet = new HashSet<>();
-		NonUpdateProperty nonUpdateProperty = entityClass.getAnnotation(NonUpdateProperty.class);
-		if (nonUpdateProperty != null) nonUpdateSet.add(nonUpdateProperty.value());
-		NonUpdateProperties nonUpdateProperties = entityClass.getAnnotation(NonUpdateProperties.class);
+	//	NonUpdateProperty nonUpdateProperty = entityClass.getAnnotation(NonUpdateProperty.class);
+	//	if (nonUpdateProperty != null) nonUpdateSet.add(nonUpdateProperty.value());
+	//	NonUpdateProperties nonUpdateProperties = entityClass.getAnnotation(NonUpdateProperties.class);
+	//	if (nonUpdateProperties != null)
+	//		Arrays.stream(nonUpdateProperties.value()).forEach(annotation -> nonUpdateSet.add(annotation.value()));
+		List<NonUpdateProperty> nonUpdateProperties = Utils.getAnnotations(entityClass, NonUpdateProperty.class);
 		if (nonUpdateProperties != null)
-			Arrays.stream(nonUpdateProperties.value()).forEach(annotation -> nonUpdateSet.add(annotation.value()));
+			nonUpdateProperties.forEach(annotation -> nonUpdateSet.add(annotation.value()));
+	////
 
 		// @ColumnProperty, @ColumnProperties
+	// 1.5.1 #0014
 		Map<String, String> columnMap = new HashMap<>();
-		ColumnProperty columnProperty = entityClass.getAnnotation(ColumnProperty.class);
-		if (columnProperty != null) columnMap.put(columnProperty.property(), columnProperty.column());
-		ColumnProperties columnProperties = entityClass.getAnnotation(ColumnProperties.class);
+	//	ColumnProperty columnProperty = entityClass.getAnnotation(ColumnProperty.class);
+	//	if (columnProperty != null) columnMap.put(columnProperty.property(), columnProperty.column());
+	//	ColumnProperties columnProperties = entityClass.getAnnotation(ColumnProperties.class);
+	//	if (columnProperties != null)
+	//		Arrays.stream(columnProperties.value())
+	//			.forEach(annotation -> columnMap.put(annotation.property(), annotation.column()));
+		List<ColumnProperty> columnProperties = Utils.getAnnotations(entityClass, ColumnProperty.class);
 		if (columnProperties != null)
-			Arrays.stream(columnProperties.value())
-				.forEach(annotation -> columnMap.put(annotation.property(), annotation.column()));
+			columnProperties.forEach(annotation -> columnMap.put(annotation.property(), annotation.column()));
+	////
 
 		// @SelectProperty, @SelectProperties
+	// 1.5.1 #0014
 		Map<String, String> selectMap = new HashMap<>();
-		SelectProperty selectProperty = entityClass.getAnnotation(SelectProperty.class);
-		if (selectProperty != null) selectMap.put(selectProperty.property(), selectProperty.expression());
-		SelectProperties selectProperties = entityClass.getAnnotation(SelectProperties.class);
+	//	SelectProperty selectProperty = entityClass.getAnnotation(SelectProperty.class);
+	//	if (selectProperty != null) selectMap.put(selectProperty.property(), selectProperty.expression());
+	//	SelectProperties selectProperties = entityClass.getAnnotation(SelectProperties.class);
+	//	if (selectProperties != null)
+	//		Arrays.stream(selectProperties.value())
+	//			.forEach(annotation -> selectMap.put(annotation.property(), annotation.expression()));
+		List<SelectProperty> selectProperties = Utils.getAnnotations(entityClass, SelectProperty.class);
 		if (selectProperties != null)
-			Arrays.stream(selectProperties.value())
-				.forEach(annotation -> selectMap.put(annotation.property(), annotation.expression()));
+			selectProperties.forEach(annotation -> selectMap.put(annotation.property(), annotation.expression()));
+	////
 
 		// @InsertProperty, @InsertProperties
+	// 1.5.1 #0014
 		Map<String, String> insertMap = new HashMap<>();
-		InsertProperty insertProperty = entityClass.getAnnotation(InsertProperty.class);
-		if (insertProperty != null) insertMap.put(insertProperty.property(), insertProperty.expression());
-		InsertProperties insertProperties = entityClass.getAnnotation(InsertProperties.class);
+	//	InsertProperty insertProperty = entityClass.getAnnotation(InsertProperty.class);
+	//	if (insertProperty != null) insertMap.put(insertProperty.property(), insertProperty.expression());
+	//	InsertProperties insertProperties = entityClass.getAnnotation(InsertProperties.class);
+	//	if (insertProperties != null)
+	//		Arrays.stream(insertProperties.value())
+	//			.forEach(annotation -> insertMap.put(annotation.property(), annotation.expression()));
+		List<InsertProperty> insertProperties = Utils.getAnnotations(entityClass, InsertProperty.class);
 		if (insertProperties != null)
-			Arrays.stream(insertProperties.value())
-				.forEach(annotation -> insertMap.put(annotation.property(), annotation.expression()));
+			insertProperties.forEach(annotation -> insertMap.put(annotation.property(), annotation.expression()));
+	////
 
 		// @UpdateProperty, @UpdateProperties
+	// 1.5.1 #0014
 		Map<String, String> updateMap = new HashMap<>();
-		UpdateProperty updateProperty = entityClass.getAnnotation(UpdateProperty.class);
-		if (updateProperty != null) updateMap.put(updateProperty.property(), updateProperty.expression());
-		UpdateProperties updateProperties = entityClass.getAnnotation(UpdateProperties.class);
+	//	UpdateProperty updateProperty = entityClass.getAnnotation(UpdateProperty.class);
+	//	if (updateProperty != null) updateMap.put(updateProperty.property(), updateProperty.expression());
+	//	UpdateProperties updateProperties = entityClass.getAnnotation(UpdateProperties.class);
+	//	if (updateProperties != null)
+	//		Arrays.stream(updateProperties.value())
+	//			.forEach(annotation -> updateMap.put(annotation.property(), annotation.expression()));
+		List<UpdateProperty> updateProperties = Utils.getAnnotations(entityClass, UpdateProperty.class);
 		if (updateProperties != null)
-			Arrays.stream(updateProperties.value())
-				.forEach(annotation -> updateMap.put(annotation.property(), annotation.expression()));
+			updateProperties.forEach(annotation -> updateMap.put(annotation.property(), annotation.expression()));
 	////
+////
 
 		columnInfoMap = new LinkedHashMap<>();
 

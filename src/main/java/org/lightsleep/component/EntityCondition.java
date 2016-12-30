@@ -67,7 +67,10 @@ public class EntityCondition<E> implements Condition {
 
 		Condition[] condition = new Condition[] {Condition.EMPTY};
 
-		entityInfo.keyColumnInfos().stream()
+	// 1.5.1
+	//	entityInfo.keyColumnInfos().stream()
+		entityInfo.keyColumnInfos()
+	////
 			.forEach(columnInfo -> {
 				String propertyName = columnInfo.propertyName();
 				String columnName = columnInfo.getColumnName(tableAlias);

@@ -23,7 +23,7 @@ public class Contact {
 	@author Masato Kokubo
 */
 @Documented
-@Inherited
+// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonColumn {

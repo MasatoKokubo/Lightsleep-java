@@ -31,7 +31,7 @@ INSERT INTO Contact (..., <b>created</b>, <b>modified</b>) VALUES (..., <b>CURRE
 	@author Masato Kokubo
 */
 @Documented
-@Inherited
+// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(InsertProperties.class)
 @Target({ElementType.TYPE})

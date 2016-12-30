@@ -14,7 +14,6 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -27,7 +26,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.lightsleep.entity.NonColumn;
-import org.lightsleep.entity.NonColumnProperties;
 import org.lightsleep.entity.NonColumnProperty;
 import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
@@ -47,7 +45,15 @@ public class Accessor<T> {
 	// Class Resources
 	private static final Resource resource = new Resource(Accessor.class);
 	private static final String messagePropertyIsNotFound       = resource.get("messagePropertyIsNotFound");
+// 1.5.1 #0011
+	private static final String messagePropertyExceededMaxNest  = resource.get("messagePropertyExceededMaxNest");
+////
 	private static final String messageIntermediateObjectIsNull = resource.get("messageIntermediateObjectIsNull");
+
+// 1.5.1
+	// Maximum nesting level of property
+	private static final int MAX_NEST = 8;
+////
 
 	// The target class
 	private final Class<T> objectClass;
@@ -117,16 +123,23 @@ public class Accessor<T> {
 
 		this.objectClass = objectClass;
 
-	// 1.3.0
+// 1.3.0
 		// @NonColumnProperty, @NonColumnProperties
-		NonColumnProperty nonColumnProperty = objectClass.getAnnotation(NonColumnProperty.class);
-		if (nonColumnProperty != null) nonColumnSet.add(nonColumnProperty.value());
-		NonColumnProperties nonColumnProperties = objectClass.getAnnotation(NonColumnProperties.class);
+	// 1.5.1 #0014
+	//	NonColumnProperty nonColumnProperty = objectClass.getAnnotation(NonColumnProperty.class);
+	//	if (nonColumnProperty != null) nonColumnSet.add(nonColumnProperty.value());
+	//	NonColumnProperties nonColumnProperties = objectClass.getAnnotation(NonColumnProperties.class);
+	//	if (nonColumnProperties != null)
+	//		Arrays.stream(nonColumnProperties.value()).forEach(annotation -> nonColumnSet.add(annotation.value()));
+		List<NonColumnProperty> nonColumnProperties = Utils.getAnnotations(objectClass, NonColumnProperty.class);
 		if (nonColumnProperties != null)
-			Arrays.stream(nonColumnProperties.value()).forEach(annotation -> nonColumnSet.add(annotation.value()));
+			nonColumnProperties.forEach(annotation -> nonColumnSet.add(annotation.value()));
 	////
+////
 
-		putToMaps(objectClass, "", null);
+	// 1.5.1 #0011
+		putToMaps(objectClass, "", null, 0);
+	////
 
 		propertyNames = fieldMap.keySet().stream().collect(Collectors.toList());
 
@@ -157,11 +170,18 @@ public class Accessor<T> {
 		@param objectClass the class of target object
 		@param basePropertyName the base property name
 		@param subGetter the getter of the base property
+		@param nestCount the nest count of the property
 	*/
-	private void putToMaps(Class<?> objectClass, String basePropertyName, Function<T, Object> subGetter) {
+// 1.5.1 #0011
+//	private void putToMaps(Class<?> objectClass, String basePropertyName, Function<T, Object> subGetter) {
+	private void putToMaps(Class<?> objectClass, String basePropertyName, Function<T, Object> subGetter, int nestCount) {
+////
 		Class<?> superClass = objectClass.getSuperclass();
 		if (superClass != null && superClass != Object.class)
-			putToMaps(superClass, basePropertyName, subGetter);
+		// 1.5.1 #0011
+		//	putToMaps(superClass, basePropertyName, subGetter);
+			putToMaps(superClass, basePropertyName, subGetter, nestCount);
+		////
 
 		Field[] fields = objectClass.getDeclaredFields();
 		for (Field field : fields) {
@@ -192,7 +212,10 @@ public class Accessor<T> {
 							return field.get(object);
 						}
 						catch (IllegalAccessException e) {
-							throw new RuntimeException(e);
+						// 1.5.1
+						//	throw new RuntimeException(e);
+							throw new RuntimeException(field.toString(), e);
+						////
 						}
 					}
 					: object -> {
@@ -200,7 +223,10 @@ public class Accessor<T> {
 							return field.get(subGetter.apply(object));
 						}
 						catch (IllegalAccessException e) {
-							throw new RuntimeException(e);
+						// 1.5.1
+						//	throw new RuntimeException(e);
+							throw new RuntimeException(field.toString(), e);
+						////
 						}
 					};
 
@@ -210,7 +236,10 @@ public class Accessor<T> {
 							field.set(object, value);
 						}
 						catch (IllegalAccessException e) {
-							throw new RuntimeException(e);
+						// 1.5.1
+						//	throw new RuntimeException(e);
+							throw new RuntimeException(field.toString(), e);
+						////
 						}
 					}
 					:  (object, value) -> {
@@ -218,7 +247,10 @@ public class Accessor<T> {
 							field.set(subGetter.apply(object), value);
 						}
 						catch (IllegalAccessException e) {
-							throw new RuntimeException(e);
+						// 1.5.1
+						//	throw new RuntimeException(e);
+							throw new RuntimeException(field.toString(), e);
+						////
 						}
 					};
 
@@ -234,7 +266,10 @@ public class Accessor<T> {
 								return getterMethod.invoke(object);
 							}
 							catch (IllegalAccessException | InvocationTargetException e) {
-								throw new RuntimeException(e);
+							// 1.5.1
+							//	throw new RuntimeException(e);
+								throw new RuntimeException(getterMethod.toString(), e);
+							////
 							}
 						}
 						: object -> {
@@ -242,13 +277,19 @@ public class Accessor<T> {
 								Object subObject = subGetter.apply(object);
 								if (subObject == null) {
 									logger.error(MessageFormat.format(
-										messageIntermediateObjectIsNull, objectClass.getName(), basePropertyName));
+									// 1.5.1
+									//	messageIntermediateObjectIsNull, objectClass.getName(), basePropertyName));
+										messageIntermediateObjectIsNull, this.objectClass.getName(), basePropertyName));
+									////
 									return null;
 								} else
 									return getterMethod.invoke(subObject);
 							}
 							catch (IllegalAccessException | InvocationTargetException e) {
-								throw new RuntimeException(e);
+							// 1.5.1
+							//	throw new RuntimeException(e);
+								throw new RuntimeException(getterMethod.toString(), e);
+							////
 							}
 						};
 				}
@@ -260,7 +301,10 @@ public class Accessor<T> {
 								setterMethod.invoke(object, value);
 							}
 							catch (IllegalAccessException | InvocationTargetException e) {
-								throw new RuntimeException(e);
+							// 1.5.1
+							//	throw new RuntimeException(e);
+								throw new RuntimeException(setterMethod.toString(), e);
+							////
 							}
 						}
 						: (object, value) -> {
@@ -268,12 +312,18 @@ public class Accessor<T> {
 								Object subObject = subGetter.apply(object);
 								if (subObject == null)
 									logger.error(MessageFormat.format(
-										messageIntermediateObjectIsNull, objectClass.getName(), basePropertyName));
+									// 1.5.1
+									//	messageIntermediateObjectIsNull, objectClass.getName(), basePropertyName));
+										messageIntermediateObjectIsNull, this.objectClass.getName(), basePropertyName));
+									////
 								else
 									setterMethod.invoke(subObject, value);
 							}
 							catch (IllegalAccessException | InvocationTargetException e) {
-								throw new RuntimeException(e);
+							// 1.5.1
+							//	throw new RuntimeException(e);
+								throw new RuntimeException(setterMethod.toString(), e);
+							////
 							}
 						};
 				}
@@ -283,8 +333,17 @@ public class Accessor<T> {
 			if (getter != null) {
 				getterMap.put(propertyName, getter);
 
+			// 1.5.1 #0011
+				if (nestCount >= MAX_NEST)
+					throw new IllegalArgumentException(
+						MessageFormat.format(messagePropertyExceededMaxNest, this.objectClass.getName(), propertyName, MAX_NEST));
+			////
+
 				if (!valueTypes.contains(fieldType) && !fieldType.isEnum())
-					putToMaps(fieldType, fieldName + '.', getter);
+				// 1.5.1 #0011,  #0014
+				//	putToMaps(fieldType, fieldName + '.', getter);
+					putToMaps(fieldType, basePropertyName + fieldName + '.', getter, nestCount + 1);
+				////
 			}
 
 			// put to setterMap
@@ -410,7 +469,10 @@ public class Accessor<T> {
 		if (field == null)
 			// Not found
 			throw new IllegalArgumentException(
-				MessageFormat.format(messagePropertyIsNotFound, propertyName, objectClass.getName()));
+			// 1.5.1
+			//	MessageFormat.format(messagePropertyIsNotFound, propertyName, objectClass.getName()));
+				MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
+			////
 
 		return field;
 	}
@@ -455,7 +517,10 @@ public class Accessor<T> {
 		if (getter == null)
 			// Not found
 			throw new IllegalArgumentException(
-				MessageFormat.format(messagePropertyIsNotFound, propertyName, objectClass.getName()));
+			// 1.5.1
+			//	MessageFormat.format(messagePropertyIsNotFound, propertyName, objectClass.getName()));
+				MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
+			////
 
 		Object value = getter.apply(object);
 		return value;
@@ -486,7 +551,10 @@ public class Accessor<T> {
 		if (setter == null)
 			// Not found
 			throw new IllegalArgumentException(
-				MessageFormat.format(messagePropertyIsNotFound, propertyName, objectClass.getName()));
+			// 1.5.1
+			//	MessageFormat.format(messagePropertyIsNotFound, propertyName, objectClass.getName()));
+				MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
+			////
 
 		if (value == null) {
 			Field field = getField(propertyName);

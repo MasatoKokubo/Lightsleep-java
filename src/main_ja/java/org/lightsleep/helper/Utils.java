@@ -4,6 +4,8 @@
 */
 package org.lightsleep.helper;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -188,6 +190,23 @@ public class Utils {
 		@return ログ出力用の文字列表現
 	*/
 	public static String toLogString(Object value) {
+		return null;
+	}
+
+	/**
+		対象クラスとそのスーパークラス (Object クラス以外) のアノテーションのリストを返します。
+
+		@param <A> アノテーションタイプ
+		@param clazz 対象クラス
+		@param annotationClass アノテーションクラス
+
+		@return アノテーションのリスト
+
+		@throws NullPointerException <b>clazz</b> または <b>annotationClass</b> が <b>null</b> の場合
+
+		@since 1.5.1
+	*/
+	public static <A extends Annotation> List<A> getAnnotations(Class<?> clazz, Class<A> annotationClass) {
 		return null;
 	}
 }
