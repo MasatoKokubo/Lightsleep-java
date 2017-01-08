@@ -1,46 +1,45 @@
-/*
-	PostgreSQL.java
-	(C) 2016 Masato Kokubo
-*/
+// PostgreSQL.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.database;
 
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
 
 /**
-	A database handler for
-	<a href="http://www.postgresql.org/" target="PostgreSQL">PostgreSQL</a>.<br>
+ * A database handler for
+ * <a href="http://www.postgresql.org/" target="PostgreSQL">PostgreSQL</a>.<br>
+ *
+ * The object of this class has a <b>TypeConverter</b> map
+ * with the following additional <b>TypeConverter</b> to
+ * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
 
-	The object of this class has a <b>TypeConverter</b> map
-	with the following additional <b>TypeConverter</b> to
-	{@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
-
-	<table class="additional">
-		<caption><span>Registered TypeConverter objects</span></caption>
-		<tr><th>Source data type</th><th>Destination data type</th></tr>
-		<tr><td>boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
-		<tr><td>String </td><td>{@linkplain org.lightsleep.component.SqlString} (Escape sequence corresponding)</td></tr>
-	</table>
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * <table class="additional">
+ *   <caption><span>Registered TypeConverter objects</span></caption>
+ *   <tr><th>Source data type</th><th>Destination data type</th></tr>
+ *   <tr><td>boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
+ *   <tr><td>String </td><td>{@linkplain org.lightsleep.component.SqlString} (Escape sequence corresponding)</td></tr>
+ * </table>
+ *
+ * @since 1.0.0
+ * @author Masato Kokubo
+ */
 public class PostgreSQL extends Standard {
 	// The PostgreSQL instance
 	private static final Database instance = new PostgreSQL();
 
 	/**
-		Returns the <b>PostgreSQL</b> instance.
-
-		@return the <b>PostgreSQL</b> instance
-	*/
+	 * Returns the <b>PostgreSQL</b> instance.
+	 *
+	 * @return the <b>PostgreSQL</b> instance
+	 */
 	public static Database instance() {
 		return instance;
 	}
 
 	/**
-		Constructs a new <b>PostgreSQL</b>.
-	*/
+	 * Constructs a new <b>PostgreSQL</b>.
+	 */
 	protected PostgreSQL() {
 		/** boolean -> FALSE, TRUE */
 		TypeConverter.put(typeConverterMap, booleanToSqlFalseTrueConverter);
@@ -106,8 +105,8 @@ public class PostgreSQL extends Standard {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean supportsOffsetLimit() {
 		return true;

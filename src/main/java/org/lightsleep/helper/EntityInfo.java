@@ -1,7 +1,6 @@
-/*
-	EntityInfo.java
-	(C) 2016 Masato Kokubo
-*/
+// EntityInfo.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.helper;
 
 import java.lang.reflect.Field;
@@ -17,13 +16,13 @@ import org.lightsleep.component.Expression;
 import org.lightsleep.entity.*;
 
 /**
-	Has information of an entity class.
-
-	@param <E> the type the entity
-
-	@since 1.0
-	@author Masato Kokubo
-*/
+ * Has information of an entity class.
+ *
+ * @param <E> the type the entity
+ *
+ * @since 1.0
+ * @author Masato Kokubo
+ */
 public class EntityInfo<E> {
 	// The entity class 
 	private final Class<E> entityClass;
@@ -44,12 +43,12 @@ public class EntityInfo<E> {
 	private final List<ColumnInfo> keyColumnInfos;
 
 	/**
-		Constructs a new <b>EntityInfo</b>.
-
-		@param entityClass the entity class
-
-		@throws NullPointerException <b>entityClass</b> is null
-	*/
+	 * Constructs a new <b>EntityInfo</b>.
+	 *
+	 * @param entityClass the entity class
+	 *
+	 * @throws NullPointerException <b>entityClass</b> is null
+	 */
 	public EntityInfo(Class<E> entityClass) {
 		if (entityClass == null) throw new NullPointerException("EntityInfo.<init>: entityClass == null");
 
@@ -291,42 +290,41 @@ public class EntityInfo<E> {
 	}
 
 	/**
-		Returns the entity class.
-
-		@return the entity class
-	*/
+	 * Returns the entity class.
+	 *
+	 * @return the entity class
+	 */
 	public Class<E> entityClass() {
 		return entityClass;
 	}
 
 	/**
-		Returns the accessor.
-
-		@return the accessor
-	*/
+	 * Returns the accessor.
+	 *
+	 * @return the accessor
+	 */
 	public Accessor<E> accessor() {
 		return accessor;
 	}
 
 	/**
-		Returns the table name.
-
-		@return the table name
-	*/
+	 * Returns the table name.
+	 *
+	 * @return the table name
+	 */
 	public String tableName() {
 		return tableName;
 	}
 
 	/**
-		Returns the column information.
-
-		@param propertyName the property name
-
-		@return the column information
-
-		@throws NullPointerException if <b>propertyName</b> is <b>null</b>
-		@throws IllegalArgumentException if the column information related to <b>propertyName</b> can not be found
-	*/
+	 * Returns the column information.
+	 *
+	 * @param propertyName the property name
+	 * @return the column information
+	 *
+	 * @throws NullPointerException if <b>propertyName</b> is <b>null</b>
+	 * @throws IllegalArgumentException if the column information related to <b>propertyName</b> can not be found
+	 */
 	public ColumnInfo getColumnInfo(String propertyName) {
 		if (propertyName == null) throw new NullPointerException("EntityInfo.getColumnInfo: propertyName == null");
 
@@ -342,19 +340,19 @@ public class EntityInfo<E> {
 	}
 
 	/**
-		Returns the list of information of the columns.
-
-		@return the list of information of the columns
-	*/
+	 * Returns the list of information of the columns.
+	 *
+	 * @return the list of information of the columns
+	 */
 	public List<ColumnInfo> columnInfos() {
 		return columnInfos;
 	}
 
 	/**
-		Returns the list of information of the columns which are key
-
-		@return the list of information of the columns
-	*/
+	 * Returns the list of information of the columns which are key
+	 *
+	 * @return the list of information of the columns
+	 */
 	public List<ColumnInfo> keyColumnInfos() {
 		return keyColumnInfos;
 	}

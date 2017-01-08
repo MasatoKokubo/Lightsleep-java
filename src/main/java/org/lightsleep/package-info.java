@@ -1,4 +1,4 @@
 /**
-	Major classes of Lightsleep.
-*/
+ * Major classes of Lightsleep.
+ */
 package org.lightsleep;

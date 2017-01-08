@@ -1,46 +1,45 @@
-/*
-	MySQL.java
-	(C) 2016 Masato Kokubo
-*/
+// MySQL.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.database;
 
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
 
 /**
-	A database handler for
-	<a href="http://www.mysql.com/" target="MySQL">MySQL</a>.<br>
+ * A database handler for
+ * <a href="http://www.mysql.com/" target="MySQL">MySQL</a>.<br>
+ *
+ * The object of this class has a <b>TypeConverter</b> map
+ * with the following additional <b>TypeConverter</b> to
+ * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
+ *
+ * <table class="additional">
+ *   <caption><span>Registered TypeConverter objects</span></caption>
+ *   <tr><th>Source data type</th><th>Destination data type</th></tr>
+ *   <tr><td>boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
+ *   <tr><td>String </td><td>{@linkplain org.lightsleep.component.SqlString} (Escape sequence corresponding)</td></tr>
+ * </table>
 
-	The object of this class has a <b>TypeConverter</b> map
-	with the following additional <b>TypeConverter</b> to
-	{@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
-
-	<table class="additional">
-		<caption><span>Registered TypeConverter objects</span></caption>
-		<tr><th>Source data type</th><th>Destination data type</th></tr>
-		<tr><td>boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
-		<tr><td>String </td><td>{@linkplain org.lightsleep.component.SqlString} (Escape sequence corresponding)</td></tr>
-	</table>
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * @since 1.0.0
+ * @author Masato Kokubo
+ */
 public class MySQL extends Standard {
 	// The MySQL instance
 	private static final Database instance = new MySQL();
 
 	/**
-		Returns the <b>MySQL</b> instance.
-
-		@return the <b>MySQL</b> instance
-	*/
+	 * Returns the <b>MySQL</b> instance.
+	 *
+	 * @return the <b>MySQL</b> instance
+	 */
 	public static Database instance() {
 		return instance;
 	}
 
 	/**
-		Constructs a new <b>MySQL</b>.
-	*/
+	 * Constructs a new <b>MySQL</b>.
+	 */
 	protected MySQL() {
 		// boolean -> 0, 1
 		TypeConverter.put(typeConverterMap, booleanToSql01Converter);
@@ -74,8 +73,8 @@ public class MySQL extends Standard {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean supportsOffsetLimit() {
 		return true;

@@ -1,7 +1,6 @@
-/*
-	AbstractConnectionSupplier.java
-	(C) 2016 Masato Kokubo
-*/
+// AbstractConnectionSupplier.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.connection;
 
 import java.sql.Connection;
@@ -20,11 +19,11 @@ import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
 
 /**
-	The abstract connection supplier
-
-	@since 1.1.0
-	@author Masato Kokubo
-*/
+ * The abstract connection supplier
+ *
+ * @since 1.1.0
+ * @author Masato Kokubo
+ */
 public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	/** The logger */
 	protected static final Logger logger = LoggerFactory.getLogger(AbstractConnectionSupplier.class);
@@ -46,9 +45,9 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	private DataSource dataSource;
 
 	/**
-		Constructs a new <b>AbstractConnectionSupplier</b>.
-		Use values specified in the lightsleep.properties file as the connection information.
-	*/
+	 * Constructs a new <b>AbstractConnectionSupplier</b>.
+	 * Use values specified in the lightsleep.properties file as the connection information.
+	 */
 	public AbstractConnectionSupplier() {
 	// 1.2.0
 	// 1.5.0
@@ -60,13 +59,13 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	}
 
 	/**
-		Constructs a new <b>AbstractConnectionSupplier</b>.
-		Use values specified in the lightsleep.properties file as the connection information.
-
-		@param modifier a consumer to modify the properties
-
-		@since 1.5.0
-	*/
+	 * Constructs a new <b>AbstractConnectionSupplier</b>.
+	 * Use values specified in the lightsleep.properties file as the connection information.
+	 *
+	 * @param modifier a consumer to modify the properties
+	 *
+	 * @since 1.5.0
+	 */
 	public AbstractConnectionSupplier(Consumer<Properties> modifier) {
 		if (modifier == null)
 			throw new NullPointerException(getClass().getSimpleName() + ".<init>: modifier == null");
@@ -81,31 +80,31 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 
 // 1.2.0
 //	/**
-//		Constructs a new <b>AbstractConnectionSupplier</b>.
-//		Use values specified in the lightsleep.properties and
-//		<i>&lt;<b>resourceName</b>&gt;</i>.properties file as the connection information.
-//
-//		@param resourceName the resource name
-//	*/
+//	 * Constructs a new <b>AbstractConnectionSupplier</b>.
+//	 * Use values specified in the lightsleep.properties and
+//   * <i>&lt;<b>resourceName</b>&gt;</i>.properties file as the connection information.
+//	 *
+//	 * @param resourceName the resource name
+//	 */
 //	public AbstractConnectionSupplier(String resourceName) {
 //		properties.putAll(new Resource(resourceName).getProperties());
 //	}
 ////
 
 	/**
-		Returns a data source.
-
-		@return a data source
-	*/
+	 * Returns a data source.
+	 *
+	 * @return a data source
+	 */
 	protected abstract DataSource getDataSource();
 
 	/**
-		Returns a database connection.
-
-		@return a database connection
-
-		@throws RuntimeSQLException if a <b>SQLException</b> is thrown
-	*/
+	 * Returns a database connection.
+	 *
+	 * @return a database connection
+	 *
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown
+	 */
 	@Override
 	public Connection get() {
 		try {

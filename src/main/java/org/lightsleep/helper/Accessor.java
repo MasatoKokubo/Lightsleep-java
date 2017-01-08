@@ -1,7 +1,6 @@
-/*
-	Accessor.java
-	(C) 2016 Masato Kokubo
-*/
+// Accessor.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.helper;
 
 import java.lang.reflect.Field;
@@ -31,13 +30,13 @@ import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
 
 /**
-	Gets and sets value for fields of objects.
-
-	@param <T> The type of target object.
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * Gets and sets value for fields of objects.
+ *
+ * @param <T> The type of target object.
+ *
+ * @since 1.0.0
+ * @author Masato Kokubo
+ */
 public class Accessor<T> {
 	// The logger
 	private static final Logger logger = LoggerFactory.getLogger(Accessor.class);
@@ -114,10 +113,10 @@ public class Accessor<T> {
 	}
 
 	/**
-		Constructs a new <b>Accessor</b>.
-
-		@param objectClass the class of access target object
-	*/
+	 * Constructs a new <b>Accessor</b>.
+	 *
+	 * @param objectClass the class of access target object
+	 */
 	public Accessor(Class<T> objectClass) {
 		if (objectClass == null) throw new NullPointerException("Accessor.<init>: objectClass == null");
 
@@ -165,13 +164,13 @@ public class Accessor<T> {
 	}
 
 	/**
-		Puts to maps.
-
-		@param objectClass the class of target object
-		@param basePropertyName the base property name
-		@param subGetter the getter of the base property
-		@param nestCount the nest count of the property
-	*/
+	 * Puts to maps.
+	 *
+	 * @param objectClass the class of target object
+	 * @param basePropertyName the base property name
+	 * @param subGetter the getter of the base property
+	 * @param nestCount the nest count of the property
+	 */
 // 1.5.1 #0011
 //	private void putToMaps(Class<?> objectClass, String basePropertyName, Function<T, Object> subGetter) {
 	private void putToMaps(Class<?> objectClass, String basePropertyName, Function<T, Object> subGetter, int nestCount) {
@@ -354,14 +353,13 @@ public class Accessor<T> {
 	}
 
 	/**
-		Returns the getter <b>Method</b>.
-
-		@param objectClass the class of target object
-		@param fieldName the name of the field
-		@param fieldType the type of the field
-
-		@return the getter <b>Method</b> (<b>null</b> if not found)
-	*/
+	 * Returns the getter <b>Method</b>.
+	 *
+	 * @param objectClass the class of target object
+	 * @param fieldName the name of the field
+	 * @param fieldType the type of the field
+	 * @return the getter <b>Method</b> (<b>null</b> if not found)
+	 */
 	private Method getGetterMethod(Class<?> objectClass, String fieldName, Class<?> fieldType) {
 		Method getterMethod = null;
 
@@ -384,14 +382,13 @@ public class Accessor<T> {
 	}
 
 	/**
-		Returns the setter <b>Method</b>.
-
-		@param objectClass the class of target object
-		@param fieldName the name of the field
-		@param fieldType the type of the field
-
-		@return the getter <b>Method</b> (<b>null</b> if not found)
-	*/
+	 * Returns the setter <b>Method</b>.
+	 *
+	 * @param objectClass the class of target object
+	 * @param fieldName the name of the field
+	 * @param fieldType the type of the field
+	 * @return the getter <b>Method</b> (<b>null</b> if not found)
+	 */
 	private Method getSetterMethod(Class<?> objectClass, String fieldName, Class<?> fieldType) {
 		Method setterMethod = null;
 
@@ -411,59 +408,57 @@ public class Accessor<T> {
 	}
 
 	/**
-		Returns the component type of <b>type</b> if it is an array, <b>type</b> otherwise.
-
-		@param type a type
-
-		@return the component type of <b>type</b> or <b>type</b>.
-	*/
+	 * Returns the component type of <b>type</b> if it is an array, <b>type</b> otherwise.
+	 *
+	 * @param type a type
+	 * @return the component type of <b>type</b> or <b>type</b>.
+	 */
 	private static Class<?> getComponentType(Class<?> type) {
 		return type.isArray() ? getComponentType(type.getComponentType()) : type;
 	}
 
 	/**
-		Returns a list of property names of accessible all fields.<br>
-		If not nested, the property name is the same as the field name.
-		Otherwise, it is the name that connected each field with a period.
-		(e.g. <b>name.first</b>)
-
-		@return a list of property names
-	*/
+	 * Returns a list of property names of accessible all fields.<br>
+	 * If not nested, the property name is the same as the field name.
+	 * Otherwise, it is the name that connected each field with a period.
+	 * (e.g. <b>name.first</b>)
+	 *
+	 * @return a list of property names
+	 */
 	public List<String> propertyNames() {
 		return propertyNames;
 	}
 
 	/**
-		Returns a list of property names of the accessible value type of the field.
-		If not nested, the property name is the same as the field name.
-		Otherwise, it is the name that connected each field with a period.
-		(e.g. <b>name.first</b>)<br>
-
-		Value type is one of the following.<br>
-
-		<div class="blankline">&nbsp;</div>
-
-		<div class="code indent">
-			boolean, char, byte, short, int, long, float, double,<br>
-			Boolean, Character, Byte, Short, Integer, Long, Float, Double, BigInteger, BigDecimal,<br>
-			String, java.util.Date, java.sql.Date, Time, Timestamp
-		</div>
-
-		@return the list of the property names
-	*/
+	 * Returns a list of property names of the accessible value type of the field.
+	 * If not nested, the property name is the same as the field name.
+	 * Otherwise, it is the name that connected each field with a period.
+	 * (e.g. <b>name.first</b>)<br>
+	 *
+	 * Value type is one of the following.<br>
+	 *
+	 * <div class="blankline">&nbsp;</div>
+	 *
+	 * <div class="code indent">
+	 *   boolean, char, byte, short, int, long, float, double,<br>
+	 *   Boolean, Character, Byte, Short, Integer, Long, Float, Double, BigInteger, BigDecimal,<br>
+	 *   String, java.util.Date, java.sql.Date, Time, Timestamp
+	 *  </div>
+	 *
+	 * @return the list of the property names
+	 */
 	public List<String> valuePropertyNames() {
 		return valuePropertyNames;
 	}
 
 	/**
-		Returns the <b>Field</b> object of the fields that are specified by <b>propertyName</b>.
-
-		@param propertyName a property name
-
-		@return the <b>Field</b> object
-
-		@throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
-	*/
+	 * Returns the <b>Field</b> object of the fields that are specified by <b>propertyName</b>.
+	 *
+	 * @param propertyName a property name
+	 * @return the <b>Field</b> object
+	 *
+	 * @throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
+	 */
 	public Field getField(String propertyName) {
 		Field field = fieldMap.get(propertyName);
 		if (field == null)
@@ -478,38 +473,36 @@ public class Accessor<T> {
 	}
 
 	/**
-		Returns the type of the field that are specified by <b>propertyName</b>.
-
-		@param propertyName a property name
-
-		@return the type
-
-		@throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
-	*/
+	 * Returns the type of the field that are specified by <b>propertyName</b>.
+	 *
+	 * @param propertyName a property name
+	 * @return the type
+	 *
+	 * @throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
+	 */
 	public Class<?> getType(String propertyName) {
 		return getField(propertyName).getType();
 	}
 
 	/**
-		Returns a value of the field of the specified object.<br>
-		If the field is <b>public</b>, gets the value directly,
-		otherwise uses the <b>public</b> getting method associated with the the field.<br>
-		If the field name is <b>foo</b>, getting method is one of the following.<br>
-		<ul>
-			<li><b>foo()   </b></li>
-			<li><b>getFoo()</b></li>
-			<li><b>isFoo() </b></li>
-		</ul>
-
-		@param object an object
-		@param propertyName the property name of the field
-
-		@return a value (might be <b>null</b>)
-
-		@throws NullPointerException if <b>object</b> is <b>null</b>
-		@throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
-		@throws RuntimeException if <b>IllegalAccessException</b> was thrown
-	*/
+	 * Returns a value of the field of the specified object.<br>
+	 * If the field is <b>public</b>, gets the value directly,
+	 * otherwise uses the <b>public</b> getting method associated with the the field.<br>
+	 * If the field name is <b>foo</b>, getting method is one of the following.<br>
+	 * <ul>
+	 *   <li><b>foo()   </b></li>
+	 *   <li><b>getFoo()</b></li>
+	 *   <li><b>isFoo() </b></li>
+	 * </ul>
+	 *
+	 * @param object an object
+	 * @param propertyName the property name of the field
+	 * @return a value (might be <b>null</b>)
+	 *
+	 * @throws NullPointerException if <b>object</b> is <b>null</b>
+	 * @throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
+	 * @throws RuntimeException if <b>IllegalAccessException</b> was thrown
+	 */
 	public Object getValue(T object, String propertyName) {
 		if (object == null) throw new NullPointerException("Accessor.getValue: object = null, propertyName = " + propertyName);
 
@@ -527,23 +520,23 @@ public class Accessor<T> {
 	}
 
 	/**
-		Sets a value to the field of the specified object.<br>
-		If the field is <b>public</b>, sets the value directly,
-		otherwise uses the <b>public</b> setting method associated with the the field.<br>
-		If the field name is <b>foo</b>, setting method is one of the following.<br>
-		<ul>
-			<li><b>foo()   </b></li>
-			<li><b>setFoo()</b></li>
-		</ul>
-
-		@param object an object
-		@param propertyName the property name of the field
-		@param value a value to be set the field (permit <b>null</b>)
-
-		@throws NullPointerException if <b>object</b> is <b>null</b>
-		@throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
-		@throws RuntimeException if <b>IllegalAccessException</b> or <b>InvocationTargetException</b> was thrown
-	*/
+	 * Sets a value to the field of the specified object.<br>
+	 * If the field is <b>public</b>, sets the value directly,
+	 * otherwise uses the <b>public</b> setting method associated with the the field.<br>
+	 * If the field name is <b>foo</b>, setting method is one of the following.<br>
+	 * <ul>
+	 *   <li><b>foo()   </b></li>
+	 *   <li><b>setFoo()</b></li>
+	 * </ul>
+	 *
+	 * @param object an object
+	 * @param propertyName the property name of the field
+	 * @param value a value to be set the field (permit <b>null</b>)
+	 *
+	 * @throws NullPointerException if <b>object</b> is <b>null</b>
+	 * @throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
+	 * @throws RuntimeException if <b>IllegalAccessException</b> or <b>InvocationTargetException</b> was thrown
+	 */
 	public void setValue(T object, String propertyName, Object value) {
 		if (object == null) throw new NullPointerException("Accessor.setValue: object = null, propertyName = " + propertyName);
 

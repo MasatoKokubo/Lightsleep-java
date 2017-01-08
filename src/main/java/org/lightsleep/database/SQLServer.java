@@ -1,7 +1,6 @@
-/*
-	SQLServer.java
-	(C) 2016 Masato Kokubo
-*/
+// SQLServer.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.database;
 
 import java.sql.Date;
@@ -16,39 +15,39 @@ import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
 
 /**
-	A database handler for
-	<a href="https://www.microsoft.com/ja-jp/server-cloud/products-SQL-Server-2014.aspx" target="SQL Server">Microsoft SQL Server</a>.<br>
+ * A database handler for
+ * <a href="https://www.microsoft.com/ja-jp/server-cloud/products-SQL-Server-2014.aspx" target="SQL Server">Microsoft SQL Server</a>.<br>
+ *
+ * The object of this class has a <b>TypeConverter</b> map
+ * with the following additional <b>TypeConverter</b> to
+ * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
+ *
+ * <table class="additional">
+ *   <caption><span>Registered TypeConverter objects</span></caption>
+ *   <tr><th>Source data type</th><th>Destination data type</th></tr>
+ *   <tr><td>boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
+ *   <tr><td>String </td><td>{@linkplain org.lightsleep.component.SqlString}</td></tr>
+ * </table>
 
-	The object of this class has a <b>TypeConverter</b> map
-	with the following additional <b>TypeConverter</b> to
-	{@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
-
-	<table class="additional">
-		<caption><span>Registered TypeConverter objects</span></caption>
-		<tr><th>Source data type</th><th>Destination data type</th></tr>
-		<tr><td>boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
-		<tr><td>String </td><td>{@linkplain org.lightsleep.component.SqlString}</td></tr>
-	</table>
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * @since 1.0.0
+ * @author Masato Kokubo
+ */
 public class SQLServer extends Standard {
 	// The SQLServer instance
 	private static final Database instance = new SQLServer();
 
 	/**
-		Returns the <b>SQLServer</b> instance.
-
-		@return the <b>SQLServer</b> instance
-	*/
+	 * Returns the <b>SQLServer</b> instance.
+	 *
+	 * @return the <b>SQLServer</b> instance
+	 */
 	public static Database instance() {
 		return instance;
 	}
 
 	/**
-		Constructs a new <b>SQLServer</b>.
-	*/
+	 * Constructs a new <b>SQLServer</b>.
+	 */
 	protected SQLServer() {
 		// boolean -> 0, 1
 		TypeConverter.put(typeConverterMap, booleanToSql01Converter);
@@ -113,8 +112,8 @@ public class SQLServer extends Standard {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
@@ -129,8 +128,8 @@ public class SQLServer extends Standard {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();

@@ -1,7 +1,6 @@
-/*
-	Oracle.java
-	(C) 2016 Masato Kokubo
-*/
+// Oracle.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.database;
 
 import oracle.sql.TIMESTAMP;
@@ -16,44 +15,44 @@ import org.lightsleep.helper.ConvertException;
 import org.lightsleep.helper.TypeConverter;
 
 /**
-	A database handler for
-	<a href="https://www.oracle.com/database/index.html" target="Oracle">Oracle Database</a>.<br>
-
-	The object of this class has a <b>TypeConverter</b> map
-	with the following additional <b>TypeConverter</b> to
-	{@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
-
-	<table class="additional">
-		<caption><span>Registered TypeConverter objects</span></caption>
-		<tr><th>Source data type</th><th>Destination data type</th></tr>
-		<tr><td>boolean       </td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
-		<tr><td>String        </td><td rowspan="2">{@linkplain org.lightsleep.component.SqlString}</td></tr>
-		<tr><td>Time          </td></tr>
-		<tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date<br><i>(since 1.4.0)</i></td></tr>
-		<tr>                                         <td>java.sql.Date     </td></tr>
-		<tr>                                         <td>java.sql.Time     </td></tr>
-		<tr>                                         <td>java.sql.Timestamp</td></tr>
-	</table>
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * A database handler for
+ * <a href="https://www.oracle.com/database/index.html" target="Oracle">Oracle Database</a>.<br>
+ *
+ * The object of this class has a <b>TypeConverter</b> map
+ * with the following additional <b>TypeConverter</b> to
+ * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
+ *
+ * <table class="additional">
+ *   <caption><span>Registered TypeConverter objects</span></caption>
+ *   <tr><th>Source data type</th><th>Destination data type</th></tr>
+ *   <tr><td>boolean       </td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
+ *   <tr><td>String        </td><td rowspan="2">{@linkplain org.lightsleep.component.SqlString}</td></tr>
+ *   <tr><td>Time          </td></tr>
+ *   <tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr>                                         <td>java.sql.Date     </td></tr>
+ *   <tr>                                         <td>java.sql.Time     </td></tr>
+ *   <tr>                                         <td>java.sql.Timestamp</td></tr>
+ * </table>
+ *
+ * @since 1.0.0
+ * @author Masato Kokubo
+ */
 public class Oracle extends Standard {
 	// The Oracle instance
 	private static final Database instance = new Oracle();
 
 	/**
-		Returns the Oracle instance.
-
-		@return the Oracle instance
-	*/
+	 * Returns the Oracle instance.
+	 *
+	 * @return the Oracle instance
+	 */
 	public static Database instance() {
 		return instance;
 	}
 
 	/**
-		Constructs a new <b>Oracle</b>.
-	*/
+	 * Constructs a new <b>Oracle</b>.
+	 */
 	protected Oracle() {
 		// boolean -> 0, 1
 		TypeConverter.put(typeConverterMap, booleanToSql01Converter);

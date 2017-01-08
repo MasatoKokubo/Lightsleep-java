@@ -1,7 +1,6 @@
-/*
-	Jndi.java
-	(C) 2016 Masato Kokubo
-*/
+// Jndi.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.connection;
 
 import javax.naming.Context;
@@ -12,42 +11,42 @@ import javax.sql.DataSource;
 import org.lightsleep.helper.Resource;
 
 /**
-	Gets a data source using JNDI (Java Naming and Directory Interface) API.<br>
-	Refers to the following properties of lightsleep.properties file.
+ * Gets a data source using JNDI (Java Naming and Directory Interface) API.<br>
+ * Refers to the following properties of lightsleep.properties file.
+ *
+ * <div class="BlankLine">&nbsp;</div>
+ *
+ * <table class="additional">
+ *   <caption><span>References in lightsleep.properties</span></caption>
+ *   <tr><th>Property Name</th><th>Content</th></tr>
+ *   <tr><td>dataSource</td><td>The resource name of the data source</td></tr>
+ * </table>
 
-	<div class="BlankLine">&nbsp;</div>
-
-	<table class="additional">
-		<caption><span>References in lightsleep.properties</span></caption>
-		<tr><th>Property Name</th><th>Content</th></tr>
-		<tr><td>dataSource</td><td>The resource name of the data source</td></tr>
-	</table>
-
-	@since 1.1.0
-	@author Masato Kokubo
-*/
+ * @since 1.1.0
+ * @author Masato Kokubo
+ */
 public class Jndi extends AbstractConnectionSupplier {
 	// The data source name
 	private String dataSourceName;
 
 	/**
-		Constructs a new <b>Jndi</b>.
-		Use values specified in the lightsleep.properties file as the connection information.
-
-		@see #Jndi(java.lang.String)
-	*/
+	 * Constructs a new <b>Jndi</b>.
+	 * Use values specified in the lightsleep.properties file as the connection information.
+	 *
+	 * @see #Jndi(java.lang.String)
+	 */
 	public Jndi() {
 	}
 
 	/**
-		Constructs a new <b>Jndi</b>.<br>
-
-		Looks up the data source uses the string of <b>"java:/comp/env/" + dataSourceName</b>.
-		If <b>dataSourceName</b> is <b>null</b>,
-		uses the value that have been specified in the lightsleep.properties file.
-
-		@param dataSourceName ther data source name (null permit)
-	*/
+	 * Constructs a new <b>Jndi</b>.<br>
+	 *
+	 * Looks up the data source uses the string of <b>"java:/comp/env/" + dataSourceName</b>.
+	 * If <b>dataSourceName</b> is <b>null</b>,
+	 * uses the value that have been specified in the lightsleep.properties file.
+	 *
+	 * @param dataSourceName ther data source name (null permit)
+	 */
 	public Jndi(String dataSourceName) {
 		logger.debug(() -> "Jndi.<init>: dataSourceName=" + dataSourceName);
 
@@ -55,8 +54,8 @@ public class Jndi extends AbstractConnectionSupplier {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected DataSource getDataSource() {
 		try {

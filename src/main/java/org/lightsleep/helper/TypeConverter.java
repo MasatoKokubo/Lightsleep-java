@@ -1,7 +1,6 @@
-/*
-	TypeConverter.java
-	(C) 2016 Masato Kokubo
-*/
+// TypeConverter.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.helper;
 
 import java.math.BigDecimal;
@@ -29,142 +28,141 @@ import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
 
 /**
-	A class to convert data types.<br>
-
-	Following <b>TypeConverter</b> objects has been registered in <b>typeConverterMap</b>.<br>
-
-	<table class="additional">
-		<caption><span>Registered TypeConverter objects</span></caption>
-		<tr><th>Source Data Type</th><th>Destination Data Type</th></tr>
-
-		<tr><td>Byte          </td><td rowspan="9">Boolean</td></tr>
-		<tr><td>Short         </td></tr>
-		<tr><td>Integer       </td></tr>
-		<tr><td>Long          </td></tr>
-		<tr><td>Float         </td></tr>
-		<tr><td>Double        </td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>Character     </td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Boolean       </td><td rowspan="9">Byte</td></tr>
-		<tr><td>Short         </td></tr>
-		<tr><td>Integer       </td></tr>
-		<tr><td>Long          </td></tr>
-		<tr><td>Float         </td></tr>
-		<tr><td>Double        </td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>Character     </td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Boolean       </td><td rowspan="9">Short</td></tr>
-		<tr><td>Short         </td></tr>
-		<tr><td>Integer       </td></tr>
-		<tr><td>Long          </td></tr>
-		<tr><td>Float         </td></tr>
-		<tr><td>Double        </td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>Character     </td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Boolean       </td><td rowspan="9">Integer</td></tr>
-		<tr><td>Short         </td></tr>
-		<tr><td>Integer       </td></tr>
-		<tr><td>Long          </td></tr>
-		<tr><td>Float         </td></tr>
-		<tr><td>Double        </td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>Character     </td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Boolean       </td><td rowspan="9">Long</td></tr>
-		<tr><td>Short         </td></tr>
-		<tr><td>Integer       </td></tr>
-		<tr><td>Long          </td></tr>
-		<tr><td>Float         </td></tr>
-		<tr><td>Double        </td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>Character     </td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Boolean       </td><td rowspan="9">Float</td></tr>
-		<tr><td>Short         </td></tr>
-		<tr><td>Integer       </td></tr>
-		<tr><td>Long          </td></tr>
-		<tr><td>Float         </td></tr>
-		<tr><td>Double        </td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>Character     </td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Boolean       </td><td rowspan="9">Double</td></tr>
-		<tr><td>Short         </td></tr>
-		<tr><td>Integer       </td></tr>
-		<tr><td>Long          </td></tr>
-		<tr><td>Float         </td></tr>
-		<tr><td>Double        </td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>Character     </td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Boolean       </td><td rowspan="9">BigDecimal</td></tr>
-		<tr><td>Short         </td></tr>
-		<tr><td>Integer       </td></tr>
-		<tr><td>Long          </td></tr>
-		<tr><td>Float         </td></tr>
-		<tr><td>Double        </td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>Character     </td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Boolean       </td><td rowspan="9">Character</td></tr>
-		<tr><td>Short         </td></tr>
-		<tr><td>Integer       </td></tr>
-		<tr><td>Long          </td></tr>
-		<tr><td>Float         </td></tr>
-		<tr><td>Double        </td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>Character     </td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Object        </td><td rowspan="6">String</td></tr>
-		<tr><td>BigDecimal    </td></tr>
-		<tr><td>java.uitl.Date<br><i>(since 1.4.0)</i></td></tr>
-		<tr><td>java.sql.Date<br><i>(since 1.4.0)</i></td></tr>
-		<tr><td>Time<br><i>(since 1.4.0)</i></td></tr>
-		<tr><td>Timestamp     </td></tr>
-
-		<tr><td>Long          </td><td rowspan="2">java.util.Date<br><i>(since 1.4.0)</i></td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Long          </td><td rowspan="3">java.sql.Date</td></tr>
-		<tr><td>java.util.Date</td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Long          </td><td rowspan="3">Time</td></tr>
-		<tr><td>java.util.Date</td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td>Long          </td><td rowspan="3">Timestamp</td></tr>
-		<tr><td>java.util.Date</td></tr>
-		<tr><td>String        </td></tr>
-
-		<tr><td rowspan="4">Enum<br><i>(since 1.4.0)</i></td>
-			<td>Integer</td></tr>
-		<tr><td>Byte </td></tr>
-		<tr><td>Short</td></tr>
-		<tr><td>Long </td></tr>
-	</table>
-
-	@see org.lightsleep.database.Standard
-	@see org.lightsleep.database.MySQL
-	@see org.lightsleep.database.Oracle
-	@see org.lightsleep.database.PostgreSQL
-	@see org.lightsleep.database.SQLServer
-
-	@since 1.0
-	@author Masato Kokubo
-*/
+ * A class to convert data types.<br>
+ *
+ * Following <b>TypeConverter</b> objects has been registered in <b>typeConverterMap</b>.<br>
+ *
+ * <table class="additional">
+ *   <caption><span>Registered TypeConverter objects</span></caption>
+ *   <tr><th>Source Data Type</th><th>Destination Data Type</th></tr>
+ *
+ *   <tr><td>Byte          </td><td rowspan="9">Boolean</td></tr>
+ *   <tr><td>Short         </td></tr>
+ *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Long          </td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Byte</td></tr>
+ *   <tr><td>Short         </td></tr>
+ *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Long          </td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Short</td></tr>
+ *   <tr><td>Short         </td></tr>
+ *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Long          </td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Integer</td></tr>
+ *   <tr><td>Short         </td></tr>
+ *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Long          </td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Long</td></tr>
+ *   <tr><td>Short         </td></tr>
+ *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Long          </td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Float</td></tr>
+ *   <tr><td>Short         </td></tr>
+ *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Long          </td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Double</td></tr>
+ *   <tr><td>Short         </td></tr>
+ *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Long          </td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">BigDecimal</td></tr>
+ *   <tr><td>Short         </td></tr>
+ *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Long          </td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Character</td></tr>
+ *   <tr><td>Short         </td></tr>
+ *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Long          </td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Object        </td><td rowspan="6">String</td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>java.uitl.Date<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>java.sql.Date<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>Time<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>Timestamp     </td></tr>
+ *
+ *   <tr><td>Long          </td><td rowspan="2">java.util.Date<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Long          </td><td rowspan="3">java.sql.Date</td></tr>
+ *   <tr><td>java.util.Date</td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Long          </td><td rowspan="3">Time</td></tr>
+ *   <tr><td>java.util.Date</td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td>Long          </td><td rowspan="3">Timestamp</td></tr>
+ *   <tr><td>java.util.Date</td></tr>
+ *   <tr><td>String        </td></tr>
+ *
+ *   <tr><td rowspan="4">Enum<br><i>(since 1.4.0)</i></td>
+ *     <td>Integer</td></tr>
+ *   <tr><td>Byte </td></tr>
+ *   <tr><td>Short</td></tr>
+ *   <tr><td>Long </td></tr>
+ * </table>
+ *
+ * @since 1.0
+ * @author Masato Kokubo
+ * @see org.lightsleep.database.Standard
+ * @see org.lightsleep.database.MySQL
+ * @see org.lightsleep.database.Oracle
+ * @see org.lightsleep.database.PostgreSQL
+ * @see org.lightsleep.database.SQLServer
+ */
 public class TypeConverter<ST, DT> {
 	// The logger
 	private static final Logger logger = LoggerFactory.getLogger(TypeConverter.class);
@@ -222,15 +220,14 @@ public class TypeConverter<ST, DT> {
 	private final int hashCode;
 
 	/**
-		Creates and returns a key of the map from the destination and source data type.
-
-		@param sourceType the source data type
-		@param destinType the destination data type
-
-		@return the key
-
-		@throws NullPointerException <b>sourceType</b> or <b>destinType</b> is null
-	*/
+	 * Creates and returns a key of the map from the destination and source data type.
+	 *
+	 * @param sourceType the source data type
+	 * @param destinType the destination data type
+	 * @return the key
+	 *
+	 * @throws NullPointerException <b>sourceType</b> or <b>destinType</b> is null
+	 */
 	public static String key(Class<?> sourceType, Class<?> destinType) {
 		if (sourceType == null) throw new NullPointerException("TypeConverter.key: sourceType == null");
 		if (destinType == null) throw new NullPointerException("TypeConverter.key: destinType == null");
@@ -248,13 +245,13 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-		Puts all the <b>typeConverters</b> in the <b>typeConverterMap</b>.
-
-		@param typeConverterMap the <b>TypeConverter</b> map
-		@param typeConverters an array of <b>TypeConverter</b> objects
-
-		@throws NullPointerException <b>typeConverterMap</b>, <b>typeConverters</b> or any of <b>typeConverters</b> is null
-	*/
+	 * Puts all the <b>typeConverters</b> in the <b>typeConverterMap</b>.
+	 *
+	 * @param typeConverterMap the <b>TypeConverter</b> map
+	 * @param typeConverters an array of <b>TypeConverter</b> objects
+	 *
+	 * @throws NullPointerException <b>typeConverterMap</b>, <b>typeConverters</b> or any of <b>typeConverters</b> is null
+	 */
 	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?>... typeConverters) {
 		if (typeConverterMap == null) throw new NullPointerException("TypeConverter.put: typeConverterMap == null");
 		if (typeConverters == null) throw new NullPointerException("TypeConverter.put: typeConverters == null");
@@ -271,33 +268,31 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-		Finds and returns a <b>TypeConverter</b>
-		to convert <b>sourceType</b> to <b>destinType</b> in <b>typeConverterMap</b>.<br>
-
-		If can not find <b>TypeConverter</b> to match with <b>sourceType</b> and <b>destinType</b>,
-		finds a <b>TypeConverter</b> to match
-		with interfaces of <b>sourceType</b> and <b>destinType</b>.<br>
-
-		If still can not find,
-		finds a <b>TypeConverter</b> to match
-		with super classes of <b>sourceType</b> and <b>destinType</b>.<br>
-
-		If still can not find, returns <b>null</b><br>.
-
-		If found with in the super class or interface,
-		puts them in <b>typeConverterMap</b> to be found directly next time.
-
-		@param <ST> the source data type
-		@param <DT> the destination data type
-
-		@param typeConverterMap the <b>TypeConverter</b> map
-		@param sourceType the source data type
-		@param destinType the destination data type
-
-		@return a <b>TypeConverter</b>
-
-		@throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is <b>null</b>
-	*/
+	 * Finds and returns a <b>TypeConverter</b>
+	 * to convert <b>sourceType</b> to <b>destinType</b> in <b>typeConverterMap</b>.<br>
+	 *
+	 * If can not find <b>TypeConverter</b> to match with <b>sourceType</b> and <b>destinType</b>,
+	 * finds a <b>TypeConverter</b> to match
+	 * with interfaces of <b>sourceType</b> and <b>destinType</b>.<br>
+	 *
+	 * If still can not find,
+	 * finds a <b>TypeConverter</b> to match
+	 * with super classes of <b>sourceType</b> and <b>destinType</b>.<br>
+	 *
+	 * If still can not find, returns <b>null</b><br>.
+	 *
+	 * If found with in the super class or interface,
+	 * puts them in <b>typeConverterMap</b> to be found directly next time.
+	 *
+	 * @param <ST> the source data type
+	 * @param <DT> the destination data type
+	 * @param typeConverterMap the <b>TypeConverter</b> map
+	 * @param sourceType the source data type
+	 * @param destinType the destination data type
+	 * @return a <b>TypeConverter</b>
+	 *
+	 * @throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is <b>null</b>
+	 */
 	@SuppressWarnings("unchecked")
 	public static <ST, DT> TypeConverter<ST, DT> get(Map<String, TypeConverter<?, ?>> typeConverterMap,
 			Class<ST> sourceType, Class<DT> destinType) {
@@ -332,30 +327,28 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-		Finds and returns a <b>TypeConverter</b>
-		to convert <b>sourceType</b> to <b>destinType</b> in <b>typeConverterMap</b>.<br>
-
-		If can not find <b>TypeConverter</b> to match with <b>sourceType</b> and <b>destinType</b>,
-		finds a <b>TypeConverter</b> to match
-		with interfaces of <b>sourceType</b> and <b>destinType</b>.<br>
-
-		If still can not find,
-		finds a <b>TypeConverter</b> to match
-		with super classes of <b>sourceType</b> and <b>destinType</b>.<br>
-
-		If still can not find, returns <b>null</b><br>.
-
-		@param <ST> the source data type
-		@param <DT> the destination data type
-
-		@param typeConverterMap the <b>TypeConverter</b> map
-		@param sourceType the source data type
-		@param destinType the destination data type
-
-		@return a <b>TypeConverter</b>
-
-		@throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is <b>null</b>
-	*/
+	 * Finds and returns a <b>TypeConverter</b>
+	 * to convert <b>sourceType</b> to <b>destinType</b> in <b>typeConverterMap</b>.<br>
+	 *
+	 * If can not find <b>TypeConverter</b> to match with <b>sourceType</b> and <b>destinType</b>,
+	 * finds a <b>TypeConverter</b> to match
+	 * with interfaces of <b>sourceType</b> and <b>destinType</b>.<br>
+	 *
+	 * If still can not find,
+	 * finds a <b>TypeConverter</b> to match
+	 * with super classes of <b>sourceType</b> and <b>destinType</b>.<br>
+	 *
+	 * If still can not find, returns <b>null</b><br>.
+	 *
+	 * @param <ST> the source data type
+	 * @param <DT> the destination data type
+	 * @param typeConverterMap the <b>TypeConverter</b> map
+	 * @param sourceType the source data type
+	 * @param destinType the destination data type
+	 * @return a <b>TypeConverter</b>
+	 *
+	 * @throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is <b>null</b>
+	 */
 	@SuppressWarnings("unchecked")
 	private static <ST, DT> TypeConverter<ST, DT> search(
 			Map<String, TypeConverter<?, ?>> typeConverterMap,
@@ -390,26 +383,24 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-		If <b>source == null</b>, returns <b>null</b><br>
-
-		Otherwise if <b>destinType.isInstance(source)</b>,
-		returns <b>source</b> without converting.
-
-		Otherwise if found a <b>TypeConverter</b>,
-		returns an object converted the source by the converter.
-
-		@param <ST> the source data type
-		@param <DT> the destination data type
-
-		@param typeConverterMap the <b>TypeConverter</b> map
-		@param source a source object (permit <b>null</b>)
-		@param destinType a destination type (other than primitive types)
-
-		@return a converted object (might be <b>null</b>)
-
-		@throws NullPointerException if <b>typeConverterMap</b> or <b>destinType</b> is <b>null</b>
-		@throws ConvertException if can not find the converter or the accuracy is lowered in the conversion
-	*/
+	 * If <b>source == null</b>, returns <b>null</b><br>
+	 *
+	 * Otherwise if <b>destinType.isInstance(source)</b>,
+	 * Returns <b>source</b> without converting.
+	 *
+	 * Otherwise if found a <b>TypeConverter</b>,
+	 * Returns an object converted the source by the converter.
+	 *
+	 * @param <ST> the source data type
+	 * @param <DT> the destination data type
+	 * @param typeConverterMap the <b>TypeConverter</b> map
+	 * @param source a source object (permit <b>null</b>)
+	 * @param destinType a destination type (other than primitive types)
+	 * @return a converted object (might be <b>null</b>)
+	 *
+	 * @throws NullPointerException if <b>typeConverterMap</b> or <b>destinType</b> is <b>null</b>
+	 * @throws ConvertException if can not find the converter or the accuracy is lowered in the conversion
+	 */
 	@SuppressWarnings("unchecked")
 	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
 		DT destin = null;
@@ -444,14 +435,14 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-		Constructs a new <b>TypeConverter</b>.
-
-		@param sourceType the source data type
-		@param destinType the destination data type
-		@param function the function for converting
-
-		@throws NullPointerException if <b>sourceType</b>, <b>destinType</b> or <b>function</b> is <b>null</b>
-	*/
+	 * Constructs a new <b>TypeConverter</b>.
+	 *
+	 * @param sourceType the source data type
+	 * @param destinType the destination data type
+	 * @param function the function for converting
+	 *
+	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b> or <b>function</b> is <b>null</b>
+	 */
 	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<ST, DT> function) {
 		if (function == null) throw new NullPointerException("TypeConverter.<init>: function == null");
 
@@ -463,55 +454,54 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-		Returns the source data type.
-
-		@return the source data type
-	*/
+	 * Returns the source data type.
+	 *
+	 * @return the source data type
+	 */
 	public Class<ST> sourceType() {
 		return sourceType;
 	}
 
 	/**
-		Returns the destination data type.
-
-		@return the destination data type
-	*/
+	 * Returns the destination data type.
+	 *
+	 * @return the destination data type
+	 */
 	public Class<DT> destinType() {
 		return destinType;
 	}
 
 	/**
-		Returns the function for converting.
-
-		@return the function for converting
-	*/
+	 * Returns the function for converting.
+	 *
+	 * @return the function for converting
+	 */
 	public Function<ST, DT> function() {
 		return function;
 	}
 
 	/**
-		Returns the key.
-
-		@return the key
-	*/
+	 * Returns the key.
+	 *
+	 * @return the key
+	 */
 	public String key() {
 		return key;
 	}
 
 	/**
-		Convers the data type of the value.
-
-		@param value a source object
-
-		@return a converted object
-	*/
+	 * Converts the data type of the value.
+	 *
+	 * @param value a source object
+	 * @return a converted object
+	 */
 	public DT apply(ST value) {
 		return function.apply(value);
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object object) {
 		return object instanceof TypeConverter
@@ -520,25 +510,25 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		return hashCode;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return key;
 	}
 
 	/**
-		A <b>TypeConverter</b> map
-		that is used in the conversion of when storing values retrieved from the database in the field.<br>
-	*/
+	 * A <b>TypeConverter</b> map
+	 * that is used in the conversion of when storing values retrieved from the database in the field.<br>
+	 */
 	public static final Map<String, TypeConverter<?, ?>> typeConverterMap = new LinkedHashMap<>();
 	static {
 	// * -> Boolean

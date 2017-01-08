@@ -1,7 +1,6 @@
-/*
-	ConvertException.java
-	(C) 2016 Masato Kokubo
-*/
+// ConvertException.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.helper;
 
 import java.text.MessageFormat;
@@ -10,12 +9,12 @@ import org.lightsleep.helper.Resource;
 import org.lightsleep.helper.Utils;
 
 /**
-	If it fails to data conversion in the method of TypeConverter class,
-	this exception will be thrown.
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * If it fails to data conversion in the method of TypeConverter class,
+ * this exception will be thrown.
+ *
+ * @since 1.0.0
+ * @author Masato Kokubo
+ */
 @SuppressWarnings("serial")
 public class ConvertException extends RuntimeException {
 	// Class resources
@@ -38,58 +37,58 @@ public class ConvertException extends RuntimeException {
 	private Object destin;
 
 	/**
-		Constructs a new <b>ConvertException</b>.
-	*/
+	 * Constructs a new <b>ConvertException</b>.
+	 */
 	public ConvertException() {
 	}
 
 	/**
-		Constructs a new <b>ConvertException</b>.
-
-		@param message the detail message
-	*/
+	 * Constructs a new <b>ConvertException</b>.
+	 *
+	 * @param message the detail message
+	 */
 	public ConvertException(String message) {
 		super(message);
 	}
 
 	/**
-		Constructs a new <b>ConvertException</b>.
-
-		@param message the detail message
-		@param cause the cause
-	*/
+	 * Constructs a new <b>ConvertException</b>.
+	 *
+	 * @param message the detail message
+	 * @param cause the cause
+	 */
 	public ConvertException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
 	/**
-		Constructs a new <b>ConvertException</b>.
-
-		@param cause the cause
-	*/
+	 * Constructs a new <b>ConvertException</b>.
+	 *
+	 * @param cause the cause
+	 */
 	public ConvertException(Throwable cause) {
 		super(cause);
 	}
 
 	/**
-		Constructs a new <b>ConvertException</b>.
-
-		@param sourceType the source data type
-		@param source the source object (permit <b>null</b>)
-		@param destinType the destination data type
-	*/
+	 * Constructs a new <b>ConvertException</b>.
+	 *
+	 * @param sourceType the source data type
+	 * @param source the source object (permit <b>null</b>)
+	 * @param destinType the destination data type
+	 */
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType) {
 		this(sourceType, source, destinType, null);
 	}
 
 	/**
-		Constructs a new <b>ConvertException</b>.
-
-		@param sourceType the source data type
-		@param source the source object (permit <b>null</b>)
-		@param destinType the destination data type
-		@param destin the destination object (permit <b>null</b>)
-	*/
+	 * Constructs a new <b>ConvertException</b>.
+	 *
+	 * @param sourceType the source data type
+	 * @param source the source object (permit <b>null</b>)
+	 * @param destinType the destination data type
+	 * @param destin the destination object (permit <b>null</b>)
+	 */
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType, Object destin) {
 		super(toString(sourceType, source, destinType, destin, null));
 		this.sourceType = sourceType;
@@ -99,14 +98,14 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-		Constructs a new <b>ConvertException</b>.
-
-		@param sourceType the source data type
-		@param source the source object (permit <b>null</b>)
-		@param destinType the destination data type
-		@param destin the destination object (permit <b>null</b>)
-		@param cause the cause
-	*/
+	 * Constructs a new <b>ConvertException</b>.
+	 *
+	 * @param sourceType the source data type
+	 * @param source the source object (permit <b>null</b>)
+	 * @param destinType the destination data type
+	 * @param destin the destination object (permit <b>null</b>)
+	 * @param cause the cause
+	 */
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType, Object destin, Throwable cause) {
 		super(toString(sourceType, source, destinType, destin, cause), cause);
 		this.sourceType = sourceType;
@@ -116,14 +115,14 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-		Returns a string representation of the exception contents.
-
-		@param sourceType the source data type
-		@param source the source object (permit <b>null</b>)
-		@param destinType the destination data type
-		@param destin the destination object (permit <b>null</b>)
-		@param cause the cause
-	*/
+	 * Returns a string representation of the exception contents.
+	 *
+	 * @param sourceType the source data type
+	 * @param source the source object (permit <b>null</b>)
+	 * @param destinType the destination data type
+	 * @param destin the destination object (permit <b>null</b>)
+	 * @param cause the cause
+	 */
 	private static String toString(Class<?> sourceType, Object source, Class<?> destinType, Object destin, Throwable cause) {
 		String sourceTypeName = sourceType.getCanonicalName();
 		String destinTypeName = destinType.getCanonicalName();
@@ -148,37 +147,37 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-		Returns the source data type.
-
-		@return the source data type
-	*/
+	 * Returns the source data type.
+	 *
+	 * @return the source data type
+	 */
 	public Class<?> sourceType() {
 		return sourceType;
 	}
 
 	/**
-		Returns the destination data type.
-
-		@return the destination data type
-	*/
+	 * Returns the destination data type.
+	 *
+	 * @return the destination data type
+	 */
 	public Class<?> destinType() {
 		return destinType;
 	}
 
 	/**
-		Returns the source object.
-
-		@return the source object
-	*/
+	 * Returns the source object.
+	 *
+	 * @return the source object
+	 */
 	public Object sourceObject() {
 		return source;
 	}
 
 	/**
-		Returns the destination object.
-
-		@return the destination object
-	*/
+	 * Returns the destination object.
+	 *
+	 * @return the destination object
+	 */
 	public Object destinObject() {
 		return destin;
 	}

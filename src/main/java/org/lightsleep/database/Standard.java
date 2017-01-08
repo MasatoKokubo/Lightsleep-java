@@ -1,7 +1,6 @@
-/*
-	Standard.java
-	(C) 2016 Masato Kokubo
-*/
+// Standard.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.database;
 
 import java.lang.reflect.Array;
@@ -30,114 +29,114 @@ import org.lightsleep.helper.TypeConverter;
 import org.lightsleep.helper.Utils;
 
 /**
-	A database handler that does not depend on the particular DBMS.
+ * A database handler that does not depend on the particular DBMS.
+ *
+ * The object of this class has a <b>TypeConverter</b> map
+ * with the following additional <b>TypeConverter</b> to
+ * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
+ *
+ * <table class="additional">
+ *   <caption><span>Registered TypeConverter objects</span></caption>
+ *   <tr><th>Source data type</th><th>Destination data type</th></tr>
+ *
+ *   <tr><td>Clob          </td><td>String</td></tr>
+ *
+ *   <tr><td>Blob          </td><td>byte[]</td></tr>
+ *
+ *   <tr><td rowspan="13">java.sql.Array</td><td>boolean[]   </td></tr>
+ *   <tr>                                    <td>byte[]      </td></tr>
+ *   <tr>                                    <td>short[]     </td></tr>
+ *   <tr>                                    <td>int[]       </td></tr>
+ *   <tr>                                    <td>long[]      </td></tr>
+ *   <tr>                                    <td>float[]     </td></tr>
+ *   <tr>                                    <td>double[]    </td></tr>
+ *   <tr>                                    <td>BigDecimal[]</td></tr>
+ *   <tr>                                    <td>String[]    </td></tr>
+ *   <tr>                                    <td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr>                                    <td>java.sql.Date[]</td></tr>
+ *   <tr>                                    <td>Time[]      </td></tr>
+ *   <tr>                                    <td>Timestamp[] </td></tr>
+ *
+ *   <tr><td>Boolean        </td><td>{@linkplain org.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
+ *
+ *   <tr><td>Object         </td><td rowspan="24">{@linkplain org.lightsleep.component.SqlString}</td></tr>
+ *   <tr><td>Character      </td></tr>
+ *   <tr><td>BigDecimal     </td></tr>
+ *   <tr><td>String         </td></tr>
+ *   <tr><td>java.util.Date<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>java.sql.Date  </td></tr>
+ *   <tr><td>Time           </td></tr>
+ *   <tr><td>Timestamp      </td></tr>
+ *   <tr><td>Enum           </td></tr>
+ *   <tr><td>boolean[]      </td></tr>
+ *   <tr><td>char[]         </td></tr>
+ *   <tr><td>byte[]         </td></tr>
+ *   <tr><td>short[]        </td></tr>
+ *   <tr><td>int[]          </td></tr>
+ *   <tr><td>long[]         </td></tr>
+ *   <tr><td>float[]        </td></tr>
+ *   <tr><td>double[]       </td></tr>
+ *   <tr><td>BigDecimal[]   </td></tr>
+ *   <tr><td>String[]       </td></tr>
+ *   <tr><td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>java.sql.Date[]</td></tr>
+ *   <tr><td>Time[]         </td></tr>
+ *   <tr><td>Timestamp[]    </td></tr>
+ *   <tr><td>Iterable       </td></tr>
+ * </table>
 
-	The object of this class has a <b>TypeConverter</b> map
-	with the following additional <b>TypeConverter</b> to
-	{@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
-
-	<table class="additional">
-		<caption><span>Registered TypeConverter objects</span></caption>
-		<tr><th>Source data type</th><th>Destination data type</th></tr>
-
-		<tr><td>Clob          </td><td>String</td></tr>
-
-		<tr><td>Blob          </td><td>byte[]</td></tr>
-
-		<tr><td rowspan="13">java.sql.Array</td><td>boolean[]   </td></tr>
-		<tr>                                    <td>byte[]      </td></tr>
-		<tr>                                    <td>short[]     </td></tr>
-		<tr>                                    <td>int[]       </td></tr>
-		<tr>                                    <td>long[]      </td></tr>
-		<tr>                                    <td>float[]     </td></tr>
-		<tr>                                    <td>double[]    </td></tr>
-		<tr>                                    <td>BigDecimal[]</td></tr>
-		<tr>                                    <td>String[]    </td></tr>
-		<tr>                                    <td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
-		<tr>                                    <td>java.sql.Date[]</td></tr>
-		<tr>                                    <td>Time[]      </td></tr>
-		<tr>                                    <td>Timestamp[] </td></tr>
-
-		<tr><td>Boolean        </td><td>{@linkplain org.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
-
-		<tr><td>Object         </td><td rowspan="24">{@linkplain org.lightsleep.component.SqlString}</td></tr>
-		<tr><td>Character      </td></tr>
-		<tr><td>BigDecimal     </td></tr>
-		<tr><td>String         </td></tr>
-		<tr><td>java.util.Date<br><i>(since 1.4.0)</i></td></tr>
-		<tr><td>java.sql.Date  </td></tr>
-		<tr><td>Time           </td></tr>
-		<tr><td>Timestamp      </td></tr>
-		<tr><td>Enum           </td></tr>
-		<tr><td>boolean[]      </td></tr>
-		<tr><td>char[]         </td></tr>
-		<tr><td>byte[]         </td></tr>
-		<tr><td>short[]        </td></tr>
-		<tr><td>int[]          </td></tr>
-		<tr><td>long[]         </td></tr>
-		<tr><td>float[]        </td></tr>
-		<tr><td>double[]       </td></tr>
-		<tr><td>BigDecimal[]   </td></tr>
-		<tr><td>String[]       </td></tr>
-		<tr><td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
-		<tr><td>java.sql.Date[]</td></tr>
-		<tr><td>Time[]         </td></tr>
-		<tr><td>Timestamp[]    </td></tr>
-		<tr><td>Iterable       </td></tr>
-	</table>
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * @since 1.0.0
+ * @author Masato Kokubo
+ */
 public class Standard implements Database {
 	/**
-		The maximum length of string literal when creates SQL.<br>
-		If the string literal exceeds this length, it generated as SQL parameters (?).<br>
-		The value of <b>maxStringLiteralLength</b> of lightsleep.properties has been set.
-		(if undefined, 128)
-	*/
+	 * The maximum length of string literal when creates SQL.<br>
+	 * If the string literal exceeds this length, it generated as SQL parameters (?).<br>
+	 * The value of <b>maxStringLiteralLength</b> of lightsleep.properties has been set.
+	 * (if undefined, 128)
+	 */
 	protected static final int maxStringLiteralLength = Resource.globalResource.get(Integer.class, "maxStringLiteralLength", 128);
 
 	/**
-		The maximum length of binary literal when creates SQL.<br>
-		If the binary literal exceeds this length, it generated as SQL parameters (?).<br>
-		The value of <b>maxBinaryLiteralLength</b> of lightsleep.properties has been set.
-		(if undefined, 128)
-	*/
+	 * The maximum length of binary literal when creates SQL.<br>
+	 * If the binary literal exceeds this length, it generated as SQL parameters (?).<br>
+	 * The value of <b>maxBinaryLiteralLength</b> of lightsleep.properties has been set.
+	 * (if undefined, 128)
+	 */
 	protected static final int maxBinaryLiteralLength = Resource.globalResource.get(Integer.class, "maxBinaryLiteralLength", 128);
 
 	/**
-		<b>TypeConverter</b> object to convert
-		from <b>boolean</b> to <b>SqlString</b> (FALSE, TRUE)
-	*/
+	 * <b>TypeConverter</b> object to convert
+	 * from <b>boolean</b> to <b>SqlString</b> (FALSE, TRUE)
+	 */
 	public static final TypeConverter<Boolean, SqlString> booleanToSqlFalseTrueConverter =
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "TRUE" : "FALSE"));
 
 	/**
-		<b>TypeConverter</b> object to convert
-		from <b>Boolean</b> to <b>SqlString</b> (0, 1)
-	*/
+	 * <b>TypeConverter</b> object to convert
+	 * from <b>Boolean</b> to <b>SqlString</b> (0, 1)
+	 */
 	public static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"));
 
 	/**
-		<b>TypeConverter</b> object to convert
-		from <b>Boolean</b> to <b>SqlString</b> ('0', '1')
-	*/
+	 * <b>TypeConverter</b> object to convert
+	 * from <b>Boolean</b> to <b>SqlString</b> ('0', '1')
+	 */
 	public static final TypeConverter<Boolean, SqlString> booleanToSqlChar01Converter =
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "'1'" : "'0'"));
 
 	/**
-		<b>TypeConverter</b> object to convert
-		from <b>Boolean</b> to <b>SqlString</b> ('N', 'Y')
-	*/
+	 * <b>TypeConverter</b> object to convert
+	 * from <b>Boolean</b> to <b>SqlString</b> ('N', 'Y')
+	 */
 	public static final TypeConverter<Boolean, SqlString> booleanToSqlNYConverter =
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "'Y'" : "'N'"));
 
 	/**
-		<b>TypeConverter</b> object to convert
-		from <b>String</b> ('N', 'Y') to <b>Boolean</b>
-	*/
+	 * <b>TypeConverter</b> object to convert
+	 * from <b>String</b> ('N', 'Y') to <b>Boolean</b>
+	 */
 	public static final TypeConverter<String, Boolean> stringNYToBooleanConverter =
 		new TypeConverter<>(String.class, Boolean.class, object -> {
 			if      ("N".equals(object)) return false;
@@ -149,10 +148,10 @@ public class Standard implements Database {
 	private static final Database instance = new Standard();
 
 	/**
-		Returns the <b>Standard</b> instance.
-
-		@return the <b>Standard</b> instance
-	*/
+	 * Returns the <b>Standard</b> instance.
+	 *
+	 * @return the <b>Standard</b> instance
+	 */
 	public static Database instance() {
 		return instance;
 	}
@@ -161,8 +160,8 @@ public class Standard implements Database {
 	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = new LinkedHashMap<>(TypeConverter.typeConverterMap);
 
 	/**
-		Constructs a new <b>Standard</b>.
-	*/
+	 * Constructs a new <b>Standard</b>.
+	 */
 	@SuppressWarnings("unchecked")
 	protected Standard() {
 		// Clob -> String
@@ -573,8 +572,8 @@ public class Standard implements Database {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
@@ -609,8 +608,8 @@ public class Standard implements Database {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String subSelectSql(Sql<E> sql, List<Object> parameters) {
 		return subSelectSql(sql, () -> {
@@ -660,8 +659,8 @@ public class Standard implements Database {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
@@ -719,8 +718,8 @@ public class Standard implements Database {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String insertSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
@@ -766,8 +765,8 @@ public class Standard implements Database {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
@@ -813,8 +812,8 @@ public class Standard implements Database {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String deleteSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
@@ -842,16 +841,16 @@ public class Standard implements Database {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Map<String, TypeConverter<?, ?>> typeConverterMap() {
 		return typeConverterMap;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <T> T convert(Object value, Class<T> type) {
 		return TypeConverter.convert(typeConverterMap, value, type);

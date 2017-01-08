@@ -1,7 +1,6 @@
-/*
-	Jdbc.java
-	(C) 2016 Masato Kokubo
-*/
+// Jdbc.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.connection;
 
 import java.io.PrintWriter;
@@ -15,27 +14,27 @@ import java.util.function.Consumer;
 import javax.sql.DataSource;
 
 /**
-	Gets database connections using the
-	<b>DriverManager</b> class.<br>
-	That refer to the following properties of lightsleep.properties file.
+ * Gets database connections using the
+ * <b>DriverManager</b> class.<br>
+ * That refer to the following properties of lightsleep.properties file.
+ *
+ * <div class="blankline">&nbsp;</div>
+ *
+ * <table class="additional">
+ *   <caption><span>References in lightsleep.properties</span></caption>
+ *   <tr><th>Property Name</th><th>Content</th></tr>
+ *   <tr><td>url     </td><td>The URL of the database to be connected</td></tr>
+ *   <tr><td>user    </td><td>The user name to use when connecting to a database</td></tr>
+ *   <tr><td>password</td><td>The password to use when connecting to the database</td></tr>
+ *   <tr>
+ *     <td><i>Other property names</i></td>
+ *     <td>Other properties to be used to get a connection from <b>DriverManager</b> class</td>
+ *   </tr>
+ * </table>
 
-	<div class="blankline">&nbsp;</div>
-
-	<table class="additional">
-		<caption><span>References in lightsleep.properties</span></caption>
-		<tr><th>Property Name</th><th>Content</th></tr>
-		<tr><td>url     </td><td>The URL of the database to be connected</td></tr>
-		<tr><td>user    </td><td>The user name to use when connecting to a database</td></tr>
-		<tr><td>password</td><td>The password to use when connecting to the database</td></tr>
-		<tr>
-			<td><i>Other property names</i></td>
-			<td>Other properties to be used to get a connection from <b>DriverManager</b> class</td>
-		</tr>
-	</table>
-
-	@since 1.1.0
-	@author Masato Kokubo
-*/
+ * @since 1.1.0
+ * @author Masato Kokubo
+ */
 public class Jdbc extends AbstractConnectionSupplier {
 // 1.5.0
 //	// The URL
@@ -43,10 +42,10 @@ public class Jdbc extends AbstractConnectionSupplier {
 ////
 
 	/**
-		Constructs a new <b>Jdbc</b>.
-		Use values specified in the lightsleep.properties
-		file as the connection information.
-	*/
+	 * Constructs a new <b>Jdbc</b>.
+	 * Use values specified in the lightsleep.properties
+	 * file as the connection information.
+	 */
 	public Jdbc() {
 	// 1.2.0
 	//	init();
@@ -60,13 +59,13 @@ public class Jdbc extends AbstractConnectionSupplier {
 
 // 1.2.0
 //	/**
-//		Constructs a new <b>Jdbc</b>.
-//		Use values specified in the lightsleep.properties and
-//		<i>&lt;<b>resourceName</b>&gt;</i>.properties
-//		file as the connection information.
-//
-//		@param resourceName the resource name
-//	*/
+//	 * Constructs a new <b>Jdbc</b>.
+//	 * Use values specified in the lightsleep.properties and
+//	 * <i>&lt;<b>resourceName</b>&gt;</i>.properties
+//	 * file as the connection information.
+//	 *
+//	 * @param resourceName the resource name
+//	 */
 //	public Jdbc(String resourceName) {
 //		super(resourceName);
 //		init();
@@ -95,21 +94,21 @@ public class Jdbc extends AbstractConnectionSupplier {
 ////
 
 	/**
-		Constructs a new <b>Jdbc</b>.
-		Use values specified in the lightsleep.properties
-		file as the connection information.
-
-		@param modifier a consumer to modify the properties
-
-		@since 1.5.0
-	*/
+	 * Constructs a new <b>Jdbc</b>.
+	 * Use values specified in the lightsleep.properties
+	 * file as the connection information.
+	 *
+	 * @param modifier a consumer to modify the properties
+	 *
+	 * @since 1.5.0
+	 */
 	public Jdbc(Consumer<Properties> modifier) {
 		super(modifier);
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected DataSource getDataSource() {
 	// 1.5.0

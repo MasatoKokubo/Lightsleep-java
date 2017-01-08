@@ -1,7 +1,6 @@
-/*
-	EntityCondition.java
-	(C) 2016 Masato Kokubo
-*/
+// EntityCondition.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.component;
 
 import java.text.MessageFormat;
@@ -13,13 +12,13 @@ import org.lightsleep.helper.EntityInfo;
 import org.lightsleep.helper.Resource;
 
 /**
-	Configure a condition using the value of the primary key of an entity.
-
-	@param <E> the entity class
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * Configure a condition using the value of the primary key of an entity.
+ *
+ * @param <E> the entity class
+ *
+ * @since 1.0.0
+ * @author Masato Kokubo
+ */
 public class EntityCondition<E> implements Condition {
 	// Class resources
 	private static final Resource resource = new Resource(EntityCondition.class);
@@ -32,12 +31,12 @@ public class EntityCondition<E> implements Condition {
 	private EntityInfo<E> entityInfo;
 
 	/**
-		Constructs a new <b>EntityCondition</b>.
-
-		@param entity the entity
-
-		@throws NullPointerException <b>entity</b> is <b>null</b>
-	*/
+	 * Constructs a new <b>EntityCondition</b>.
+	 *
+	 * @param entity the entity
+	 *
+	 * @throws NullPointerException <b>entity</b> is <b>null</b>
+	 */
 	@SuppressWarnings("unchecked")
 	public EntityCondition(E entity) {
 		if (entity == null) throw new NullPointerException("EntityCondition.<init>: entity == null");
@@ -50,16 +49,16 @@ public class EntityCondition<E> implements Condition {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isEmpty() {
 		return false;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <T> String toString(Sql<T> sql, List<Object> parameters) {
 		String tableAlias = sql.tableAlias();

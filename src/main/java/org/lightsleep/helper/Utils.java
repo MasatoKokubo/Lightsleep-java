@@ -1,7 +1,6 @@
-/*
-	Utils.java
-	(C) 2016 Masato Kokubo
-*/
+// Utils.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.helper;
 
 import java.math.BigInteger;
@@ -23,11 +22,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
-	There are utility methods.
-
-	@since 1.0
-	@author Masato Kokubo
-*/
+ * There are utility methods.
+ *
+ * @since 1.0
+ * @author Masato Kokubo
+ */
 public class Utils {
 	// Class resources
 	private static final int maxLogStringLength    = Resource.globalResource.get(Integer.class, "maxLogStringLength"   , 200);
@@ -62,23 +61,21 @@ public class Utils {
 	}
 
 	/**
-		Converts the primitive type to the corresponding class type.
-
-		@param type the type (permit <b>null</b>)
-
-		@return the corresponding class type if <b>type</b> is a primitive type, <b>type</b> otherwise (in the case of <b>type</b> == <b>null</b>)
-	*/
+	 * Converts the primitive type to the corresponding class type.
+	 *
+	 * @param type the type (permit <b>null</b>)
+	 * @return the corresponding class type if <b>type</b> is a primitive type, <b>type</b> otherwise (in the case of <b>type</b> == <b>null</b>)
+	 */
 	public static Class<?> toClassType(Class<?> type) {
 		return toClassMap.getOrDefault(type, type);
 	}
 
 	/**
-		Converts the class type to the corresponding primitive type.
-
-		@param type the type (permit <b>null</b>)
-
-		@return the corresponding primitive type if <b>type</b> is a class type, <b>type</b> otherwise (in the case of <b>type</b> == <b>null</b>)
-	*/
+	 * Converts the class type to the corresponding primitive type.
+	 *
+	 * @param type the type (permit <b>null</b>)
+	 * @return the corresponding primitive type if <b>type</b> is a class type, <b>type</b> otherwise (in the case of <b>type</b> == <b>null</b>)
+	 */
 	public static Class<?> toPrimitiveType(Class<?> type) {
 		return toPrimitiveMap.getOrDefault(type, type);
 	}
@@ -112,36 +109,34 @@ public class Utils {
 	}
 
 	/**
-		Returns whether <b>type</b> is value type.<br>
-		Value type is one of the following.<br>
-
-		<div class="blankline">&nbsp;</div>
-
-		<div class="code indent">
-			boolean, char, byte, short, int, long, float, double,<br>
-			Boolean, Character, Byte, Short, Integer, Long, Float, Double, BigInteger, BigDecimal,<br>
-			String, java.util.Date, java.sql.Date, Time, Timestamp
-		</div>
-
-		@param type the type (permit <b>null</b>)
-
-		@return <b>type</b> if <b>type</b> is value type, <b>false</b> otherwise
-
-		@throws NullPointerException if <b>type</b> is <b>null</b>
-	*/
+	 * Returns whether <b>type</b> is value type.<br>
+	 * Value type is one of the following.<br>
+	 *
+	 * <div class="blankline">&nbsp;</div>
+	 *
+	 * <div class="code indent">
+	 *   boolean, char, byte, short, int, long, float, double,<br>
+	 *   Boolean, Character, Byte, Short, Integer, Long, Float, Double, BigInteger, BigDecimal,<br>
+	 *   String, java.util.Date, java.sql.Date, Time, Timestamp
+	 * </div>
+	 *
+	 * @param type the type (permit <b>null</b>)
+	 * @return <b>type</b> if <b>type</b> is value type, <b>false</b> otherwise
+	 *
+	 * @throws NullPointerException if <b>type</b> is <b>null</b>
+	 */
 	public static boolean isValueType(Class<?> type) {
 		return valueClasses.contains(type);
 	}
 
 	/**
-		Returns a class name without the package name.
-
-		@param clazz the class
-
-		@return a class name without the package name
-
-		@throws NullPointerException if <b>clazz</b> is <b>null</b>
-	*/
+	 * Returns a class name without the package name.
+	 *
+	 * @param clazz the class
+	 * @return a class name without the package name
+	 *
+	 * @throws NullPointerException if <b>clazz</b> is <b>null</b>
+	 */
 	public static String nameWithoutPackage(Class<?> clazz) {
 		String className = null;
 		if (clazz.isArray()) {
@@ -157,21 +152,19 @@ public class Utils {
 	}
 
 	/**
-		Returns a new array of <b>elementType</b>.<br>
-
-		Store a new object of <b>elementType</b> for all of the elements of the array.
-
-		@param <E> the element type of the array
-
-		@param elementType the element type of the array
-		@param length the length of the array
-
-		@return elementType a new array of <b>elementType</b>
-
-		@throws NullPointerException if <b>elementType</b> is <b>null</b>
-		@throws IndexOutOfBoundsException if <b>length </b>&lt; 0
-		@throws RuntimeException if <b>InstantiationException</b> or <b>IllegalAccessException</b> has been thrown
-	*/
+	 * Returns a new array of <b>elementType</b>.<br>
+	 *
+	 * Store a new object of <b>elementType</b> for all of the elements of the array.
+	 *
+	 * @param <E> the element type of the array
+	 * @param elementType the element type of the array
+	 * @param length the length of the array
+	 * @return elementType a new array of <b>elementType</b>
+	 *
+	 * @throws NullPointerException if <b>elementType</b> is <b>null</b>
+	 * @throws IndexOutOfBoundsException if <b>length </b>&lt; 0
+	 * @throws RuntimeException if <b>InstantiationException</b> or <b>IllegalAccessException</b> has been thrown
+	 */
 	@SuppressWarnings("unchecked")
 	public static <E> E[] newArray(Class<E> elementType, int length) {
 		E[] array = (E[])Array.newInstance(elementType, length);
@@ -194,114 +187,104 @@ public class Utils {
 	}
 
 	/**
-		Returns a string representation for the log output of the specified value.
-
-		@param value the value
-
-		@return a string representation for the log output
-	*/
+	 * Returns a string representation for the log output of the specified value.
+	 *
+	 * @param value the value
+	 * @return a string representation for the log output
+	 */
 	public static String toLogString(boolean value) {
 		return toLogString(Boolean.valueOf(value), Boolean.TYPE);
 	}
 
 	/**
-		Returns a string representation for the log output of the specified value.
-
-		@param value the value
-
-		@return a string representation for the log output
-	*/
+	 * Returns a string representation for the log output of the specified value.
+	 *
+	 * @param value the value
+	 * @return a string representation for the log output
+	 */
 	public static String toLogString(char value) {
 		return toLogString(Character.valueOf(value), Character.TYPE);
 	}
 
 	/**
-		Returns a string representation for the log output of the specified value.
-
-		@param value the value
-
-		@return a string representation for the log output
-	*/
+	 * Returns a string representation for the log output of the specified value.
+	 *
+	 * @param value the value
+	 * @return a string representation for the log output
+	 */
 	public static String toLogString(byte value) {
 		return toLogString(Byte.valueOf(value), Byte.TYPE);
 	}
 
 	/**
-		Returns a string representation for the log output of the specified value.
-
-		@param value the value
-
-		@return a string representation for the log output
-	*/
+	 * Returns a string representation for the log output of the specified value.
+	 *
+	 * @param value the value
+	 * @return a string representation for the log output
+	 */
 	public static String toLogString(short value) {
 		return toLogString(Short.valueOf(value), Short.TYPE);
 	}
 
 	/**
-		Returns a string representation for the log output of the specified value.
-
-		@param value the value
-
-		@return a string representation for the log output
-	*/
+	 * Returns a string representation for the log output of the specified value.
+	 *
+	 * @param value the value
+	 * @return a string representation for the log output
+	 */
 	public static String toLogString(int value) {
 		return toLogString(Integer.valueOf(value), Integer.TYPE);
 	}
 
 	/**
-		Returns a string representation for the log output of the specified value.
-
-		@param value the value
-
-		@return a string representation for the log output
-	*/
+	 * Returns a string representation for the log output of the specified value.
+	 *
+	 * @param value the value
+	 * @return a string representation for the log output
+	 */
 	public static String toLogString(long value) {
 		return toLogString(Long.valueOf(value), Long.TYPE);
 	}
 
 	/**
-		Returns a string representation for the log output of the specified value.
-
-		@param value the value
-
-		@return a string representation for the log output
-	*/
+	 * Returns a string representation for the log output of the specified value.
+	 *
+	 * @param value the value
+	 * @return a string representation for the log output
+	 */
 	public static String toLogString(float value) {
 		return toLogString(Float.valueOf(value), Float.TYPE);
 	}
 
 	/**
-		Returns a string representation for the log output of the specified value.
-
-		@param value the value
-
-		@return a string representation for the log output
-	*/
+	 * Returns a string representation for the log output of the specified value.
+	 *
+	 * @param value the value
+	 * @return a string representation for the log output
+	 */
 	public static String toLogString(double value) {
 		return toLogString(Double.valueOf(value), Double.TYPE);
 	}
 
 	/**
-		Returns a string representation for the log output of the specified value.
-
-		@param value the value (permit <b>null</b>)
-
-		@return a string representation for the log output
-	*/
+	 * Returns a string representation for the log output of the specified value.
+	 *
+	 * @param value the value (permit <b>null</b>)
+	 * @return a string representation for the log output
+	 */
 	public static String toLogString(Object value) {
 		return toLogString(value, null);
 	}
 
 	/**
-		Returns a string representation for the log output of the specified value.
-
-		@param object the object (permit <b>null</b>)
-		@param type the type of the object (permit <b>null</b>)
-
-		@return a string representation for the log output
-
-		@throws NullPointerException if <b>type</b> is <b>null</b>
-	*/
+	 * Returns a string representation for the log output of the specified value.
+	 *
+	 * @param object the object (permit <b>null</b>)
+	 * @param type the type of the object (permit <b>null</b>)
+	 * @return a string representation for the log output
+	 *
+	 * @throws NullPointerException if <b>type</b> is <b>null</b>
+	 */
 	@SuppressWarnings("rawtypes")
 	private static String toLogString(Object object, Class<?> type) {
 		StringBuilder buff = new StringBuilder();
@@ -385,16 +368,15 @@ public class Utils {
 	}
 
 	/**
-		Appends a string representation of <b>value</b> to the string buffer.
-
-		@param buff the string buffer
-		@param type the type of the value
-		@param value a value to be appended (permit <b>null</b>)
-
-		@return the string buffer
-
-		@throws NullPointerException if <b>buff</b> or <b>type</b> is <b>null</b>
-	*/
+	 * Appends a string representation of <b>value</b> to the string buffer.
+	 *
+	 * @param buff the string buffer
+	 * @param type the type of the value
+	 * @param value a value to be appended (permit <b>null</b>)
+	 * @return the string buffer
+	 *
+	 * @throws NullPointerException if <b>buff</b> or <b>type</b> is <b>null</b>
+	 */
 	@SuppressWarnings("rawtypes")
 	private static StringBuilder append(StringBuilder buff, Class<?> type, Object value) {
 		if (type == null)
@@ -430,15 +412,14 @@ public class Utils {
 	}
 
 	/**
-		Appends a string representation of a character to the string buffer.
-
-		@param buff the string buffer
-		@param ch a character
-
-		@return the string buffer
-
-		@throws NullPointerException if <b>buff</b> is <b>null</b>
-	*/
+	 * Appends a string representation of a character to the string buffer.
+	 *
+	 * @param buff the string buffer
+	 * @param ch a character
+	 * @return the string buffer
+	 *
+	 * @throws NullPointerException if <b>buff</b> is <b>null</b>
+	 */
 	private static StringBuilder append(StringBuilder buff, char ch) {
 		if (ch >= ' ' && ch != '\u007F') {
 			if      (ch == '"' ) buff.append("\\\"");
@@ -461,15 +442,14 @@ public class Utils {
 	}
 
 	/**
-		Appends a string representation of a string to the string buffer.
-
-		@param buff the string buffer
-		@param string the string
-
-		@return the string buffer
-
-		@throws NullPointerException if <b>buff</b> or <b>string</b> is <b>null</b>
-	*/
+	 * Appends a string representation of a string to the string buffer.
+	 *
+	 * @param buff the string buffer
+	 * @param string the string
+	 * @return the string buffer
+	 *
+	 * @throws NullPointerException if <b>buff</b> or <b>string</b> is <b>null</b>
+	 */
 	private static StringBuilder append(StringBuilder buff, String string) {
 		buff.append('"');
 		for (int index = 0; index < string.length(); ++index) {
@@ -485,15 +465,14 @@ public class Utils {
 	}
 
 	/**
-		Appends a string representation of characters to the string buffer.
-
-		@param buff the string buffer
-		@param chars an array of characters
-
-		@return the string buffer
-
-		@throws NullPointerException if <b>buff</b> or <b>chars</b> is <b>null</b>
-	*/
+	 * Appends a string representation of characters to the string buffer.
+	 *
+	 * @param buff the string buffer
+	 * @param chars an array of characters
+	 * @return the string buffer
+	 *
+	 * @throws NullPointerException if <b>buff</b> or <b>chars</b> is <b>null</b>
+	 */
 	private static StringBuilder append(StringBuilder buff, char[] chars) {
 		buff.append('"');
 		for (int index = 0; index < chars.length; ++index) {
@@ -509,15 +488,14 @@ public class Utils {
 	}
 
 	/**
-		Appends a string representation of bytes to the string buffer.
-
-		@param buff the string buffer
-		@param bytes an array of bytes
-
-		@return the string buffer
-
-		@throws NullPointerException if <b>buff</b> or <b>bytes</b> is <b>null</b>
-	*/
+	 * Appends a string representation of bytes to the string buffer.
+	 *
+	 * @param buff the string buffer
+	 * @param bytes an array of bytes
+	 * @return the string buffer
+	 *
+	 * @throws NullPointerException if <b>buff</b> or <b>bytes</b> is <b>null</b>
+	 */
 	private static StringBuilder append(StringBuilder buff, byte[] bytes) {
 		buff.append('[');
 		String delimiter = "";
@@ -543,15 +521,14 @@ public class Utils {
 	}
 
 	/**
-		Appends a string representation of an array to the string buffer.
-
-		@param buff the string buffer
-		@param array an array
-
-		@return the string buffer
-
-		@throws NullPointerException if <b>buff</b> or <b>array</b> is <b>null</b>
-	*/
+	 * Appends a string representation of an array to the string buffer.
+	 *
+	 * @param buff the string buffer
+	 * @param array an array
+	 * @return the string buffer
+	 *
+	 * @throws NullPointerException if <b>buff</b> or <b>array</b> is <b>null</b>
+	 */
 	private static StringBuilder appendArray(StringBuilder buff, Object array) {
 		Class<?> componentType = array.getClass().getComponentType();
 		if (!componentType.isPrimitive())
@@ -576,15 +553,14 @@ public class Utils {
 	}
 
 	/**
-		Appends a string representation of an iterable to the string buffer.
-
-		@param buff the string buffer
-		@param iterable an <b>Iterable</b>
-
-		@return the string buffer
-
-		@throws NullPointerException if <b>buff</b> or <b>iterable</b> is <b>null</b>
-	*/
+	 * Appends a string representation of an iterable to the string buffer.
+	 *
+	 * @param buff the string buffer
+	 * @param iterable an <b>Iterable</b>
+	 * @return the string buffer
+	 *
+	 * @throws NullPointerException if <b>buff</b> or <b>iterable</b> is <b>null</b>
+	 */
 	private static StringBuilder append(StringBuilder buff, Iterable<?> iterable) {
 		Iterator<?> iter = iterable.iterator();
 		buff.append('[');
@@ -604,15 +580,14 @@ public class Utils {
 	}
 
 	/**
-		Appends a string representation of a map to the string buffer.
-
-		@param buff the string buffer
-		@param map a <b>Map</b>
-
-		@return the string buffer
-
-		@throws NullPointerException if <b>buff</b> or <b>map</b> is <b>null</b>
-	*/
+	 * Appends a string representation of a map to the string buffer.
+	 *
+	 * @param buff the string buffer
+	 * @param map a <b>Map</b>
+	 * @return the string buffer
+	 *
+	 * @throws NullPointerException if <b>buff</b> or <b>map</b> is <b>null</b>
+	 */
 	private static <K,V> StringBuilder append(StringBuilder buff, Map<K,V> map) {
 		Iterator<Map.Entry<K,V>> iter = map.entrySet().iterator();
 		buff.append('[');
@@ -634,18 +609,17 @@ public class Utils {
 
 	// #0014
 	/**
-		Returns annotations of the target class and its super class without Object class.
-
-		@param <A> the annotation type
-		@param clazz the target class
-		@param annotationClass the annotation class
-
-		@return a list of annotations
-
-		@throws NullPointerException if <b>clazz</b> or <b>annotationClass</b> is <b>null</b>
-
-		@since 1.5.1
-	*/
+	 * Returns annotations of the target class and its super class without Object class.
+	 *
+	 * @param <A> the annotation type
+	 * @param clazz the target class
+	 * @param annotationClass the annotation class
+	 * @return a list of annotations
+	 *
+	 * @throws NullPointerException if <b>clazz</b> or <b>annotationClass</b> is <b>null</b>
+	 *
+	 * @since 1.5.1
+	 */
 	public static <A extends Annotation> List<A> getAnnotations(Class<?> clazz, Class<A> annotationClass) {
 		List<A> annotations = new ArrayList<>();
 		addAnnotations(annotations, clazz, annotationClass);

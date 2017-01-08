@@ -1,7 +1,6 @@
-/*
-	Expression.java
-	(C) 2016 Masato Kokubo
-*/
+// Expression.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.component;
 
 import java.text.MessageFormat;
@@ -16,11 +15,11 @@ import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
 
 /**
-	Configures an expression with a string content and an array of argument objects embedded in the string.
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * Configures an expression with a string content and an array of argument objects embedded in the string.
+ *
+ * @since 1.0.0
+ * @author Masato Kokubo
+ */
 public class Expression implements Condition {
 	// The logger
 	private static final Logger logger = LoggerFactory.getLogger(Expression.class);
@@ -43,13 +42,13 @@ public class Expression implements Condition {
 	private final Object[] arguments;
 
 	/**
-		Constructs a new <b>Expression</b>.
-
-		@param content the content of the expression
-		@param arguments the arguments of the expression
-
-		@throws NullPointerException <b>content</b> or <b>arguments</b> is <b>null</b>
-	*/
+	 * Constructs a new <b>Expression</b>.
+	 *
+	 * @param content the content of the expression
+	 * @param arguments the arguments of the expression
+	 *
+	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is <b>null</b>
+	 */
 	public Expression(String content, Object... arguments) {
 		if (content == null) throw new NullPointerException("Expression.<init>: content == null");
 		if (arguments == null) throw new NullPointerException("Expression.<init>: arguments == null");
@@ -59,62 +58,62 @@ public class Expression implements Condition {
 	}
 
 	/**
-		Returns the content of the expression.
-
-		@return the content
-	*/
+	 * Returns the content of the expression.
+	 *
+	 * @return the content
+	 */
 	public String content() {
 		return content;
 	}
 
 	/**
-		Returns the arguments.
-
-		@return the arguments
-	*/
+	 * Returns the arguments.
+	 *
+	 * @return the arguments
+	 */
 	public Object[] arguments() {
 		return arguments;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isEmpty() {
 		return content.isEmpty();
 	}
 
 	/**
-		{@inheritDoc}
-
-		<table class="additional">
-			<caption><span>Conversion Process</span></caption>
-			<tr>
-				<th>String before convert</th>
-				<th>String after convert</th>
-			</tr>
-			<tr>
-				<td>{}</td>
-				<td>An element of <b>arguments</b></td>
-			</tr>
-			<tr>
-				<td>{<i>Property Name</i>}</td>
-				<td>Column Name</td>
-			</tr>
-			<tr>
-				<td>{<i>Table Alias</i>.<i>Property Name</i>}</td>
-				<td>Table Alias.Column Name</td>
-			</tr>
-			<tr>
-				<td>{<i>Table Alias</i>_<i>Property Name</i>}</td>
-				<td>Column Alias</td>
-			</tr>
-			<tr>
-				<td>{#<i>Property Name</i>}</td>
-				<td>Property Value of the entity</td>
-			</tr>
-		</table>
-	*/
+	 * {@inheritDoc}
+	 *
+	 * <table class="additional">
+	 *   <caption><span>Conversion Process</span></caption>
+	 *   <tr>
+	 *     <th>String before convert</th>
+	 *     <th>String after convert</th>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>{}</td>
+	 *     <td>An element of <b>arguments</b></td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>{<i>Property Name</i>}</td>
+	 *     <td>Column Name</td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>{<i>Table Alias</i>.<i>Property Name</i>}</td>
+	 *     <td>Table Alias.Column Name</td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>{<i>Table Alias</i>_<i>Property Name</i>}</td>
+	 *     <td>Column Alias</td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>{#<i>Property Name</i>}</td>
+	 *     <td>Property Value of the entity</td>
+	 *   </tr>
+	 * </table>
+	 */
 	@Override
 	public <E> String toString(Sql<E> sql, List<Object> parameters) {
 		EntityInfo<E> entityInfo = sql.entityInfo();
