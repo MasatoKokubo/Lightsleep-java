@@ -31,7 +31,9 @@ import org.lightsleep.connection.Jdbc;
 import org.lightsleep.database.Database;
 import org.lightsleep.database.Standard;
 import org.lightsleep.entity.Composite;
+import org.lightsleep.entity.PostLoad;
 import org.lightsleep.entity.PreInsert;
+import org.lightsleep.entity.PreStore;
 import org.lightsleep.helper.Accessor;
 import org.lightsleep.helper.ColumnInfo;
 import org.lightsleep.helper.EntityInfo;
@@ -1208,6 +1210,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public int insert(Connection connection, E entity) {
 		if (entity == null) throw new NullPointerException("Sql.insert: entity == null");
 
+	// 1.6.0
+		if (entity instanceof PreStore)
+			((PreStore)entity).preStore();
+	////
+
 		int count = 0;
 
 		// before INSERT
@@ -1258,6 +1265,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 */
 	public int update(Connection connection, E entity) {
 		if (entity == null) throw new NullPointerException("Sql.update: entity == null");
+
+	// 1.6.0
+		if (entity instanceof PreStore)
+			((PreStore)entity).preStore();
+	////
 
 		this.entity = entity;
 		if (where.isEmpty())
@@ -1333,6 +1345,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (entity == null) throw new NullPointerException("Sql.delete: entity == null");
 
 		where = Condition.of(entity);
+
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().deleteSql(this, parameters);
 		int count = executeUpdate(connection, sql, parameters);
@@ -1413,6 +1426,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 					});
 
 				// After get
+			// 1.6.0
+				if (entity instanceof PostLoad)
+					((PostLoad)entity).postLoad();
+			////
 				if (entity instanceof Composite)
 					((Composite)entity).postSelect(connection);
 

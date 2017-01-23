@@ -8,7 +8,7 @@ import java.sql.Connection;
 /**
  * If an entity class implements this interface,
  * <b>insert</b> method of Sql class calls <b>preInsert</b> method
- * of the entity before INSERT SQL execution.<br>
+ * of the entity class before executing INSERT SQL.<br>
  *
  * In <b>preInsert method,</b> do the implementation of the numbering of the primary key or etc.
  *
@@ -32,7 +32,7 @@ import java.sql.Connection;
  */
 public interface PreInsert {
 	/**
-	 * <b>preInsert</b> is executed before a row is inserted.
+	 * This method is execute before executing INSERT SQL.
 	 *
 	 * @param connection the database connection
 	 * @return the number of inserted rows
