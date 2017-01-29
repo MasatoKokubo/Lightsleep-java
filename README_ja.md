@@ -15,6 +15,7 @@ Lightsleep は、軽量のデータベース永続化ライブラリで、Java 8
 - MySQL
 - Oracle Database
 - PostgreSQL
+- SQLite (since 1.7.0)
 - SQL Server
 - 標準SQL準拠DBMS
 

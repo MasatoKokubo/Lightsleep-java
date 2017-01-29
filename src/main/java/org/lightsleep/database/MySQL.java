@@ -12,17 +12,19 @@ import org.lightsleep.helper.TypeConverter;
  *
  * The object of this class has a <b>TypeConverter</b> map
  * with the following additional <b>TypeConverter</b> to
- * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
+ * {@linkplain Standard#typeConverterMap}.
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th></tr>
- *   <tr><td>boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
- *   <tr><td>String </td><td>{@linkplain org.lightsleep.component.SqlString} (Escape sequence corresponding)</td></tr>
+ *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Format</th></tr>
+ *   <tr><td>boolean</td><td rowspan="2">{@linkplain org.lightsleep.component.SqlString}</td><td>0 or 1</td></tr>
+ *   <tr><td>String </td><td><i>sql parameter (?)</i> if too long, '...' (may include escape sequences) otherwise</td></tr>
  * </table>
-
+ *
  * @since 1.0.0
  * @author Masato Kokubo
+ * @see org.lightsleep.helper.TypeConverter
+ * @see org.lightsleep.database.Standard
  */
 public class MySQL extends Standard {
 	// The MySQL instance
@@ -48,7 +50,10 @@ public class MySQL extends Standard {
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, SqlString.class, object -> {
 				if (object.length() > maxStringLiteralLength)
-					return SqlString.PARAMETER; // SQL Paramter
+				// 1.7.0
+				//	return SqlString.PARAMETER; // SQL Paramter
+					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
+				////
 
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');

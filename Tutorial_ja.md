@@ -5,7 +5,7 @@ Lightsleep / チュートリアル
 
 #### 1. テーブルの準備
 
-MySQL, Oracle, PostgreSQL または SQL Server のいずれかのデータベースに Contact テーブルを作成し、サンプルデータを挿入します。
+MySQL, Oracle, PostgreSQL, SQLite または SQL Server のいずれかのデータベースに Contact テーブルを作成し、サンプルデータを挿入します。
 
 以下の SQL のいずれかを実行してテーブルを作成します。
 
@@ -40,6 +40,18 @@ CREATE TABLE Contact (
     familyName  VARCHAR(20)     NULL,
     givenName   VARCHAR(20)     NULL,
     birthday    DATE            NULL,
+
+    PRIMARY KEY(id)
+);
+```
+
+```sql:ddl_sqlite.sql
+-- for SQLite
+CREATE TABLE Contact (
+    id         INTEGER         NOT NULL,
+    familyName VARCHAR(20)     NULL,
+    givenName  VARCHAR(20)     NULL,
+    birthday   TEXT            NULL,
 
     PRIMARY KEY(id)
 );
@@ -107,7 +119,7 @@ url, user および password の値は、使用するデータベース環境に
 Logger             = Std$Out$Info
 Database           = MySQL
 ConnectionSupplier = Jdbc
-url                = jdbc:mysql://MySQL57/test
+url                = jdbc:mysql://mysql57/test
 user               = test
 password           = _test_
 ```
@@ -117,7 +129,7 @@ password           = _test_
 Logger             = Std$Out$Info
 Database           = Oracle
 ConnectionSupplier = Jdbc
-url                = jdbc:oracle:thin:@Oracle121:1521:test
+url                = jdbc:oracle:thin:@oracle121:1521:test
 user               = test
 password           = _test_
 ```
@@ -127,9 +139,17 @@ password           = _test_
 Logger             = Std$Out$Info
 Database           = PostgreSQL
 ConnectionSupplier = Jdbc
-url                = jdbc:postgresql://Postgres95/test
+url                = jdbc:postgresql://postgres96/test
 user               = test
 password           = _test_
+```
+
+```properties:lightsleep.properties
+# for SQLite
+Logger             = Std$Out$Info
+Database           = SQLite
+ConnectionSupplier = Jdbc
+url                = jdbc:sqlite:C:/sqlite/test
 ```
 
 ```properties:lightsleep.properties
@@ -137,7 +157,7 @@ password           = _test_
 Logger             = Std$Out$Info
 Database           = SQLServer
 ConnectionSupplier = Jdbc
-url                = jdbc:sqlserver://SQLServer13;Database=test
+url                = jdbc:sqlserver://sqlserver13;Database=test
 user               = test
 password           = _test_
 ```

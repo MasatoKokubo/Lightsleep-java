@@ -20,15 +20,16 @@ import org.lightsleep.helper.TypeConverter;
  *
  * The object of this class has a <b>TypeConverter</b> map
  * with the following additional <b>TypeConverter</b> to
- * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
+ * {@linkplain Standard#typeConverterMap}.
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th></tr>
- *   <tr><td>boolean       </td><td>{@linkplain org.lightsleep.component.SqlString} (0, 1)</td></tr>
- *   <tr><td>String        </td><td rowspan="2">{@linkplain org.lightsleep.component.SqlString}</td></tr>
- *   <tr><td>Time          </td></tr>
- *   <tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Format</th></tr>
+ *   <tr><td>boolean</td><td rowspan="4">{@linkplain org.lightsleep.component.SqlString}</td><td>0 or 1</td></tr>
+ *   <tr><td>String </td><td><i>sql parameter (?)</i> if too long, '...' (may include ...'||CHR(n)||'...) otherwise</td></tr>
+ *   <tr><td>Time   </td><td>TO_TIMESTAMP('1970-01-01 HH:mm:ss','YYYY-MM-DD HH24:MI:SS.FF3')</td></tr>
+ *   <tr><td>byte[]<br><i>(since 1.7.0)</i></td><td>always <i>sql parameter (?)</i></td></tr>
+ *   <tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="4"></td></tr>
  *   <tr>                                         <td>java.sql.Date     </td></tr>
  *   <tr>                                         <td>java.sql.Time     </td></tr>
  *   <tr>                                         <td>java.sql.Timestamp</td></tr>
@@ -36,6 +37,8 @@ import org.lightsleep.helper.TypeConverter;
  *
  * @since 1.0.0
  * @author Masato Kokubo
+ * @see org.lightsleep.helper.TypeConverter
+ * @see org.lightsleep.database.Standard
  */
 public class Oracle extends Standard {
 	// The Oracle instance
@@ -61,15 +64,21 @@ public class Oracle extends Standard {
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, SqlString.class, object -> {
 				if (object.length() > maxStringLiteralLength)
-					return SqlString.PARAMETER; // SQL Paramter
+				// 1.7.0
+				//	return SqlString.PARAMETER; // SQL Paramter
+					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
+				////
 
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');
 
 				char[] chars = object.toCharArray();
 				boolean inLiteral = true;
-				for (int index = 0; index < chars.length; ++index) {
-					char ch = chars[index];
+			// 1.7.0
+			//	for (int index = 0; index < chars.length; ++index) {
+			//		char ch = chars[index];
+				for (char ch : chars) {
+			////
 					if (ch >= ' ' && ch != '\u007F') {
 						// Literal representation
 						if (!inLiteral) {
@@ -103,6 +112,13 @@ public class Oracle extends Standard {
 			new TypeConverter<>(Time.class, SqlString.class, object ->
 				new SqlString("TO_TIMESTAMP('1970-01-01 " + object + "','YYYY-MM-DD HH24:MI:SS.FF3')")
 			)
+		);
+
+		// 1.7.0
+		// byte[] -> SqlString
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(byte[].class, SqlString.class, object ->
+				new SqlString(SqlString.PARAMETER, object))
 		);
 
 		// oracle.sql.TIMESTAMP -> java.util.Date (since 1.4.0)

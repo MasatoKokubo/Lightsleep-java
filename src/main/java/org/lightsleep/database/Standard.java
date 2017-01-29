@@ -11,6 +11,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,40 +39,40 @@ import org.lightsleep.helper.Utils;
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th></tr>
+ *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Format</th></tr>
  *
- *   <tr><td>Clob          </td><td>String</td></tr>
+ *   <tr><td>Clob          </td><td>String</td><td></td></tr>
  *
- *   <tr><td>Blob          </td><td>byte[]</td></tr>
+ *   <tr><td>Blob          </td><td>byte[]</td><td></td></tr>
  *
- *   <tr><td rowspan="13">java.sql.Array</td><td>boolean[]   </td></tr>
- *   <tr>                                    <td>byte[]      </td></tr>
- *   <tr>                                    <td>short[]     </td></tr>
- *   <tr>                                    <td>int[]       </td></tr>
- *   <tr>                                    <td>long[]      </td></tr>
- *   <tr>                                    <td>float[]     </td></tr>
- *   <tr>                                    <td>double[]    </td></tr>
- *   <tr>                                    <td>BigDecimal[]</td></tr>
- *   <tr>                                    <td>String[]    </td></tr>
- *   <tr>                                    <td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
- *   <tr>                                    <td>java.sql.Date[]</td></tr>
- *   <tr>                                    <td>Time[]      </td></tr>
- *   <tr>                                    <td>Timestamp[] </td></tr>
+ *   <tr><td rowspan="13">java.sql.Array</td><td>boolean[]      </td><td></td></tr>
+ *   <tr>                                    <td>byte[]         </td><td></td></tr>
+ *   <tr>                                    <td>short[]        </td><td></td></tr>
+ *   <tr>                                    <td>int[]          </td><td></td></tr>
+ *   <tr>                                    <td>long[]         </td><td></td></tr>
+ *   <tr>                                    <td>float[]        </td><td></td></tr>
+ *   <tr>                                    <td>double[]       </td><td></td></tr>
+ *   <tr>                                    <td>BigDecimal[]   </td><td></td></tr>
+ *   <tr>                                    <td>String[]       </td><td></td></tr>
+ *   <tr>           <td>java.util.Date[]<br><i>(since 1.4.0)</i></td><td></td></tr>
+ *   <tr>                                    <td>java.sql.Date[]</td><td></td></tr>
+ *   <tr>                                    <td>Time[]         </td><td></td></tr>
+ *   <tr>                                    <td>Timestamp[]    </td><td></td></tr>
  *
- *   <tr><td>Boolean        </td><td>{@linkplain org.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
- *
- *   <tr><td>Object         </td><td rowspan="24">{@linkplain org.lightsleep.component.SqlString}</td></tr>
- *   <tr><td>Character      </td></tr>
- *   <tr><td>BigDecimal     </td></tr>
- *   <tr><td>String         </td></tr>
- *   <tr><td>java.util.Date<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>Boolean        </td><td rowspan="26">{@linkplain org.lightsleep.component.SqlString}</td><td>FALSE or TRUE</td></tr>
+ *   <tr><td>Object         </td><td>'...'</td></tr>
+ *   <tr><td>Character      </td><td>'...'</td></tr>
+ *   <tr><td>BigDecimal     </td><td></td></tr>
+ *   <tr><td>String         </td><td><i>sql parameter (?)</i> if too long, '...' otherwise</td></tr>
+ *   <tr><td>java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="2">DATE'yyyy-MM-dd'</td></tr>
  *   <tr><td>java.sql.Date  </td></tr>
- *   <tr><td>Time           </td></tr>
- *   <tr><td>Timestamp      </td></tr>
- *   <tr><td>Enum           </td></tr>
- *   <tr><td>boolean[]      </td></tr>
+ *   <tr><td>Time           </td><td>TIME'HH:mm:ss'</td></tr>
+ *   <tr><td>Timestamp      </td><td>TIMESTAMP'yyyy-MM-dd HH:mm:ss.SSS'</td></tr>
+ *   <tr><td>Enum           </td><td></td></tr>
+ *   <tr><td>byte[]         </td><td><i>sql parameter (?)</i> if too long, X'...' otherwise</td></tr>
+ *   <tr><td>boolean[]      </td><td rowspan="14">ARRAY[x,y,z,...]</td></tr>
  *   <tr><td>char[]         </td></tr>
- *   <tr><td>byte[]         </td></tr>
+ *   <tr><td>byte[][]       </td></tr>
  *   <tr><td>short[]        </td></tr>
  *   <tr><td>int[]          </td></tr>
  *   <tr><td>long[]         </td></tr>
@@ -82,11 +84,12 @@ import org.lightsleep.helper.Utils;
  *   <tr><td>java.sql.Date[]</td></tr>
  *   <tr><td>Time[]         </td></tr>
  *   <tr><td>Timestamp[]    </td></tr>
- *   <tr><td>Iterable       </td></tr>
+ *   <tr><td>Iterable       </td><td>(x,y,z,...)</td></tr>
  * </table>
-
+ *
  * @since 1.0.0
  * @author Masato Kokubo
+ * @see org.lightsleep.helper.TypeConverter
  */
 public class Standard implements Database {
 	/**
@@ -95,7 +98,10 @@ public class Standard implements Database {
 	 * The value of <b>maxStringLiteralLength</b> of lightsleep.properties has been set.
 	 * (if undefined, 128)
 	 */
-	protected static final int maxStringLiteralLength = Resource.globalResource.get(Integer.class, "maxStringLiteralLength", 128);
+// 1.7.0
+//	protected static final int maxStringLiteralLength = Resource.globalResource.get(Integer.class, "maxStringLiteralLength", 128);
+	public static final int maxStringLiteralLength = Resource.globalResource.get(Integer.class, "maxStringLiteralLength", 128);
+////
 
 	/**
 	 * The maximum length of binary literal when creates SQL.<br>
@@ -103,39 +109,42 @@ public class Standard implements Database {
 	 * The value of <b>maxBinaryLiteralLength</b> of lightsleep.properties has been set.
 	 * (if undefined, 128)
 	 */
-	protected static final int maxBinaryLiteralLength = Resource.globalResource.get(Integer.class, "maxBinaryLiteralLength", 128);
+// 1.7.0
+//	protected static final int maxBinaryLiteralLength = Resource.globalResource.get(Integer.class, "maxBinaryLiteralLength", 128);
+	public static final int maxBinaryLiteralLength = Resource.globalResource.get(Integer.class, "maxBinaryLiteralLength", 128);
+////
 
 	/**
 	 * <b>TypeConverter</b> object to convert
-	 * from <b>boolean</b> to <b>SqlString</b> (FALSE, TRUE)
+	 * from <b>boolean</b> to <b>SqlString</b> (FALSE or TRUE)
 	 */
 	public static final TypeConverter<Boolean, SqlString> booleanToSqlFalseTrueConverter =
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "TRUE" : "FALSE"));
 
 	/**
 	 * <b>TypeConverter</b> object to convert
-	 * from <b>Boolean</b> to <b>SqlString</b> (0, 1)
+	 * from <b>Boolean</b> to <b>SqlString</b> (0 or 1)
 	 */
 	public static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"));
 
 	/**
 	 * <b>TypeConverter</b> object to convert
-	 * from <b>Boolean</b> to <b>SqlString</b> ('0', '1')
+	 * from <b>Boolean</b> to <b>SqlString</b> ('0' or '1')
 	 */
 	public static final TypeConverter<Boolean, SqlString> booleanToSqlChar01Converter =
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "'1'" : "'0'"));
 
 	/**
 	 * <b>TypeConverter</b> object to convert
-	 * from <b>Boolean</b> to <b>SqlString</b> ('N', 'Y')
+	 * from <b>Boolean</b> to <b>SqlString</b> ('N' or 'Y')
 	 */
 	public static final TypeConverter<Boolean, SqlString> booleanToSqlNYConverter =
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "'Y'" : "'N'"));
 
 	/**
 	 * <b>TypeConverter</b> object to convert
-	 * from <b>String</b> ('N', 'Y') to <b>Boolean</b>
+	 * from <b>String</b> ("N" or "Y") to <b>Boolean</b>
 	 */
 	public static final TypeConverter<String, Boolean> stringNYToBooleanConverter =
 		new TypeConverter<>(String.class, Boolean.class, object -> {
@@ -295,13 +304,19 @@ public class Standard implements Database {
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, SqlString.class, object -> {
 				if (object.length() > maxStringLiteralLength)
-					return SqlString.PARAMETER; // SQL Paramter
+				// 1.7.0
+				//	return SqlString.PARAMETER; // SQL Paramter
+					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
+				////
 
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');
 				char[] chars = object.toCharArray();
-				for (int index = 0; index < chars.length; ++index) {
-					char ch = chars[index];
+			// 1.7.0
+			//	for (int index = 0; index < chars.length; ++index) {
+			//		char ch = chars[index];
+				for (char ch : chars) {
+			////
 					if (ch == '\'')
 						buff.append(ch);
 					buff.append(ch);
@@ -392,8 +407,37 @@ public class Standard implements Database {
 
 		// byte[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[].class, SqlString.class, object -> new SqlString("?"))
+		// 1.7.0
+		//	new TypeConverter<>(byte[].class, SqlString.class, object -> new SqlString("?"))
+			new TypeConverter<>(byte[].class, SqlString.class, object -> {
+				if (object.length > maxBinaryLiteralLength)
+					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
+
+				StringBuilder buff = new StringBuilder(object.length * 2 + 3);
+				buff.append("X'");
+				for (int value : object) {
+					value &= 0xFF;
+					char ch = (char)((value >>> 4) + '0');
+					if (ch > '9') ch += 'A' - ('9' + 1);
+					buff.append(ch);
+					ch = (char)((value & 0x0F) + '0');
+					if (ch > '9') ch += 'A' - ('9' + 1);
+					buff.append(ch);
+				}
+				buff.append('\'');
+				return new SqlString(buff.toString());
+
+			})
+		////
 		);
+
+	// 1.7.0
+		// byte[][] -> SqlString
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(byte[][].class, SqlString.class, object ->
+				toSqlString(object, byte[].class))
+		);
+	////
 
 		// short[] -> SqlString
 		TypeConverter.put(typeConverterMap,
@@ -563,12 +607,20 @@ public class Standard implements Database {
 		Function<CT, SqlString> function = typeConverter.function();
 	////
 		StringBuilder buff = new StringBuilder("ARRAY[");
+	// 1.7.0
+		List<Object> parameters = new ArrayList<>();
+	////
 		for (int index = 0; index < Array.getLength(array); ++ index) {
 			if (index > 0) buff.append(",");
-			buff.append(function.apply((CT)Array.get(array, index)).content());
+		// 1.7.0
+		//	buff.append(function.apply((CT)Array.get(array, index)).content());
+			SqlString sqlString = function.apply((CT)Array.get(array, index));
+			buff.append(sqlString.content());
+			parameters.addAll(Arrays.asList(sqlString.parameters()));
+		////
 		}
 		buff.append(']');
-		return new SqlString(buff.toString());
+		return new SqlString(buff.toString(), parameters.toArray());
 	}
 
 	/**

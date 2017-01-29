@@ -15,6 +15,7 @@ Lightsleep is a database persistence library of lightweight. It can be used in J
 - MySQL
 - Oracle Database
 - PostgreSQL
+- SQLite (since 1.7.0)
 - SQL Server
 - DBMSs that conforms to the standard SQL
 

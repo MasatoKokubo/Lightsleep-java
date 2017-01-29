@@ -4,6 +4,7 @@
 package org.lightsleep.component;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import org.lightsleep.Sql;
@@ -183,10 +184,15 @@ public class Expression implements Condition {
 						if (value == null)
 							buff.append("NULL");
 						else {
-							String string = Sql.getDatabase().convert(value, SqlString.class).toString();
-							buff.append(string);
-							if (string.equals("?"))
-								parameters.add(value);
+						// 1.7.0
+						//	String string = Sql.getDatabase().convert(value, SqlString.class).toString();
+						//	buff.append(string);
+						//	if (string.equals("?"))
+						//		parameters.add(value);
+							SqlString sqlString = Sql.getDatabase().convert(value, SqlString.class);
+							buff.append(sqlString.toString());
+							parameters.addAll(Arrays.asList(sqlString.parameters()));
+						////
 						}
 						continue;
 

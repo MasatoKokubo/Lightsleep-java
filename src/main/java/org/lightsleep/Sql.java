@@ -1472,8 +1472,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			//  Sets the parameter values
 			for (int index = 0; index < parameters.size(); ++index) {
 				Object parameter = parameters.get(index);
-				if  (logger.isInfoEnabled())
-					logger.info("  parameters[" + index + "]: " + Utils.toLogString(parameter));
+			// 1.7.0
+			//	if  (logger.isInfoEnabled())
+			//		logger.info("  parameters[" + index + "]: " + Utils.toLogString(parameter));
+				if  (logger.isDebugEnabled())
+					logger.debug("  parameters[" + index + "]: " + Utils.toLogString(parameter));
+			////
 
 				if (parameter instanceof Reader)
 					statement.setCharacterStream(index + 1, (Reader)parameter);
@@ -1557,8 +1561,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			//  Sets the parameter values
 			for (int index = 0; index < parameters.size(); ++index) {
 				Object parameter = parameters.get(index);
-				if  (logger.isInfoEnabled())
-					logger.info("  parameters[" + index + "]: " + Utils.toLogString(parameter));
+			// 1.7.0
+			//	if  (logger.isInfoEnabled())
+			//		logger.info("  parameters[" + index + "]: " + Utils.toLogString(parameter));
+				if  (logger.isDebugEnabled())
+					logger.debug("  parameters[" + index + "]: " + Utils.toLogString(parameter));
+			////
 
 				if (parameter instanceof Reader)
 					statement.setCharacterStream(index + 1, (Reader)parameter);

@@ -34,9 +34,9 @@ import org.lightsleep.logger.LoggerFactory;
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source Data Type</th><th>Destination Data Type</th></tr>
+ *   <tr><th>Source Data Type</th><th>Destination Data Type</th><th>Conversion Format</th></tr>
  *
- *   <tr><td>Byte          </td><td rowspan="9">Boolean</td></tr>
+ *   <tr><td>Byte          </td><td rowspan="9">Boolean</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -46,7 +46,7 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Byte</td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Byte</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -56,7 +56,7 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Short</td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Short</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -66,7 +66,7 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Integer</td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Integer</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -76,7 +76,7 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Long</td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Long</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -86,7 +86,7 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Float</td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Float</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -96,7 +96,7 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Double</td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Double</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -106,7 +106,7 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">BigDecimal</td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">BigDecimal</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -116,7 +116,7 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Character</td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Character</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -126,30 +126,30 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Object        </td><td rowspan="6">String</td></tr>
+ *   <tr><td>Object        </td><td rowspan="6">String</td><td rowspan="2"></td></tr>
  *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>java.uitl.Date<br><i>(since 1.4.0)</i></td></tr>
- *   <tr><td>java.sql.Date<br><i>(since 1.4.0)</i></td></tr>
- *   <tr><td>Time<br><i>(since 1.4.0)</i></td></tr>
- *   <tr><td>Timestamp     </td></tr>
+ *   <tr><td>java.uitl.Date<br><i>(since 1.4.0)</i></td><td rowspan="2">"yyyy-MM-dd"</td></tr>
+ *   <tr><td>java.sql.Date <br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>Time          <br><i>(since 1.4.0)</i></td><td>"HH:mm:ss"</td></tr>
+ *   <tr><td>Timestamp                             </td><td>"yyyy-MM-dd HH:mm:ss.SSS"</td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="2">java.util.Date<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>Long          </td><td rowspan="2">java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="2"></td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="3">java.sql.Date</td></tr>
+ *   <tr><td>Long          </td><td rowspan="3">java.sql.Date</td><td rowspan="3"></td></tr>
  *   <tr><td>java.util.Date</td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="3">Time</td></tr>
+ *   <tr><td>Long          </td><td rowspan="3">Time</td><td rowspan="3"></td></tr>
  *   <tr><td>java.util.Date</td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="3">Timestamp</td></tr>
+ *   <tr><td>Long          </td><td rowspan="3">Timestamp</td><td rowspan="3"></td></tr>
  *   <tr><td>java.util.Date</td></tr>
  *   <tr><td>String        </td></tr>
  *
  *   <tr><td rowspan="4">Enum<br><i>(since 1.4.0)</i></td>
- *     <td>Integer</td></tr>
+ *     <td>Integer</td><td rowspan="4"></td></tr>
  *   <tr><td>Byte </td></tr>
  *   <tr><td>Short</td></tr>
  *   <tr><td>Long </td></tr>
@@ -161,6 +161,7 @@ import org.lightsleep.logger.LoggerFactory;
  * @see org.lightsleep.database.MySQL
  * @see org.lightsleep.database.Oracle
  * @see org.lightsleep.database.PostgreSQL
+ * @see org.lightsleep.database.SQLite
  * @see org.lightsleep.database.SQLServer
  */
 public class TypeConverter<ST, DT> {
@@ -201,8 +202,11 @@ public class TypeConverter<ST, DT> {
 		wellKnownClasses.add(SqlString.class);
 	}
 
-	// The string of Timestamp format
-	private static final String timestampFormatString = "yyyy-MM-dd HH:mm:ss.SSS";
+	// The string of Timestamp format (without millis)
+	private static final String timestampFormatString = "yyyy-MM-dd HH:mm:ss";
+
+	// The string of Timestamp format (with millis)
+	private static final String timestampMillisFormatString = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	// The source data type
 	private final Class<ST> sourceType;
@@ -1204,7 +1208,10 @@ public class TypeConverter<ST, DT> {
 		// Timestamp -> String
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Timestamp.class, String.class, object ->
-				new SimpleDateFormat(timestampFormatString).format(object))
+			// 1.7.0
+			//	new SimpleDateFormat(timestampFormatString).format(object))
+				new SimpleDateFormat(timestampMillisFormatString).format(object))
+			////
 		);
 
 	// * -> java.util.Date (since 1.4.0)
@@ -1289,7 +1296,11 @@ public class TypeConverter<ST, DT> {
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, Timestamp.class, object -> {
 				try {
-					return new Timestamp(new SimpleDateFormat(timestampFormatString).parse(object).getTime());
+				// 1.7.0
+				//	return new Timestamp(new SimpleDateFormat(timestampFormatString).parse(object).getTime());
+					String formatStr = object.lastIndexOf('.') >= 0 ? timestampMillisFormatString : timestampFormatString;
+					return new Timestamp(new SimpleDateFormat(formatStr).parse(object).getTime());
+				////
 				}
 				catch (ParseException e) {
 					throw new ConvertException(String.class, object, Timestamp.class, e);

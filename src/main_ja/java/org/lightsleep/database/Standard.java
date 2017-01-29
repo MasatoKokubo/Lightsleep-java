@@ -1,7 +1,6 @@
-/*
-	Standard.java
-	(C) 2016 Masato Kokubo
-*/
+// Standard.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.database;
 
 import java.util.List;
@@ -13,65 +12,66 @@ import org.lightsleep.helper.TypeConverter;
 import org.lightsleep.Sql;
 
 /**
-	特定の DBMS に依存しないデータベース・ハンドラーです。<br>
+ * 特定の DBMS に依存しないデータベース・ハンドラーです。<br>
+ *
+ * このクラスのオブジェクトは、
+ * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}
+ * に以下の <b>TypeConverter</b> を追加した <b>TypeConverter</b> マップを持ちます。
 
-	このクラスのオブジェクトは、
-	{@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}
-	に以下の <b>TypeConverter</b> を追加した <b>TypeConverter</b> マップを持ちます。
-
-	<table class="additional">
-		<caption><span>登録されている TypeConverter オブジェクト</span></caption>
-		<tr><th>変換元データ型</th><th>変換先データ型</th></tr>
-
-		<tr><td>Clob          </td><td>String</td></tr>
-
-		<tr><td>Blob          </td><td>byte[]</td></tr>
-
-		<tr><td rowspan="13">java.sql.Array</td><td>boolean[]   </td></tr>
-		<tr>                                    <td>byte[]      </td></tr>
-		<tr>                                    <td>short[]     </td></tr>
-		<tr>                                    <td>int[]       </td></tr>
-		<tr>                                    <td>long[]      </td></tr>
-		<tr>                                    <td>float[]     </td></tr>
-		<tr>                                    <td>double[]    </td></tr>
-		<tr>                                    <td>BigDecimal[]</td></tr>
-		<tr>                                    <td>String[]    </td></tr>
-		<tr>                                    <td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
-		<tr>                                    <td>java.sql.Date[]</td></tr>
-		<tr>                                    <td>Time[]      </td></tr>
-		<tr>                                    <td>Timestamp[] </td></tr>
-
-		<tr><td>Boolean        </td><td>{@linkplain org.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
-
-		<tr><td>Object         </td><td rowspan="24">{@linkplain org.lightsleep.component.SqlString}</td></tr>
-		<tr><td>Character      </td></tr>
-		<tr><td>BigDecimal     </td></tr>
-		<tr><td>String         </td></tr>
-		<tr><td>java.util.Date<br><i>(since 1.4.0)</i></td></tr>
-		<tr><td>java.sql.Date  </td></tr>
-		<tr><td>Time           </td></tr>
-		<tr><td>Timestamp      </td></tr>
-		<tr><td>Enum           </td></tr>
-		<tr><td>boolean[]      </td></tr>
-		<tr><td>char[]         </td></tr>
-		<tr><td>byte[]         </td></tr>
-		<tr><td>short[]        </td></tr>
-		<tr><td>int[]          </td></tr>
-		<tr><td>long[]         </td></tr>
-		<tr><td>float[]        </td></tr>
-		<tr><td>double[]       </td></tr>
-		<tr><td>BigDecimal[]   </td></tr>
-		<tr><td>String[]       </td></tr>
-		<tr><td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
-		<tr><td>java.sql.Date[]</td></tr>
-		<tr><td>Time[]         </td></tr>
-		<tr><td>Timestamp[]    </td></tr>
-		<tr><td>Iterable       </td></tr>
-	</table>
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * <table class="additional">
+ *   <caption><span>登録されている TypeConverter オブジェクト</span></caption>
+ *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換フォーマット</th></tr>
+ *
+ *   <tr><td>Clob          </td><td>String</td><td></td></tr>
+ *
+ *   <tr><td>Blob          </td><td>byte[]</td><td></td></tr>
+ *
+ *   <tr><td rowspan="13">java.sql.Array</td><td>boolean[]      </td><td></td></tr>
+ *   <tr>                                    <td>byte[]         </td><td></td></tr>
+ *   <tr>                                    <td>short[]        </td><td></td></tr>
+ *   <tr>                                    <td>int[]          </td><td></td></tr>
+ *   <tr>                                    <td>long[]         </td><td></td></tr>
+ *   <tr>                                    <td>float[]        </td><td></td></tr>
+ *   <tr>                                    <td>double[]       </td><td></td></tr>
+ *   <tr>                                    <td>BigDecimal[]   </td><td></td></tr>
+ *   <tr>                                    <td>String[]       </td><td></td></tr>
+ *   <tr>           <td>java.util.Date[]<br><i>(since 1.4.0)</i></td><td></td></tr>
+ *   <tr>                                    <td>java.sql.Date[]</td><td></td></tr>
+ *   <tr>                                    <td>Time[]         </td><td></td></tr>
+ *   <tr>                                    <td>Timestamp[]    </td><td></td></tr>
+ *
+ *   <tr><td>Boolean        </td><td rowspan="26">{@linkplain org.lightsleep.component.SqlString}</td><td>FALSE か TRUE</td></tr>
+ *   <tr><td>Object         </td><td>'...'</td></tr>
+ *   <tr><td>Character      </td><td>'...'</td></tr>
+ *   <tr><td>BigDecimal     </td><td></td></tr>
+ *   <tr><td>String         </td><td>長い場合は <i>SQL パラメーター (?)</i>、そうでなければ '...' </td></tr>
+ *   <tr><td>java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="2">DATE'yyyy-MM-dd'</td></tr>
+ *   <tr><td>java.sql.Date  </td></tr>
+ *   <tr><td>Time           </td><td>TIME'HH:mm:ss'</td></tr>
+ *   <tr><td>Timestamp      </td><td>TIMESTAMP'yyyy-MM-dd HH:mm:ss.SSS'</td></tr>
+ *   <tr><td>Enum           </td><td></td></tr>
+ *   <tr><td>byte[]         </td><td>長い場合は <i>SQL パラメーター (?)</i>、そうでなければ X'...'</td></tr>
+ *   <tr><td>boolean[]      </td><td rowspan="14">ARRAY[x,y,z,...]</td></tr>
+ *   <tr><td>char[]         </td></tr>
+ *   <tr><td>byte[][]       </td></tr>
+ *   <tr><td>short[]        </td></tr>
+ *   <tr><td>int[]          </td></tr>
+ *   <tr><td>long[]         </td></tr>
+ *   <tr><td>float[]        </td></tr>
+ *   <tr><td>double[]       </td></tr>
+ *   <tr><td>BigDecimal[]   </td></tr>
+ *   <tr><td>String[]       </td></tr>
+ *   <tr><td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>java.sql.Date[]</td></tr>
+ *   <tr><td>Time[]         </td></tr>
+ *   <tr><td>Timestamp[]    </td></tr>
+ *   <tr><td>Iterable       </td><td>(x,y,z,...)</td></tr>
+ * </table>
+ *
+ * @since 1.0.0
+ * @author Masato Kokubo
+ * @see org.lightsleep.helper.TypeConverter
+ */
 public class Standard implements Database {
 	/**
 		SQL が作成される時の文字列リテラルの最大長。
@@ -90,31 +90,31 @@ public class Standard implements Database {
 	protected static final int maxBinaryLiteralLength = 0;
 
 	/**
-		<b>boolean</b> から <b>SqlString</b> (FALSE, TRUE) へ変換する
+		<b>boolean</b> から <b>SqlString</b> (FALSE か TRUE) へ変換する
 		<b>TypeConverter</b> オブジェクト
 	*/
 	public static final TypeConverter<Boolean, SqlString> booleanToSqlFalseTrueConverter = null;
 
 	/**
-		<b>boolean</b> から <b>SqlString</b> (0, 1) へ変換する
+		<b>boolean</b> から <b>SqlString</b> (0 か 1) へ変換する
 		<b>TypeConverter</b> オブジェクト
 	*/
 	public static final TypeConverter<Boolean, SqlString> booleanToSql01Converter = null;
 
 	/**
-		<b>boolean</b> から <b>SqlString</b> ('0', '1') へ変換する
+		<b>boolean</b> から <b>SqlString</b> ('0' か '1') へ変換する
 		<b>TypeConverter</b> オブジェクト
 	*/
 	public static final TypeConverter<Boolean, SqlString> booleanToSqlChar01Converter = null;
 
 	/**
-		<b>boolean</b> から <b>SqlString</b> ('N', 'Y') へ変換する
+		<b>boolean</b> から <b>SqlString</b> ('N' か 'Y') へ変換する
 		<b>TypeConverter</b> オブジェクト
 	*/
 	public static final TypeConverter<Boolean, SqlString> booleanToSqlNYConverter = null;
 
 	/**
-		<b>String</b> ("N", "Y") から <b>boolean</b> へ変換する
+		<b>String</b> ("N" か "Y") から <b>boolean</b> へ変換する
 		<b>TypeConverter</b> オブジェクト
 	*/
 	public static final TypeConverter<String, Boolean> stringNYToBooleanConverter = null;

@@ -11,6 +11,9 @@ package org.lightsleep.component;
 	@author Masato Kokubo
 */
 public class SqlString {
+//	/** SQL のパラメーター文字列 */
+	public static final String PARAMETER = "?";
+
 	/**
 		SqlString を構築します。
 

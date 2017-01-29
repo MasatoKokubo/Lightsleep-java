@@ -238,7 +238,7 @@ Lightsleep にはコネクションを供給するクラスとして以下があ
 ```properties:lightsleep.properties
 # lightsleep.properties / C3p0 設定例
 ConnectionSupplier = C3p0
-url                = jdbc:mysql://MySQL57/test
+url                = jdbc:mysql://mysql57/test
 user               = test
 password           = _test_
 ```
@@ -253,7 +253,7 @@ c3p0.maxPoolSize     = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / Dbcp 設定例
 ConnectionSupplier = Dbcp
-url                = jdbc:oracle:thin:@Oracle121:1521:test
+url                = jdbc:oracle:thin:@oracle121:1521:test
 username           = test
 password           = _test_
 initialSize        = 20
@@ -263,7 +263,7 @@ maxTotal           = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / HikariCP 設定例
 ConnectionSupplier = HikariCP
-jdbcUrl            = jdbc:postgresql://Postgres95/test
+jdbcUrl            = jdbc:postgresql://postgres96/test
 username           = test
 password           = _test_
 minimumIdle        = 10
@@ -273,7 +273,7 @@ maximumPoolSize    = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / TomcatCP 設定例
 ConnectionSupplier = TomcatCP
-url                = jdbc:sqlserver://SQLServer13;database=test
+url                = jdbc:sqlserver://sqlserver13;database=test
 username           = test
 password           = _test_
 initialSize        = 20
@@ -283,7 +283,7 @@ maxActive          = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / Jdbc 設定例
 ConnectionSupplier = Jdbc
-url                = jdbc:mysql://MySQL57/test
+url                = jdbc:sqlite:C:/sqlite/test
 user               = test
 password           = _test_
 ```

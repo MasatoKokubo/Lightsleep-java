@@ -12,17 +12,20 @@ import org.lightsleep.helper.TypeConverter;
  *
  * The object of this class has a <b>TypeConverter</b> map
  * with the following additional <b>TypeConverter</b> to
- * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
+ * {@linkplain Standard#typeConverterMap}.
 
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th></tr>
- *   <tr><td>boolean</td><td>{@linkplain org.lightsleep.component.SqlString} (FALSE, TRUE)</td></tr>
- *   <tr><td>String </td><td>{@linkplain org.lightsleep.component.SqlString} (Escape sequence corresponding)</td></tr>
+ *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Format</th></tr>
+ *   <tr><td>boolean</td><td rowspan="3">{@linkplain org.lightsleep.component.SqlString}</td><td>FALSE or TRUE</td></tr>
+ *   <tr><td>String </td><td><i>sql parameter (?)</i> if too long, '...' (may include escape sequences) otherwise</td></tr>
+ *   <tr><td>byte[] </td><td><i>sql parameter (?)</i> if too long, E'\\x...' otherwise</td></tr>
  * </table>
  *
  * @since 1.0.0
  * @author Masato Kokubo
+ * @see org.lightsleep.helper.TypeConverter
+ * @see org.lightsleep.database.Standard
  */
 public class PostgreSQL extends Standard {
 	// The PostgreSQL instance
@@ -44,43 +47,24 @@ public class PostgreSQL extends Standard {
 		/** boolean -> FALSE, TRUE */
 		TypeConverter.put(typeConverterMap, booleanToSqlFalseTrueConverter);
 
-		// byte[].class -> SqlString.class
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[].class, SqlString.class, object -> {
-				if (object.length > maxBinaryLiteralLength)
-					return SqlString.PARAMETER; // SQL Paramter
-
-				StringBuilder buff = new StringBuilder(object.length * 2 + 5);
-				buff.append("E'\\\\x");
-
-				for (int b : object) {
-					if (b < 0) b += 256;
-					char ch = (char)('0' + b / 16);
-					if (ch > '9') ch += 'A' - ('9' + 1);
-					buff.append(ch);
-
-					ch = (char)('0' + b % 16);
-					if (ch > '9') ch += 'A' - ('9' + 1);
-					buff.append(ch);
-				}
-
-				buff.append("'");
-				return new SqlString(buff.toString());
-			})
-		);
-
 		// String.class -> SqlString.class
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, SqlString.class, object -> {
 				if (object.length() > maxStringLiteralLength)
-					return SqlString.PARAMETER; // SQL Paramter
+				// 1.7.0
+				//	return SqlString.PARAMETER; // SQL Paramter
+					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
+				////
 
 				boolean escaped = false;
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');
 				char[] chars = object.toCharArray();
-				for (int index = 0; index < chars.length; ++index) {
-					char ch = chars[index];
+			// 1.7.0
+			//	for (int index = 0; index < chars.length; ++index) {
+			//		char ch = chars[index];
+				for (char ch : chars) {
+			////
 					switch (ch) {
 					case '\b'    : buff.append("\\b" ); escaped = true; break; // 07 BEL
 					case '\t'    : buff.append("\\t" ); escaped = true; break; // 09 HT
@@ -100,6 +84,45 @@ public class PostgreSQL extends Standard {
 				if (escaped)
 					string = 'E' + string;
 				return new SqlString(string);
+			})
+		);
+
+		// byte[].class -> SqlString.class
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(byte[].class, SqlString.class, object -> {
+				if (object.length > maxBinaryLiteralLength)
+				// 1.7.0
+				//	return SqlString.PARAMETER; // SQL Paramter
+					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
+				////
+
+				StringBuilder buff = new StringBuilder(object.length * 2 + 5);
+				buff.append("E'\\\\x");
+			// 1.7.0
+			//	for (int b : object) {
+			//		if (b < 0) b += 256;
+			//		char ch = (char)('0' + b / 16);
+			//		if (ch > '9') ch += 'A' - ('9' + 1);
+			//		buff.append(ch);
+			//
+			//		ch = (char)('0' + b % 16);
+			//		if (ch > '9') ch += 'A' - ('9' + 1);
+			//		buff.append(ch);
+			//	}
+			//
+			//	buff.append("'");
+				for (int value : object) {
+					value &= 0xFF;
+					char ch = (char)((value >>> 4) + '0');
+					if (ch > '9') ch += 'A' - ('9' + 1);
+					buff.append(ch);
+					ch = (char)((value & 0x0F) + '0');
+					if (ch > '9') ch += 'A' - ('9' + 1);
+					buff.append(ch);
+				}
+				buff.append('\'');
+			////
+				return new SqlString(buff.toString());
 			})
 		);
 	}

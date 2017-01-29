@@ -25,12 +25,12 @@ public interface SqlComponent {
 	/**
 		このオブジェクトの SQL 文字列表現を返します。<br>
 		文字列生成時にパラメータ文字 (<b>?</b>) を使用した場合は、
-		パラメータオブジェクトをパラメータリストに追加します。
+		パラメータ・オブジェクトをパラメータ・リストに追加します。
 
 		@param <E> エンティティの型
 
 		@param sql <b>Sql</b> オブジェクト
-		@param parameters パラメータリスト
+		@param parameters パラメータ・リスト
 
 		@return SQL 文字列
 
