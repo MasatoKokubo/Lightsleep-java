@@ -749,7 +749,49 @@ Transaction.execute(connection ->
 DELETE FROM Phone
 ```
 
-### 5. ログ出力
+### 5. 式の変換処理
+
+SQL を生成する時に、以下の文字列を式として評価し、変換処理を行います。
+
+- `@Select`, `@Insert`, `@Update` アノテーションの値
+
+- `@SelectProperty`, `@InsertProperty`, `@UpdateProperty` アノテーションの `expression` の値
+
+- `Sql` クラスの以下のメソッドの引数
+    - `where(String content, Object... arguments)`
+    - `where(String content, Sql<SE> subSql)`
+    - `and(String content, Object... arguments)`
+    - `and(String content, Sql<SE> subSql)`
+    - `or(String content, Object... arguments)`
+    - `or(String content, Sql<SE> subSql)`
+    - `groupBy(String content, Object... arguments)`
+    - `having(String content, Object... arguments)`
+    - `having(String content, Sql<SE> subSql)`
+    - `orderBy(String content, Object... arguments)`
+
+- `Condition` インターフェースの以下のメソッドの引数
+    - `of(String content)`
+    - `of(String content, Object... arguments)`
+    - `Condition of(String content, Sql<E> outerSql, Sql<SE> subSql)`
+    - `and(String content, Object... arguments)`
+    - `and(String content, Sql<E> outerSql, Sql<SE> subSql)`
+    - `or(String content, Object... arguments)`
+    - `or(String content, Sql<E> outerSql, Sql<SE> subSql)`
+
+- `Expression` クラスの以下のコンストラクタの引数
+    - `Expression(String content, Object... arguments)`
+
+式の変換には以下があります。
+
+|書式|変換内容|
+|:--|:--|
+|`{}`|出現順に `arguments` の要素|
+|`{xxx}`|`xxx` プロパティに関連するカラム名|
+|`{A.xxx}`|`"A."` + `xxx` プロパティに関連するカラム名 (`A` はテーブル別名)|
+|`{A_xxx}`|テーブル別名 `A` と `xxx` プロパティに関連するカラム別名|
+|`{#xxx}`|`Sql` オブジェクトに設定されたエンティティ(または `Sql#insert`, `Sql#update` メソッドのエンティティ引数) の `xxx` プロパティの値|
+
+### 6. ログ出力
 Lightsleep は以下のログ出力ライブラリに対応しています。
 
 - java.util.logging.Logger

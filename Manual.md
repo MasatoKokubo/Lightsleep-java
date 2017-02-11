@@ -721,7 +721,49 @@ Transaction.execute(connection ->
 DELETE FROM Phone
 ```
 
-### 5. Logging
+### 5. Expression conversion processing
+
+When generating SQL, evaluates the following character string as an expression and perform conversion processing.
+
+- The value of `@Select`, `@Insert` and `@Update`
+
+- The value of `expression` of `@SelectProperty`, `@InsertProperty` and `@UpdateProperty` annotations.
+
+- Arguments for the following methods of the `Sql` class
+    - `where(String content, Object... arguments)`
+    - `where(String content, Sql<SE> subSql)`
+    - `and(String content, Object... arguments)`
+    - `and(String content, Sql<SE> subSql)`
+    - `or(String content, Object... arguments)`
+    - `or(String content, Sql<SE> subSql)`
+    - `groupBy(String content, Object... arguments)`
+    - `having(String content, Object... arguments)`
+    - `having(String content, Sql<SE> subSql)`
+    - `orderBy(String content, Object... arguments)`
+
+- Arguments for the following methods of the `Condition` interface
+    - `of(String content)`
+    - `of(String content, Object... arguments)`
+    - `Condition of(String content, Sql<E> outerSql, Sql<SE> subSql)`
+    - `and(String content, Object... arguments)`
+    - `and(String content, Sql<E> outerSql, Sql<SE> subSql)`
+    - `or(String content, Object... arguments)`
+    - `or(String content, Sql<E> outerSql, Sql<SE> subSql)`
+
+- Arguments of the following constructor of the `Expression` class
+    - `Expression(String content, Object... arguments)`
+
+Conversion of expressions has the followings.
+
+|Format|Conversion Content|
+|:--|:--|
+|`{}`|An element of `arguments` in appearance|
+|`{xxx}`|The column name associated with property `xxx`|
+|`{A.xxx}`|`"A."` + The column name associated with property `xxx` (`A` is a table alias)|
+|`{A_xxx}`|The column alias associated with table alias `A` and `xxx` property|
+|`{#xxx}`|The value of property `xxx` of an entity set on the `Sql` object (or an entity argument of `Sql#insert` or `Sql#update` method)|
+
+### 6. Logging
 Lightsleep is compatible with the following logging Libraries.
 
 - java.util.logging.Logger
