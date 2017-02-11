@@ -18,7 +18,7 @@ public class Contact1 extends Contact {
 }
 ```
 
-If you specify ```@Table("super")```, the class name of the superclass is the table name.
+If you specify `@Table("super")`, the class name of the superclass is the table name.
 
 ```java:Java
 import org.lightsleep.entity.*;
@@ -30,7 +30,7 @@ public class Contact1 extends Contact {
 ```
 
 ##### 1-1-2. Key Annotation
-Specifies that the column associated with the field is part of the primary key.
+Indicates that the column associated with the field is part of the primary key.
 
 ```java:Java
 @Key
@@ -38,32 +38,42 @@ public String id;
 ```
 
 ##### 1-1-3. Column Annotation
-Specifies the column name associated with the field.
-If the column name is the same as the field name, you do not need to specify this annotation.
+Indicates the name of column associated with the field.
+If the column name is the same as the field name, you do not need to specify it.
 
 ```java:Java
     @Column("family_name")
     public String familyName;
 ```
 
-##### 1-1-4. NonColumn Annotation
-Specifies that the field not related to any column.
+##### 1-1-4. ColumnType Annotation
+Indicates the type of column associated with the field.
+If the field type and column type are the same type, you do not need to specify it.
+Specify if field type (e.g. date type) and column type (e.g. numerical type) are different.
+
+```java:Java
+    @Column("Long")
+    public Date birhtday;
+```
+
+##### 1-1-5. NonColumn Annotation
+Indicates that the field not related to any column.
 
 ```java:Java
     @NonColumn
     public List<Phone> phones = new ArrayList<>();
 ```
 
-##### 1-1-5. NonSelect Annotation
-Specifies that the column related the field are not used in the SELECT SQL.
+##### 1-1-6. NonSelect Annotation
+Indicates that the column related the field are not used in the SELECT SQL.
 
 ```java:Java
     @NonSelect
     public String givenName;
 ```
 
-##### 1-1-6. NonInsert Annotation
-Specifies that the column related the field are not used in the INSERT SQL.
+##### 1-1-7. NonInsert Annotation
+Indicates that the column related the field are not used in the INSERT SQL.
 
 ```java:Java
     @Select("CONCAT({givenName}, ' ', {familyName})") // MySQL, Oracle
@@ -71,8 +81,8 @@ Specifies that the column related the field are not used in the INSERT SQL.
     public String fullName;
 ```
 
-##### 1-1-7. NonUpdate Annotation
-Specifies that the column related the field are not used in the UPDATE SQL.
+##### 1-1-8. NonUpdate Annotation
+Indicates that the column related the field are not used in the UPDATE SQL.
 
 ```java:Java
     @Insert("CURRENT_TIMESTAMP")
@@ -80,8 +90,8 @@ Specifies that the column related the field are not used in the UPDATE SQL.
     public Timestamp created;
 ```
 
-##### 1-1-8. Select Annotation
-Specifies a column expression instead of the column name of the SELECT SQL.
+##### 1-1-9. Select Annotation
+Indicates a column expression instead of the column name of the SELECT SQL.
 
 ```java:Java
     @Select("CONCAT({givenName}, ' ', {familyName})") // MySQL, Oracle
@@ -89,8 +99,8 @@ Specifies a column expression instead of the column name of the SELECT SQL.
     public String fullName;
 ```
 
-##### 1-1-9. Insert Annotation
-Specifies an expression as a value of the INSERT SQL.
+##### 1-1-10. Insert Annotation
+Indicates an expression as a value of the INSERT SQL.
 If this annotation is specified, the value of the field is not used.
 
 ```java:Java
@@ -99,8 +109,8 @@ If this annotation is specified, the value of the field is not used.
     public Timestamp created;
 ```
 
-##### 1-1-10. Update Annotation
-Specifies an expression as a value of the UPDATE SQL.
+##### 1-1-11. Update Annotation
+Indicates an expression as a value of the UPDATE SQL.
 If this annotation is specified, the value of the field is not used.
 
 ```java:Java
@@ -109,9 +119,9 @@ If this annotation is specified, the value of the field is not used.
     public Timestamp modified;
 ```
 
-##### 1-1-11. XxxxxProperty Annotations
+##### 1-1-12. XxxxxProperty Annotations
 
-ColumnProperty, NonColumnProperty, NonSelectProperty, NonInsertProperty, NonUpdateProperty, SelectProperty, InsertProperty and UpdateProperty are the same as the Column, NonColumn, NonSelect, NonInsert, NonUpdate, Select, Insert and Update annotations. They are specified for classes, not fields.
+ColumnProperty, ColumnTypeProperty, NonColumnProperty, NonSelectProperty, NonInsertProperty, NonUpdateProperty, SelectProperty, InsertProperty and UpdateProperty are the same as the Column, NonColumn, NonSelect, NonInsert, NonUpdate, Select, Insert and Update annotations. They are specified for classes, not fields.
 
 These annotations are used when relating to fields defined in the superclass.
 
@@ -125,8 +135,8 @@ public class Contact1 extends Contact {
 
 ### 1-2. Interfaces that Entity Class to implement
 #### 1-2-1. PreInsert Interface
-If an entity class implements this interface, ```insert``` method of Sql class calls ```preInsert``` method of the entity before INSERT SQL execution.
-In ```preInsert``` method, do the implementation of the numbering of the primary key or etc.
+If an entity class implements this interface, `insert` method of Sql class calls `preInsert` method of the entity before INSERT SQL execution.
+In `preInsert` method, do the implementation of the numbering of the primary key or etc.
 
 ```java:Java
 import org.lightsleep.entity.*;
@@ -146,8 +156,8 @@ public class Contact implements PreInsert {
 ```
 
 #### 1-2-2. Composite Interface
-If an entity class implements this interface, ```select```, ```insert```, ```update``` or ```delete``` method of ```Sql``` class calls ```postSelect```, ```postInsert```, ```postUpdate``` or ```postDelete``` method of the entity class after the execution of each execute SQL.
-However if ```update``` or ```delete``` method dose not have entity parameter, dose not call.
+If an entity class implements this interface, `select`, `insert`, `update` or `delete` method of `Sql` class calls `postSelect`, `postInsert`, `postUpdate` or `postDelete` method of the entity class after the execution of each execute SQL.
+However if `update` or `delete` method dose not have entity parameter, dose not call.
 If an entity is enclose another entity, by implementing this interface, You can perform SQL processing to the enclosed entity in conjunction the entity which encloses.
 
 ```java:Java
@@ -199,9 +209,9 @@ public class ContactComposite extends Contact implements Composite {
 ```
 
 ### 2. Transaction
-Execution of ```Transaction.execute``` method is equivalent to the execution of a transaction.
-Define contents of the transaction by the argument ```transaction``` as a lambda expression.
-The lambda expression is equivalent to the contents of ```Transaction.executeBody``` method and the argument of this method is a ```Connection```.
+Execution of `Transaction.execute` method is equivalent to the execution of a transaction.
+Define contents of the transaction by the argument `transaction` as a lambda expression.
+The lambda expression is equivalent to the contents of `Transaction.executeBody` method and the argument of this method is a `Connection`.
 
 ```java:Java
 import org.lightsleep.*;
@@ -216,11 +226,11 @@ Transaction.execute(connection -> {
 });
 ```
 
-If an exception is thrown during the transaction, ```Transaction.rollback``` method is called.
-Otherwise, ```Transaction.commit``` method is called.
+If an exception is thrown during the transaction, `Transaction.rollback` method is called.
+Otherwise, `Transaction.commit` method is called.
 
 ### 3. Connection Supplier
-Getting of database connection (```java.sql.Connection```) is done in the ```Transaction.execute``` method.
+Getting of database connection (`java.sql.Connection`) is done in the `Transaction.execute` method.
 Lightsleep has following classes to supply connections.
 
 1. org.lightsleep.connection.C3p0
@@ -230,9 +240,9 @@ Lightsleep has following classes to supply connections.
 1. org.lightsleep.connection.Jdbc
 1. org.lightsleep.connection.Jndi
 
-```C3p0```, ```Dbcp 2```, ```HikariCP``` and ```TomcatCP``` class gets database connectiona using the corresponding connection pool library.  
-```JdbcConnection``` class gets database connections using the ```java.sql.DriverManager.getConnection``` method.  
-```JndiConnection``` class gets database connections from the data source (```javax.sql.DataSource```) that was obtained using JNDI (Java Naming and Directory Interface).  
+`C3p0`, `Dbcp 2`, `HikariCP` and `TomcatCP` class gets database connectiona using the corresponding connection pool library.  
+`JdbcConnection` class gets database connections using the `java.sql.DriverManager.getConnection` method.  
+`JndiConnection` class gets database connections from the data source (`javax.sql.DataSource`) that was obtained using JNDI (Java Naming and Directory Interface).  
 Define the connection supplier class and information needed to connect in the **lightsleep.properties** file.
 
 ```properties:lightsleep.properties
@@ -295,7 +305,7 @@ dataSource         = jdbc/Sample
 ```
 
 ### 4. Execution of SQL
-Use the various methods of ```Sql``` class to execute SQLs and define it in the lambda expression argument of ```Transaction.execute``` method.
+Use the various methods of `Sql` class to execute SQLs and define it in the lambda expression argument of `Transaction.execute` method.
 
 #### 4-1. SELECT
 #### 4-1-1. SELECT / 1 row / Expression Condition

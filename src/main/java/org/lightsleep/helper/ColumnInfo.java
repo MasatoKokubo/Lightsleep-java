@@ -21,6 +21,11 @@ public class ColumnInfo {
 	// The column name
 	private final String columnName;
 
+// 1.8.0
+	// The column type
+	private final Class<?> columnType;
+////
+
 	// Is key?
 	private final boolean isKey;
 
@@ -39,6 +44,7 @@ public class ColumnInfo {
 	 * @param entityInfo the entity information
 	 * @param propertyName the property name
 	 * @param columnName the column name
+	 * @param columnType the column type (permit <b>null</b>)
 	 * @param isKey <b>true</b> if key, <b>false</b> otherwise
 	 * @param selectExpression the expression to be used to create SELECT SQL (permit <b>null</b>)
 	 * @param insertExpression the expression to be used to create INSERT SQL (permit <b>null</b>)
@@ -47,7 +53,10 @@ public class ColumnInfo {
 	 * @throws NullPointerException <code>entityInfo</code>, <code>propertyName</code> または <code>columnName</code> が null の場合
 	 */
 	public ColumnInfo(
-		EntityInfo<?> entityInfo, String propertyName, String columnName, boolean isKey,
+	// 1.8.0
+	//	EntityInfo<?> entityInfo, String propertyName, String columnName, boolean isKey,
+		EntityInfo<?> entityInfo, String propertyName, String columnName, Class<?> columnType, boolean isKey,
+	////
 		Expression selectExpression, Expression insertExpression, Expression updateExpression) {
 
 		if (entityInfo == null) throw new NullPointerException("ColumnInfo.<init>: entityInfo == null");
@@ -57,6 +66,9 @@ public class ColumnInfo {
 		this.entityInfo       = entityInfo;
 		this.propertyName     = propertyName;
 		this.columnName       = columnName;
+	// 1.8.0
+		this.columnType       = columnType;
+	////
 		this.isKey            = isKey;
 		this.selectExpression = selectExpression;
 		this.insertExpression = insertExpression;
@@ -88,6 +100,17 @@ public class ColumnInfo {
 	 */
 	public String columnName() {
 		return columnName;
+	}
+
+	/**
+	 * Returns the associated column type.
+	 *
+	 * @return the associated column type
+	 *
+	 * @since 1.8.0
+	 */
+	public Class<?> columnType() {
+		return columnType;
 	}
 
 	/**

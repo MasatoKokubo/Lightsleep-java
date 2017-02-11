@@ -138,6 +138,14 @@ public class EntityInfo<E> {
 			columnProperties.forEach(annotation -> columnMap.put(annotation.property(), annotation.column()));
 	////
 
+	// 1.8.0
+		// @ColumnTypeProperty, @ColumnTypeProperties
+		Map<String, Class<?>> columnTypeMap = new HashMap<>();
+		List<ColumnTypeProperty> columnTypeProperties = Utils.getAnnotations(entityClass, ColumnTypeProperty.class);
+		if (columnTypeProperties != null)
+			columnTypeProperties.forEach(annotation -> columnTypeMap.put(annotation.property(), annotation.type()));
+	////
+
 		// @SelectProperty, @SelectProperties
 	// 1.5.1 #0014
 		Map<String, String> selectMap = new HashMap<>();
@@ -195,6 +203,16 @@ public class EntityInfo<E> {
 			if (columnName == null) {
 				Column column = field.getAnnotation(Column.class);
 				columnName = column != null ? column.value() : field.getName();
+			}
+		////
+
+		// 1.8.0
+			// @ColumnType / the column type
+			Class<?> columnType = columnTypeMap.get(propertyName);
+			if (columnType == null) {
+				ColumnType columnTypeAnn = field.getAnnotation(ColumnType.class);
+				if (columnTypeAnn != null)
+					columnType = columnTypeAnn.value();
 			}
 		////
 
@@ -280,7 +298,13 @@ public class EntityInfo<E> {
 				: nonUpdate ? null : new Expression("{#" + propertyName + "}");
 		////
 
-			ColumnInfo columnInfo = new ColumnInfo(this, propertyName, columnName, isKey, selectExpression, insertExpression, updateExpression);
+			// creates a new ColumnInfo
+		// 1.8.0
+		//	ColumnInfo columnInfo = new ColumnInfo(this, propertyName, columnName, isKey, selectExpression, insertExpression, updateExpression);
+			ColumnInfo columnInfo = new ColumnInfo(
+				this, propertyName, columnName, columnType, isKey,
+				selectExpression, insertExpression, updateExpression);
+		////
 			columnInfoMap.put(propertyName, columnInfo);
 		}
 

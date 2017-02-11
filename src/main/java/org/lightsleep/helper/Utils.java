@@ -3,23 +3,18 @@
 
 package org.lightsleep.helper;
 
-import java.math.BigInteger;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * There are utility methods.
@@ -39,7 +34,6 @@ public class Utils {
 
 	// A map to convert the class type to primitive type
 	private static final Map<Class<?>, Class<?>> toPrimitiveMap = new LinkedHashMap<>();
-
 	static {
 		toClassMap.put(boolean.class, Boolean  .class);
 		toClassMap.put(char   .class, Character.class);
@@ -59,6 +53,36 @@ public class Utils {
 		toPrimitiveMap.put(Float    .class, float  .class);
 		toPrimitiveMap.put(Double   .class, double .class);
 	}
+
+// 1.8.0 (not used)
+//	// the set of the value classes
+//	private static final Set<Class<?>> valueClasses = new HashSet<>();
+//	static {
+//		valueClasses.add(boolean          .class);
+//		valueClasses.add(char             .class);
+//		valueClasses.add(byte             .class);
+//		valueClasses.add(short            .class);
+//		valueClasses.add(int              .class);
+//		valueClasses.add(long             .class);
+//		valueClasses.add(float            .class);
+//		valueClasses.add(double           .class);
+//		valueClasses.add(Boolean          .class);
+//		valueClasses.add(Character        .class);
+//		valueClasses.add(Byte             .class);
+//		valueClasses.add(Short            .class);
+//		valueClasses.add(Integer          .class);
+//		valueClasses.add(Long             .class);
+//		valueClasses.add(Float            .class);
+//		valueClasses.add(Double           .class);
+//		valueClasses.add(BigInteger       .class);
+//		valueClasses.add(BigDecimal       .class);
+//		valueClasses.add(String           .class);
+//		valueClasses.add(java.util.Date   .class);
+//		valueClasses.add(Date             .class);
+//		valueClasses.add(Time             .class);
+//		valueClasses.add(Timestamp        .class);
+//	}
+////
 
 	/**
 	 * Converts the primitive type to the corresponding class type.
@@ -80,34 +104,7 @@ public class Utils {
 		return toPrimitiveMap.getOrDefault(type, type);
 	}
 
-	// the set of the value classes
-	private static final Set<Class<?>> valueClasses = new HashSet<>();
-	static {
-		valueClasses.add(boolean          .class);
-		valueClasses.add(char             .class);
-		valueClasses.add(byte             .class);
-		valueClasses.add(short            .class);
-		valueClasses.add(int              .class);
-		valueClasses.add(long             .class);
-		valueClasses.add(float            .class);
-		valueClasses.add(double           .class);
-		valueClasses.add(Boolean          .class);
-		valueClasses.add(Character        .class);
-		valueClasses.add(Byte             .class);
-		valueClasses.add(Short            .class);
-		valueClasses.add(Integer          .class);
-		valueClasses.add(Long             .class);
-		valueClasses.add(Float            .class);
-		valueClasses.add(Double           .class);
-		valueClasses.add(BigInteger       .class);
-		valueClasses.add(BigDecimal       .class);
-		valueClasses.add(String           .class);
-		valueClasses.add(java.util.Date   .class);
-		valueClasses.add(Date             .class);
-		valueClasses.add(Time             .class);
-		valueClasses.add(Timestamp        .class);
-	}
-
+// 1.8.0 (not used)
 	/**
 	 * Returns whether <b>type</b> is value type.<br>
 	 * Value type is one of the following.<br>
@@ -116,7 +113,7 @@ public class Utils {
 	 *
 	 * <div class="code indent">
 	 *   boolean, char, byte, short, int, long, float, double,<br>
-	 *   Boolean, Character, Byte, Short, Integer, Long, Float, Double, BigInteger, BigDecimal,<br>
+	 *   Boolean, Character, Byte, Short, Integer, Long, Float, Double, BigDecimal,<br>
 	 *   String, java.util.Date, java.sql.Date, Time, Timestamp
 	 * </div>
 	 *
@@ -125,9 +122,10 @@ public class Utils {
 	 *
 	 * @throws NullPointerException if <b>type</b> is <b>null</b>
 	 */
-	public static boolean isValueType(Class<?> type) {
-		return valueClasses.contains(type);
-	}
+//	public static boolean isValueType(Class<?> type) {
+//		return valueClasses.contains(type);
+//	}
+////
 
 	/**
 	 * Returns a class name without the package name.
@@ -626,9 +624,11 @@ public class Utils {
 		return annotations;
 	}
 
+	// Adds annotations of the class and its superclasses to the annotation list.
 	private static <A extends Annotation> void addAnnotations(List<A> annotations, Class<?> clazz, Class<A> annotationClass) {
 		if (clazz == Object.class) return;
 
+		// Adds annotations of superclasses to the annotation list.
 		addAnnotations(annotations, clazz.getSuperclass(), annotationClass);
 
 		A annotation = clazz.getAnnotation(annotationClass);
@@ -637,9 +637,12 @@ public class Utils {
 
 		Repeatable repeatable = annotationClass.getAnnotation(Repeatable.class);
 		if (repeatable != null) {
+			// the annotation is repeatable
 			Annotation repeatAnnotation = clazz.getAnnotation(repeatable.value());
 			if (repeatAnnotation != null) {
+				// has repeat annotation
 				try {
+					// gets repeat annotation array
 					@SuppressWarnings("unchecked")
 					A[] annotationArray = (A[])repeatAnnotation.annotationType().getMethod("value").invoke(repeatAnnotation);
 					Arrays.stream(annotationArray).forEach(ann -> annotations.add(ann));

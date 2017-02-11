@@ -5,7 +5,7 @@ package org.lightsleep.entity;
 
 /**
  * エンティティ・クラスがこのインターフェースを実装している場合、
- * そのエンティティ・クラスの <b>postLoad</b> が 各行の取得後に実行されます。
+ * そのエンティティ・クラスの <b>postLoad</b> メソッドが 各行の取得後に実行されます。
  *
  * @since 1.6.0
  * @author Masato Kokubo

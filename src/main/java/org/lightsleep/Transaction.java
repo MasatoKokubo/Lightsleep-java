@@ -144,7 +144,10 @@ public interface Transaction {
 			committed = true;
 
 			//  Logging of the transaction end
-			logger.info(messageEnd);
+		// 1.8.0
+		//	logger.info(messageEnd);
+			logger.debug(messageEnd);
+		////
 
 			// Closes the connection
 			long beforeCloseTime = System.nanoTime(); // The time before connectionSupplier.get

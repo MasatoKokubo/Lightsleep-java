@@ -114,44 +114,51 @@ public class Standard implements Database {
 	public static final int maxBinaryLiteralLength = Resource.globalResource.get(Integer.class, "maxBinaryLiteralLength", 128);
 ////
 
-	/**
-	 * <b>TypeConverter</b> object to convert
-	 * from <b>boolean</b> to <b>SqlString</b> (FALSE or TRUE)
-	 */
-	public static final TypeConverter<Boolean, SqlString> booleanToSqlFalseTrueConverter =
-		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "TRUE" : "FALSE"));
+// 1.8.0
+//	/**
+//	 * <b>TypeConverter</b> object to convert
+//	 * from <b>boolean</b> to <b>SqlString</b> (FALSE or TRUE)
+//	 */
+//	public static final TypeConverter<Boolean, SqlString> booleanToSqlFalseTrueConverter =
+//		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "TRUE" : "FALSE"));
+////
 
 	/**
 	 * <b>TypeConverter</b> object to convert
 	 * from <b>Boolean</b> to <b>SqlString</b> (0 or 1)
 	 */
-	public static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
+// 1.8.0
+//	public static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
+	protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
+////
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"));
 
-	/**
-	 * <b>TypeConverter</b> object to convert
-	 * from <b>Boolean</b> to <b>SqlString</b> ('0' or '1')
-	 */
-	public static final TypeConverter<Boolean, SqlString> booleanToSqlChar01Converter =
-		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "'1'" : "'0'"));
-
-	/**
-	 * <b>TypeConverter</b> object to convert
-	 * from <b>Boolean</b> to <b>SqlString</b> ('N' or 'Y')
-	 */
-	public static final TypeConverter<Boolean, SqlString> booleanToSqlNYConverter =
-		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "'Y'" : "'N'"));
-
-	/**
-	 * <b>TypeConverter</b> object to convert
-	 * from <b>String</b> ("N" or "Y") to <b>Boolean</b>
-	 */
-	public static final TypeConverter<String, Boolean> stringNYToBooleanConverter =
-		new TypeConverter<>(String.class, Boolean.class, object -> {
-			if      ("N".equals(object)) return false;
-			else if ("Y".equals(object)) return true;
-			else throw new ConvertException(String.class, object, Boolean.class, null);
-		});
+// 1.8.0 (not used)
+//	/**
+//	 * <b>TypeConverter</b> object to convert
+//	 * from <b>Boolean</b> to <b>SqlString</b> ('0' or '1')
+//	 */
+//	public static final TypeConverter<Boolean, SqlString> booleanToSqlChar01Converter =
+//		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "'1'" : "'0'"));
+//
+//	/**
+//	 * <b>TypeConverter</b> object to convert
+//	 * from <b>Boolean</b> to <b>SqlString</b> ('N' or 'Y')
+//	 */
+//	public static final TypeConverter<Boolean, SqlString> booleanToSqlNYConverter =
+//		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "'Y'" : "'N'"));
+//
+//	/**
+//	 * <b>TypeConverter</b> object to convert
+//	 * from <b>String</b> ("N" or "Y") to <b>Boolean</b>
+//	 */
+//	public static final TypeConverter<String, Boolean> stringNYToBooleanConverter =
+//		new TypeConverter<>(String.class, Boolean.class, object -> {
+//			if      ("N".equals(object)) return false;
+//			else if ("Y".equals(object)) return true;
+//			else throw new ConvertException(String.class, object, Boolean.class, null);
+//		});
+////
 
 	// The Standard instance
 	private static final Database instance = new Standard();
@@ -293,7 +300,12 @@ public class Standard implements Database {
 		);
 
 		// Boolean -> SqlString(FALSE, TRUE)
-		TypeConverter.put(typeConverterMap, booleanToSqlFalseTrueConverter);
+	// 1.8.0
+	//	TypeConverter.put(typeConverterMap, booleanToSqlFalseTrueConverter);
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "TRUE" : "FALSE"))
+		);
+	////
 
 		// BigDecimal -> SqlString
 		TypeConverter.put(typeConverterMap,
@@ -328,9 +340,14 @@ public class Standard implements Database {
 
 		// Character -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Character.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Character.class, String.class).function()
-				.andThen(TypeConverter.get(typeConverterMap, String.class, SqlString.class).function())
+		// 1.8.0
+		//	new TypeConverter<>(Character.class, SqlString.class,
+		//		TypeConverter.get(typeConverterMap, Character.class, String.class).function()
+		//		.andThen(TypeConverter.get(typeConverterMap, String.class, SqlString.class).function())
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Character.class, String.class),
+				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
 			)
 		);
 
@@ -339,9 +356,14 @@ public class Standard implements Database {
 		// 1.4.0
 		//	new TypeConverter<>(java.util.Date.class, SqlString.class, object ->
 		//		new SqlString("DATE'" + new Date(object.getTime()) + '\''))
-			new TypeConverter<>(java.util.Date.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function()
-				.andThen(object -> new SqlString("DATE'" + object + '\''))
+		// 1.8.0
+		//	new TypeConverter<>(java.util.Date.class, SqlString.class,
+		//		TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function()
+		//		.andThen(object -> new SqlString("DATE'" + object + '\''))
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class),
+				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("DATE'" + object + '\''))
 			)
 		////
 		);
@@ -350,9 +372,14 @@ public class Standard implements Database {
 		TypeConverter.put(typeConverterMap,
 		// 1.4.0
 		//	new TypeConverter<>(Date.class, SqlString.class, object -> new SqlString("DATE'" + object + '\''))
-			new TypeConverter<>(Date.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Date.class, String.class).function()
-				.andThen(object -> new SqlString("DATE'" + object + '\''))
+		// 1.8.0
+		//	new TypeConverter<>(Date.class, SqlString.class,
+		//		TypeConverter.get(typeConverterMap, Date.class, String.class).function()
+		//		.andThen(object -> new SqlString("DATE'" + object + '\''))
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Date.class, String.class),
+				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("DATE'" + object + '\''))
 			)
 		////
 		);
@@ -361,9 +388,14 @@ public class Standard implements Database {
 		TypeConverter.put(typeConverterMap,
 		// 1.4.0
 		//	new TypeConverter<>(Time.class, SqlString.class, object -> new SqlString("TIME'" + object + '\''))
-			new TypeConverter<>(Time.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Time.class, String.class).function()
-				.andThen(object -> new SqlString("TIME'" + object + '\''))
+		// 1.8.0
+		//	new TypeConverter<>(Time.class, SqlString.class,
+		//		TypeConverter.get(typeConverterMap, Time.class, String.class).function()
+		//		.andThen(object -> new SqlString("TIME'" + object + '\''))
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Time.class, String.class),
+				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("TIME'" + object + '\''))
 			)
 		////
 		);
@@ -372,18 +404,28 @@ public class Standard implements Database {
 		TypeConverter.put(typeConverterMap,
 		// 1.4.0
 		//	new TypeConverter<>(Timestamp.class, SqlString.class, object -> new SqlString("TIMESTAMP'" + object + '\''))
-			new TypeConverter<>(Timestamp.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function()
-				.andThen(object -> new SqlString("TIMESTAMP'" + object + '\''))
+		// 1.8.0
+		//	new TypeConverter<>(Timestamp.class, SqlString.class,
+		//		TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function()
+		//		.andThen(object -> new SqlString("TIMESTAMP'" + object + '\''))
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Timestamp.class, String.class),
+				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("TIMESTAMP'" + object + '\''))
 			)
 		////
 		);
 
 		// Enum -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Enum.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Enum.class, String.class).function()
-				.andThen(TypeConverter.get(typeConverterMap, String.class, SqlString.class).function())
+		// 1.8.0
+		//	new TypeConverter<>(Enum.class, SqlString.class,
+		//		TypeConverter.get(typeConverterMap, Enum.class, String.class).function()
+		//		.andThen(TypeConverter.get(typeConverterMap, String.class, SqlString.class).function())
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Enum.class, String.class),
+				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
 			)
 		);
 

@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 
 /**
  * Indicates that the column related the field is not used in SELECT SQL.<br>
- * Specifies the field by the property name.
+ * Specifies the field by <b>value</b>.
  *
  * <div class="sampleTitle"><span>Example of use</span></div>
  * <div class="sampleCode"><pre>
@@ -34,6 +34,6 @@ import java.lang.annotation.*;
 @Repeatable(NonSelectProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonSelectProperty {
-	/** @return the property name */
+	/** @return the property name of the specified field */
 	String value();
 }

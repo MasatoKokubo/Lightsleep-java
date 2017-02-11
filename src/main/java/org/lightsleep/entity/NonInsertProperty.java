@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 
 /**
  * Indicates that the column related the field is not used in INSERT SQL.<br>
- * Specifies the field by the property name.
+ * Specifies the field by <b>value</b>.
  *
  * <div class="sampleTitle"><span>Example of use</span></div>
  * <div class="sampleCode"><pre>
@@ -27,6 +27,6 @@ import java.lang.annotation.*;
 @Repeatable(NonInsertProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonInsertProperty {
-	/** @return the property name */
+	/** @return the property name of the specified field */
 	String value();
 }

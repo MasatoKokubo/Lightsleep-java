@@ -142,11 +142,14 @@ public class Expression implements Condition {
 
 				if (inBrace) {
 					// in {}
+				// 1.8.0
+					if (Character.isWhitespace(ch)) continue;
+				////
 					if (ch != '}') {
 						if (tempBuff.length() == 0) {
-							if (Character.isSpaceChar(ch))
-								continue;
-
+						// 1.8.0
+						//	if (Character.isSpaceChar(ch)) continue;
+						////
 							if (ch == '#' && !referEntity) {
 								referEntity = true;
 								continue;
@@ -158,7 +161,10 @@ public class Expression implements Condition {
 					}
 
 					inBrace = false;
-					String propertyName = tempBuff.toString().trim();
+				// 1.8.0
+				//	String propertyName = tempBuff.toString().trim();
+					String propertyName = tempBuff.toString();
+				////
 
 					if (propertyName.length() == 0 || referEntity) {
 						// Replaces an argument or refer the entity value
@@ -176,9 +182,16 @@ public class Expression implements Condition {
 						} else {
 							// Refers the entity value
 							if (entity == null)
-								throw new NullPointerException("Expression.toString: sql.entity = null, content = " + content);
+								throw new NullPointerException("Expression.toString: sql.entity == null, content = " + content);
 
 							value = entityInfo.accessor().getValue(entity, propertyName);
+						// 1.8.0
+							// converts value to the column type
+							ColumnInfo columnInfo = entityInfo.getColumnInfo(propertyName);
+							Class<?> columnType = columnInfo.columnType();
+							if (columnType != null)
+								value = Sql.getDatabase().convert(value, columnType);
+						////
 						}
 
 						if (value == null)
@@ -258,6 +271,9 @@ public class Expression implements Condition {
 				if (ch == '{') {
 					// { start
 					inBrace = true;
+				// 1.8.0 #0022
+					referEntity = false;
+				////
 					tempBuff.setLength(0);
 					continue;
 				}

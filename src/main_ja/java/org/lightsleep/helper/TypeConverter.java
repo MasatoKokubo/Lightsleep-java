@@ -45,7 +45,7 @@ import java.util.function.Function;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Integer</td><td rowspan="9"></td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="10">Integer</td><td rowspan="10"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -54,8 +54,9 @@ import java.util.function.Function;
  *   <tr><td>BigDecimal    </td></tr>
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
+ *   <tr><td>java.util.Date<br><i>(since 1.8.0)</i></td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Long</td><td rowspan="9"></td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="10">Long</td><td rowspan="10"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -64,6 +65,7 @@ import java.util.function.Function;
  *   <tr><td>BigDecimal    </td></tr>
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
+ *   <tr><td>java.util.Date<br><i>(since 1.8.0)</i></td></tr>
  *
  *   <tr><td>Boolean       </td><td rowspan="9">Float</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
@@ -112,26 +114,34 @@ import java.util.function.Function;
  *   <tr><td>Time          <br><i>(since 1.4.0)</i></td><td>"HH:mm:ss"</td></tr>
  *   <tr><td>Timestamp                             </td><td>"yyyy-MM-dd HH:mm:ss.SSS"</td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="2">java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="2"></td></tr>
+ *   <tr><td>Long          </td><td rowspan="4">java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="4"></td></tr>
+ *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="3">java.sql.Date</td><td rowspan="3"></td></tr>
+ *   <tr><td>Long          </td><td rowspan="5">java.sql.Date</td><td rowspan="5"></td></tr>
+ *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
  *   <tr><td>java.util.Date</td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="3">Time</td><td rowspan="3"></td></tr>
+ *   <tr><td>Long          </td><td rowspan="5">Time</td><td rowspan="5"></td></tr>
+ *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
  *   <tr><td>java.util.Date</td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="3">Timestamp</td><td rowspan="3"></td></tr>
+ *   <tr><td>Long          </td><td rowspan="5">Timestamp</td><td rowspan="5"></td></tr>
+ *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
  *   <tr><td>java.util.Date</td></tr>
  *   <tr><td>String        </td></tr>
  *
  *   <tr><td rowspan="4">Enum<br><i>(since 1.4.0)</i></td>
- *     <td>Integer</td><td rowspan="4"></td></tr>
- *   <tr><td>Byte </td></tr>
- *   <tr><td>Short</td></tr>
- *   <tr><td>Long </td></tr>
+ *       <td>Integer</td><td rowspan="4"></td></tr>
+ *   <tr><td>Byte   </td></tr>
+ *   <tr><td>Short  </td></tr>
+ *   <tr><td>Long   </td></tr>
  * </table>
  *
  * @since 1.0
@@ -218,15 +228,29 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-		<b>TypeConverter</b> を構築します。
-
-		@param sourceType 変換元のデータ型クラス
-		@param destinType 変換先のデータ型クラス
-		@param function 変換を実行する関数
-
-		@throws NullPointerException <b>sourceType</b>, <b>destinType</b> または <b>function</b> が <b>null</b> の場合
+	 * <b>TypeConverter</b> を構築します。
+	 *
+	 * @param sourceType 変換元のデータ型クラス
+	 * @param destinType 変換先のデータ型クラス
+	 * @param function 変換を実行する関数
+	 *
+	 * @throws NullPointerException <b>sourceType</b>, <b>destinType</b> または <b>function</b> が <b>null</b> の場合
 	*/
 	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, ? extends DT> function) {
+	}
+
+	/**
+	 * <b>TypeConverter</b> を構築します。
+	 *
+	 * @param <MT> 中間の型
+	 * @param typeConverter1 コンバーター1
+	 * @param typeConverter2 コンバーター2
+	 *
+	 * @throws NullPointerException <b>typeConverter1</b> または <b>typeConverter2</b> が <b>null</b> の場合
+	 *
+	 * @since 1.8.0
+	 */
+	public <MT> TypeConverter(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2) {
 	}
 
 	/**

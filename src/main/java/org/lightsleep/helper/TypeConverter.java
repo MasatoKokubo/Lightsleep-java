@@ -66,7 +66,7 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Integer</td><td rowspan="9"></td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="10">Integer</td><td rowspan="10"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -75,8 +75,9 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>BigDecimal    </td></tr>
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
+ *   <tr><td>java.util.Date<br><i>(since 1.8.0)</i></td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Long</td><td rowspan="9"></td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="10">Long</td><td rowspan="10"></td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
@@ -85,6 +86,7 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>BigDecimal    </td></tr>
  *   <tr><td>Character     </td></tr>
  *   <tr><td>String        </td></tr>
+ *   <tr><td>java.util.Date<br><i>(since 1.8.0)</i></td></tr>
  *
  *   <tr><td>Boolean       </td><td rowspan="9">Float</td><td rowspan="9"></td></tr>
  *   <tr><td>Short         </td></tr>
@@ -133,26 +135,34 @@ import org.lightsleep.logger.LoggerFactory;
  *   <tr><td>Time          <br><i>(since 1.4.0)</i></td><td>"HH:mm:ss"</td></tr>
  *   <tr><td>Timestamp                             </td><td>"yyyy-MM-dd HH:mm:ss.SSS"</td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="2">java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="2"></td></tr>
+ *   <tr><td>Long          </td><td rowspan="4">java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="4"></td></tr>
+ *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="3">java.sql.Date</td><td rowspan="3"></td></tr>
+ *   <tr><td>Long          </td><td rowspan="5">java.sql.Date</td><td rowspan="5"></td></tr>
+ *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
  *   <tr><td>java.util.Date</td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="3">Time</td><td rowspan="3"></td></tr>
+ *   <tr><td>Long          </td><td rowspan="5">Time</td><td rowspan="5"></td></tr>
+ *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
  *   <tr><td>java.util.Date</td></tr>
  *   <tr><td>String        </td></tr>
  *
- *   <tr><td>Long          </td><td rowspan="3">Timestamp</td><td rowspan="3"></td></tr>
+ *   <tr><td>Long          </td><td rowspan="5">Timestamp</td><td rowspan="5"></td></tr>
+ *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
  *   <tr><td>java.util.Date</td></tr>
  *   <tr><td>String        </td></tr>
  *
  *   <tr><td rowspan="4">Enum<br><i>(since 1.4.0)</i></td>
- *     <td>Integer</td><td rowspan="4"></td></tr>
- *   <tr><td>Byte </td></tr>
- *   <tr><td>Short</td></tr>
- *   <tr><td>Long </td></tr>
+ *       <td>Integer</td><td rowspan="4"></td></tr>
+ *   <tr><td>Byte   </td></tr>
+ *   <tr><td>Short  </td></tr>
+ *   <tr><td>Long   </td></tr>
  * </table>
  *
  * @since 1.0
@@ -453,6 +463,28 @@ public class TypeConverter<ST, DT> {
 		this.sourceType = sourceType;
 		this.destinType = destinType;
 		this.function = function;
+		key = key(sourceType, destinType);
+		hashCode = key.hashCode();
+	}
+
+	/**
+	 * Constructs a new <b>TypeConverter</b>.
+	 *
+	 * @param <MT> the middle type
+	 * @param typeConverter1 the first TypeConverter
+	 * @param typeConverter2 the second TypeConverter
+	 *
+	 * @throws NullPointerException if <b>typeConverter1</b> or <b>typeConverter2</b> is <b>null</b>
+	 *
+	 * @since 1.8.0
+	 */
+	public <MT> TypeConverter(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2) {
+		if (typeConverter1 == null) throw new NullPointerException("TypeConverter.<init>: typeConverter1 == null");
+		if (typeConverter2 == null) throw new NullPointerException("TypeConverter.<init>: typeConverter2 == null");
+
+		this.sourceType = typeConverter1.sourceType;
+		this.destinType = typeConverter2.destinType;
+		this.function = typeConverter1.function.andThen(typeConverter2.function);
 		key = key(sourceType, destinType);
 		hashCode = key.hashCode();
 	}
@@ -940,6 +972,19 @@ public class TypeConverter<ST, DT> {
 			})
 		);
 
+		// java.util.Date -> Long (since 1.8.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.util.Date.class, Long.class, object -> object.getTime())
+		);
+
+		// java.util.Date -> Integer (since 1.8.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, java.util.Date.class, Long.class),
+				TypeConverter.get(typeConverterMap, Long.class, Integer.class)
+			)
+		);
+
 	// * -> Float
 		// Boolean -> Float
 		TypeConverter.put(typeConverterMap,
@@ -1220,6 +1265,19 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(Long.class, java.util.Date.class, object -> new java.util.Date(object))
 		);
 
+		// Integer -> java.util.Date (since 1.8.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Integer.class, java.util.Date.class, object -> new java.util.Date((long)(int)object))
+		);
+
+		// BigDecimal -> java.util.Date (since 1.8.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, BigDecimal.class, Long.class),
+				TypeConverter.get(typeConverterMap, Long.class, java.util.Date.class)
+			)
+		);
+
 		// String -> java.util.Date (since 1.4.0)
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, java.util.Date.class, object -> {
@@ -1237,6 +1295,19 @@ public class TypeConverter<ST, DT> {
 		// Long -> java.sql.Date
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Long.class, Date.class, object -> new Date(object))
+		);
+
+		// Integer -> java.sql.Date (since 1.8.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Integer.class, Date.class, object -> new Date((long)(int)object))
+		);
+
+		// BigDecimal -> java.sql.Date (since 1.8.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, BigDecimal.class, Long.class),
+				TypeConverter.get(typeConverterMap, Long.class, Date.class)
+			)
 		);
 
 		// java.util.Date -> java.sql.Date
@@ -1263,6 +1334,19 @@ public class TypeConverter<ST, DT> {
 			new TypeConverter<>(Long.class, Time.class, object -> new Time(object))
 		);
 
+		// Integer -> Time (since 1.8.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Integer.class, Time.class, object -> new Time((long)(int)object))
+		);
+
+		// BigDecimal -> Time (since 1.8.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, BigDecimal.class, Long.class),
+				TypeConverter.get(typeConverterMap, Long.class, Time.class)
+			)
+		);
+
 		// java.util.Date -> Time
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(java.util.Date.class, Time.class, object -> new Time(object.getTime()))
@@ -1285,6 +1369,19 @@ public class TypeConverter<ST, DT> {
 		// Long -> Timestamp
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Long.class, Timestamp.class, object -> new Timestamp(object))
+		);
+
+		// Integer -> Timestamp (since 1.8.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Integer.class, Timestamp.class, object -> new Timestamp((long)(int)object))
+		);
+
+		// BigDecimal -> Timestamp (since 1.8.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, BigDecimal.class, Long.class),
+				TypeConverter.get(typeConverterMap, Long.class, Timestamp.class)
+			)
 		);
 
 		// java.util.Date -> Timestamp
@@ -1317,26 +1414,44 @@ public class TypeConverter<ST, DT> {
 
 		// Enum -> Byte (since 1.4.0)
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Enum.class, Byte.class,
-				TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
-				.andThen(TypeConverter.get(typeConverterMap, Integer.class, Byte.class).function())
+		// 1.8.0
+		//	new TypeConverter<>(Enum.class, Byte.class,
+		//		TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
+		//		.andThen(TypeConverter.get(typeConverterMap, Integer.class, Byte.class).function())
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Enum.class, Integer.class),
+				TypeConverter.get(typeConverterMap, Integer.class, Byte.class)
 			)
+		////
 		);
 
 		// Enum -> Short (since 1.4.0)
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Enum.class, Short.class,
-				TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
-				.andThen(TypeConverter.get(typeConverterMap, Integer.class, Short.class).function())
+		// 1.8.0
+		//	new TypeConverter<>(Enum.class, Short.class,
+		//		TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
+		//		.andThen(TypeConverter.get(typeConverterMap, Integer.class, Short.class).function())
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Enum.class, Integer.class),
+				TypeConverter.get(typeConverterMap, Integer.class, Short.class)
 			)
+		////
 		);
 
 		// Enum -> Long (since 1.4.0)
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Enum.class, Long.class,
-				TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
-				.andThen(TypeConverter.get(typeConverterMap, Integer.class, Long.class).function())
+		// 1.8.0
+		//	new TypeConverter<>(Enum.class, Long.class,
+		//		TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
+		//		.andThen(TypeConverter.get(typeConverterMap, Integer.class, Long.class).function())
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Enum.class, Integer.class),
+				TypeConverter.get(typeConverterMap, Integer.class, Long.class)
 			)
+		////
 		);
 
 	}

@@ -14,20 +14,21 @@ import org.lightsleep.component.Expression;
 */
 public class ColumnInfo {
 	/**
-		<b>ColumnInfo</b> を構築します。
-
-		@param entityInfo エンティティ情報
-		@param propertyName プロパティ名
-		@param columnName カラム名
-		@param isKey 関連するカラムがキーの一部であれば <b>true</b>、そうでなければ <b>false</b>
-		@param selectExpression SELECT SQL を作成する時に使用する式 (式を使用しない場合は、<b>null</b>)
-		@param insertExpression INSERT SQL を作成する時に使用する式 (式を使用しない場合は、<b>null</b>)
-		@param updateExpression UPDATE SQL を作成する時に使用する式 (式を使用しない場合は、<b>null</b>)
-
-		@throws NullPointerException <b>entityInfo</b>, <b>propertyName</b> または <b>columnName</b> が <b>null</b> の場合
-	*/
+	 * <b>ColumnInfo</b> を構築します。
+	 *
+	 * @param entityInfo エンティティ情報
+	 * @param propertyName プロパティ名
+	 * @param columnName カラム名
+	 * @param columnType カラムの型 (<b>null</b> 可)
+	 * @param isKey 関連するカラムがキーの一部であれば <b>true</b>、そうでなければ <b>false</b>
+	 * @param selectExpression SELECT SQL を作成する時に使用する式 (式を使用しない場合は、<b>null</b>)
+	 * @param insertExpression INSERT SQL を作成する時に使用する式 (式を使用しない場合は、<b>null</b>)
+	 * @param updateExpression UPDATE SQL を作成する時に使用する式 (式を使用しない場合は、<b>null</b>)
+	 *
+	 * @throws NullPointerException <b>entityInfo</b>, <b>propertyName</b> または <b>columnName</b> が <b>null</b> の場合
+	 */
 	public ColumnInfo(
-		EntityInfo<?> entityInfo, String propertyName, String columnName, boolean isKey,
+		EntityInfo<?> entityInfo, String propertyName, String columnName, Class<?> columnType, boolean isKey,
 		Expression selectExpression, Expression insertExpression, Expression updateExpression) {
 	}
 
@@ -55,6 +56,17 @@ public class ColumnInfo {
 		@return 関連するカラム名 
 	*/
 	public String columnName() {
+		return null;
+	}
+
+	/**
+	 * 関連するカラムの型を返します。
+	 *
+	 * @return 関連するカラムの型
+	 *
+	 * @since 1.8.0
+	 */
+	public Class<?> columnType() {
 		return null;
 	}
 

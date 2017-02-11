@@ -18,7 +18,7 @@ public class Contact1 extends Contact {
 }
 ```
 
-```@Table("super")``` を指定した場合は、スーパークラスのクラス名がテーブル名となります。
+`@Table("super")` を指定した場合は、スーパークラスのクラス名がテーブル名となります。
 
 ```java:Java
 import org.lightsleep.entity.*;
@@ -46,7 +46,17 @@ public String id;
     public String familyName;
 ```
 
-##### 1-1-4. NonColumn アノテーション
+##### 1-1-4. ColumnType アノテーション
+フィールドに関連するカラムの型を指定します。
+フィールド型とカラム型が同種類の場合は、指定する必要がありません。
+フィールド型が日付型で、カラム型が数値型のように異なる場合に指定します。
+
+```java:Java
+    @Column("Long")
+    public Date birhtday;
+```
+
+##### 1-1-5. NonColumn アノテーション
 フィールドがどのカラムにも関連しない事を指定します。
 
 ```java:Java
@@ -54,7 +64,7 @@ public String id;
     public List<Phone> phones = new ArrayList<>();
 ```
 
-##### 1-1-5. NonSelect アノテーション
+##### 1-1-6. NonSelect アノテーション
 フィールドに関連するカラムが SELECT SQL で使用されない事を指定します。
 
 ```java:Java
@@ -62,7 +72,7 @@ public String id;
     public String givenName;
 ```
 
-##### 1-1-6. NonInsert アノテーション
+##### 1-1-7. NonInsert アノテーション
 フィールドに関連するカラムが INSERT SQL で使用されない事を指定します。
 
 ```java:Java
@@ -71,7 +81,7 @@ public String id;
     public String fullName;
 ```
 
-##### 1-1-7. NonUpdate アノテーション
+##### 1-1-8. NonUpdate アノテーション
 フィールドに関連するカラムが UPDATE SQL で使用されない事を指定します。
 
 ```java:Java
@@ -80,7 +90,7 @@ public String id;
     public Timestamp created;
 ```
 
-##### 1-1-8. Select アノテーション
+##### 1-1-9. Select アノテーション
 SELECT SQL のカラム名の代わりの式を指定します。
 
 ```java:Java
@@ -89,7 +99,7 @@ SELECT SQL のカラム名の代わりの式を指定します。
     public String fullName;
 ```
 
-##### 1-1-9. Insert アノテーション
+##### 1-1-10. Insert アノテーション
 INSERT SQL の挿入値の式を指定します。
 このアノテーションが指定された場合、フィールドの値は使用されません。
 
@@ -99,7 +109,7 @@ INSERT SQL の挿入値の式を指定します。
     public Timestamp created;
 ```
 
-##### 1-1-10. Update アノテーション
+##### 1-1-11. Update アノテーション
 UPDATE SQL の更新値の式を指定します。
 このアノテーションが指定された場合、フィールドの値は使用されません。
 
@@ -109,8 +119,8 @@ UPDATE SQL の更新値の式を指定します。
     public Timestamp modified;
 ```
 
-##### 1-1-11. XxxxxProperty アノテーション
-ColumnProperty, NonColumnProperty, NonSelectProperty, NonInsertProperty, NonUpdateProperty, SelectProperty, InsertProperty, UpdateProperty は、目的は、Column, NonColumn, NonSelect, NonInsert, NonUpdate, Select, Insert, Update アノテーションと同じですが、フィールドではなく、クラスに指定して使用します。
+##### 1-1-12. XxxxxProperty アノテーション
+ColumnProperty, ColumnTypeProperty, NonColumnProperty, NonSelectProperty, NonInsertProperty, NonUpdateProperty, SelectProperty, InsertProperty, UpdateProperty は、目的は、Column, NonColumn, NonSelect, NonInsert, NonUpdate, Select, Insert, Update アノテーションと同じですが、フィールドではなく、クラスに指定して使用します。
 
 スーパークラスで定義されているフィールドに関連させる場合に使用します。
 
@@ -124,8 +134,8 @@ public class Contact1 extends Contact {
 
 ### 1-2. エンティティ・クラスが実装するインターフェース
 #### 1-2-1. PreInsert インターフェース
-エンティティ・クラスがこのインターフェースを実装している場合、Sql クラスの ```insert``` メソッドで、INSERT SQL 実行前に ```preInsert``` メソッドがコールされます。
-```preInsert``` メソッドでは、プライマリー・キーの採番の実装等を行います。
+エンティティ・クラスがこのインターフェースを実装している場合、`Sql クラス`の `insert` メソッドで、INSERT SQL 実行前に `preInsert` メソッドがコールされます。
+`preInsert` メソッドでは、プライマリー・キーの採番の実装等を行います。
 
 ```java:Java
 import org.lightsleep.entity.*;
@@ -145,8 +155,8 @@ public class Contact implements PreInsert {
 ```
 
 #### 1-2-2. Composite インターフェース
-エンティティ・クラスがこのインターフェースを実装している場合、Sql クラスの ```select```, ```insert```, ```update``` または ```delete``` メソッドで、各 SQL の実行後にエンティティ・クラスの ```postSelect```, ```postInsert```, ```postUpdate```  または ```postDelete``` メソッドがコールされます。
-ただし ```update```, ```delete``` メソッドで、引数にエンティティがない場合は、コールされません。
+エンティティ・クラスがこのインターフェースを実装している場合、`Sql` クラスの `select`, `insert`, `update` または `delete` メソッドで、各 SQL の実行後にエンティティ・クラスの `postSelect`, `postInsert`, `postUpdate`  または `postDelete` メソッドがコールされます。
+ただし `update`, `delete` メソッドで、引数にエンティティがない場合は、コールされません。
 エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、内包するエンティティへの SQL 処理を連動して行う事ができるようになります。
 
 ```java:Java
@@ -197,11 +207,38 @@ public class ContactComposite extends Contact implements Composite {
 }
 ```
 
+#### 1-2-3. PreStore インターフェース
+エンティティ・クラスがこのインターフェースを実装している場合、`Sql` クラスの `insert` または `update` メソッドで、各 SQL が実行される前にエンティティ・クラスの `preStore` メソッドがコールされます。
+
+#### 1-2-4. PostLoad インターフェース
+エンティティ・クラスがこのインターフェースを実装している場合、`Sql` クラスの `select` メソッドで SELECT SQL が実行されエンティティにデータベースから取得した値が設定された後にエンティティ・クラスの `postLoad` メソッドがコールされます。
+
+```java:Java
+import org.lightsleep.entity.*;
+
+public class Contact implements PreStore, PostLoad {
+
+    @Column("phone")
+    public String[] phones_
+
+    @NonColumn
+    public final List<String> phones = new ArrayList<>();
+
+    public void preStore() {
+        phones_ = phones.toArray(new String[phones.size()]);
+    }
+
+    public void postLoad() {
+        phones.clear();
+        Arrays.stream(phones_).forEach(phones::add);
+    }
+```
+
 ### 2. トランザクション
 
-```Transaction.execute``` メソッドの実行が1つのトランザクションの実行に相当します。
-トランザクションの内容を引数 ```transaction``` (ラムダ式) で定義してください。
-ラムダ式は、```Transaction.executeBody``` メソッドの内容に相当し、このメソッドの引数は、```Connection``` です。
+`Transaction.execute` メソッドの実行が1つのトランザクションの実行に相当します。
+トランザクションの内容を引数 `transaction` (ラムダ式) で定義してください。
+ラムダ式は、`Transaction.executeBody` メソッドの内容に相当し、このメソッドの引数は、`Connection` です。
 
 ```java:Java
 import org.lightsleep.*;
@@ -216,11 +253,11 @@ Transaction.execute(connection -> {
 });
 ```
 
-トランザクション中に例外がスローされた場合は、```Transaction.rollback``` メソッドが実行され、
-そうでなければ ```Transaction.commit``` メソッドが実行されます。
+トランザクション中に例外がスローされた場合は、`Transaction.rollback` メソッドが実行され、
+そうでなければ `Transaction.commit` メソッドが実行されます。
 
 ### 3. コネクション・サプライヤー
-データベース・コネクション(```java.sql.Connection```) の取得は、```Transaction.execute``` メソッド内で行われます。
+データベース・コネクション(`java.sql.Connection`) の取得は、`Transaction.execute` メソッド内で行われます。
 Lightsleep にはコネクションを供給するクラスとして以下があります。
 
 1. org.lightsleep.connection.C3p0
@@ -230,9 +267,9 @@ Lightsleep にはコネクションを供給するクラスとして以下があ
 1. org.lightsleep.connection.Jdbc
 1. org.lightsleep.connection.Jndi
 
-```C3p0```, ```Dbcp 2```, ```HikariCP```, ```TomcatCP``` クラスは、それぞれ対応するコネクション・プール・ライブラリを使用してデータベース・コネクションを取得します。  
-```JdbcConnection``` クラスは、```java.sql.DriverManager.getConnection``` メソッドを使用してデータベース・コネクションを取得します。  
-```JndiConnection``` クラスは、JNDI (Java Naming and Directory Interface) を使用して取得したデータソース (```javax.sql.DataSource```) からデータベース・コネクションを取得します。  
+`C3p0`, `Dbcp 2`, `HikariCP`, `TomcatCP` クラスは、それぞれ対応するコネクション・プール・ライブラリを使用してデータベース・コネクションを取得します。  
+`JdbcConnection` クラスは、`java.sql.DriverManager.getConnection` メソッドを使用してデータベース・コネクションを取得します。  
+`JndiConnection` クラスは、JNDI (Java Naming and Directory Interface) を使用して取得したデータソース (`javax.sql.DataSource`) からデータベース・コネクションを取得します。  
 コネクションを供給するクラスおよび接続に必要な情報 **lightsleep.properties** ファイルに定義してください。
 
 ```properties:lightsleep.properties
@@ -296,7 +333,7 @@ dataSource         = jdbc/Sample
 
 
 ### 4. SQLの実行
-SQLの実行は、```Sql``` クラスの各種メソッドを使用し、```Transaction.execute``` メソッドの引数のラムダ式内に定義します。
+SQLの実行は、`Sql` クラスの各種メソッドを使用し、`Transaction.execute` メソッドの引数のラムダ式内に定義します。
 
 #### 4-1. SELECT
 #### 4-1-1. SELECT 1行 / 式条件

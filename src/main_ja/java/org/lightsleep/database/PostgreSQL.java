@@ -14,8 +14,8 @@ package org.lightsleep.database;
  * <table class="additional">
  * 	<caption><span>登録されている TypeConverter オブジェクト</span></caption>
  *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換フォーマット</th></tr>
- *   <tr><td>boolean</td><td rowspan="3">{@linkplain org.lightsleep.component.SqlString}</td><td>FALSE か TRUE</td></tr>
- *   <tr><td>String </td><td>長い場合は <i>SQL パラメータ (?)</i>、そうでなければ '...' (エスケープ・シーケンスを含む場合あり)</td></tr>
+ *   <tr><td>String </td><td rowspan="2">{@linkplain org.lightsleep.component.SqlString}</td>
+                         <td>長い場合は <i>SQL パラメータ (?)</i>、そうでなければ '...' (エスケープ・シーケンスを含む場合あり)</td></tr>
  *   <tr><td>byte[] </td><td>長い場合は <i>SQL パラメータ (?)</i>、そうでなければ E'\\x...'</td></tr>
  * </table>
  * 

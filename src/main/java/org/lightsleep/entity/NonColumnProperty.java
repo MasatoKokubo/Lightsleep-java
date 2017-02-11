@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 
 /**
  * Indicates that the field not related to any column.<br>
- * Specifies the field by the property name.
+ * Specifies the field by <b>value</b>.
  *
  * <div class="sampleTitle"><span>Example of use</span></div>
  * <div class="sampleCode"><pre>
@@ -30,6 +30,6 @@ import java.lang.annotation.*;
 @Repeatable(NonColumnProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonColumnProperty {
-	/** @return the property name */
+	/** @return the property name of the specified field */
 	String value();
 }

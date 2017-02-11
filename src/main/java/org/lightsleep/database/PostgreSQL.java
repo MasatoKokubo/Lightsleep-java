@@ -6,6 +6,7 @@ package org.lightsleep.database;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
 
+//*   <tr><td>boolean</td><td rowspan="3">{@linkplain org.lightsleep.component.SqlString}</td><td>FALSE or TRUE</td></tr>
 /**
  * A database handler for
  * <a href="http://www.postgresql.org/" target="PostgreSQL">PostgreSQL</a>.<br>
@@ -17,8 +18,8 @@ import org.lightsleep.helper.TypeConverter;
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
  *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Format</th></tr>
- *   <tr><td>boolean</td><td rowspan="3">{@linkplain org.lightsleep.component.SqlString}</td><td>FALSE or TRUE</td></tr>
- *   <tr><td>String </td><td><i>sql parameter (?)</i> if too long, '...' (may include escape sequences) otherwise</td></tr>
+ *   <tr><td>String </td><td rowspan="2">{@linkplain org.lightsleep.component.SqlString}</td>
+	                     <td><i>sql parameter (?)</i> if too long, '...' (may include escape sequences) otherwise</td></tr>
  *   <tr><td>byte[] </td><td><i>sql parameter (?)</i> if too long, E'\\x...' otherwise</td></tr>
  * </table>
  *
@@ -44,8 +45,10 @@ public class PostgreSQL extends Standard {
 	 * Constructs a new <b>PostgreSQL</b>.
 	 */
 	protected PostgreSQL() {
-		/** boolean -> FALSE, TRUE */
-		TypeConverter.put(typeConverterMap, booleanToSqlFalseTrueConverter);
+	// 1.8.0
+	//	/** boolean -> FALSE, TRUE */
+	//	TypeConverter.put(typeConverterMap, booleanToSqlFalseTrueConverter);
+	////
 
 		// String.class -> SqlString.class
 		TypeConverter.put(typeConverterMap,

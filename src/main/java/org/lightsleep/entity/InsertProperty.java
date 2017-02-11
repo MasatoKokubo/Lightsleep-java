@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 
 /**
  * Indicates the expression instead of the field value used in INSERT SQL.<br>
- * Specifies the field by the property name.
+ * Specifies the field by <b>property</b>.
  *
  * <div class="sampleTitle"><span>Example of use</span></div>
  * <div class="sampleCode"><pre>
@@ -35,7 +35,7 @@ import java.lang.annotation.*;
 @Repeatable(InsertProperties.class)
 @Target({ElementType.TYPE})
 public @interface InsertProperty {
-	/** @return the property name */
+	/** @return the property name of the specified field */
 	String property();
 
 	/** @return the expression */

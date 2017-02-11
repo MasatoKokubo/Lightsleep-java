@@ -58,33 +58,53 @@ public class SQLite extends Standard {
 
 		// java.util.Date -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.util.Date.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function()
-				.andThen(object -> new SqlString('\'' + object + '\''))
+		// 1.8.0
+		//	new TypeConverter<>(java.util.Date.class, SqlString.class,
+		//		TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function()
+		//		.andThen(object -> new SqlString('\'' + object + '\''))
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class),
+				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
 			)
 		);
 
 		// java.sql.Date -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Date.class, String.class).function()
-				.andThen(object -> new SqlString('\''+ object + '\''))
+		// 1.8.0
+		//	new TypeConverter<>(Date.class, SqlString.class,
+		//		TypeConverter.get(typeConverterMap, Date.class, String.class).function()
+		//		.andThen(object -> new SqlString('\''+ object + '\''))
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Date.class, String.class),
+				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
 			)
 		);
 
 		// Time -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Time.class, String.class).function()
-				.andThen(object -> new SqlString('\'' + object + '\''))
+		// 1.8.0
+		//	new TypeConverter<>(Time.class, SqlString.class,
+		//		TypeConverter.get(typeConverterMap, Time.class, String.class).function()
+		//		.andThen(object -> new SqlString('\'' + object + '\''))
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Time.class, String.class),
+				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
 			)
 		);
 
 		// Timestamp -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function()
-				.andThen(object -> new SqlString('\'' + object + '\''))
+		// 1.8.0
+		//	new TypeConverter<>(Timestamp.class, SqlString.class,
+		//		TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function()
+		//		.andThen(object -> new SqlString('\'' + object + '\''))
+		//	)
+			new TypeConverter<>(
+				TypeConverter.get(typeConverterMap, Timestamp.class, String.class),
+				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
 			)
 		);
 

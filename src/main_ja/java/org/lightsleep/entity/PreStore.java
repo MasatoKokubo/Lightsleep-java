@@ -5,7 +5,7 @@ package org.lightsleep.entity;
 
 /**
  * エンティティ・クラスがこのインターフェースを実装している場合、
- * そのエンティティ・クラスの <b>preStore</b> が INSERT または UPDATE SQL を実行する前に実行されます。
+ * そのエンティティ・クラスの <b>preStore</b> メソッドが INSERT または UPDATE SQL を実行する前に実行されます。
  *
  * @since 1.6.0
  * @author Masato Kokubo

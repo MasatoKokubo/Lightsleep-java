@@ -1,17 +1,18 @@
 
-/* Followings are additional for LightSleep. */
+/* Followings are additional for Lightsleep. */
 pre, code, tt, dt code, table tr td dt code {
 	font-family: Consolas, monospace;
 }
 
 i {
 	font-style: italic;
-	color: #666666;
+	color: #CC5555;
 }
 
 b, b i, .code {
 	font-family: Consolas, monospace;
 	font-weight: bold;
+	color: #5555CC;
 }
 
 .title {
@@ -78,7 +79,7 @@ table.additional caption {
 }
 
 .sampleCode pre {
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .sampleCode pre b {

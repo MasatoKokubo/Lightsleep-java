@@ -17,6 +17,7 @@ repositories {
 }
 
 dependencies {
+	compile 'org.debugtrace:debugtrace:2.+'
 	compile 'log4j:log4j:1.+'
 	compile 'org.apache.logging.log4j:log4j-api:2.+'
 	compile 'org.slf4j:slf4j-api:1.+'
@@ -33,7 +34,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '1.7.0'
+version             = '1.8.0'
 
 compileJava {
 	options.encoding     = 'UTF-8'
@@ -71,6 +72,7 @@ jar {
 
 javadoc {
 	title               = "$project.name $version API Specification"
+	options.charSet     = 'UTF-8'
 	options.encoding    = 'UTF-8'
 	options.locale      = 'en'
 	options.windowTitle = "$project.name"
@@ -95,7 +97,8 @@ javadoc.doLast {
 task javadoc_ja(type:Javadoc) {
 	dependsOn = ['compileJava_ja']
 
-	title               = "$project.name $version API 仕様"
+	title               = "$project.name $version API \u4ED5\u69D8"
+	options.charSet     = javadoc.options.charSet
 	options.encoding    = javadoc.options.encoding
 	options.locale      = 'ja'
 	options.windowTitle = javadoc.options.windowTitle
