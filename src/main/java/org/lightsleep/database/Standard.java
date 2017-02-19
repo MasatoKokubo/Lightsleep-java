@@ -14,9 +14,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -39,38 +39,38 @@ import org.lightsleep.helper.Utils;
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Format</th></tr>
+ *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Contents</th></tr>
  *
- *   <tr><td>Clob          </td><td>String</td><td></td></tr>
+ *   <tr><td>Clob          </td><td>String</td><td rowspan="2">Throws a ConvertException if the length exceeds <code>Integer.MAX_VALUE</code>.<br>Throws a ConvertException if SQLException is thrown when getting content.</td></tr>
  *
- *   <tr><td>Blob          </td><td>byte[]</td><td></td></tr>
+ *   <tr><td>Blob          </td><td>byte[]</td></tr>
  *
- *   <tr><td rowspan="13">java.sql.Array</td><td>boolean[]      </td><td></td></tr>
- *   <tr>                                    <td>byte[]         </td><td></td></tr>
- *   <tr>                                    <td>short[]        </td><td></td></tr>
- *   <tr>                                    <td>int[]          </td><td></td></tr>
- *   <tr>                                    <td>long[]         </td><td></td></tr>
- *   <tr>                                    <td>float[]        </td><td></td></tr>
- *   <tr>                                    <td>double[]       </td><td></td></tr>
- *   <tr>                                    <td>BigDecimal[]   </td><td></td></tr>
- *   <tr>                                    <td>String[]       </td><td></td></tr>
- *   <tr>           <td>java.util.Date[]<br><i>(since 1.4.0)</i></td><td></td></tr>
- *   <tr>                                    <td>java.sql.Date[]</td><td></td></tr>
- *   <tr>                                    <td>Time[]         </td><td></td></tr>
- *   <tr>                                    <td>Timestamp[]    </td><td></td></tr>
+ *   <tr><td rowspan="13">java.sql.Array</td><td>boolean[]       </td><td rowspan="13">Converts each element to the data type of array element with TypeConverter.</td></tr>
+ *   <tr>                                    <td>byte[]          </td></tr>
+ *   <tr>                                    <td>short[]         </td></tr>
+ *   <tr>                                    <td>int[]           </td></tr>
+ *   <tr>                                    <td>long[]          </td></tr>
+ *   <tr>                                    <td>float[]         </td></tr>
+ *   <tr>                                    <td>double[]        </td></tr>
+ *   <tr>                                    <td>BigDecimal[]    </td></tr>
+ *   <tr>                                    <td>String[]        </td></tr>
+ *   <tr>                                    <td>java.util.Date[]</td></tr>
+ *   <tr>                                    <td>java.sql.Date[] </td></tr>
+ *   <tr>                                    <td>Time[]          </td></tr>
+ *   <tr>                                    <td>Timestamp[]     </td></tr>
  *
- *   <tr><td>Boolean        </td><td rowspan="26">{@linkplain org.lightsleep.component.SqlString}</td><td>FALSE or TRUE</td></tr>
- *   <tr><td>Object         </td><td>'...'</td></tr>
- *   <tr><td>Character      </td><td>'...'</td></tr>
+ *   <tr><td>Boolean        </td><td rowspan="26">SqlString</td><td>false -&gt; <code>FALSE</code><br>true -&gt; <code>TRUE</code></td></tr>
+ *   <tr><td>Object         </td><td rowspan="2"><code>'...'</code></td></tr>
+ *   <tr><td>Character      </td></tr>
  *   <tr><td>BigDecimal     </td><td></td></tr>
- *   <tr><td>String         </td><td><i>sql parameter (?)</i> if too long, '...' otherwise</td></tr>
- *   <tr><td>java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="2">DATE'yyyy-MM-dd'</td></tr>
+ *   <tr><td>String         </td><td><code>'...'</code><br><code>?</code> <i>(SQL parameter)</i> if long</td></tr>
+ *   <tr><td>java.util.Date</td><td rowspan="2"><code>DATE'yyyy-MM-dd'</code></td></tr>
  *   <tr><td>java.sql.Date  </td></tr>
- *   <tr><td>Time           </td><td>TIME'HH:mm:ss'</td></tr>
- *   <tr><td>Timestamp      </td><td>TIMESTAMP'yyyy-MM-dd HH:mm:ss.SSS'</td></tr>
- *   <tr><td>Enum           </td><td></td></tr>
- *   <tr><td>byte[]         </td><td><i>sql parameter (?)</i> if too long, X'...' otherwise</td></tr>
- *   <tr><td>boolean[]      </td><td rowspan="14">ARRAY[x,y,z,...]</td></tr>
+ *   <tr><td>Time           </td><td><code>TIME'HH:mm:ss'</code></td></tr>
+ *   <tr><td>Timestamp      </td><td><code>TIMESTAMP'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
+ *   <tr><td>Enum           </td><td><code>'...'</code> (Using toString())</td></tr>
+ *   <tr><td>byte[]         </td><td><code>X'...'</code><br><code>?</code> <i>(SQL parameter)</i> if long</td></tr>
+ *   <tr><td>boolean[]      </td><td rowspan="14"><code>ARRAY[x,y,z,...]</code><br>Convert each element to a SqlString with TypeConverter.</td></tr>
  *   <tr><td>char[]         </td></tr>
  *   <tr><td>byte[][]       </td></tr>
  *   <tr><td>short[]        </td></tr>
@@ -80,11 +80,11 @@ import org.lightsleep.helper.Utils;
  *   <tr><td>double[]       </td></tr>
  *   <tr><td>BigDecimal[]   </td></tr>
  *   <tr><td>String[]       </td></tr>
- *   <tr><td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>java.util.Date[]</td></tr>
  *   <tr><td>java.sql.Date[]</td></tr>
  *   <tr><td>Time[]         </td></tr>
  *   <tr><td>Timestamp[]    </td></tr>
- *   <tr><td>Iterable       </td><td>(x,y,z,...)</td></tr>
+ *   <tr><td>Iterable       </td><td><code>(x,y,z,...)</code><br>Convert each element to a SqlString with TypeConverter.</td></tr>
  * </table>
  *
  * @since 1.0.0
@@ -173,7 +173,10 @@ public class Standard implements Database {
 	}
 
 	// The TypeConverter map
-	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = new LinkedHashMap<>(TypeConverter.typeConverterMap);
+// 1.8.1
+//	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = new LinkedHashMap<>(TypeConverter.typeConverterMap);
+	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = new ConcurrentHashMap<>(TypeConverter.typeConverterMap());
+////
 
 	/**
 	 * Constructs a new <b>Standard</b>.

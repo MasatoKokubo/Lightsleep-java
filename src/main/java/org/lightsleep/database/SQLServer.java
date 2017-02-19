@@ -24,13 +24,13 @@ import org.lightsleep.helper.TypeConverter;
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Format</th></tr>
- *   <tr><td>boolean      </td><td rowspan="6">{@linkplain org.lightsleep.component.SqlString}</td><td>0 or 1</td></tr>
- *   <tr><td>java.sql.Date</td><td>CAST('yyyy:MM:dd' AS DATE)</td></tr>
- *   <tr><td>Time         </td><td>CAST('HH:mm:ss' AS DATE)</td></tr>
- *   <tr><td>Timestamp    </td><td>CAST('yyyy-MM-dd HH:mm:ss.SSS' AS DATETIME2)</td></tr>
- *   <tr><td>String       </td><td><i>sql parameter (?)</i> if too long, '...' (may include ...'+CHAR(n)+'...) otherwise</td></tr>
- *   <tr><td>byte[]<br><i>(since 1.7.0)</i></td><td>always <i>sql parameter (?)</i></td></tr>
+ *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Contents</th></tr>
+ *   <tr><td>Boolean      </td><td rowspan="6">SqlString</td><td>false -&gt; <code>0</code><br>true -&gt; <code>1</code></td></tr>
+ *   <tr><td>java.sql.Date</td><td><code>CAST('yyyy:MM:dd' AS DATE)</code></td></tr>
+ *   <tr><td>Time         </td><td><code>CAST('HH:mm:ss' AS DATE)</code></td></tr>
+ *   <tr><td>Timestamp    </td><td><code>CAST('yyyy-MM-dd HH:mm:ss.SSS' AS DATETIME2)</code></td></tr>
+ *   <tr><td>String       </td><td><code>'...'</code><br>Converts control character to <code>'...'+CHAR(n)+'...'</code>.<br><code>?</code> <i>(SQL parameter)</i> if long</td></tr>
+ *   <tr><td>byte[]</td><td><code>?</code> <i>(SQL parameter)</i></td></tr>
  * </table>
 
  * @since 1.0.0

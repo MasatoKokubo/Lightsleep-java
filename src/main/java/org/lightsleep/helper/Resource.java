@@ -212,7 +212,10 @@ public class Resource {
 				String string = get(key);
 				object = objectType == String.class
 					? objectType.cast(string)
-					: TypeConverter.convert(TypeConverter.typeConverterMap, string, objectType);
+				// 1.8.1
+				//	: TypeConverter.convert(TypeConverter.typeConverterMap, string, objectType);
+					: TypeConverter.convert(TypeConverter.typeConverterMap(), string, objectType);
+				////
 			}
 
 			// puts to the map

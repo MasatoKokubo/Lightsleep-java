@@ -22,15 +22,15 @@ import org.lightsleep.helper.TypeConverter;
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Format</th></tr>
- *   <tr><td>boolean       </td><td rowspan="6">{@linkplain org.lightsleep.component.SqlString}</td><td>0 or 1</td></tr>
- *   <tr><td>java.util.Date</td><td rowspan="2">'yyyy-MM-dd'</td></tr>
+ *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Contents</th></tr>
+ *   <tr><td>Boolean       </td><td rowspan="6">SqlString</td><td>false -&gt; <code>0</code><br>true -&gt; <code>1</code></td></tr>
+ *   <tr><td>java.util.Date</td><td rowspan="2"><code>'yyyy-MM-dd'</code></td></tr>
  *   <tr><td>java.sql.Date </td></tr>
- *   <tr><td>Time          </td><td>'HH:mm:ss'</td></tr>
- *   <tr><td>Timestamp     </td><td>'yyyy-MM-dd HH:mm:ss.SSS'</td></tr>
- *   <tr><td>byte[]        </td><td>always <i>sql parameter (?)</i></td></tr>
+ *   <tr><td>Time          </td><td><code>'HH:mm:ss'</code></td></tr>
+ *   <tr><td>Timestamp     </td><td><code>'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
+ *   <tr><td>byte[]        </td><td><code>?</code> <i>(SQL parameter)</i></td></tr>
  * </table>
-
+ *
  * @since 1.7.0
  * @author Masato Kokubo
  * @see org.lightsleep.helper.TypeConverter

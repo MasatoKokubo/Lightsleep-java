@@ -24,12 +24,12 @@ import org.lightsleep.helper.TypeConverter;
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Format</th></tr>
- *   <tr><td>boolean</td><td rowspan="4">{@linkplain org.lightsleep.component.SqlString}</td><td>0 or 1</td></tr>
- *   <tr><td>String </td><td><i>sql parameter (?)</i> if too long, '...' (may include ...'||CHR(n)||'...) otherwise</td></tr>
- *   <tr><td>Time   </td><td>TO_TIMESTAMP('1970-01-01 HH:mm:ss','YYYY-MM-DD HH24:MI:SS.FF3')</td></tr>
- *   <tr><td>byte[]<br><i>(since 1.7.0)</i></td><td>always <i>sql parameter (?)</i></td></tr>
- *   <tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="4"></td></tr>
+ *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Contents</th></tr>
+ *   <tr><td>Boolean</td><td rowspan="4">SqlString</td><td>false -&gt; <code>0</code><br>true -&gt; <code>1</code></td></tr>
+ *   <tr><td>String </td><td><code>'...'</code><br>Converts control character to <code>'...'||CHR(n)||'...'</code>.<br><code>?</code> <i>(SQL parameter)</i> if long</td></tr>
+ *   <tr><td>Time   </td><td><code>TO_TIMESTAMP('1970-01-01 HH:mm:ss','YYYY-MM-DD HH24:MI:SS.FF3')</code></td></tr>
+ *   <tr><td>byte[]</td><td><code>?</code> <i>(SQL parameter)</i></td></tr>
+ *   <tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date</td><td rowspan="4">Throws a ConvertException if SQLException is thrown when getting value.</td></tr>
  *   <tr>                                         <td>java.sql.Date     </td></tr>
  *   <tr>                                         <td>java.sql.Time     </td></tr>
  *   <tr>                                         <td>java.sql.Timestamp</td></tr>

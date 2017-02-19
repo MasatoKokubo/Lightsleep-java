@@ -13,14 +13,14 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.lightsleep.component.SqlString;
@@ -28,141 +28,142 @@ import org.lightsleep.logger.Logger;
 import org.lightsleep.logger.LoggerFactory;
 
 /**
- * A class to convert data types.<br>
+ * Converts data types.<br>
  *
- * Following <b>TypeConverter</b> objects has been registered in <b>typeConverterMap</b>.<br>
+ * Has <b>TypeConverter</b> objects below in the static map.
+ * You can get this map with the {@linkplain #typeConverterMap()} method.<br>
+ * <br>
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source Data Type</th><th>Destination Data Type</th><th>Conversion Format</th></tr>
+ *   <tr><th>Source Data Type</th><th>Destination Data Type</th><th>Conversion Contents</th></tr>
  *
- *   <tr><td>Byte          </td><td rowspan="9">Boolean</td><td rowspan="9"></td></tr>
+ *   <tr><td>Byte          </td><td rowspan="9">Boolean</td><td rowspan="7">0 -&gt; false<br>1 -&gt; true<br>Throw a ConvertException otherwise.</td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
  *   <tr><td>Float         </td></tr>
  *   <tr><td>Double        </td></tr>
  *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>Character     </td><td>'0' -&gt; false<br>'1' -&gt; true<br>Throw a ConvertException otherwise.</td></tr>
+ *   <tr><td>String        </td><td>"0" -&gt; false<br>"1" -&gt; true<br>Throw a ConvertException otherwise.</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Byte</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Byte</td><td>false -&gt; 0<br>true -&gt; 1</td></tr>
+ *   <tr><td>Short         </td><td rowspan="7">Throws a ConvertException if out of range.</td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
  *   <tr><td>Float         </td></tr>
  *   <tr><td>Double        </td></tr>
  *   <tr><td>BigDecimal    </td></tr>
  *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>String        </td><td>Throws a ConvertException if non-numeric or out of range.</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Short</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Short</td><td>false -&gt; 0<br>true -&gt; 1</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Integer       </td><td rowspan="6">Throws a ConvertException if out of range.</td></tr>
  *   <tr><td>Long          </td></tr>
  *   <tr><td>Float         </td></tr>
  *   <tr><td>Double        </td></tr>
  *   <tr><td>BigDecimal    </td></tr>
  *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>String        </td><td>Throws a ConvertException if non-numeric or out of range.</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="10">Integer</td><td rowspan="10"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="10">Integer</td><td>false -&gt; 0<br>true -&gt; 1</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Long          </td><td rowspan="4">Throws a ConvertException if out of range.</td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td><td></td></tr>
+ *   <tr><td>String        </td><td>Throws a ConvertException if non-numeric or out of range.</td></tr>
+ *   <tr><td>java.util.Date</td><td>Throws a ConvertException if out of range.</td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="10">Long</td><td>false -&gt; 0<br>true -&gt; 1</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Integer       </td><td></td></tr>
+ *   <tr><td>Float         </td><td rowspan="3">Throws a ConvertException if out of range.</td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td><td></td></tr>
+ *   <tr><td>String        </td><td>Throws a ConvertException if non-numeric or out of range.</td></tr>
+ *   <tr><td>java.util.Date</td><td>Gets the long value.</td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Float</td><td>false -&gt; 0.0F<br>true -&gt; 1.0F</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Integer       </td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>Double        </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td></td></tr>
+ *   <tr><td>Character     </td><td></td></tr>
+ *   <tr><td>String        </td><td>Throws a ConvertException if nonnumeric.</td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Double</td><td>false -&gt; 0.0D<br>true -&gt; 1.0D</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Integer       </td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>Float         </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td></td></tr>
+ *   <tr><td>Character     </td><td></td></tr>
+ *   <tr><td>String        </td><td>Throws a ConvertException if nonnumeric.</td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">BigDecimal</td><td>false -&gt; <code>BigDecimal.ZERO</code><br>true -&gt; <code>BigDecimal.ONE</code></td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Integer       </td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>Float         </td><td></td></tr>
+ *   <tr><td>Double        </td><td></td></tr>
+ *   <tr><td>Character     </td><td></td></tr>
+ *   <tr><td>String        </td><td>Throws a ConvertException if nonnumeric.</td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Character</td><td>false -&gt; '0'<br>true -&gt; '1'</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Integer       </td><td rowspan="5">Throws a ConvertException if out of range.</td></tr>
  *   <tr><td>Long          </td></tr>
  *   <tr><td>Float         </td></tr>
  *   <tr><td>Double        </td></tr>
  *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
- *   <tr><td>java.util.Date<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>String        </td><td>Throws a ConvertException if the length is not 1.</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="10">Long</td><td rowspan="10"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
- *   <tr><td>Long          </td></tr>
- *   <tr><td>Float         </td></tr>
- *   <tr><td>Double        </td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
- *   <tr><td>java.util.Date<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>BigDecimal    </td><td rowspan="6">String</td><td>Using toPlainString()</td></tr>
+ *   <tr><td>java.uitl.Date</td><td rowspan="2"><code>"yyyy-MM-dd"</code></td></tr>
+ *   <tr><td>java.sql.Date </td></tr>
+ *   <tr><td>Time          </td><td><code>"HH:mm:ss"</code></td></tr>
+ *   <tr><td>Timestamp     </td><td><code>"yyyy-MM-dd HH:mm:ss.SSS"</code></td></tr>
+ *   <tr><td>Object        </td><td>Using toString()</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Float</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
- *   <tr><td>Long          </td></tr>
- *   <tr><td>Float         </td></tr>
- *   <tr><td>Double        </td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>Integer       </td><td rowspan="4">java.util.Date</td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td>Throws a ConvertException if out of range when converting to a Long.</td></tr>
+ *   <tr><td>String        </td><td><code>"yyyy-MM-dd"</code> -&gt; String<br>Throws a ConvertException if illegal format.</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Double</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
- *   <tr><td>Long          </td></tr>
- *   <tr><td>Float         </td></tr>
- *   <tr><td>Double        </td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>Integer       </td><td rowspan="5">java.sql.Date</td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td>Throws a ConvertException if out of range when converting to a Long.</td></tr>
+ *   <tr><td>java.util.Date</td><td></td></tr>
+ *   <tr><td>String        </td><td><code>"yyyy-MM-dd"</code> -&gt; String<br>Throws a ConvertException if illegal format.</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">BigDecimal</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
- *   <tr><td>Long          </td></tr>
- *   <tr><td>Float         </td></tr>
- *   <tr><td>Double        </td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>Integer       </td><td rowspan="5">Time</td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td>Throws a ConvertException if out of range when converting to a Long.</td></tr>
+ *   <tr><td>java.util.Date</td><td></td></tr>
+ *   <tr><td>String        </td><td><code>"HH:mm:ss"</code> -&gt; String<br>Throws a ConvertException if illegal format.</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Character</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
- *   <tr><td>Long          </td></tr>
- *   <tr><td>Float         </td></tr>
- *   <tr><td>Double        </td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>Long          </td><td rowspan="5">Timestamp</td><td></td></tr>
+ *   <tr><td>Integer       </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td>Throws a ConvertException if out of range when converting to a Long.</td></tr>
+ *   <tr><td>java.util.Date</td><td></td></tr>
+ *   <tr><td>String        </td><td><code>"yyyy-MM-dd HH:mm:ss"</code> or<br><code>"yyyy-MM-dd HH:mm:ss.SSS"</code> -&gt; String<br>Throws a ConvertException if illegal format.</td></tr>
  *
- *   <tr><td>Object        </td><td rowspan="6">String</td><td rowspan="2"></td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>java.uitl.Date<br><i>(since 1.4.0)</i></td><td rowspan="2">"yyyy-MM-dd"</td></tr>
- *   <tr><td>java.sql.Date <br><i>(since 1.4.0)</i></td></tr>
- *   <tr><td>Time          <br><i>(since 1.4.0)</i></td><td>"HH:mm:ss"</td></tr>
- *   <tr><td>Timestamp                             </td><td>"yyyy-MM-dd HH:mm:ss.SSS"</td></tr>
- *
- *   <tr><td>Long          </td><td rowspan="4">java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="4"></td></tr>
- *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>String        </td></tr>
- *
- *   <tr><td>Long          </td><td rowspan="5">java.sql.Date</td><td rowspan="5"></td></tr>
- *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>java.util.Date</td></tr>
- *   <tr><td>String        </td></tr>
- *
- *   <tr><td>Long          </td><td rowspan="5">Time</td><td rowspan="5"></td></tr>
- *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>java.util.Date</td></tr>
- *   <tr><td>String        </td></tr>
- *
- *   <tr><td>Long          </td><td rowspan="5">Timestamp</td><td rowspan="5"></td></tr>
- *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>java.util.Date</td></tr>
- *   <tr><td>String        </td></tr>
- *
- *   <tr><td rowspan="4">Enum<br><i>(since 1.4.0)</i></td>
- *       <td>Integer</td><td rowspan="4"></td></tr>
- *   <tr><td>Byte   </td></tr>
- *   <tr><td>Short  </td></tr>
- *   <tr><td>Long   </td></tr>
+ *   <tr><td rowspan="4">Enum</td><td>Byte   </td><td rowspan="2">Using ordinal()<br>Throws a ConvertException if out of range.</td></tr>
+ *   <tr>                         <td>Short  </td></tr>
+ *   <tr>                         <td>Integer</td><td rowspan="2">Using ordinal()</td></tr>
+ *   <tr>                         <td>Long   </td></tr>
  * </table>
  *
  * @since 1.0
@@ -218,6 +219,11 @@ public class TypeConverter<ST, DT> {
 	// The string of Timestamp format (with millis)
 	private static final String timestampMillisFormatString = "yyyy-MM-dd HH:mm:ss.SSS";
 
+	// The TypeConverter map
+// 1.8.1
+	private static final Map<String, TypeConverter<?, ?>> typeConverterMap = new ConcurrentHashMap<>();
+////
+
 	// The source data type
 	private final Class<ST> sourceType;
 
@@ -259,27 +265,36 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-	 * Puts all the <b>typeConverters</b> in the <b>typeConverterMap</b>.
+	 * Puts the <b>typeConverter</b> in the <b>typeConverterMap</b>.
 	 *
 	 * @param typeConverterMap the <b>TypeConverter</b> map
-	 * @param typeConverters an array of <b>TypeConverter</b> objects
+	 * @param typeConverter the <b>TypeConverter</b>
 	 *
-	 * @throws NullPointerException <b>typeConverterMap</b>, <b>typeConverters</b> or any of <b>typeConverters</b> is null
+	 * @throws NullPointerException <b>typeConverterMap</b> or <b>typeConverter</b> is null
 	 */
-	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?>... typeConverters) {
+// 1.8.1
+//	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?>... typeConverters) {
+//		if (typeConverterMap == null) throw new NullPointerException("TypeConverter.put: typeConverterMap == null");
+//		if (typeConverters == null) throw new NullPointerException("TypeConverter.put: typeConverters == null");
+//
+//		Arrays.stream(typeConverters).forEach(typeConverter -> {
+//			if (typeConverter == null) throw new NullPointerException("TypeConverter.put: typeConverters[...] == null");
+//
+//			boolean overwrite = typeConverterMap.containsKey(typeConverter.key);
+//
+//			typeConverterMap.put(typeConverter.key, typeConverter);
+//
+//			logger.debug(() -> "TypeConverter.put: " + typeConverter + (overwrite ? " (overwrite)" : ""));
+//		});
+//	}
+	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?> typeConverter) {
 		if (typeConverterMap == null) throw new NullPointerException("TypeConverter.put: typeConverterMap == null");
-		if (typeConverters == null) throw new NullPointerException("TypeConverter.put: typeConverters == null");
+		if (typeConverter == null) throw new NullPointerException("TypeConverter.put: typeConverter == null");
 
-		Arrays.stream(typeConverters).forEach(typeConverter -> {
-			if (typeConverter == null) throw new NullPointerException("TypeConverter.put: typeConverters[...] == null");
-
-			boolean overwrite = typeConverterMap.containsKey(typeConverter.key);
-
-			typeConverterMap.put(typeConverter.key, typeConverter);
-
-			logger.debug(() -> "TypeConverter.put: " + typeConverter + (overwrite ? " (overwrite)" : ""));
-		});
+		TypeConverter<?, ?> beforeTypeConverter = typeConverterMap.put(typeConverter.key, typeConverter);
+		logger.debug(() -> "TypeConverter.put: " + typeConverter + (beforeTypeConverter != null ? " (overwrite)" : ""));
 	}
+////
 
 	/**
 	 * Finds and returns a <b>TypeConverter</b>
@@ -449,6 +464,18 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
+	 * Returns an unmodifiable <b>TypeConverter</b> map
+	 * where various TypeConverter objects are registered.
+	 *
+	 * @return the unmodifiable <b>TypeConverter</b> map
+	 *
+	 * @since 1.8.1
+	 */
+	public static Map<String, TypeConverter<?, ?>>typeConverterMap() {
+		return Collections.unmodifiableMap(typeConverterMap);
+	}
+
+	/**
 	 * Constructs a new <b>TypeConverter</b>.
 	 *
 	 * @param sourceType the source data type
@@ -561,11 +588,13 @@ public class TypeConverter<ST, DT> {
 		return key;
 	}
 
-	/**
-	 * A <b>TypeConverter</b> map
-	 * that is used in the conversion of when storing values retrieved from the database in the field.<br>
-	 */
-	public static final Map<String, TypeConverter<?, ?>> typeConverterMap = new LinkedHashMap<>();
+// 1.8.1
+//	/**
+//	 * A <b>TypeConverter</b> map
+//	 * that is used in the conversion of when storing values retrieved from the database in the field.<br>
+//	 */
+//	public static final Map<String, TypeConverter<?, ?>> typeConverterMap = new LinkedHashMap<>();
+////
 	static {
 	// * -> Boolean
 		// Byte -> Boolean

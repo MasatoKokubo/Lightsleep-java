@@ -31,9 +31,6 @@ public class Utils {
 
 	// A map to convert the primitive type to class type
 	private static final Map<Class<?>, Class<?>> toClassMap = new LinkedHashMap<>();
-
-	// A map to convert the class type to primitive type
-	private static final Map<Class<?>, Class<?>> toPrimitiveMap = new LinkedHashMap<>();
 	static {
 		toClassMap.put(boolean.class, Boolean  .class);
 		toClassMap.put(char   .class, Character.class);
@@ -43,7 +40,11 @@ public class Utils {
 		toClassMap.put(long   .class, Long     .class);
 		toClassMap.put(float  .class, Float    .class);
 		toClassMap.put(double .class, Double   .class);
+	}
 
+	// A map to convert the class type to primitive type
+	private static final Map<Class<?>, Class<?>> toPrimitiveMap = new LinkedHashMap<>();
+	static {
 		toPrimitiveMap.put(Boolean  .class, boolean.class);
 		toPrimitiveMap.put(Character.class, char   .class);
 		toPrimitiveMap.put(Byte     .class, byte   .class);

@@ -14,44 +14,45 @@ import org.lightsleep.Sql;
 /**
  * 特定の DBMS に依存しないデータベース・ハンドラーです。<br>
  *
- * このクラスのオブジェクトは、
- * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}
- * に以下の <b>TypeConverter</b> を追加した <b>TypeConverter</b> マップを持ちます。
-
+ * {@linkplain org.lightsleep.helper.TypeConverter} クラスが持つ
+ * <b>TypeConverter</b> オブジェクトおよび以下の変換を行う
+ * <b>TypeConverter</b> オブジェクトを持ちます。<br>
+ * <br>
+ *
  * <table class="additional">
- *   <caption><span>登録されている TypeConverter オブジェクト</span></caption>
- *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換フォーマット</th></tr>
+ *   <caption><span>追加される TypeConverter オブジェクト</span></caption>
+ *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
  *
- *   <tr><td>Clob          </td><td>String</td><td></td></tr>
+ *   <tr><td>Clob          </td><td>String</td><td rowspan="2">長さが <code>Integer.MAX_VALUE</code> を超える場合 ConvertException をスロー<br>内容の取得時に SQLException がスローされた場合 ConvertException をスロー</td></tr>
  *
- *   <tr><td>Blob          </td><td>byte[]</td><td></td></tr>
+ *   <tr><td>Blob          </td><td>byte[]</td></tr>
  *
- *   <tr><td rowspan="13">java.sql.Array</td><td>boolean[]      </td><td></td></tr>
- *   <tr>                                    <td>byte[]         </td><td></td></tr>
- *   <tr>                                    <td>short[]        </td><td></td></tr>
- *   <tr>                                    <td>int[]          </td><td></td></tr>
- *   <tr>                                    <td>long[]         </td><td></td></tr>
- *   <tr>                                    <td>float[]        </td><td></td></tr>
- *   <tr>                                    <td>double[]       </td><td></td></tr>
- *   <tr>                                    <td>BigDecimal[]   </td><td></td></tr>
- *   <tr>                                    <td>String[]       </td><td></td></tr>
- *   <tr>           <td>java.util.Date[]<br><i>(since 1.4.0)</i></td><td></td></tr>
- *   <tr>                                    <td>java.sql.Date[]</td><td></td></tr>
- *   <tr>                                    <td>Time[]         </td><td></td></tr>
- *   <tr>                                    <td>Timestamp[]    </td><td></td></tr>
+ *   <tr><td rowspan="13">java.sql.Array</td><td>boolean[]       </td><td rowspan="13">各要素を TypeConverter で配列要素のデータ型に変換</td></tr>
+ *   <tr>                                    <td>byte[]          </td></tr>
+ *   <tr>                                    <td>short[]         </td></tr>
+ *   <tr>                                    <td>int[]           </td></tr>
+ *   <tr>                                    <td>long[]          </td></tr>
+ *   <tr>                                    <td>float[]         </td></tr>
+ *   <tr>                                    <td>double[]        </td></tr>
+ *   <tr>                                    <td>BigDecimal[]    </td></tr>
+ *   <tr>                                    <td>String[]        </td></tr>
+ *   <tr>                                    <td>java.util.Date[]</td></tr>
+ *   <tr>                                    <td>java.sql.Date[] </td></tr>
+ *   <tr>                                    <td>Time[]          </td></tr>
+ *   <tr>                                    <td>Timestamp[]     </td></tr>
  *
- *   <tr><td>Boolean        </td><td rowspan="26">{@linkplain org.lightsleep.component.SqlString}</td><td>FALSE か TRUE</td></tr>
- *   <tr><td>Object         </td><td>'...'</td></tr>
- *   <tr><td>Character      </td><td>'...'</td></tr>
+ *   <tr><td>Boolean        </td><td rowspan="26">SqlString</td><td>false ➔ <code>FALSE</code><br>true ➔ <code>TRUE</code></td></tr>
+ *   <tr><td>Object         </td><td rowspan="2"><code>'...'</code></td></tr>
+ *   <tr><td>Character      </td></tr>
  *   <tr><td>BigDecimal     </td><td></td></tr>
- *   <tr><td>String         </td><td>長い場合は <i>SQL パラメーター (?)</i>、そうでなければ '...' </td></tr>
- *   <tr><td>java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="2">DATE'yyyy-MM-dd'</td></tr>
+ *   <tr><td>String         </td><td><code>'...'</code><br>長い場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
+ *   <tr><td>java.util.Date</td><td rowspan="2"><code>DATE'yyyy-MM-dd'</code></td></tr>
  *   <tr><td>java.sql.Date  </td></tr>
- *   <tr><td>Time           </td><td>TIME'HH:mm:ss'</td></tr>
- *   <tr><td>Timestamp      </td><td>TIMESTAMP'yyyy-MM-dd HH:mm:ss.SSS'</td></tr>
- *   <tr><td>Enum           </td><td></td></tr>
- *   <tr><td>byte[]         </td><td>長い場合は <i>SQL パラメーター (?)</i>、そうでなければ X'...'</td></tr>
- *   <tr><td>boolean[]      </td><td rowspan="14">ARRAY[x,y,z,...]</td></tr>
+ *   <tr><td>Time           </td><td><code>TIME'HH:mm:ss'</code></td></tr>
+ *   <tr><td>Timestamp      </td><td><code>TIMESTAMP'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
+ *   <tr><td>Enum           </td><td><code>'...'</code> (toString() で変換)</td></tr>
+ *   <tr><td>byte[]         </td><td><code>X'...'</code><br>長い場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
+ *   <tr><td>boolean[]      </td><td rowspan="14"><code>ARRAY[x,y,z,...]</code><br>各要素を TypeConverter で SqlString に変換</td></tr>
  *   <tr><td>char[]         </td></tr>
  *   <tr><td>byte[][]       </td></tr>
  *   <tr><td>short[]        </td></tr>
@@ -61,11 +62,11 @@ import org.lightsleep.Sql;
  *   <tr><td>double[]       </td></tr>
  *   <tr><td>BigDecimal[]   </td></tr>
  *   <tr><td>String[]       </td></tr>
- *   <tr><td>java.util.Date[]<br><i>(since 1.4.0)</i></td></tr>
+ *   <tr><td>java.util.Date[]</td></tr>
  *   <tr><td>java.sql.Date[]</td></tr>
  *   <tr><td>Time[]         </td></tr>
  *   <tr><td>Timestamp[]    </td></tr>
- *   <tr><td>Iterable       </td><td>(x,y,z,...)</td></tr>
+ *   <tr><td>Iterable       </td><td><code>(x,y,z,...)</code><br>各要素を TypeConverter で SqlString に変換</td></tr>
  * </table>
  *
  * @since 1.0.0

@@ -16,19 +16,18 @@ import org.lightsleep.helper.TypeConverter;
  * <a href="https://www.sqlite.org/index.html" target="SQLite">SQLite</a>
  * 用のデータベース・ハンドラーです。<br>
  *
- * このクラスのオブジェクトは、
- * {@linkplain Standard#typeConverterMap}.
- * に以下の <b>TypeConverter</b> を追加した <b>TypeConverter</b> マップを持ちます。
+ * スーパークラスで追加された <b>TypeConverter</b> オブジェクトに以下を追加するか置き換えます。<br>
+ * <br>
  *
  * <table class="additional">
- *   <caption><span>登録されている TypeConverter オブジェクト</span></caption>
- *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換フォーマット</th></tr>
- *   <tr><td>boolean       </td><td rowspan="6">{@linkplain org.lightsleep.component.SqlString}</td><td>0 か 1</td></tr>
- *   <tr><td>java.util.Date</td><td rowspan="2">'yyyy-MM-dd'</td></tr>
+ *   <caption><span>追加される TypeConverter オブジェクト</span></caption>
+ *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
+ *   <tr><td>Boolean       </td><td rowspan="6">SqlString</td><td>false ➔ <code>0</code><br>true ➔ <code>1</code></td></tr>
+ *   <tr><td>java.util.Date</td><td rowspan="2"><code>'yyyy-MM-dd'</code></td></tr>
  *   <tr><td>java.sql.Date </td></tr>
- *   <tr><td>Time          </td><td>'HH:mm:ss'</td></tr>
- *   <tr><td>Timestamp     </td><td>'yyyy-MM-dd HH:mm:ss.SSS'</td></tr>
- *   <tr><td>byte[]        </td><td>常に <i>SQL パラメータ (?)</i></td></tr>
+ *   <tr><td>Time          </td><td><code>'HH:mm:ss'</code></td></tr>
+ *   <tr><td>Timestamp     </td><td><code>'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
+ *   <tr><td>byte[]        </td><td><code>?</code> <i>(SQLパラメータ)</i></td></tr>
  * </table>
 
  * @since 1.7.0

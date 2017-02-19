@@ -16,9 +16,9 @@ import org.lightsleep.helper.TypeConverter;
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Format</th></tr>
- *   <tr><td>boolean</td><td rowspan="2">{@linkplain org.lightsleep.component.SqlString}</td><td>0 or 1</td></tr>
- *   <tr><td>String </td><td><i>sql parameter (?)</i> if too long, '...' (may include escape sequences) otherwise</td></tr>
+ *   <tr><th>Source Data Type</th><th>Destination Data Type</th><th>Conversion Contents</th></tr>
+ *   <tr><td>Boolean</td><td rowspan="2">SqlString</td><td>false -&gt; <code>0</code><br>true -&gt; <code>1</code></td></tr>
+ *   <tr><td>String </td><td><code>'...'</code><br>Converts control character to escape sequence.<br><code>?</code> <i>(SQL parameter)</i> if long</td></tr>
  * </table>
  *
  * @since 1.0.0

@@ -7,141 +7,142 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * データ型を変換するためのクラスです。<br>
+ * データ型を変換します。<br>
  *
- * 以下の <b>TypeConverter</b> オブジェクトが <b>typeConverterMap</b> に登録されています。<br>
- * 
+ * 下記の <b>TypeConverter</b> オブジェクトを static マップに持ちます。
+ * このマップは、{@linkplain #typeConverterMap()} メソッドで取得する事ができます。<br>
+ * <br>
+ *
  * <table class="additional">
  *   <caption><span>登録されている TypeConverter オブジェクト</span></caption>
- *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換フォーマット</th></tr>
+ *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
  *
- *   <tr><td>Byte          </td><td rowspan="9">Boolean</td><td rowspan="9"></td></tr>
+ *   <tr><td>Byte          </td><td rowspan="9">Boolean</td><td rowspan="7">0 ➔ false<br>1 ➔ true<br>その他の場合 ConvertException をスロー</td></tr>
  *   <tr><td>Short         </td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
  *   <tr><td>Float         </td></tr>
  *   <tr><td>Double        </td></tr>
  *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>Character     </td><td>'0' ➔ false<br>'1' ➔ true<br>その他の場合 ConvertException をスロー</td></tr>
+ *   <tr><td>String        </td><td>"0" ➔ false<br>"1" ➔ true<br>その他の場合 ConvertException をスロー</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Byte</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Byte</td><td>false ➔ 0<br>true ➔ 1</td></tr>
+ *   <tr><td>Short         </td><td rowspan="7">範囲外の場合 ConvertException をスロー</td></tr>
  *   <tr><td>Integer       </td></tr>
  *   <tr><td>Long          </td></tr>
  *   <tr><td>Float         </td></tr>
  *   <tr><td>Double        </td></tr>
  *   <tr><td>BigDecimal    </td></tr>
  *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>String        </td><td>非数値または範囲外の場合 ConvertException をスロー</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Short</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="9">Short</td><td>false ➔ 0<br>true ➔ 1</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Integer       </td><td rowspan="6">範囲外の場合 ConvertException をスロー</td></tr>
  *   <tr><td>Long          </td></tr>
  *   <tr><td>Float         </td></tr>
  *   <tr><td>Double        </td></tr>
  *   <tr><td>BigDecimal    </td></tr>
  *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>String        </td><td>非数値または範囲外の場合 ConvertException をスロー</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="10">Integer</td><td rowspan="10"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="10">Integer</td><td>false ➔ 0<br>true ➔ 1</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Long          </td><td rowspan="4">範囲外の場合 ConvertException をスロー</td></tr>
+ *   <tr><td>Float         </td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td><td></td></tr>
+ *   <tr><td>String        </td><td>非数値または範囲外の場合 ConvertException をスロー</td></tr>
+ *   <tr><td>java.util.Date</td><td>範囲外の場合 ConvertException をスロー</td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="10">Long</td><td>false ➔ 0<br>true ➔ 1</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Integer       </td><td></td></tr>
+ *   <tr><td>Float         </td><td rowspan="3">範囲外の場合 ConvertException をスロー</td></tr>
+ *   <tr><td>Double        </td></tr>
+ *   <tr><td>BigDecimal    </td></tr>
+ *   <tr><td>Character     </td><td></td></tr>
+ *   <tr><td>String        </td><td>非数値または範囲外の場合 ConvertException をスロー</td></tr>
+ *   <tr><td>java.util.Date</td><td>long 値を取得</td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Float</td><td>false ➔ 0.0F<br>true ➔ 1.0F</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Integer       </td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>Double        </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td></td></tr>
+ *   <tr><td>Character     </td><td></td></tr>
+ *   <tr><td>String        </td><td>非数値の場合 ConvertException をスロー</td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Double</td><td>false ➔ 0.0D<br>true ➔ 1.0D</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Integer       </td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>Float         </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td></td></tr>
+ *   <tr><td>Character     </td><td></td></tr>
+ *   <tr><td>String        </td><td>非数値の場合 ConvertException をスロー</td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">BigDecimal</td><td>false ➔ <code>BigDecimal.ZERO</code><br>true ➔ <code>BigDecimal.ONE</code></td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Integer       </td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>Float         </td><td></td></tr>
+ *   <tr><td>Double        </td><td></td></tr>
+ *   <tr><td>Character     </td><td></td></tr>
+ *   <tr><td>String        </td><td>非数値の場合 ConvertException をスロー</td></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="9">Character</td><td>false ➔ '0'<br>true ➔ '1'</td></tr>
+ *   <tr><td>Byte          </td><td></td></tr>
+ *   <tr><td>Short         </td><td></td></tr>
+ *   <tr><td>Integer       </td><td rowspan="5">範囲外の場合 ConvertException をスロー</td></tr>
  *   <tr><td>Long          </td></tr>
  *   <tr><td>Float         </td></tr>
  *   <tr><td>Double        </td></tr>
  *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
- *   <tr><td>java.util.Date<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>String        </td><td>String の長さが1以外の場合 ConvertException をスロー</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="10">Long</td><td rowspan="10"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
- *   <tr><td>Long          </td></tr>
- *   <tr><td>Float         </td></tr>
- *   <tr><td>Double        </td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
- *   <tr><td>java.util.Date<br><i>(since 1.8.0)</i></td></tr>
+ *   <tr><td>BigDecimal    </td><td rowspan="6">String</td><td>toPlainString() で変換</td></tr>
+ *   <tr><td>java.uitl.Date</td><td rowspan="2"><code>"yyyy-MM-dd"</code></td></tr>
+ *   <tr><td>java.sql.Date </td></tr>
+ *   <tr><td>Time          </td><td><code>"HH:mm:ss"</code></td></tr>
+ *   <tr><td>Timestamp     </td><td><code>"yyyy-MM-dd HH:mm:ss.SSS"</code></td></tr>
+ *   <tr><td>Object        </td><td>toString() で変換</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Float</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
- *   <tr><td>Long          </td></tr>
- *   <tr><td>Float         </td></tr>
- *   <tr><td>Double        </td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>Integer       </td><td rowspan="4">java.util.Date</td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td>Long への変換で範囲外の場合 ConvertException をスロー</td></tr>
+ *   <tr><td>String        </td><td><code>"yyyy-MM-dd"</code> ➔ String<br>フォーマット不正の場合 ConvertException をスロー</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Double</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
- *   <tr><td>Long          </td></tr>
- *   <tr><td>Float         </td></tr>
- *   <tr><td>Double        </td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>Integer       </td><td rowspan="5">java.sql.Date</td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td>Long への変換で範囲外の場合 ConvertException をスロー</td></tr>
+ *   <tr><td>java.util.Date</td><td></td></tr>
+ *   <tr><td>String        </td><td><code>"yyyy-MM-dd"</code> ➔ String<br>フォーマット不正の場合 ConvertException をスロー</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">BigDecimal</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
- *   <tr><td>Long          </td></tr>
- *   <tr><td>Float         </td></tr>
- *   <tr><td>Double        </td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>Integer       </td><td rowspan="5">Time</td><td></td></tr>
+ *   <tr><td>Long          </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td>Long への変換で範囲外の場合 ConvertException をスロー</td></tr>
+ *   <tr><td>java.util.Date</td><td></td></tr>
+ *   <tr><td>String        </td><td><code>"HH:mm:ss"</code> ➔ String<br>フォーマット不正の場合 ConvertException をスロー</td></tr>
  *
- *   <tr><td>Boolean       </td><td rowspan="9">Character</td><td rowspan="9"></td></tr>
- *   <tr><td>Short         </td></tr>
- *   <tr><td>Integer       </td></tr>
- *   <tr><td>Long          </td></tr>
- *   <tr><td>Float         </td></tr>
- *   <tr><td>Double        </td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>Character     </td></tr>
- *   <tr><td>String        </td></tr>
+ *   <tr><td>Long          </td><td rowspan="5">Timestamp</td><td></td></tr>
+ *   <tr><td>Integer       </td><td></td></tr>
+ *   <tr><td>BigDecimal    </td><td>Long への変換で範囲外の場合 ConvertException をスロー</td></tr>
+ *   <tr><td>java.util.Date</td><td></td></tr>
+ *   <tr><td>String        </td><td><code>"yyyy-MM-dd HH:mm:ss"</code> または<br><code>"yyyy-MM-dd HH:mm:ss.SSS"</code> ➔ String<br>フォーマット不正の場合 ConvertException をスロー</td></tr>
  *
- *   <tr><td>Object        </td><td rowspan="6">String</td><td rowspan="2"></td></tr>
- *   <tr><td>BigDecimal    </td></tr>
- *   <tr><td>java.uitl.Date<br><i>(since 1.4.0)</i></td><td rowspan="2">"yyyy-MM-dd"</td></tr>
- *   <tr><td>java.sql.Date <br><i>(since 1.4.0)</i></td></tr>
- *   <tr><td>Time          <br><i>(since 1.4.0)</i></td><td>"HH:mm:ss"</td></tr>
- *   <tr><td>Timestamp                             </td><td>"yyyy-MM-dd HH:mm:ss.SSS"</td></tr>
- *
- *   <tr><td>Long          </td><td rowspan="4">java.util.Date<br><i>(since 1.4.0)</i></td><td rowspan="4"></td></tr>
- *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>String        </td></tr>
- *
- *   <tr><td>Long          </td><td rowspan="5">java.sql.Date</td><td rowspan="5"></td></tr>
- *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>java.util.Date</td></tr>
- *   <tr><td>String        </td></tr>
- *
- *   <tr><td>Long          </td><td rowspan="5">Time</td><td rowspan="5"></td></tr>
- *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>java.util.Date</td></tr>
- *   <tr><td>String        </td></tr>
- *
- *   <tr><td>Long          </td><td rowspan="5">Timestamp</td><td rowspan="5"></td></tr>
- *   <tr><td>Integer<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>BigDecimal<br><i>(since 1.8.0)</i></td></tr>
- *   <tr><td>java.util.Date</td></tr>
- *   <tr><td>String        </td></tr>
- *
- *   <tr><td rowspan="4">Enum<br><i>(since 1.4.0)</i></td>
- *       <td>Integer</td><td rowspan="4"></td></tr>
- *   <tr><td>Byte   </td></tr>
- *   <tr><td>Short  </td></tr>
- *   <tr><td>Long   </td></tr>
+ *   <tr><td rowspan="4">Enum</td><td>Byte   </td><td rowspan="2">ordinal() で変換<br>範囲外の場合 ConvertException をスロー</td></tr>
+ *   <tr>                         <td>Short  </td></tr>
+ *   <tr>                         <td>Integer</td><td rowspan="2">ordinal() で変換</td></tr>
+ *   <tr>                         <td>Long   </td></tr>
  * </table>
  *
  * @since 1.0
@@ -224,6 +225,17 @@ public class TypeConverter<ST, DT> {
 		@throws ConvertException コンバータが見つからない場合か変換処理で精度が落ちた場合
 	*/
 	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
+		return null;
+	}
+
+	/**
+	 * 各種の TypeConverter オブジェクトが登録された変更不可な <b>TypeConverter</b> マップを返します。
+	 *
+	 * @return <b>TypeConverter</b> マップ
+	 *
+	 * @since 1.8.1
+	 */
+	public static Map<String, TypeConverter<?, ?>>typeConverterMap() {
 		return null;
 	}
 
@@ -323,9 +335,4 @@ public class TypeConverter<ST, DT> {
 	public String toString() {
 		return null;
 	}
-
-	/**
-		データベースから取得した値をフィールドに格納する際のデータ変換に使用する <b>TypeConverter</b> マップです。<br>
-	*/
-	public static final Map<String, TypeConverter<?, ?>> typeConverterMap = null;
 }
