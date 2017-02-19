@@ -1,5 +1,15 @@
 
 /* Followings are additional for Lightsleep. */
+body, div.block, dd {
+	font-family: 'Segoe UI', sans-serif;
+	font-size: 14px;
+}
+
+.contentContainer .description dl dd, .contentContainer .details dl dd, .serializedFormContainer dl dd {
+	font-family: 'Segoe UI', sans-serif;
+	font-size: 14px;
+}
+
 pre, code, tt, dt code, table tr td dt code {
 	font-family: Consolas, monospace;
 }
@@ -16,7 +26,7 @@ b, b i, .code {
 }
 
 .title {
-	font-family: Verdana, sans-serif;
+	font-family: 'Segoe UI', sans-serif;
 	font-weight: bold;
 }
 
@@ -42,8 +52,8 @@ b, b i, .code {
 }
 
 .copyright {
-	font-family: Verdana, sans-serif;
-    font-size: 14px;
+	font-family: 'Segoe UI', sans-serif;
+    font-size: 16px;
 	font-style: italic;
 	color: #666666;
 	text-align: center;
@@ -62,7 +72,7 @@ table.additional caption {
 .sampleTitle span, table.additional caption span {
 	background-color: #F8981D;
 	padding: 2px 6px 2px 6px;
-	font-family: Verdana, sans-serif;
+	font-family: 'Segoe UI', sans-serif;
     font-size: 12px;
 	font-weight: bold;
 }
@@ -112,8 +122,8 @@ ul.additional li, ol.additional li {
 table.additional {
 	margin: 8px;
 	border-collapse: collapse;
-	font-family: Verdana, sans-serif;
-    font-size: 12px;
+	font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
 }
 
 table.additional tr th {
@@ -135,6 +145,17 @@ table.additional tr td {
 .arrow {
 	margin: 4px 0px -6px 60px;
 	color: #DD4400;
+}
+
+.langLink {
+	margin: 12px 32px 2px 32px;
+	text-align: right;
+}
+
+.langLink a {
+	background-color: #FFFF44;
+	padding: 2px 8px 5px 8px;
+	border-radius: 6px;
 }
 
 .ja {display: none;}

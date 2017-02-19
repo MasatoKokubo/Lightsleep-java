@@ -1,7 +1,7 @@
 Lightsleep
 ===========
 
-Lightsleep is a database persistence library of lightweight. It can be used in Java 8.
+Lightsleep is a object-relational mapping library of lightweight. It can be used in Java 8.
 
 #### Features
 

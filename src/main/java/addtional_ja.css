@@ -1,11 +1,11 @@
 
 /* Followings are additional for Lightsleep. */
 body, div.block, dd {
-	font-family: 'Meiryo UI', Verdana, sans-serif;
+	font-family: 'Meiryo UI', 'Segoe UI', sans-serif;
 }
 
 .contentContainer .description dl dd, .contentContainer .details dl dd, .serializedFormContainer dl dd {
-	font-family: 'Meiryo UI', Verdana, sans-serif;
+	font-family: 'Meiryo UI', 'Segoe UI', sans-serif;
 	font-size: 12px;
 }
 
@@ -25,7 +25,7 @@ b, b i, .code {
 }
 
 .title {
-	font-family: 'Meiryo UI', Verdana, sans-serif;
+	font-family: 'Meiryo UI', 'Segoe UI', sans-serif;
 	font-weight: bold;
 }
 
@@ -51,7 +51,7 @@ b, b i, .code {
 }
 
 .copyright {
-	font-family: Verdana, sans-serif;
+	font-family: 'Segoe UI', sans-serif;
     font-size: 14px;
 	font-style: italic;
 	color: #666666;
@@ -71,7 +71,7 @@ table.additional caption {
 .sampleTitle span, table.additional caption span {
 	background-color: #F8981D;
 	padding: 2px 6px 2px 6px;
-	font-family: Verdana, sans-serif;
+	font-family: 'Segoe UI', sans-serif;
     font-size: 12px;
 	font-weight: bold;
 }
@@ -121,7 +121,7 @@ ul.additional li, ol.additional li {
 table.additional {
 	margin: 8px;
 	border-collapse: collapse;
-	font-family: 'Meiryo UI', Verdana, sans-serif;
+	font-family: 'Meiryo UI', 'Segoe UI', sans-serif;
     font-size: 12px;
 }
 
@@ -144,6 +144,17 @@ table.additional tr td {
 .arrow {
 	margin: 4px 0px -6px 60px;
 	color: #DD4400;
+}
+
+.langLink {
+	margin: 12px 32px 2px 32px;
+	text-align: right;
+}
+
+.langLink a {
+	background-color: #FFFF44;
+	padding: 2px 8px 5px 8px;
+	border-radius: 6px;
 }
 
 .en {display: none;}

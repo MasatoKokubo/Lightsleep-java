@@ -1,7 +1,7 @@
 Lightsleep
 ===========
 
-Lightsleep は、軽量のデータベース永続化ライブラリで、Java 8 で利用できます。
+Lightsleep は、軽量の O/R マッピング・ライブラリで、Java 8 で利用できます。
 
 #### 特徴
 
