@@ -39,4 +39,6 @@ The MIT License (MIT)
 
 [Manual](Manual.md)
 
+[API Specification](http://masatokokubo.github.io/Lightsleep/javadoc_ja/index.html)
+
 [Japanese](README_ja.md)
