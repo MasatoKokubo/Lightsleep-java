@@ -17,10 +17,7 @@ import org.lightsleep.Sql;
 */
 public class Expression implements Condition {
 	/** 空の式 */
-	public static final Expression empty = null;
-
-	/** デフォルト値の式 */
-	public static final Expression DEFAULT = new Expression("DEFAULT");
+	public static final Expression EMPTY = null;
 
 	/**
 		Expression を構築します。
@@ -60,36 +57,38 @@ public class Expression implements Condition {
 	}
 
 	/**
-		{@inheritDoc}
-
-		<table class="additional">
-			<caption><span>変換処理</span></caption>
-			<tr>
-				<th>変換前文字列</th>
-				<th>変換後文字列</th>
-			</tr>
-			<tr>
-				<td>{}</td>
-				<td>コンストラクタの引数の <b>arguments</b> の要素</td>
-			</tr>
-			<tr>
-				<td>{<i>プロパティ名</i>}</td>
-				<td>カラム名</td>
-			</tr>
-			<tr>
-				<td>{<i>テーブル別名</i>.<i>プロパティ名</i>}</td>
-				<td>テーブル別名.カラム名</td>
-			</tr>
-			<tr>
-				<td>{<i>テーブル別名</i>_<i>プロパティ名</i>}</td>
-				<td>カラム別名</td>
-			</tr>
-			<tr>
-				<td>{#<i>プロパティ名</i>}</td>
-				<td>エンティティのプロパティ値</td>
-			</tr>
-		</table>
-	*/
+	 * {@inheritDoc}
+	 * 
+	 * <table class="additional">
+	 *   <caption><span>変換処理</span></caption>
+	 *   <tr>
+	 *     <th>変換前文字列</th>
+	 *     <th>変換後文字列</th>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>{}</td>
+	 *     <td>コンストラクタの引数の <b>arguments</b> の要素</td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>{<i>プロパティ名</i>}</td>
+	 *     <td>カラム名</td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>{<i>テーブル別名</i>.<i>プロパティ名</i>}</td>
+	 *     <td>テーブル別名.カラム名</td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>{<i>テーブル別名</i>_<i>プロパティ名</i>}</td>
+	 *     <td>カラム別名</td>
+	 *   </tr>
+	 *   <tr>
+	 *     <td>{#<i>プロパティ名</i>}</td>
+	 *     <td>エンティティのプロパティ値</td>
+	 *   </tr>
+	 * </table>
+	 *
+	 * @throws IllegalArgumentException 式の引数がプレースメントよりも少ないか多い場合
+	 */
 	@Override
 	public <E> String toString(Sql<E> sql, List<Object> parameters) {
 		return null;

@@ -177,6 +177,19 @@ public class ColumnInfo {
 	}
 
 	/**
+	 * Returns <b>tableAlias + '.' + <i>property name</i></b> if <b>tableAlias</b> is not empty,
+	 * <b><i>property name</i></b> otherwise.
+	 *
+	 * @param tableAlias the table alias
+	 * @return <b>tableAlias + '.' + <i>column name</i></b> or <b><i>column name</i></b>
+	 *
+	 * @since 1.8.2
+	 */
+	public String getPropertyName(String tableAlias) {
+		return tableAlias.isEmpty() ? propertyName : tableAlias + '.' + propertyName;
+	}
+
+	/**
 	 * Returns <b>tableAlias + '.' + <i>column name</i></b> if <b>tableAlias</b> is not empty,
 	 * <b><i>column name</i></b> otherwise.
 	 *

@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Indicates that the field not related to any column.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * public class Contact {
  *

@@ -18,7 +18,7 @@ import java.sql.Connection;
  *  * If an entity is enclose another entity, by implementing this interface,
  * 	You can perform SQL processing to the enclosed entity in conjunction the entity which encloses.
  * 
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * public class Contact implements PreInsert {
  *  {@literal @}Key public int id;

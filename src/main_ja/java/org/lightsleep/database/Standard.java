@@ -200,6 +200,131 @@ public class Standard implements Database {
 	}
 
 	/**
+	 * DISTINCT を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsDistinct(StringBuilder buff, Sql<E> sql) {
+	}
+
+	/**
+	 * メインテーブルの名前と別名を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsMainTable(StringBuilder buff, Sql<E> sql) {
+	}
+
+	/**
+	 * 結合テーブルの名前と別名を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 * @param parameters SQL のパラメータを格納するリスト
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsJoinTables(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	}
+
+	/**
+	 * WHERE 句を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 * @param parameters SQL のパラメータを格納するリスト
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	}
+
+	/**
+	 * GROUP BY 句を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 * @param parameters SQL のパラメータを格納するリスト
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	}
+
+	/**
+	 * HAVING 句を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 * @param parameters SQL のパラメータを格納するリスト
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	}
+
+	/**
+	 * ORDER BY 句を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 * @param parameters SQL のパラメータを格納するリスト
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	}
+
+	/**
+	 * LIMIT 句を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsLimit(StringBuilder buff, Sql<E> sql) {
+	}
+
+	/**
+	 * OFFSET 句を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsOffset(StringBuilder buff, Sql<E> sql) {
+	}
+
+	/**
+	 * FOR UPDATE 句を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsForUpdate(StringBuilder buff, Sql<E> sql) {
+	}
+
+	/**
 		{@inheritDoc}
 	*/
 	@Override

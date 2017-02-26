@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 /**
- * The interface with the table alias, the entity information and an entity.
+ * An interface with a table alias, an entity information and an entity.
  *
  * @since 1.0
  * @author Masato Kokubo
@@ -49,13 +49,16 @@ public interface SqlEntityInfo<E> {
 	 * Returns a stream of <b>SqlColumnInfo</b>
 	 * that is created from the column information to match any of specified names.
 	 *
-	 * @param names a collection of names
+	 * @param names the selected names
 	 * @return a stream of <b>SqlColumnInfo</b>
 	 */
 	default Stream<SqlColumnInfo> selectedSqlColumnInfoStream(Collection<String> names) {
 		return names.isEmpty()
 			? sqlColumnInfoStream()
 			: sqlColumnInfoStream()
-				.filter(sqlColumnInfo -> names.stream().anyMatch(name -> sqlColumnInfo.matches(name)));
+			// 1.8.2
+			//	.filter(sqlColumnInfo -> names.stream().anyMatch(name -> sqlColumnInfo.matches(name)));
+				.filter(sqlColumnInfo -> names.stream().anyMatch(sqlColumnInfo::matches));
+			////
 	}
 }

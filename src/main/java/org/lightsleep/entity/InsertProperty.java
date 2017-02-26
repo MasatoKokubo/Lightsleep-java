@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * Indicates the expression instead of the field value used in INSERT SQL.<br>
  * Specifies the field by <b>property</b>.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * <b>{@literal @}InsertProperty(property="created", expression="CURRENT_TIMESTAMP")</b>
  * <b>{@literal @}InsertProperty(property="modified", expression="CURRENT_TIMESTAMP")</b>

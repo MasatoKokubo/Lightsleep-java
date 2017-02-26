@@ -12,8 +12,6 @@ import org.lightsleep.helper.ColumnInfo;
 import org.lightsleep.helper.EntityInfo;
 import org.lightsleep.helper.Resource;
 import org.lightsleep.helper.SqlEntityInfo;
-import org.lightsleep.logger.Logger;
-import org.lightsleep.logger.LoggerFactory;
 
 /**
  * Configures an expression with a string content and an array of argument objects embedded in the string.
@@ -22,19 +20,27 @@ import org.lightsleep.logger.LoggerFactory;
  * @author Masato Kokubo
  */
 public class Expression implements Condition {
-	// The logger
-	private static final Logger logger = LoggerFactory.getLogger(Expression.class);
+// 1.8.2
+//	// The logger
+//	private static final Logger logger = LoggerFactory.getLogger(Expression.class);
+////
 
 	// Class resources
 	private static final Resource resource = new Resource(Expression.class);
-	private static final String messageParametersIsLess   = resource.get("messageParametersIsLess");
+// 1.8.2
+//	private static final String messageParametersIsLess   = resource.get("messageParametersIsLess");
+	private static final String messageLessArguments      = resource.get("messageLessArguments");
+	private static final String messageMoreArguments      = resource.get("messageMoreArguments");
+////
 	private static final String messagePropertyIsNotFound = resource.get("messagePropertyIsNotFound");
 
 	/** The empty expression */
 	public static final Expression EMPTY = new Expression("");
 
-	/** The default value expression */
-	public static final Expression DEFAULT = new Expression("DEFAULT");
+// 1.8.2 (Not used)
+//	/** The default value expression */
+//	public static final Expression DEFAULT = new Expression("DEFAULT");
+////
 
 	// The content
 	private final String content;
@@ -81,7 +87,10 @@ public class Expression implements Condition {
 	 */
 	@Override
 	public boolean isEmpty() {
-		return content.isEmpty();
+	// 1.8.2
+	//	return content.isEmpty();
+		return this == Condition.EMPTY || content.isEmpty();
+	////
 	}
 
 	/**
@@ -114,6 +123,8 @@ public class Expression implements Condition {
 	 *     <td>Property Value of the entity</td>
 	 *   </tr>
 	 * </table>
+	 *
+	 * @throws IllegalArgumentException if the expression arguments are less or more than the placements
 	 */
 	@Override
 	public <E> String toString(Sql<E> sql, List<Object> parameters) {
@@ -173,9 +184,13 @@ public class Expression implements Condition {
 							// Replaces an argument
 							if (argIndex >= arguments.length) {
 								// Argument shortage
-								logger.warn(MessageFormat.format(messageParametersIsLess, content, arguments.length));
-								buff.append("{***}");
-								continue;
+							// 1.8.2
+							//	logger.warn(MessageFormat.format(messageParametersIsLess, content, arguments.length));
+							//	buff.append("{***}");
+							//	continue;
+								throw new IllegalArgumentException(MessageFormat.format(
+									messageLessArguments, content, arguments.length));
+							////
 							}
 							value = arguments[argIndex++];
 
@@ -207,65 +222,70 @@ public class Expression implements Condition {
 							parameters.addAll(Arrays.asList(sqlString.parameters()));
 						////
 						}
-						continue;
+					// 1.8.2
+					//	continue;
+					////
 
 					} else {
-						ColumnInfo columnInfo = null;
-
-						try {
-							// Converts to a column name
-							columnInfo = entityInfo.getColumnInfo(propertyName);
-							buff.append(columnInfo.getColumnName(sql.tableAlias()));
-							continue;
-						}
-						catch (IllegalArgumentException e) {
-						}
-
-						// Try with the table alias
-						int chIndex = propertyName.indexOf('.');
-						if (chIndex >= 1) {
-							String tableAlias = propertyName.substring(0, chIndex);
-							SqlEntityInfo<?> sqlEntityInfo = sql.getSqlEntityInfo(tableAlias);
-							if (sqlEntityInfo != null) {
-								// Found an entity information of the table alias
-								String propertyName2 = propertyName.substring(chIndex + 1);
-
-								try {
-									columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
-									buff.append(columnInfo.getColumnName(sqlEntityInfo.tableAlias()));
-									continue;
-								}
-								catch (IllegalArgumentException e) {
-								}
-							}
-						}
-
-						//  Try by column alias
-						chIndex = propertyName.indexOf('_');
-						if (chIndex >= 1) {
-							String tableAlias = propertyName.substring(0, chIndex);
-							SqlEntityInfo<?> sqlEntityInfo = sql.getSqlEntityInfo(tableAlias);
-							if (sqlEntityInfo != null) {
-								// Found an entity information of the table alias
-								String propertyName2 = propertyName.substring(chIndex + 1);
-								try {
-									columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
-									buff.append(columnInfo.getColumnAlias(sqlEntityInfo.tableAlias()));
-									continue;
-								}
-								catch (IllegalArgumentException e) {
-								}
-							}
-						}
-
-						// Not found any column information
+					// 1.8.2
+					//	ColumnInfo columnInfo = null;
+					//
+					//	try {
+					//		// Converts to a column name
+					//		columnInfo = entityInfo.getColumnInfo(propertyName);
+					//		buff.append(columnInfo.getColumnName(sql.tableAlias()));
+					//		continue;
+					//	}
+					//	catch (IllegalArgumentException e) {
+					//	}
+					//
+					//	// Try with the table alias
+					//	int chIndex = propertyName.indexOf('.');
+					//	if (chIndex >= 1) {
+					//		String tableAlias = propertyName.substring(0, chIndex);
+					//		SqlEntityInfo<?> sqlEntityInfo = sql.getSqlEntityInfo(tableAlias);
+					//		if (sqlEntityInfo != null) {
+					//			// Found an entity information of the table alias
+					//			String propertyName2 = propertyName.substring(chIndex + 1);
+					//
+					//			try {
+					//				columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
+					//				buff.append(columnInfo.getColumnName(sqlEntityInfo.tableAlias()));
+					//				continue;
+					//			}
+					//			catch (IllegalArgumentException e) {
+					//			}
+					//		}
+					//	}
+					//
+					//	//  Try by column alias
+					//	chIndex = propertyName.indexOf('_');
+					//	if (chIndex >= 1) {
+					//		String tableAlias = propertyName.substring(0, chIndex);
+					//		SqlEntityInfo<?> sqlEntityInfo = sql.getSqlEntityInfo(tableAlias);
+					//		if (sqlEntityInfo != null) {
+					//			// Found an entity information of the table alias
+					//			String propertyName2 = propertyName.substring(chIndex + 1);
+					//			try {
+					//				columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
+					//				buff.append(columnInfo.getColumnAlias(sqlEntityInfo.tableAlias()));
+					//				continue;
+					//			}
+					//			catch (IllegalArgumentException e) {
+					//			}
+					//		}
+					//	}
+					//	// Not found any column information
 					// 1.5.1
-					//	logger.warn(MessageFormat.format(messagePropertyIsNotFound, propertyName, entityInfo.entityClass().getName()));
-						logger.warn(MessageFormat.format(messagePropertyIsNotFound, entityInfo.entityClass().getName(), propertyName));
+					////logger.warn(MessageFormat.format(messagePropertyIsNotFound, propertyName, entityInfo.entityClass().getName()));
+					//	logger.warn(MessageFormat.format(messagePropertyIsNotFound, entityInfo.entityClass().getName(), propertyName));
+						appendsColumnName(buff, sql, entityInfo, propertyName);
 					////
-						buff.append('{').append(propertyName).append('}');
-						continue;
 					}
+
+				// 1.8.2
+					continue;
+				////
 				}
 
 				if (ch == '{') {
@@ -282,6 +302,55 @@ public class Expression implements Condition {
 			buff.append(ch);
 		}
 
+	// 1.8.2
+		if (argIndex < arguments.length)
+			throw new IllegalArgumentException(MessageFormat.format(
+				messageMoreArguments, content, arguments.length));
+	////
+
 		return buff.toString();
 	}
+
+// 1.8.2
+	private static char[] delimiterChars = {'.', '_'};
+
+	// Appends a column name
+	private <E> void appendsColumnName(StringBuilder buff, Sql<E> sql, EntityInfo<E> entityInfo, String propertyName) {
+		try {
+			// Converts to a column name
+			ColumnInfo columnInfo = entityInfo.getColumnInfo(propertyName);
+			buff.append(columnInfo.getColumnName(sql.tableAlias()));
+			return;
+		}
+		catch (IllegalArgumentException e) {
+		}
+
+		// Try with the table alias and column alias
+		for (char delimiterChar : delimiterChars) {
+			int chIndex = propertyName.indexOf(delimiterChar);
+			if (chIndex >= 1) {
+				String tableAlias = propertyName.substring(0, chIndex);
+				SqlEntityInfo<?> sqlEntityInfo = sql.getSqlEntityInfo(tableAlias);
+				if (sqlEntityInfo != null) {
+					// Found an entity information with the table alias or column alias
+					String propertyName2 = propertyName.substring(chIndex + 1);
+
+					try {
+						ColumnInfo columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
+						if (delimiterChar == '.')
+							buff.append(columnInfo.getColumnName(sqlEntityInfo.tableAlias()));
+						else
+							buff.append(columnInfo.getColumnAlias(sqlEntityInfo.tableAlias()));
+						return;
+					}
+					catch (IllegalArgumentException e) {
+					}
+				}
+			}
+		}
+
+		throw new IllegalArgumentException(MessageFormat.format(
+			messagePropertyIsNotFound, entityInfo.entityClass().getName(), propertyName));
+	}
+////
 }

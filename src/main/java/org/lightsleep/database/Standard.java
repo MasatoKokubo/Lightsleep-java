@@ -678,28 +678,43 @@ public class Standard implements Database {
 		// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
 		buff.append(subSelectSql(sql, parameters));
 
+	// 1.8.2
+	//	// ORDER BY ...
+	//	if (!sql.getOrderBy().isEmpty())
+	//		buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+	//
+	//	if (supportsOffsetLimit()) {
+	//		// LIMIT ...
+	//		if (sql.getLimit() != Integer.MAX_VALUE)
+	//			buff.append(" LIMIT ").append(sql.getLimit());
+	//
+	//		// OFFSET ...
+	//		if (sql.getOffset() != 0)
+	//			buff.append(" OFFSET ").append(sql.getOffset());
+	//	}
+	//
+	//	// FOR UPDATE
+	//	if (sql.isForUpdate()) {
+	//		buff.append(" FOR UPDATE");
+	//
+	//		// NO WAIT
+	//		if (sql.isNoWait())
+	//			buff.append(" NO WAIT");
+	//	}
 		// ORDER BY ...
-		if (!sql.getOrderBy().isEmpty())
-			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+		appendsOrderBy(buff, sql, parameters);
 
 		if (supportsOffsetLimit()) {
 			// LIMIT ...
-			if (sql.getLimit() != Integer.MAX_VALUE)
-				buff.append(" LIMIT ").append(sql.getLimit());
+			appendsLimit(buff, sql);
 
 			// OFFSET ...
-			if (sql.getOffset() != 0)
-				buff.append(" OFFSET ").append(sql.getOffset());
+			appendsOffset(buff, sql);
 		}
 
 		// FOR UPDATE
-		if (sql.isForUpdate()) {
-			buff.append(" FOR UPDATE");
-
-			// NO WAIT
-			if (sql.isNoWait())
-				buff.append(" NO WAIT");
-		}
+		appendsForUpdate(buff, sql);
+	////
 
 		return buff.toString();
 	}
@@ -713,21 +728,29 @@ public class Standard implements Database {
 			//  column name, ...
 			StringBuilder buff = new StringBuilder();
 			String[] delimiter = new String[] {""};
+
 			sql.selectedJoinSqlColumnInfoStream()
-				.filter(sqlColumnInfo -> {
-					return sqlColumnInfo.columnInfo().selectable();
-				})
+			// 1.8.2
+			//	.filter(sqlColumnInfo -> {
+			//		return sqlColumnInfo.columnInfo().selectable();
+			//	})
+				.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
+			////
 				.forEach(sqlColumnInfo -> {
 					buff.append(delimiter[0]);
 					delimiter[0] = ", ";
 
 					ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
-					String tableAlias  = sqlColumnInfo.tableAlias();
-					String columnName  = columnInfo.getColumnName (tableAlias);
-					String columnAlias = columnInfo.getColumnAlias(tableAlias);
+					String tableAlias   = sqlColumnInfo.tableAlias();
+					String columnName   = columnInfo.getColumnName(tableAlias);
+					String columnAlias  = columnInfo.getColumnAlias(tableAlias);
 
 					// gets expression
 					Expression expression = sql.getExpression(columnInfo.propertyName());
+				// 1.8.2
+					if (expression.isEmpty())
+						expression = sql.getExpression(columnInfo.getPropertyName(tableAlias));
+				////
 					if (expression.isEmpty())
 						expression = columnInfo.selectExpression();
 
@@ -762,54 +785,81 @@ public class Standard implements Database {
 	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
+	// 1.8.2
+	//	// SELECT
+	//	buff.append("SELECT ");
+	//
+	//	// DISTINCT
+	//	if (sql.isDistinct())
+	//		buff.append("DISTINCT ");
+	//
+	//	//  column name, ...
+	//	buff.append(columnsSupplier.get());
+	//
+	//	// FROM table name
+	//	buff.append(" FROM ").append(sql.entityInfo().tableName());
+	//
+	//	// table alias
+	//	if (!sql.tableAlias().isEmpty())
+	//		buff.append(" ").append(sql.tableAlias());
+	//
+	//	// INNER / OUTER JOIN ...
+	//	if (!sql.getJoinInfos().isEmpty()) {
+	//	// 1.5.1
+	//	//	sql.getJoinInfos().stream()
+	//		sql.getJoinInfos()
+	//	////
+	//			.forEach(joinInfo -> {
+	//				// INNER/OUTER JOIN table name
+	//				buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());
+	//
+	//				// table alias
+	//				if (!joinInfo.tableAlias().isEmpty())
+	//					buff.append(" ").append(joinInfo.tableAlias());
+	//
+	//				// ON ...
+	//				if (!joinInfo.on().isEmpty())
+	//					buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
+	//			});
+	//	}
+	//	// WHERE ...
+	//	if (!sql.getWhere().isEmpty() && sql.getWhere() != Condition.ALL)
+	//		buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
+	//
+	//	// GROUP BY ...
+	//	if (!sql.getGroupBy().isEmpty())
+	//		buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
+	//
+	//	// HAVING ...
+	//	if (!sql.getHaving().isEmpty())
+	//		buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
 		// SELECT
-		buff.append("SELECT ");
+		buff.append("SELECT");
 
 		// DISTINCT
-		if (sql.isDistinct())
-			buff.append("DISTINCT ");
+		appendsDistinct(buff, sql);
 
 		//  column name, ...
-		buff.append(columnsSupplier.get());
+		buff.append(' ').append(columnsSupplier.get());
 
-		// FROM table name
-		buff.append(" FROM ").append(sql.entityInfo().tableName());
+		// FROM
+		buff.append(" FROM");
 
-		// table alias
-		if (!sql.tableAlias().isEmpty())
-			buff.append(" ").append(sql.tableAlias());
+		// main table name and alias
+		appendsMainTable(buff, sql);
 
 		// INNER / OUTER JOIN ...
-		if (!sql.getJoinInfos().isEmpty()) {
-		// 1.5.1
-		//	sql.getJoinInfos().stream()
-			sql.getJoinInfos()
-		////
-				.forEach(joinInfo -> {
-					// INNER/OUTER JOIN table name
-					buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());
-
-					// table alias
-					if (!joinInfo.tableAlias().isEmpty())
-						buff.append(" ").append(joinInfo.tableAlias());
-
-					// ON ...
-					if (!joinInfo.on().isEmpty())
-						buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
-				});
-		}
+		appendsJoinTables(buff, sql, parameters);
 
 		// WHERE ...
-		if (!sql.getWhere().isEmpty() && sql.getWhere() != Condition.ALL)
-			buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
+		appendsWhere(buff, sql, parameters);
 
 		// GROUP BY ...
-		if (!sql.getGroupBy().isEmpty())
-			buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
+		appendsGroupBy(buff, sql, parameters);
 
 		// HAVING ...
-		if (!sql.getHaving().isEmpty())
-			buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
+		appendsHaving(buff, sql, parameters);
+	////
 
 		return buff.toString();
 	}
@@ -821,42 +871,82 @@ public class Standard implements Database {
 	public <E> String insertSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
-		// INSERT INTO table name
-		buff.append("INSERT INTO ").append(sql.entityInfo().tableName());
+	// 1.8.2
+	//	// INSERT INTO table name
+	//	buff.append("INSERT INTO ").append(sql.entityInfo().tableName());
+	//
+	//	// table alias
+	//	if (!sql.tableAlias().isEmpty())
+	//		buff.append(" ").append(sql.tableAlias());
+	//
+	//	// ( column name, ...
+	//	buff.append(" (");
+	//	String[] delimiter = new String[] {""};
+	//	sql.entityInfo().columnInfos().stream()
+	//	// 1.2.0
+	//		.filter(columnInfo -> columnInfo.insertable())
+	//		.forEach(columnInfo -> {
+	//			buff.append(delimiter[0])
+	//				.append(columnInfo.columnName());
+	//			delimiter[0] = ", ";
+	//		});
+	//
+	//	// ) VALUES (value, ...)
+	//	buff.append(") VALUES (");
+	//	delimiter[0] = "";
+	//	sql.columnInfoStream()
+	//		.filter(columnInfo -> columnInfo.insertable())
+	//		.forEach(columnInfo -> {
+	//			// gets expression
+	//			Expression expression = sql.getExpression(columnInfo.propertyName());
+	//			if (expression.isEmpty())
+	//				expression = columnInfo.insertExpression();
+	//
+	//			buff.append(delimiter[0])
+	//				.append(expression.toString(sql, parameters));
+	//			delimiter[0] = ", ";
+	//		});
+	//	buff.append(")");
+		// INSERT INTO
+		buff.append("INSERT INTO");
 
-		// table alias
-		if (!sql.tableAlias().isEmpty())
-			buff.append(" ").append(sql.tableAlias());
+		// table name and alias
+		appendsMainTable(buff, sql);
 
 		// ( column name, ...
 		buff.append(" (");
 		String[] delimiter = new String[] {""};
-		sql.entityInfo().columnInfos().stream()
-		// 1.2.0
-			.filter(columnInfo -> columnInfo.insertable())
-		////
+
+		sql.columnInfoStream()
+			.filter(ColumnInfo::insertable)
 			.forEach(columnInfo -> {
-				buff.append(delimiter[0])
-					.append(columnInfo.columnName());
+				buff.append(delimiter[0]).append(columnInfo.columnName());
 				delimiter[0] = ", ";
 			});
 
 		// ) VALUES (value, ...)
 		buff.append(") VALUES (");
 		delimiter[0] = "";
+
 		sql.columnInfoStream()
-			.filter(columnInfo -> columnInfo.insertable())
+			.filter(ColumnInfo::insertable)
 			.forEach(columnInfo -> {
+				String propertyName = columnInfo.propertyName();
+
 				// gets expression
-				Expression expression = sql.getExpression(columnInfo.propertyName());
+				Expression expression = sql.getExpression(propertyName);
 				if (expression.isEmpty())
 					expression = columnInfo.insertExpression();
+
+				if (expression.isEmpty())
+					expression = new Expression("{#" + propertyName + "}");
 
 				buff.append(delimiter[0])
 					.append(expression.toString(sql, parameters));
 				delimiter[0] = ", ";
 			});
 		buff.append(")");
+	////
 
 		return buff.toString();
 	}
@@ -868,42 +958,88 @@ public class Standard implements Database {
 	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
+	// 1.8.2
+	//	// UPDATE table name
+	//	buff.append("UPDATE ").append(sql.entityInfo().tableName());
+	//
+	//	// table alias
+	//	if (!sql.tableAlias().isEmpty())
+	//		buff.append(" ").append(sql.tableAlias());
+	//
+	//	// SET column name =  value, ...
+	//	buff.append(" SET ");
+	//	String[] delimiter = new String[] {""};
+	//	sql.selectedColumnInfoStream()
+	//		.filter(columnInfo -> !columnInfo.isKey() && columnInfo.updatable())
+	//		.forEach(columnInfo -> {
+	//			// gets expression
+	//			Expression expression = sql.getExpression(columnInfo.propertyName());
+	//			if (expression.isEmpty())
+	//				expression = columnInfo.updateExpression();
+	//
+	//			buff.append(delimiter[0])
+	//				.append(columnInfo.columnName())
+	//				.append("=")
+	//				.append(expression.toString(sql, parameters));
+	//			delimiter[0] = ", ";
+	//		});
+	//
+	//	// WHERE ...
+	//	if (sql.getWhere() != Condition.ALL)
+	//		buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
+	//
+	//	// ORDER BY ...
+	//	if (!sql.getOrderBy().isEmpty())
+	//		buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+	//
+	//	// LIMIT ...
+	//	if (sql.getLimit() != Integer.MAX_VALUE)
+	//		buff.append(" LIMIT ").append(sql.getLimit());
 		// UPDATE table name
-		buff.append("UPDATE ").append(sql.entityInfo().tableName());
+		buff.append("UPDATE");
 
-		// table alias
-		if (!sql.tableAlias().isEmpty())
-			buff.append(" ").append(sql.tableAlias());
+		// main table name and alias
+		appendsMainTable(buff, sql);
+
+		// INNER / OUTER JOIN ...
+		appendsJoinTables(buff, sql, parameters);
 
 		// SET column name =  value, ...
 		buff.append(" SET ");
 		String[] delimiter = new String[] {""};
-		sql.selectedColumnInfoStream()
-			.filter(columnInfo -> !columnInfo.isKey() && columnInfo.updatable())
-			.forEach(columnInfo -> {
+
+		sql.selectedSqlColumnInfoStream()
+			.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().updatable())
+			.forEach(sqlColumnInfo -> {
+				ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
+				String tableAlias   = sqlColumnInfo.tableAlias();
+				String propertyName = columnInfo.propertyName();
+				String columnName   = columnInfo.getColumnName(tableAlias);
+
 				// gets expression
-				Expression expression = sql.getExpression(columnInfo.propertyName());
+				Expression expression = sql.getExpression(propertyName);
 				if (expression.isEmpty())
 					expression = columnInfo.updateExpression();
 
+				if (expression.isEmpty())
+					expression = new Expression("{#" + propertyName + "}");
+
 				buff.append(delimiter[0])
-					.append(columnInfo.columnName())
+					.append(columnName)
 					.append("=")
 					.append(expression.toString(sql, parameters));
 				delimiter[0] = ", ";
 			});
 
 		// WHERE ...
-		if (sql.getWhere() != Condition.ALL)
-			buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
+		appendsWhere(buff, sql, parameters);
 
 		// ORDER BY ...
-		if (!sql.getOrderBy().isEmpty())
-			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+		appendsOrderBy(buff, sql, parameters);
 
 		// LIMIT ...
-		if (sql.getLimit() != Integer.MAX_VALUE)
-			buff.append(" LIMIT ").append(sql.getLimit());
+		appendsLimit(buff, sql);
+	////
 
 		return buff.toString();
 	}
@@ -915,26 +1051,211 @@ public class Standard implements Database {
 	public <E> String deleteSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
-		// DELETE FROM table name
-		buff.append("DELETE FROM ").append(sql.entityInfo().tableName());
+	// 1.8.2
+	//	// DELETE FROM table name
+	//	buff.append("DELETE FROM ").append(sql.entityInfo().tableName());
+	//
+	//	// table alias
+	//	if (!sql.tableAlias().isEmpty())
+	//		buff.append(" ").append(sql.tableAlias());
+	//
+	//	// WHERE ...
+	//	if (sql.getWhere() != Condition.ALL)
+	//		buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
+	//
+	//	// ORDER BY ...
+	//	if (!sql.getOrderBy().isEmpty())
+	//		buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+	//
+	//	// LIMIT ...
+	//	if (sql.getLimit() != Integer.MAX_VALUE)
+	//		buff.append(" LIMIT ").append(sql.getLimit());
+		// DELETE FROM
+		buff.append("DELETE FROM");
+
+		// main table name and alias
+		appendsMainTable(buff, sql);
+
+		// INNER / OUTER JOIN ...
+		appendsJoinTables(buff, sql, parameters);
+
+		// WHERE ...
+		appendsWhere(buff, sql, parameters);
+
+		// ORDER BY ...
+		appendsOrderBy(buff, sql, parameters);
+
+		// LIMIT ...
+		appendsLimit(buff, sql);
+	////
+
+		return buff.toString();
+	}
+
+	/**
+	 * Appends DISTINCT to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsDistinct(StringBuilder buff, Sql<E> sql) {
+		// DISTINCT
+		if (sql.isDistinct())
+			buff.append(" DISTINCT");
+	}
+
+	/**
+	 * Appends the main table name and alias to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsMainTable(StringBuilder buff, Sql<E> sql) {
+		// main table name
+		buff.append(' ').append(sql.entityInfo().tableName());
 
 		// table alias
 		if (!sql.tableAlias().isEmpty())
-			buff.append(" ").append(sql.tableAlias());
+			buff.append(' ').append(sql.tableAlias());
+	}
 
-		// WHERE ...
+	/**
+	 * Appends the join table names and aliases to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 * @param parameters a list to add the parameters of the SQL
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsJoinTables(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+		sql.getJoinInfos().forEach(joinInfo -> {
+			// INNER/OUTER JOIN table name
+			buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());
+
+			// table alias
+			if (!joinInfo.tableAlias().isEmpty())
+				buff.append(' ').append(joinInfo.tableAlias());
+
+			// ON ...
+			if (!joinInfo.on().isEmpty())
+				buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
+		});
+	}
+
+	/**
+	 * Appends WHERE clause to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 * @param parameters a list to add the parameters of the SQL
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (sql.getWhere() != Condition.ALL)
 			buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
+	}
 
-		// ORDER BY ...
+	/**
+	 * Appends GROUP BY clause to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 * @param parameters a list to add the parameters of the SQL
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+		if (!sql.getGroupBy().isEmpty())
+			buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
+	}
+
+	/**
+	 * Appends HAVING clause to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 * @param parameters a list to add the parameters of the SQL
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+		if (!sql.getHaving().isEmpty())
+			buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
+	}
+
+	/**
+	 * Appends ORDER BY clause to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 * @param parameters a list to add the parameters of the SQL
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (!sql.getOrderBy().isEmpty())
 			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+	}
 
-		// LIMIT ...
+	/**
+	 * Appends LIMIT clause to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsLimit(StringBuilder buff, Sql<E> sql) {
 		if (sql.getLimit() != Integer.MAX_VALUE)
 			buff.append(" LIMIT ").append(sql.getLimit());
+	}
 
-		return buff.toString();
+	/**
+	 * Appends OFFSET clause to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsOffset(StringBuilder buff, Sql<E> sql) {
+		if (sql.getOffset() != 0)
+			buff.append(" OFFSET ").append(sql.getOffset());
+	}
+
+	/**
+	 * Appends FOR UPDATE clause to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 *
+	 * @since 1.8.2
+	 */
+	protected <E> void appendsForUpdate(StringBuilder buff, Sql<E> sql) {
+		// FOR UPDATE
+		if (sql.isForUpdate()) {
+			buff.append(" FOR UPDATE");
+
+			// NO WAIT
+			if (sql.isNoWait())
+				buff.append(" NO WAIT");
+		}
 	}
 
 	/**

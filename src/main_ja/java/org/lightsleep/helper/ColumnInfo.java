@@ -134,11 +134,25 @@ public class ColumnInfo {
 	}
 
 	/**
+		<b>tableAlias</b> が空文字列でなければ、<b>tableAlias + '.' +  <i>プロパティ名</i></b> を返します。
+		空文字列の場合は、単にプロパティ名を返します。
+
+		@param tableAlias テーブル別名
+		@return テーブル別名付きのプロパティ名
+
+		@throws NullPointerException <b>tableAlias</b> が <b>null</b> の場合
+	 *
+	 * @since 1.8.2
+	 */
+	public String getPropertyName(String tableAlias) {
+		return null;
+	}
+
+	/**
 		<b>tableAlias</b> が空文字列でなければ、<b>tableAlias + '.' +  <i>カラム名</i></b> を返します。
 		空文字列の場合は、単にカラム名を返します。
 
 		@param tableAlias テーブル別名
-
 		@return テーブル別名付きのカラム名
 
 		@throws NullPointerException <b>tableAlias</b> が <b>null</b> の場合
@@ -152,7 +166,6 @@ public class ColumnInfo {
 		空文字列の場合は、単にカラム名を返します。
 
 		@param tableAlias テーブル別名
-
 		@return カラム別名
 
 		@throws NullPointerException <b>tableAlias</b> が <b>null</b> の場合

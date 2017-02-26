@@ -62,4 +62,13 @@ public class SQLServer extends Standard {
 	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
 		return null;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.8.2
+	 */
+	@Override
+	protected <E> void appendsForUpdate(StringBuilder buff, Sql<E> sql) {
+	}
 }

@@ -30,7 +30,7 @@ public interface Database {
 	 * Creates and returns a SELECT SQL.
 	 *
 	 * @param <E> type of the entity
-	 * @param sql a Sql object
+	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
 	 * @return a SELECT SQL string
 	 */
@@ -43,7 +43,7 @@ public interface Database {
 	 * <b>ORDER BY</b>.
 	 *
 	 * @param <E> type of the entity
-	 * @param sql a Sql object
+	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
 	 * @return a SELECT SQL string
 	 */
@@ -56,7 +56,7 @@ public interface Database {
 	 * <b>ORDER BY</b>.
 	 *
 	 * @param <E> type of the entity
-	 * @param sql a Sql object
+	 * @param sql a <b>Sql</b> object
 	 * @param columnsSupplier a Supplier of the columns string
 	 * @param parameters a list to add the parameters of the SQL
 	 * @return a SELECT SQL string
@@ -67,7 +67,7 @@ public interface Database {
 	 * Creates and returns a INSERT SQL.
 	 *
 	 * @param <E> type of the entity
-	 * @param sql a Sql object
+	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
 	 * @return a INSERT SQL string
 	 */
@@ -77,7 +77,7 @@ public interface Database {
 	 * Creates and returns a UPDATE SQL.
 	 *
 	 * @param <E> type of the entity
-	 * @param sql a Sql object
+	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
 	 * @return a INSERT SQL string
 	 */
@@ -88,7 +88,7 @@ public interface Database {
 
 	 * @param <E> type of the entity
 
-	 * @param sql a Sql object
+	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
 
 	 * @return a INSERT SQL string

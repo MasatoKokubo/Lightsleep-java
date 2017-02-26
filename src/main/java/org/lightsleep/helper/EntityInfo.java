@@ -243,9 +243,15 @@ public class EntityInfo<E> {
 				Select select = field.getAnnotation(Select.class);
 				if (select != null) selectString = select.value();
 			}
-			Expression selectExpression = selectString != null
-				? new Expression(selectString)
-				: nonSelect ? null : Expression.EMPTY;
+	// 1.8.2
+	//		Expression selectExpression = selectString != null
+	//			? new Expression(selectString)
+	//			: nonSelect ? null : Expression.EMPTY;
+			Expression selectExpression = nonSelect ? null 
+				: selectString != null
+					? new Expression(selectString)
+					: Expression.EMPTY;
+	////
 		////
 
 			// @NonInsert / the expression to be used to create INSERT SQL
@@ -268,15 +274,25 @@ public class EntityInfo<E> {
 				Insert insert = field.getAnnotation(Insert.class);
 				if (insert != null) insertString = insert.value();
 			}
-			Expression insertExpression = insertString != null
-				? new Expression(insertString)
-				: nonInsert ? null : new Expression("{#" + propertyName + "}");
+	// 1.8.2
+	//		Expression insertExpression = insertString != null
+	//			? new Expression(insertString)
+	//			: nonInsert ? null : new Expression("{#" + propertyName + "}");
+			Expression insertExpression = nonInsert ? null 
+				: insertString != null
+					? new Expression(insertString)
+					: Expression.EMPTY;
+	////
 		////
 
 			// @NonUpdate
 		// 1.3.0
 		//	boolean nonUpdate = field.getAnnotation(NonUpdate.class) != null;
-			boolean nonUpdate = field.getAnnotation(NonUpdate.class) != null
+	// 1.8.2
+	//		boolean nonUpdate = field.getAnnotation(NonUpdate.class) != null
+			boolean nonUpdate = isKey
+				|| field.getAnnotation(NonUpdate.class) != null
+	////
 				|| nonUpdateSet.contains(propertyName);
 		////
 
@@ -293,9 +309,15 @@ public class EntityInfo<E> {
 				Update update = field.getAnnotation(Update.class);
 				if (update != null) updateString = update.value();
 			}
-			Expression updateExpression = updateString != null
-				? new Expression(updateString)
-				: nonUpdate ? null : new Expression("{#" + propertyName + "}");
+	// 1.8.2
+	//		Expression updateExpression = updateString != null
+	//			? new Expression(updateString)
+	//			: nonUpdate ? null : new Expression("{#" + propertyName + "}");
+			Expression updateExpression = nonUpdate ? null
+				: updateString != null
+					? new Expression(updateString)
+					: Expression.EMPTY;
+	////
 		////
 
 			// creates a new ColumnInfo
@@ -310,7 +332,10 @@ public class EntityInfo<E> {
 
 		columnInfos = columnInfoMap.values().stream().collect(Collectors.toList());
 
-		keyColumnInfos = columnInfos.stream().filter(columnInfo -> columnInfo.isKey()).collect(Collectors.toList());
+	// 1.8.2
+	//	keyColumnInfos = columnInfos.stream().filter(columnInfo -> columnInfo.isKey()).collect(Collectors.toList());
+		keyColumnInfos = columnInfos.stream().filter(ColumnInfo::isKey).collect(Collectors.toList());
+	////
 	}
 
 	/**

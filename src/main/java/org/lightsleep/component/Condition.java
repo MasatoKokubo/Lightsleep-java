@@ -12,10 +12,23 @@ import org.lightsleep.Sql;
  */
 public interface Condition extends SqlComponent {
 	/** The empty condition */
-	static final Condition EMPTY = new And();
+// 1.8.2
+//	static final Condition EMPTY = new And();
+	static final Condition EMPTY = of("/* EMPTY CONDITION */");
+////
 
 	/** The condition for all rows */
 	static final Condition ALL = of("0 = 0");
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.8.2
+	 */
+	@Override
+	default boolean isEmpty() {
+		return this == EMPTY;
+	}
 
 	/**
 	 * Returns a new expression condition.

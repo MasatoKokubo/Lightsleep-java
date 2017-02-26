@@ -6,7 +6,6 @@ package org.lightsleep.database;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.List;
 
 import org.lightsleep.Sql;
 import org.lightsleep.component.SqlString;
@@ -115,39 +114,51 @@ public class SQLite extends Standard {
 		);
 	}
 
+// 1.8.2
+//	/**
+//	 * {@inheritDoc}
+//	 */
+//	@Override
+//	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
+//		StringBuilder buff = new StringBuilder();
+//
+//		// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+//		buff.append(subSelectSql(sql, parameters));
+//
+//		// ORDER BY ...
+//		if (!sql.getOrderBy().isEmpty())
+//			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+//
+//		if (supportsOffsetLimit()) {
+//			// LIMIT ...
+//			if (sql.getLimit() != Integer.MAX_VALUE)
+//				buff.append(" LIMIT ").append(sql.getLimit());
+//
+//			// OFFSET ...
+//			if (sql.getOffset() != 0)
+//				buff.append(" OFFSET ").append(sql.getOffset());
+//		}
+//
+//		// FOR UPDATE
+//		if (sql.isForUpdate()) {
+//			buff.append(" /* dose not support FOR UPDATE */");
+//
+//			// NO WAIT
+//			if (sql.isNoWait())
+//				buff.append(" /* dose not support NO WAIT */");
+//		}
+//
+//		return buff.toString();
+//	}
+////
+
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @since 1.8.2
 	 */
 	@Override
-	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
-		StringBuilder buff = new StringBuilder();
-
-		// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-		buff.append(subSelectSql(sql, parameters));
-
-		// ORDER BY ...
-		if (!sql.getOrderBy().isEmpty())
-			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
-
-		if (supportsOffsetLimit()) {
-			// LIMIT ...
-			if (sql.getLimit() != Integer.MAX_VALUE)
-				buff.append(" LIMIT ").append(sql.getLimit());
-
-			// OFFSET ...
-			if (sql.getOffset() != 0)
-				buff.append(" OFFSET ").append(sql.getOffset());
-		}
-
-		// FOR UPDATE
-		if (sql.isForUpdate()) {
-			buff.append(" /* dose not support FOR UPDATE */");
-
-			// NO WAIT
-			if (sql.isNoWait())
-				buff.append(" /* dose not support NO WAIT */");
-		}
-
-		return buff.toString();
+	public boolean supportsOffsetLimit() {
+		return true;
 	}
 }

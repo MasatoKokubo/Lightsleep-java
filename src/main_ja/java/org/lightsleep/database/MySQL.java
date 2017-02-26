@@ -3,6 +3,8 @@
 
 package org.lightsleep.database;
 
+import org.lightsleep.Sql;
+
 /**
  * <a href="http://www.mysql.com/" target="MySQL">MySQL</a>
  * 用のデータベース・ハンドラーです。<br>
@@ -39,8 +41,8 @@ public class MySQL extends Standard {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean supportsOffsetLimit() {
 		return true;

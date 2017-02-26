@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * Indicates that the column related the field is not used in SELECT SQL.<br>
  * Specifies the field by <b>value</b>.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * <b>{@literal @}NonSelectProperty("created")</b>
  * {@literal @}InsertProperty(property="created", expression="CURRENT_TIMESTAMP")

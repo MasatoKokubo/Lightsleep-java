@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -48,19 +49,19 @@ import org.lightsleep.logger.LoggerFactory;
 /**
  * The class to build and execute SQLs.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
  * Transaction.execute(connection -&gt; {
  *     new <b>Sql</b>&lt;&gt;(Contact.class)
- *         .<b>where</b>("{familyName} = {}", "Smith")
+ *         .<b>where</b>("{familyName} = {}", "Apple")
  *         .<b>select</b>(connection, contacts::add);
  * });
  * </pre></div>
  *
  * <div class="sampleTitle"><span>SQL</span></div>
  * <div class="sampleCode"><pre>
- * SELECT contactId, familyName, givenName, ... FROM Contact WHERE familyName='Smith'
+ * SELECT id, familyName, givenName, ... FROM Contact WHERE familyName='Apple'
  * </pre></div>
  *
  * @param <E> the entity class corresponding to the main table
@@ -281,6 +282,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Constructs a new <b>Sql</b>.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class)
+	 * </pre></div>
+	 *
 	 * @param entityClass the entity class
 	 */
 	public Sql(Class<E> entityClass) {
@@ -289,6 +295,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Constructs a new <b>Sql</b>.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 * </pre></div>
 	 *
 	 * @param entityClass the entity class
 	 * @param tableAlias the table alias
@@ -373,6 +384,20 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * You can also be specified <b>"*"</b> or <b>"<i>&lt;table alias&gt;</i>.*"</b>.
 	 * If this method is not called it will be in the same manner as <b>"*"</b> is specified.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class)
+	 *         .<b>columns("familyName", "givenName")</b>
+	 * </pre></div>
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
+	 *         .<b>columns("C.id", "P.*")</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
+	 *
 	 * @param columns the array of the property names related to the columns
 	 *
 	 * @return this object
@@ -382,8 +407,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public Sql<E> columns(String... columns) {
 		if (columns == null) throw new NullPointerException("Sql.columns: columns == null");
 
-		for (String column : columns)
-			this.columns.add(column);
+	// 1.8.2
+	//	for (String column : columns)
+	//		this.columns.add(column);
+		Arrays.stream(columns).forEach(this.columns::add);
+	////
 		return this;
 	}
 
@@ -399,6 +427,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Associates <b>expression</b> to the column related to <b>propertyName</b>.<br>
 	 * If <b>expression</b> is empty, releases the previous association of <b>propertyName</b>.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class)
+	 *         .<b>expression("birthday", "'['||{birthday}||']'")</b>
+	 * </pre></div>
 	 *
 	 * @param propertyName the property name
 	 * @param expression the expression
@@ -450,6 +484,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Add an information of the table that join with <b>INNER JOIN</b>.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class)
+	 *         .<b>innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
+	 *         .select(connection, contacts::add, phones::add);
+	 * </pre></div>
+	 *
 	 * @param <JE> the entity class that relateed to the table to join
 	 * @param entityClass the entity class that relateed to the table to join
 	 * @param tableAlias the alias of the table to join
@@ -481,6 +522,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Add an information of the table that join with <b>LEFT OUTER JOIN</b>.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class)
+	 *         .<b>leftJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
+	 *         .select(connection, contacts::add, phones::add);
+	 * </pre></div>
+	 *
 	 * @param <JE> the entity class that relateed to the table to join
 	 * @param entityClass the entity class that relateed to the table to join
 	 * @param tableAlias the alias of the table to join
@@ -511,6 +559,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Add an information of the table that join with <b>RIGHT OUTER JOIN</b>.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class)
+	 *         .<b>rightJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
+	 *         .select(connection, contacts::add, phones::add);
+	 * </pre></div>
 	 *
 	 * @param <JE> the entity class that relateed to the table to join
 	 * @param entityClass the entity class that relateed to the table to join
@@ -573,6 +628,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the <b>WHERE</b> condition.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .<b>where("{birthday} IS NULL")</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
+	 *
 	 * @param condition the condition
 	 * @return this object
 	 *
@@ -588,6 +650,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the <b>WHERE</b> condition by <b>Expression</b>.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .<b>where("{id} = {}", contactId)</b>
+	 *         .select(connection).orElse(null);
+	 * </pre></div>
+	 *
 	 * @param content the content of the <b>Expression</b>
 	 * @param arguments the arguments of the <b>Expression</b>
 	 * @return this object
@@ -602,6 +671,16 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the <b>WHERE</b> condition by EntityCondition.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     Contact contact = new Contact();
+	 *     contact.familyName = "Apple";
+	 *     contact.givenName = "Yukari";
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .<b>where(contact)</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
+	 *
 	 * @param entity the entity of the EntityCondition
 	 * @return this object
 	 *
@@ -614,6 +693,17 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Specifies the <b>WHERE</b> condition by SubqueryCondition.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .<b>where("EXISTS",</b>
+	 *              <b>new Sql&lt;&gt;(Phone.class, "P")</b>
+	 *                  <b>.where("{P.contactId} = {C.id}")</b>
+	 *                  <b>.and("{P.phoneNumber} LIKE {}", "080%")</b>
+	 *         <b>)</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
 	 *
 	 * @param <SE> the entity class of the subquery
 	 * @param content the content of the SubqueryCondition
@@ -661,6 +751,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * If after you call <b>having</b> method, 
 	 * add the <b>Expression</b> condition to the <b>HAVING</b> condition useing <b>AND</b>.
 	 * Otherwise, add the condition to the <b>WHERE</b> condition.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .where("{familyName} = {}", "Apple")
+	 *         .<b>and("{givenName} = {}", "Akiyo")</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
 	 *
 	 * @param content the content of the <b>Expression</b>
 	 * @param arguments the arguments of the <b>Expression</b>
@@ -714,6 +812,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * If after you call <b>having</b> method, 
 	 * add the <b>Expression</b> condition to the <b>HAVING</b> condition useing <b>OR</b>.
 	 * Otherwise, add the condition to the <b>WHERE</b> condition.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .where("{familyName}", "Apple")
+	 *         .<b>or("{familyName}", "Orange")</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
 	 *
 	 * @param content the content of the <b>Expression</b>
 	 * @param arguments the arguments of the <b>Expression</b>
@@ -820,6 +926,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the <b>ORDER BY</b> expression.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .<b>orderBy("{familyName}")</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
+	 *
 	 * @param content the content of the <b>Expression</b>
 	 * @param arguments the arguments of the <b>Expression</b>
 	 * @return this object
@@ -834,6 +947,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the sort order to ascend.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .orderBy("{id}").<b>asc()</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
+	 *
 	 * @return this object
 	 */
 	public Sql<E> asc() {
@@ -843,6 +963,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Specifies the sort order to descend.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .orderBy("{id}").<b>desc()</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
 	 *
 	 * @return this object
 	 */
@@ -863,6 +990,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the <b>LIMIT</b> value.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .<b>limit(10)</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
+	 *
 	 * @param limit the <b>LIMIT</b> value
 	 * @return this object
 	 */
@@ -882,6 +1016,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Specifies the <b>OFFSET</b> value.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .limit(10).<b>offset(100)</b>
+	 *         .select(connection, contacts::add);
+	 * </pre></div>
 	 *
 	 * @param offset the <b>OFFSET</b> value
 	 * @return this object
@@ -941,6 +1082,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Executes <b>action</b> if <b>condition</b> is true.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     .doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)
+	 * </pre></div>
+	 *
 	 * @param condition the condition
 	 * @param action the action that is executed if <b>condition</b> is true
 	 * @return this object
@@ -988,6 +1134,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Adds the <b>SqlEntityInfo</b> object.
+	 * <br>
+	 * <i> this method is used internally.</i>
 	 *
 	 * @param sqlEntityInfo the SqlEntityInfo object
 	 */
@@ -999,12 +1147,22 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (sqlEntityInfo instanceof Sql) {
 			((Sql<?>)sqlEntityInfo).sqlEntityInfoMap.values().stream()
 				.filter(sqlEntityInfo2 -> sqlEntityInfo2 != sqlEntityInfo)
-				.forEach(sqlEntityInfo2 -> addSqlEntityInfo(sqlEntityInfo2));
+			// 1.8.2
+			//	.forEach(sqlEntityInfo2 -> addSqlEntityInfo(sqlEntityInfo2));
+				.forEach(this::addSqlEntityInfo);
+			////
 		}
 	}
 
 	/**
 	 * Generates and executes a SELECT SQL that joins no tables.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .<b>select(connection, contacts::add)</b>;
+	 * </pre></div>
 	 *
 	 * @param connection the database connection
 	 * @param consumer a consumer for the entities
@@ -1013,6 +1171,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public void select(Connection connection, Consumer<? super E> consumer) {
+	// 1.8.2
+		if (where.isEmpty())
+			where = Condition.ALL;
+	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
@@ -1021,6 +1183,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Generates and executes a SELECT SQL that joins one table.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
+	 *         .<b>select(connection, contacts::add, phones:add)</b>;
+	 * </pre></div>
 	 *
 	 * @param <JE1> the entity class of the joined table
 	 * @param connection the database connection
@@ -1036,6 +1207,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Consumer<? super JE1> consumer1) {
 		if (joinInfos.size() < 1) throw new IllegalStateException("Sql.select: joinInfos.size < 1");
 
+	// 1.8.2
+		if (where.isEmpty())
+			where = Condition.ALL;
+	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
@@ -1047,6 +1222,17 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Generates and executes a SELECT SQL that joins two tables.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 *     List&lt;Email&gt; emails = new ArrayList&lt;&gt;();
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
+	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
+	 *         .<b>select(connection, contacts::add, phones:add, emails::add)</b>;
+	 * </pre></div>
 	 *
 	 * @param <JE1> the entity class of the 1st joined table
 	 * @param <JE2> the entity class of the 2nd joined table
@@ -1065,6 +1251,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			Consumer<? super JE2> consumer2) {
 		if (joinInfos.size() < 2) throw new IllegalStateException("Sql.select: joinInfos.size < 2");
 
+	// 1.8.2
+		if (where.isEmpty())
+			where = Condition.ALL;
+	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
@@ -1077,6 +1267,19 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Generates and executes a SELECT SQL that joins three tables.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 *     List&lt;Email&gt; emails = new ArrayList&lt;&gt;();
+	 *     List&lt;Address&gt; addresses = new ArrayList&lt;&gt;();
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
+	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
+	 *         .innerJoin(Address.class, "A", "{A.contactId} = {C.id}")
+	 *         .<b>select(connection, contacts::add, phones:add, emails::add, addresses::add)</b>;
+	 * </pre></div>
 	 *
 	 * @param <JE1> the entity class of the 1st joined table
 	 * @param <JE2> the entity class of the 2nd joined table
@@ -1098,6 +1301,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			Consumer<? super JE3> consumer3) {
 		if (joinInfos.size() < 3) throw new IllegalStateException("Sql.select: joinInfos.size < 3");
 
+	// 1.8.2
+		if (where.isEmpty())
+			where = Condition.ALL;
+	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
@@ -1111,6 +1318,21 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Generates and executes a SELECT SQL that joins four tables.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 *     List&lt;Email&gt; emails = new ArrayList&lt;&gt;();
+	 *     List&lt;Address&gt; addresses = new ArrayList&lt;&gt;();
+	 *     List&lt;Url&gt; urls = new ArrayList&lt;&gt;();
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
+	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
+	 *         .innerJoin(Address.class, "A", "{A.contactId} = {C.id}")
+	 *         .innerJoin(Url.class, "U", "{U.contactId} = {C.id}")
+	 *         .<b>select(connection, contacts::add, phones:add, emails::add, addresses::add urls::add)</b>;
+	 * </pre></div>
 	 *
 	 * @param <JE1> the entity class of the 1st joined table
 	 * @param <JE2> the entity class of the 2nd joined table
@@ -1135,6 +1357,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			Consumer<? super JE4> consumer4) {
 		if (joinInfos.size() < 4) throw new IllegalStateException("Sql.select: joinInfos.size < 4");
 
+	// 1.8.2
+		if (where.isEmpty())
+			where = Condition.ALL;
+	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
@@ -1150,6 +1376,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Generates and executes a SELECT SQL
 	 * and returns an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     Contact contact = new Sql&lt;&gt;(Contact.class)
+	 *         .where("{id} = ", contactId)
+	 *         .<b>select(connection)</b>.orElse(null);
+	 * </pre></div>
 	 *
 	 * @param connection the database connection
 	 * @return an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise
@@ -1174,6 +1407,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Generates and executes a SELECT COUNT(*) SQL and returns the result.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     int count = new Sql&lt;&gt;(Contact.class)
+	 *         .<b>selectCount(connection)</b>;
+	 * </pre></div>
+	 *
 	 * @param connection the database connection
 	 * @return the row count
 	 *
@@ -1181,6 +1420,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int selectCount(Connection connection) {
+	// 1.8.2
+		if (where.isEmpty())
+			where = Condition.ALL;
+	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().subSelectSql(this, () -> "COUNT(*)", parameters);
 
@@ -1199,6 +1442,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Generates and executes an INSERT SQL.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     Contact contact = new Contact();
+	 *       ...
+	 *     int count = new Sql&lt;&gt;(Contact.class)
+	 *         .<b>insert(connection, contact)</b>;
+	 * </pre></div>
 	 *
 	 * @param connection the database connection
 	 * @param entity the entity to be inserted
@@ -1236,6 +1487,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Generates and executes INSERT SQLs for each element of entities.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 *       ...
+	 *     int count = new Sql&lt;&gt;(Contact.class)
+	 *         .<b>insert(connection, contacts)</b>;
+	 * </pre></div>
+	 *
 	 * @param connection the database connection
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the row count
@@ -1255,6 +1514,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Generates and executes an UPDATE SQL.<br>
 	 * If the <b>WHERE</b> condition is specified, updates by the condition.<br>
 	 * To update all rows of the target table, specify <b>Condition.ALL</b> to <b>WHERE</b> conditions.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     Contact contact = new Contact();
+	 *       ...
+	 *     int count = new Sql&lt;&gt;(Contact.class)
+	 *         .<b>update(connection, contact)</b>;
+	 * </pre></div>
 	 *
 	 * @param connection the database connection
 	 * @param entity the entity to be updated
@@ -1290,6 +1557,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Generates and executes UPDATE SQLs for each element of entities.<br>
 	 * Even if the <b>WHERE</b> condition is specified, <b> new EntityCondition(entity)</b> will be specified for each entity.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 *       ...
+	 *     int count = new Sql&lt;&gt;(Contact.class)
+	 *         .<b>update(connection, contacts)</b>;
+	 * </pre></div>
+	 *
 	 * @param connection the database connection
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the row count
@@ -1313,6 +1588,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * If the <B>WHERE</b> condition is not specified, dose not delete.<br>
 	 * To delete all rows of the target table, specify <b>Condition.ALL</b> to <b>WHERE</b> conditions.
 	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     int count = new Sql&lt;&gt;(Contact.class)
+	 *         .where(Condition.ALL)
+	 *         .<b>delete(connection)</b>;
+	 * </pre></div>
+	 *
 	 * @param connection the database connection
 	 * @return the row count
 	 *
@@ -1333,6 +1615,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Generates and executes a DELETE SQL.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     Contact contact = new Contact();
+	 *       ...
+	 *     int count = new Sql&lt;&gt;(Contact.class)
+	 *         .<b>delete(connection, contact)</b>;
+	 * </pre></div>
 	 *
 	 * @param connection the database connection
 	 * @param entity the entity to be deleted
@@ -1359,6 +1649,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Generates and executes DELETE SQLs for each element of entities.
+	 *
+	 * <div class="sampleTitle"><span>Example</span></div>
+	 * <div class="sampleCode"><pre>
+	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 *       ...
+	 *     int count = new Sql&lt;&gt;(Contact.class)
+	 *         .<b>delete(connection, contacts)</b>;
+	 * </pre></div>
 	 *
 	 * @param connection the database connection
 	 * @param entities an <b>Iterable</b> of entities
@@ -1593,68 +1891,96 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Returns a <b>ColumnInfo</b> stream of the main table.<br>
+	 * <br>
 	 * <i> this method is used internally.</i>
 	 *
 	 * @return a <b>ColumnInfo</b> stream
 	 */
 	public Stream<ColumnInfo> columnInfoStream() {
-		return entityInfo().columnInfos().stream();
+	// 1.8.2
+	//	return entityInfo().columnInfos().stream();
+		return entityInfo.columnInfos().stream();
+	////
 	}
 
-	/**
-	 * Returns a <b>ColumnInfo</b> stream of selected columns of the main table.<br>
-	 * <i> this method is used internally.</i>
-	 *
-	 * @return a <b>ColumnInfo</b> stream
-	 */
-	public Stream<ColumnInfo> selectedColumnInfoStream() {
-		return columns.isEmpty()
-			? columnInfoStream()
-			: columnInfoStream()
-				.filter(columnInfo ->
-					columns.stream().anyMatch(name ->
-						name.endsWith("*")
-							? columnInfo.propertyName().startsWith(name.substring(0, name.length() - 1))
-							: columnInfo.propertyName().equals(name)
-					)
-				);
-	}
+// 1.8.2
+//	/**
+//	 * Returns a <b>ColumnInfo</b> stream with selected columns of the main table.<br>
+//	 * <i> this method is used internally.</i>
+//	 *
+//	 * @return a <b>ColumnInfo</b> stream
+//	 */
+//	public Stream<ColumnInfo> selectedColumnInfoStream() {
+//		return columns.isEmpty()
+//			? columnInfoStream()
+//			: columnInfoStream()
+//				.filter(columnInfo ->
+//					columns.stream().anyMatch(name ->
+//						name.endsWith("*")
+//							? columnInfo.propertyName().startsWith(name.substring(0, name.length() - 1))
+//							: columnInfo.propertyName().equals(name)
+//					)
+//				);
+//	}
+////
 
-	/**
-	 * Returns a <b>SqlEntityInfo</b> stream of the main table and the joined tables.<br>
-	 * <i> this method is used internally.</i>
-	 *
-	 * @return a <b>SqlEntityInfo</b> stream
-	 */
-	public Stream<SqlEntityInfo<?>> sqlEntityInfoStream() {
-		return  Stream.concat(Stream.of(this), joinInfos.stream());
-	}
+// 1.8.2
+//	/**
+//	 * Returns a <b>SqlEntityInfo</b> stream of the main table and the joined tables.<br>
+//	 * <i> this method is used internally.</i>
+//	 *
+//	 * @return a <b>SqlEntityInfo</b> stream
+//	 */
+//	public Stream<SqlEntityInfo<?>> sqlEntityInfoStream() {
+//		return  Stream.concat(Stream.of(this), joinInfos.stream());
+//	}
+////
 
+// 1.8.2
+//	/**
+//	 * Returns a <b>SqlColumnInfo</b> stream of the main table and the joined tables.<br>
+//	 * <i> this method is used internally.</i>
+//	 *
+//	 * @return a <b>SqlColumnInfo</b> stream
+//	 */
+//	public Stream<SqlColumnInfo> joinSqlColumnInfoStream() {
+//		return sqlEntityInfoStream()
+//			.flatMap(sqlEntityInfo ->
+//				sqlEntityInfo.entityInfo().columnInfos().stream()
+//					.map(columnInfo -> new SqlColumnInfo(sqlEntityInfo.tableAlias(), columnInfo))
+//			);
+//	}
+////
+
+// 1.8.2
 	/**
-	 * Returns a <b>SqlColumnInfo</b> stream of the main table and the joined tables.<br>
+	 * Returns a <b>SqlColumnInfo</b> stream with selected columns of the main table.<br>
+	 * <br>
 	 * <i> this method is used internally.</i>
 	 *
 	 * @return a <b>SqlColumnInfo</b> stream
 	 */
-	public Stream<SqlColumnInfo> joinSqlColumnInfoStream() {
-		return sqlEntityInfoStream()
-			.flatMap(sqlEntityInfo ->
-				sqlEntityInfo.entityInfo().columnInfos().stream()
-					.map(columnInfo -> new SqlColumnInfo(sqlEntityInfo.tableAlias(), columnInfo))
-			);
+	public Stream<SqlColumnInfo> selectedSqlColumnInfoStream() {
+		return selectedSqlColumnInfoStream(columns);
 	}
+////
 
 	/**
-	 * Returns a <b>SqlColumnInfo</b> stream of selected columns
+	 * Returns a <b>SqlColumnInfo</b> stream with selected columns
 	 * of the main table and the joined tables.<br>
+	 * <br>
 	 * <i> this method is used internally.</i>
 	 *
 	 * @return a <b>SqlColumnInfo</b> stream
 	 */
 	public Stream<SqlColumnInfo> selectedJoinSqlColumnInfoStream() {
-		return columns.isEmpty()
-			? joinSqlColumnInfoStream()
-			: joinSqlColumnInfoStream()
-				.filter(sqlColumnInfo -> columns.stream().anyMatch(name -> sqlColumnInfo.matches(name)));
+	// 1.8.2
+	//	return columns.isEmpty()
+	//		? joinSqlColumnInfoStream()
+	//		: joinSqlColumnInfoStream()
+	//			.filter(sqlColumnInfo -> columns.stream().anyMatch(name -> sqlColumnInfo.matches(name)));
+		return Stream.concat(Stream.of(this), joinInfos.stream())
+			.flatMap(sqlEntityInfo -> sqlEntityInfo.selectedSqlColumnInfoStream(columns));
+	////
 	}
 }

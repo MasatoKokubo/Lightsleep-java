@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * Indicates the expression instead of the field value used in UPDATE SQL.<br>
  * Specifies the field by <b>property</b>.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * <b>{@literal @}UpdateProperty(property="updateCount", expression="updateCount=updateCount+1")</b>
  * <b>{@literal @}UpdateProperty(property="modified", expression="CURRENT_TIMESTAMP")</b>

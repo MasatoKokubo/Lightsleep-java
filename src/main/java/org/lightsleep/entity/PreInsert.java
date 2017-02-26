@@ -12,7 +12,7 @@ import java.sql.Connection;
  *
  * In <b>preInsert method,</b> do the implementation of the numbering of the primary key or etc.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * public class Contact implements <b>PreInsert</b> {
  *  {@literal @}Key public int id;

@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * Indicates that the field not related to any column.<br>
  * Specifies the field by <b>value</b>.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * <b>{@literal @}NonColumnProperty("phones")</b>
  * <b>{@literal @}NonColumnProperty("addresses")</b>

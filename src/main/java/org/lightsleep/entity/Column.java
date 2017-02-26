@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * Indicates the name of column associated with the field.<br>
  * If the column name is the same as the field name, you do not need to specify it.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * public class Contact {
  *

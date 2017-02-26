@@ -9,8 +9,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.lightsleep.Sql;
-import org.lightsleep.component.SqlString;
-import org.lightsleep.helper.TypeConverter;
 
 /**
  * <a href="https://www.sqlite.org/index.html" target="SQLite">SQLite</a>
@@ -53,9 +51,11 @@ public class SQLite extends Standard {
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @since 1.8.2
 	 */
 	@Override
-	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
-		return null;
+	public boolean supportsOffsetLimit() {
+		return true;
 	}
 }

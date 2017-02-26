@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * Indicates that the column associated with the field is part of the primary key.
  * Specifies the field by <b>value</b>.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * <b>{@literal @}KeyProperty("contactId")</b>
  * <b>{@literal @}KeyProperty("childIndex")</b>

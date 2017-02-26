@@ -16,7 +16,7 @@ import org.lightsleep.logger.LoggerFactory;
 /**
  * A functional interface to execute transactions.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * <b>Transaction.execute(connection -&gt; {</b>
  *     new Sql&lt;&gt;(Person.class)

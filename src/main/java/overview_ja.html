@@ -1,8 +1,16 @@
 <html>
 	<body>
-		Lightsleep は、Persistence API とは別のアプローチによる O/R マッピングを行うためのライブラリです。
-		Java 8 から導入された関数型プログラミングを取り入れているため、Java 7 以前には対応していません。
-		構成するクラスが少ないため、学習しやすいのが特徴です。<br>
+		Lightsleep は、軽量の O/R マッピング・ライブラリで、Java 8 で利用できます。Java 7 以前には対応していません。
+		また Java Persistence API (JPA) との互換性はありません。<br>
+		<br>
+		以下の特徴があります。<br>
+		<ul>
+			<li>Java 8 で追加された機能 (関数型インタフェース、Optional クラス) を使用した API 。</li>
+			<li>メソッド名を SQL の予約語に似せてあるため、直観的に理解しやすい。</li>
+			<li>Java Runtime と JDBC ドライバー以外に依存するライブラリがないため、バッチ処理にも使用しやすい。</li>
+			<li>XML ファイル等によるマッピング定義ファイルは不要。</li>
+			<li>大規模なライブラリではないため、学習が比較的容易。</li>
+		</ul>
 
 		<div class="langLink">
 			<a href="../javadoc/index.html" target="_top">English</a>

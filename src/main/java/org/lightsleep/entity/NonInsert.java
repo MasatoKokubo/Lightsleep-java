@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * Indicates that the column related the field is not used in INSERT SQL.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
+ * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
  * public class Contact {
  *   {@literal @}Key<b>{@literal @}NonInsert</b>public int id;

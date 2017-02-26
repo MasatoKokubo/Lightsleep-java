@@ -147,7 +147,10 @@ public class Accessor<T> {
 				Class<?> fieldType = getComponentType(entry.getValue().getType());
 				return valueTypes.contains(fieldType) || fieldType.isEnum();
 			})
-			.map(entry -> entry.getKey())
+		// 1.8.2
+		//	.map(entry -> entry.getKey())
+			.map(Map.Entry::getKey)
+		////
 			.collect(Collectors.toList());
 
 		if (logger.isDebugEnabled()) {

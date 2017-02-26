@@ -14,10 +14,20 @@ import org.lightsleep.Sql;
 */
 public interface Condition extends SqlComponent {
 	/** 空の条件 */
-	static final Condition EMPTY = new And();
+	static final Condition EMPTY = null;
 
 	/** 全行を対象する条件 */
-	static final Condition ALL = of("0 = 0");
+	static final Condition ALL = null;
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.8.2
+	 */
+	@Override
+	default boolean isEmpty() {
+		return false;
+	}
 
 	/**
 		条件式を生成して返します。
@@ -31,7 +41,7 @@ public interface Condition extends SqlComponent {
 		@throws NullPointerException <b>content</b> が <b>null</b> の場合
 	*/
 	static Condition of(String content) {
-		return new Expression(content);
+		return null;
 	}
 
 	/**
@@ -47,7 +57,7 @@ public interface Condition extends SqlComponent {
 		@throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
 	*/
 	static Condition of(String content, Object... arguments) {
-		return new Expression(content, arguments);
+		return null;
 	}
 
 	/**

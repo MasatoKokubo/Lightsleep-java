@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.lightsleep.Sql;
-import org.lightsleep.component.Condition;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
 
@@ -141,7 +140,10 @@ public class SQLServer extends Standard {
 		buff.append(subSelectSql(sql, parameters));
 
 		// ORDER BY ...
-		buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+	// 1.8.2
+	//	buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+		appendsOrderBy(buff, sql, parameters);
+	////
 
 		return buff.toString();
 	}
@@ -153,23 +155,105 @@ public class SQLServer extends Standard {
 	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
+	// 1.8.2
+	//	// SELECT
+	//	buff.append("SELECT ");
+	//
+	//	// DISTINCT
+	//	if (sql.isDistinct())
+	//		buff.append("DISTINCT ");
+	//
+	//	// the column names, ...
+	//	buff.append(columnsSupplier.get());
+	//
+	//	// FROM table name
+	//	buff.append(" FROM ").append(sql.entityInfo().tableName());
+	//
+	//	// table alias
+	//	if (!sql.tableAlias().isEmpty())
+	//		buff.append(" ").append(sql.tableAlias());
+	//
+	//	// FOR UPDATE
+	//	if (sql.isForUpdate()) {
+	//		// NO WAIT
+	//		if (sql.isNoWait())
+	//			buff.append(" WITH (ROWLOCK,UPDLOCK,NOWAIT)");
+	//		else
+	//			buff.append(" WITH (ROWLOCK,UPDLOCK)");
+	//	}
+	//
+	//	// INNER / OUTER JOIN ...
+	//	if (!sql.getJoinInfos().isEmpty()) {
+	//	// 1.5.1
+	//	//	sql.getJoinInfos().stream()
+	//		sql.getJoinInfos()
+	//	////
+	//			.forEach(joinInfo -> {
+	//				// INNER/OUTER JOIN table name
+	//				buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());
+	//
+	//				// table alias
+	//				if (!joinInfo.tableAlias().isEmpty())
+	//					buff.append(" ").append(joinInfo.tableAlias());
+	//
+	//				// ON ...
+	//				if (!joinInfo.on().isEmpty())
+	//					buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
+	//			});
+	//	}
+	//
+	//	// WHERE ...
+	//	if (!sql.getWhere().isEmpty() && sql.getWhere() != Condition.ALL)
+	//		buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
+	//
+	//	// GROUP BY ...
+	//	if (!sql.getGroupBy().isEmpty())
+	//		buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
+	//
+	//	// HAVING ...
+	//	if (!sql.getHaving().isEmpty())
+	//		buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
 		// SELECT
-		buff.append("SELECT ");
-
+		buff.append("SELECT");
+	
 		// DISTINCT
-		if (sql.isDistinct())
-			buff.append("DISTINCT ");
-
+		appendsDistinct(buff, sql);
+	
 		// the column names, ...
-		buff.append(columnsSupplier.get());
+		buff.append(' ').append(columnsSupplier.get());
+	
+		// FROM
+		buff.append(" FROM");
 
-		// FROM table name
-		buff.append(" FROM ").append(sql.entityInfo().tableName());
+		// main table name and alias
+		appendsMainTable(buff, sql);
 
-		// table alias
-		if (!sql.tableAlias().isEmpty())
-			buff.append(" ").append(sql.tableAlias());
+		// FOR UPDATE
+		appendsForUpdate(buff, sql);
+	
+		// INNER / OUTER JOIN ...
+		appendsJoinTables(buff, sql, parameters);
+	
+		// WHERE ...
+		appendsWhere(buff, sql, parameters);
+	
+		// GROUP BY ...
+		appendsGroupBy(buff, sql, parameters);
+	
+		// HAVING ...
+		appendsHaving(buff, sql, parameters);
+	////
 
+		return buff.toString();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.8.2
+	 */
+	@Override
+	protected <E> void appendsForUpdate(StringBuilder buff, Sql<E> sql) {
 		// FOR UPDATE
 		if (sql.isForUpdate()) {
 			// NO WAIT
@@ -178,39 +262,5 @@ public class SQLServer extends Standard {
 			else
 				buff.append(" WITH (ROWLOCK,UPDLOCK)");
 		}
-
-		// INNER / OUTER JOIN ...
-		if (!sql.getJoinInfos().isEmpty()) {
-		// 1.5.1
-		//	sql.getJoinInfos().stream()
-			sql.getJoinInfos()
-		////
-				.forEach(joinInfo -> {
-					// INNER/OUTER JOIN table name
-					buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());
-
-					// table alias
-					if (!joinInfo.tableAlias().isEmpty())
-						buff.append(" ").append(joinInfo.tableAlias());
-
-					// ON ...
-					if (!joinInfo.on().isEmpty())
-						buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
-				});
-		}
-
-		// WHERE ...
-		if (!sql.getWhere().isEmpty() && sql.getWhere() != Condition.ALL)
-			buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
-
-		// GROUP BY ...
-		if (!sql.getGroupBy().isEmpty())
-			buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
-
-		// HAVING ...
-		if (!sql.getHaving().isEmpty())
-			buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
-
-		return buff.toString();
 	}
 }

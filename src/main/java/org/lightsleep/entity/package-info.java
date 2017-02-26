@@ -1,4 +1,4 @@
 /**
-	Annotation classes and innterfaces to be used in entity classes.
+	Annotation classes and interfaces to be used in your entity classes.
 */
 package org.lightsleep.entity;
