@@ -204,7 +204,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
 	 *         .<b>columns("C.id", "P.*")</b>
-	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
 	 * @param columns カラムに関連するプロパティ名の配列
@@ -280,9 +279,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class)
+	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .<b>innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .select(connection, contacts::add, phones::add);
+	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
 	 * @param <JE> 結合するエンティティ・クラス
@@ -318,9 +317,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class)
+	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .<b>leftJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .select(connection, contacts::add, phones::add);
+	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
 	 * @param <JE> 結合するエンティティ・クラス
@@ -357,9 +356,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class)
+	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .<b>rightJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .select(connection, contacts::add, phones::add);
+	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
 	 * @param <JE> 結合するエンティティ・クラス
@@ -404,7 +403,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>where("{birthday} IS NULL")</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -423,7 +422,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>where("{id} = {}", contactId)</b>
 	 *         .select(connection).orElse(null);
 	 * </pre></div>
@@ -448,7 +447,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *     Contact contact = new Contact();
 	 *     contact.familyName = "Apple";
 	 *     contact.givenName = "Yukari";
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>where(contact)</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -471,7 +470,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .<b>where("EXISTS",</b>
 	 *              <b>new Sql&lt;&gt;(Phone.class, "P")</b>
 	 *                  <b>.where("{P.contactId} = {C.id}")</b>
-	 *                  <b>.and("{P.phoneNumber} LIKE {}", "080%")</b>
+	 *                  <b>.and("{P.content} LIKE {}", "080%")</b>
 	 *         <b>)</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -517,7 +516,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .where("{familyName} = {}", "Apple")
 	 *         .<b>and("{givenName} = {}", "Akiyo")</b>
 	 *         .select(connection, contacts::add);
@@ -569,9 +568,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .where("{familyName}", "Apple")
-	 *         .<b>or("{familyName}", "Orange")</b>
+	 *     new Sql&lt;&gt;(Contact.class)
+	 *         .where("{familyName} = {}", "Apple")
+	 *         .<b>or("{familyName} = {}", "Orange")</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
@@ -667,7 +666,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>orderBy("{familyName}")</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -687,7 +686,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .orderBy("{id}").<b>asc()</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -703,7 +702,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .orderBy("{id}").<b>desc()</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -728,7 +727,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>limit(10)</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -754,7 +753,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .limit(10).<b>offset(100)</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -816,7 +815,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     .doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .<b>doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)</b>
+	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
 	 * @param condition 条件
@@ -865,7 +866,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
 	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>select(connection, contacts::add)</b>;
 	 * </pre></div>
 	 *
@@ -887,7 +888,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
 	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .<b>select(connection, contacts::add, phones:add)</b>;
+	 *         .<b>&lt;Phone&gt;select(connection, contacts::add, phones::add)</b>;
 	 * </pre></div>
 	 *
 	 * @param <JE1> 結合テーブル1のエンティティ・クラス
@@ -915,7 +916,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
 	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
-	 *         .<b>select(connection, contacts::add, phones:add, emails::add)</b>;
+	 *         .<b>&lt;Phone, Email&gt;select(connection, contacts::add, phones::add, emails::add)</b>;
 	 * </pre></div>
 	 *
 	 * @param <JE1> 結合テーブル1のエンティティ・クラス
@@ -948,7 +949,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
 	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
 	 *         .innerJoin(Address.class, "A", "{A.contactId} = {C.id}")
-	 *         .<b>select(connection, contacts::add, phones:add, emails::add, addresses::add)</b>;
+	 *         .<b>&lt;Phone, Email, Address&gt;select(connection, contacts::add, phones::add,</b>
+	 *             <b>emails::add, addresses::add)</b>;
 	 * </pre></div>
 	 *
 	 * @param <JE1> 結合テーブル1のエンティティ・クラス
@@ -986,7 +988,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
 	 *         .innerJoin(Address.class, "A", "{A.contactId} = {C.id}")
 	 *         .innerJoin(Url.class, "U", "{U.contactId} = {C.id}")
-	 *         .<b>select(connection, contacts::add, phones:add, emails::add, addresses::add urls::add)</b>;
+	 *         .<b>&lt;Phone, Email, Address, Url&gt;select(connection, contacts::add, phones::add,</b>
+	 *             <b>emails::add, addresses::add, urls::add)</b>;
 	 * </pre></div>
 	 *
 	 * @param <JE1> 結合テーブル1のエンティティ・クラス

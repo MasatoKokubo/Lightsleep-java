@@ -1,7 +1,7 @@
 Lightsleep
 ===========
 
-Lightsleep is a lightweight Object-Relational mapping library and is available in Java 8. It does not work in Java 7 or earlier.
+Lightsleep is a lightweight Object-Relational (O/R) mapping library and is available in Java 8. It does not work in Java 7 or earlier.
 It is not compatible with the Java Persistence API (JPA).
 
 #### Features

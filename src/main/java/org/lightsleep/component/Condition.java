@@ -30,19 +30,21 @@ public interface Condition extends SqlComponent {
 		return this == EMPTY;
 	}
 
-	/**
-	 * Returns a new expression condition.
-	 *
-	 * @param content the content of the expression condition
-	 * @return a new expression condition
-	 *
-	 * @throws NullPointerException if <b>content</b> is <b>null</b>
-	 *
-	 * @see Expression
-	 */
-	static Condition of(String content) {
-		return new Expression(content);
-	}
+// 1.8.3
+//	/**
+//	 * Returns a new expression condition.
+//	 *
+//	 * @param content the content of the expression condition
+//	 * @return a new expression condition
+//	 *
+//	 * @throws NullPointerException if <b>content</b> is <b>null</b>
+//	 *
+//	 * @see Expression
+//	 */
+//	static Condition of(String content) {
+//		return new Expression(content);
+//	}
+////
 
 	/**
 	 * Returns a new expression condition.
@@ -69,6 +71,11 @@ public interface Condition extends SqlComponent {
 	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
 	 */
 	static <E> Condition of(E entity) {
+	// 1.8.3
+		// for Groovy
+		if (entity instanceof String)
+			return new Expression((String)entity);
+	////
 		return new EntityCondition<E>(entity);
 	}
 

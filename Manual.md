@@ -52,7 +52,7 @@ If the field type and column type are the same type, you do not need to specify 
 Specify if field type (e.g. date type) and column type (e.g. numerical type) are different.
 
 ```java:Java
-    @Column("Long")
+    @ColumnType(Long.class)
     public Date birhtday;
 ```
 
@@ -214,16 +214,35 @@ Define contents of the transaction by the argument `transaction` as a lambda exp
 The lambda expression is equivalent to the contents of `Transaction.executeBody` method and the argument of this method is a `Connection`.
 
 ```java:Java
-import org.lightsleep.*;
+// Java
+Contact contact = new Contact();
+contact.id = 1;
+contact.familyName = "Apple";
+contact.givenName  = "Akane";
 
-// A definition example of transaction
+// An example of transaction
 Transaction.execute(connection -> {
-    // Start of the transaction
-    new Sql<>(Contact.class)
-        .update(connection, contact);
+    // Start of transaction
+    new Sql<>(Contact.class).insert(connection, contact);
     ...
-    // End of the transaction
+    // End of transaction
 });
+```
+
+```groovy:Groovy
+// Groovy
+def contact = new Contact()
+contact.id = 1
+contact.familyName = 'Apple'
+contact.givenName  = 'Akane'
+
+// An example of transaction
+Transaction.execute {
+    // Start of transaction
+    new Sql<>(Contact.class).insert(it, contact)
+    ...
+    // End of transaction
+}
 ```
 
 If an exception is thrown during the transaction, `Transaction.rollback` method is called.
@@ -311,11 +330,21 @@ Use the various methods of `Sql` class to execute SQLs and define it in the lamb
 #### 4-1-1. SELECT / 1 row / Expression Condition
 
 ```java:Java
+// Java
 Transaction.execute(connection -> {
     Optional<Contact> contactOpt = new Sql<>(Contact.class)
         .where("{id}={}", 1)
         .select(connection);
 });
+```
+
+```groovy:Groovy
+// Groovy
+Transaction.execute {
+    def contactOpt = new Sql<>(Contact.class)
+        .where('{id}={}', 1)
+        .select(it)
+}
 ```
 
 ```sql:SQL
@@ -325,6 +354,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 4-1-2. SELECT / 1 row / Entity Condition
 
 ```java:Java
+// Java
 Contact contact = new Contact();
 contact.id = 1;
 Transaction.execute(connection -> {
@@ -334,6 +364,17 @@ Transaction.execute(connection -> {
 });
 ```
 
+```groovy:Groovy
+// Groovy
+def contact = new Contact()
+contact.id = 1
+Transaction.execute {
+    def contactOpt = new Sql<>(Contact.class)
+        .where(contact)
+        .select(it)
+}
+```
+
 ```sql:SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
@@ -341,12 +382,23 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 4-1-3. SELECT / Multiple rows / Expression Condition
 
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
         .where("{familyName}={}", "Apple")
         .select(connection, contacts::add)
 );
+```
+
+```groovy:Groovy
+// Groovy
+def contacts = []
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .where('{familyName}={}', 'Apple')
+        .select(it, {contacts << it})
+}
 ```
 
 ```sql:SQL
@@ -356,6 +408,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 4-1-4. SELECT / Subquery Condition
 
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class, "C")
@@ -367,6 +420,19 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+Transaction.execute {
+    new Sql<>(Contact.class, 'C')
+        .where('EXISTS',
+            new Sql<>(Phone.class, 'P')
+                .where('{P.contactId}={C.id}')
+        )
+        .select(it, {contacts << it})
+}
+```
+
 ```sql:SQL
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime FROM Contact C WHERE EXISTS (SELECT * FROM Phone P WHERE P.contactId=C.id)
 ```
@@ -374,6 +440,7 @@ SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C
 #### 4-1-5. SELECT / Expression Condition / AND
 
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -383,6 +450,17 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .where('{familyName}={}', 'Apple')
+        .and  ('{givenName}={}', 'Akane')
+        .select(it, {contacts << it})
+}
+```
+
 ```sql:SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE (familyName='Apple' AND givenName='Akane')
 ```
@@ -390,6 +468,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 4-1-6. SELECT / Expression Condition / OR
 
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -399,6 +478,17 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .where('{familyName}={}', 'Apple')
+        .or   ('{familyName}={}', 'Orange')
+        .select(it, {contacts << it})
+}
+```
+
 ```sql:SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE (familyName='Apple' OR familyName='Orange')
 ```
@@ -406,6 +496,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 4-1-7. SELECT / Expression Condition / (A AND B) OR (C AND D)
 
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -421,6 +512,23 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .where(Condition
+            .of ('{familyName}={}', 'Apple')
+            .and('{givenName}={}', 'Akane')
+        )
+        .or(Condition
+            .of ('{familyName}={}', 'Orange')
+            .and('{givenName}={}', 'Setoka')
+        )
+        .select(it, {contacts << it})
+}
+```
+
 ```sql:SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE ((familyName='Apple' AND givenName='Akane') OR (familyName='Orange' AND givenName='Setoka'))
 ```
@@ -428,6 +536,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 4-1-8. SELECT / Select Columns
 
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -437,6 +546,17 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .where('{familyName}={}', 'Apple')
+        .columns('familyName', 'givenName')
+        .select(it, {contacts << it})
+}
+```
+
 ```sql:SQL
 SELECT familyName, givenName FROM Contact WHERE familyName='Apple'
 ```
@@ -444,6 +564,7 @@ SELECT familyName, givenName FROM Contact WHERE familyName='Apple'
 #### 4-1-9. SELECT / GROUP BY, HAVING
 
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class, "C")
@@ -454,6 +575,18 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+Transaction.execute {
+    new Sql<>(Contact.class, 'C')
+        .columns('familyName')
+        .groupBy('{familyName}')
+        .having('COUNT({familyName})>=2')
+        .select(it, {contacts << it})
+}
+```
+
 ```sql:SQL
 SELECT MIN(C.familyName) AS C_familyName FROM Contact C GROUP BY C.familyName HAVING COUNT(C.familyName)>=2
 ```
@@ -461,6 +594,7 @@ SELECT MIN(C.familyName) AS C_familyName FROM Contact C GROUP BY C.familyName HA
 #### 4-1-10. SELECT / ORDER BY, OFFSET, LIMIT
 
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -472,14 +606,33 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .orderBy('{familyName}')
+        .orderBy('{givenName}')
+        .orderBy('{id}')
+        .offset(10).limit(5)
+        .select(it, {contacts << it})
+}
+```
+
 ```sql:SQL
--- MySQL, PostgreSQL
+-- MySQL, PostgreSQL, SQLite
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY familyName ASC, givenName ASC, id ASC LIMIT 5 OFFSET 10
+```
+
+```sql:SQL
+-- Oracle, SQLServer (Skip rows during getting)
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY familyName ASC, givenName ASC, id ASC
 ```
 
 #### 4-1-11. SELECT / FOR UPDATE
 
 ```java:Java
+// Java
 Transaction.execute(connection -> {
     Optional<Contact> contactOpt = new Sql<>(Contact.class)
         .where("{id}={}", 1)
@@ -488,13 +641,31 @@ Transaction.execute(connection -> {
 });
 ```
 
+```groovy:Groovy
+// Groovy
+Transaction.execute {
+    def contactOpt = new Sql<>(Contact.class)
+        .where('{id}={}', 1)
+        .forUpdate()
+        .select(it)
+}
+```
+
 ```sql:SQL
+-- MySQL, Oracle, PostgreSQL, SQLite
+-- An exception is thrown on SQLite because FOR UPDATE is not supported.
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE
+```
+
+```sql:SQL
+-- SQLServer
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WITH (ROWLOCK,UPDLOCK) WHERE id=1
 ```
 
 #### 4-1-12. SELECT / INNER JOIN
 
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
 Transaction.execute(connection ->
@@ -505,12 +676,25 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+def phones = []
+Transaction.execute {
+    new Sql<>(Contact.class, 'C')
+        .innerJoin(Phone.class, 'P', '{P.contactId}={C.id}')
+        .where('{C.id}={}', 1)
+        .select(it, {contacts << it}, {phones << it})
+}
+```
+
 ```sql:SQL
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C INNER JOIN Phone P ON P.contactId=C.id WHERE C.id=1
 ```
 
 #### 4-1-13. SELECT / LEFT OUTER JOIN
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
 Transaction.execute(connection ->
@@ -521,12 +705,25 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+def phones = []
+Transaction.execute {
+    new Sql<>(Contact.class, 'C')
+        .leftJoin(Phone.class, 'P', '{P.contactId}={C.id}')
+        .where('{C.familyName}={}', 'Apple')
+        .select(it, {contacts << it}, {phones << it})
+}
+```
+
 ```sql:SQL
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C LEFT OUTER JOIN Phone P ON P.contactId=C.id WHERE C.familyName='Apple'
 ```
 
 #### 4-1-14. SELECT / RIGHT OUTER JOIN
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
 Transaction.execute(connection ->
@@ -537,7 +734,20 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+def phones = []
+Transaction.execute {
+    new Sql<>(Contact.class, 'C')
+        .rightJoin(Phone.class, 'P', '{P.contactId}={C.id}')
+        .where('{P.label}={}', 'Main')
+        .select(it, {contacts << it}, {phones << it})
+}
+```
+
 ```sql:SQL
+-- An exception is thrown in SQLite because RIGHT OUTER JOIN is not supported.
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C RIGHT OUTER JOIN Phone P ON P.contactId=C.id WHERE P.label='Main'
 ```
 
@@ -545,6 +755,7 @@ SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C
 #### 4-2-1. INSERT / 1 row
 
 ```java:Java
+// Java
 Contact contact = new Contact();
 contact.id = 1;
 contact.familyName = "Apple";
@@ -552,16 +763,45 @@ contact.givenName = "Akane";
 Calendar calendar = Calendar.getInstance();
 calendar.set(2001, 1-1, 1, 0, 0, 0);
 contact.birthday = new Date(calendar.getTimeInMillis())
-Transaction.execute(connection -> {
+
+Transaction.execute(connection ->
     new Sql<>(Contact.class).insert(connection, contact));
 ```
 
+```groovy:Groovy
+// Groovy
+def contact = new Contact()
+contact.id = 1
+contact.familyName = 'Apple'
+contact.givenName = 'Akane'
+Calendar calendar = Calendar.instance
+calendar.set(2001, 1-1, 1, 0, 0, 0)
+contact.birthday = new Date(calendar.timeInMillis)
+
+Transaction.execute {
+    new Sql<>(Contact.class).insert(it, contact)
+}
+```
+
 ```sql:SQL
+-- MySQL, Oracle, PostgreSQL
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', DATE'2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
+```sql:SQL
+-- SQLite
+INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', '2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+```
+
+```sql:SQL
+-- SQLServer
+INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', CAST('2001-01-01' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+```
+
 #### 4-2-2. INSERT / Multiple rows
+
 ```java:Java
+// Java
 List<Contact> contacts = new ArrayList<>();
 
 Contact contact = new Contact();
@@ -582,15 +822,52 @@ Transaction.execute(connection ->
     new Sql<>(Contact.class).insert(connection, contacts));
 ```
 
+```groovy:Groovy
+// Groovy
+def contacts = []
+
+def contact = new Contact()
+contact.id = 2; contact.familyName = 'Apple'; contact.givenName = 'Yukari'
+def calendar = Calendar.instance
+calendar.set(2001, 1-1, 2, 0, 0, 0)
+contact.birthday = new Date(calendar.timeInMillis)
+contacts << contact
+
+contact = new Contact()
+contact.id = 3; contact.familyName = 'Apple'; contact.givenName = 'Azusa'
+calendar = Calendar.instance
+calendar.set(2001, 1-1, 3, 0, 0, 0)
+contact.birthday = new Date(calendar.timeInMillis)
+contacts << contact
+
+Transaction.execute {
+    new Sql<>(Contact.class).insert(it, contacts)
+}
+```
+
 ```sql:SQL
+-- MySQL, Oracle, PostgreSQL
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', DATE'2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', DATE'2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+```
+
+```sql:SQL
+-- SQLite
+INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', '2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', '2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+```
+
+```sql:SQL
+-- SQLServer
+INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', CAST('2001-01-02' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', CAST('2001-01-03' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 #### 4-3. UPDATE
 #### 4-3-1. UPDATE / 1 row
 
 ```java:Java
+// Java
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
         .where("{id}={}", 1)
@@ -602,14 +879,41 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .where('{id}={}', 1)
+        .select(it)
+        .ifPresent {Contact contact ->
+            contact.givenName = 'Akiyo'
+            new Sql<>(Contact.class).update(it, contact)
+        }
+}
+```
+
 ```sql:SQL
+-- MySQL, Oracle, PostgreSQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+```
+
+```sql:SQL
+-- SQLite
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
+UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+```
+
+```sql:SQL
+-- SQLServer
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
+UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
 #### 4-3-2. UPDATE / Multiple rows
 
 ```java:Java
+// Java
 Transaction.execute(connection -> {
     List<Contact> contacts = new ArrayList<>();
     new Sql<>(Contact.class)
@@ -622,16 +926,48 @@ Transaction.execute(connection -> {
 });
 ```
 
+```groovy:Groovy
+// Groovy
+Transaction.execute {
+    def contacts = []
+    new Sql<>(Contact.class)
+        .where('{familyName}={}', 'Apple')
+        .select(it, {Contact contact ->
+            contact.familyName = 'Apfel'
+            contacts << contact
+        })
+    new Sql<>(Contact.class).update(it, contacts)
+}
+```
+
 ```sql:SQL
+-- MySQL, Oracle, PostgreSQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
 UPDATE Contact SET familyName='Apfel', givenName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday=DATE'2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
 UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday=DATE'2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
 ```
 
+```sql:SQL
+-- SQLite
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
+UPDATE Contact SET familyName='Apfel', givenName='Akiyo', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday='2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
+UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday='2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
+```
+
+```sql:SQL
+-- SQLServer
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
+UPDATE Contact SET familyName='Apfel', givenName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday=CAST('2001-01-02' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
+UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday=CAST('2001-01-03' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
+```
+
 #### 4-3-3. UPDATE / Specified Condition, Select Columns
 
 ```java:Java
+// Java
 Contact contact = new Contact();
 contact.familyName = "Pomme";
 Transaction.execute(connection ->
@@ -642,6 +978,18 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contact = new Contact()
+contact.familyName = 'Pomme'
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .where('{familyName}={}', 'Apfel')
+        .columns('familyName')
+        .update(it, contact)
+}
+```
+
 ```sql:SQL
 UPDATE Contact SET familyName='Pomme' WHERE familyName='Apfel'
 ```
@@ -649,6 +997,7 @@ UPDATE Contact SET familyName='Pomme' WHERE familyName='Apfel'
 #### 4-3-4. UPDATE / All rows
 
 ```java:Java
+// Java
 Contact contact = new Contact();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -658,13 +1007,26 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+def contact = new Contact()
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .where(Condition.ALL)
+        .columns('birthday')
+        .update(it, contact)
+}
+```
+
 ```sql:SQL
 UPDATE Contact SET birthday=NULL
 ```
 
 #### 4-4. DELETE
 #### 4-4-1. DELETE / 1 row
+
 ```java:Java
+// Java
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
         .where("{id}={}", 1)
@@ -674,13 +1036,27 @@ Transaction.execute(connection ->
 );
 ```
 
+```groovy:Groovy
+// Groovy
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .where('{id}={}', 1)
+        .select(it)
+        .ifPresent {contact ->
+            new Sql<>(Contact.class).delete(it, contact)
+        }
+}
+```
+
 ```sql:SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 DELETE FROM Contact WHERE id=1
 ```
 
 #### 4-4-2. DELETE / Multiple rows
+
 ```java:Java
+// Java
 Transaction.execute(connection -> {
     List<Contact> contacts = new ArrayList<>();
     new Sql<>(Contact.class)
@@ -688,6 +1064,17 @@ Transaction.execute(connection -> {
         .select(connection, contacts::add);
     new Sql<>(Contact.class).delete(connection, contacts);
 });
+```
+
+```groovy:Groovy
+// Groovy
+Transaction.execute {
+    def contacts = []
+    new Sql<>(Contact.class)
+        .where('{familyName}={}', 'Pomme')
+        .select(it, {contacts << it})
+    new Sql<>(Contact.class).delete(it, contacts)
+}
 ```
 
 ```sql:SQL
@@ -697,14 +1084,23 @@ DELETE FROM Contact WHERE id=3
 ```
 
 #### 4-4-3. DELETE / Specified Condition
+
 ```java:Java
-Transaction.execute(connection -> {
-    List<Contact> contacts = new ArrayList<>();
+// Java
+Transaction.execute(connection ->
     new Sql<>(Contact.class)
-        .where("{familyName}={}", "Pomme")
-        .select(connection, contacts::add);
-    new Sql<>(Contact.class).delete(connection, contacts);
-});
+        .where("{familyName}={}", "Orange")
+        .delete(connection)
+);
+```
+
+```groovy:Groovy
+// Groovy
+Transaction.execute {
+    new Sql<>(Contact.class)
+        .where('{familyName}={}', 'Orange')
+        .delete(it)
+}
 ```
 
 ```sql:SQL
@@ -712,9 +1108,23 @@ DELETE FROM Contact WHERE familyName='Orange'
 ```
 
 #### 4-4-4. DELETE / All rows
+
 ```java:Java
+// Java
 Transaction.execute(connection ->
-    new Sql<>(Phone.class).where(Condition.ALL).delete(connection));
+    new Sql<>(Phone.class)
+        .where(Condition.ALL)
+        .delete(connection)
+);
+```
+
+```groovy:Groovy
+// Groovy
+Transaction.execute {
+    new Sql<>(Phone.class)
+        .where(Condition.ALL)
+        .delete(it)
+}
 ```
 
 ```sql:SQL
@@ -742,9 +1152,8 @@ When generating SQL, evaluates the following character string as an expression a
     - `orderBy(String content, Object... arguments)`
 
 - Arguments for the following methods of the `Condition` interface
-    - `of(String content)`
     - `of(String content, Object... arguments)`
-    - `Condition of(String content, Sql<E> outerSql, Sql<SE> subSql)`
+    - `of(String content, Sql<E> outerSql, Sql<SE> subSql)`
     - `and(String content, Object... arguments)`
     - `and(String content, Sql<E> outerSql, Sql<SE> subSql)`
     - `or(String content, Object... arguments)`

@@ -395,7 +395,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
 	 *         .<b>columns("C.id", "P.*")</b>
-	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
 	 * @param columns the array of the property names related to the columns
@@ -486,9 +485,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class)
+	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .<b>innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .select(connection, contacts::add, phones::add);
+	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
 	 * @param <JE> the entity class that relateed to the table to join
@@ -524,9 +523,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class)
+	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .<b>leftJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .select(connection, contacts::add, phones::add);
+	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
 	 * @param <JE> the entity class that relateed to the table to join
@@ -562,9 +561,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class)
+	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .<b>rightJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .select(connection, contacts::add, phones::add);
+	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
 	 * @param <JE> the entity class that relateed to the table to join
@@ -597,7 +596,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * Add an information of the table that join with
- *   <b>INNER JOIN</b>, <b>LEFT OUTER JOIN</b> or <b>RIGHT OUTER JOIN</b>.
+ 	 *   <b>INNER JOIN</b>, <b>LEFT OUTER JOIN</b> or <b>RIGHT OUTER JOIN</b>.
 	 *
 	 * @param <JE> the entity class that relateed to the table to join
 	 * @param joinType the join type
@@ -630,7 +629,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>where("{birthday} IS NULL")</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -652,7 +651,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>where("{id} = {}", contactId)</b>
 	 *         .select(connection).orElse(null);
 	 * </pre></div>
@@ -676,7 +675,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *     Contact contact = new Contact();
 	 *     contact.familyName = "Apple";
 	 *     contact.givenName = "Yukari";
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>where(contact)</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -700,7 +699,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .<b>where("EXISTS",</b>
 	 *              <b>new Sql&lt;&gt;(Phone.class, "P")</b>
 	 *                  <b>.where("{P.contactId} = {C.id}")</b>
-	 *                  <b>.and("{P.phoneNumber} LIKE {}", "080%")</b>
+	 *                  <b>.and("{P.content} LIKE {}", "080%")</b>
 	 *         <b>)</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -732,7 +731,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Otherwise, add the condition to the <b>WHERE</b> condition.
 	 *
 	 * @param condition the condition
-	 *
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
@@ -754,7 +752,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .where("{familyName} = {}", "Apple")
 	 *         .<b>and("{givenName} = {}", "Akiyo")</b>
 	 *         .select(connection, contacts::add);
@@ -762,7 +760,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @param content the content of the <b>Expression</b>
 	 * @param arguments the arguments of the <b>Expression</b>
-	 *
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
@@ -793,7 +790,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Otherwise, add the condition to the <b>WHERE</b> condition.
 	 *
 	 * @param condition the condition
-	 *
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
@@ -815,9 +811,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .where("{familyName}", "Apple")
-	 *         .<b>or("{familyName}", "Orange")</b>
+	 *     new Sql&lt;&gt;(Contact.class)
+	 *         .where("{familyName} = {}", "Apple")
+	 *         .<b>or("{familyName} = {}", "Orange")</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
@@ -928,7 +924,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>orderBy("{familyName}")</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -949,7 +945,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .orderBy("{id}").<b>asc()</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -966,7 +962,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .orderBy("{id}").<b>desc()</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -992,7 +988,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>limit(10)</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -1019,7 +1015,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .limit(10).<b>offset(100)</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
@@ -1084,7 +1080,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
-	 *     .doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .<b>doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)</b>
+	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
 	 * @param condition the condition
@@ -1160,7 +1158,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
 	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>select(connection, contacts::add)</b>;
 	 * </pre></div>
 	 *
@@ -1190,7 +1188,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
 	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .<b>select(connection, contacts::add, phones:add)</b>;
+	 *         .<b>&lt;Phone&gt;select(connection, contacts::add, phones::add)</b>;
 	 * </pre></div>
 	 *
 	 * @param <JE1> the entity class of the joined table
@@ -1214,10 +1212,16 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
-		executeQuery(connection, sql, parameters, resultSet -> {
-			getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
-			getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
-		});
+	// 1.8.3
+	//	executeQuery(connection, sql, parameters, resultSet -> {
+	//		getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
+	//		getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
+	//	});
+		executeQuery(connection, sql, parameters,
+			getRowConsumer(connection, this, consumer)
+			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
+		);
+	////
 	}
 
 	/**
@@ -1231,7 +1235,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
 	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
-	 *         .<b>select(connection, contacts::add, phones:add, emails::add)</b>;
+	 *         .<b>&lt;Phone, Email&gt;select(connection, contacts::add, phones::add, emails::add)</b>;
 	 * </pre></div>
 	 *
 	 * @param <JE1> the entity class of the 1st joined table
@@ -1246,9 +1250,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public <JE1, JE2> void select(Connection connection,
-			Consumer<? super  E > consumer,
-			Consumer<? super JE1> consumer1,
-			Consumer<? super JE2> consumer2) {
+		Consumer<? super  E > consumer,
+		Consumer<? super JE1> consumer1,
+		Consumer<? super JE2> consumer2) {
 		if (joinInfos.size() < 2) throw new IllegalStateException("Sql.select: joinInfos.size < 2");
 
 	// 1.8.2
@@ -1258,11 +1262,18 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
-		executeQuery(connection, sql, parameters, resultSet -> {
-			getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
-			getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
-			getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2).accept(resultSet);
-		});
+	// 1.8.3
+	//	executeQuery(connection, sql, parameters, resultSet -> {
+	//		getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
+	//		getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
+	//		getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2).accept(resultSet);
+	//	});
+		executeQuery(connection, sql, parameters,
+			getRowConsumer(connection, this, consumer)
+			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
+			.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
+		);
+	////
 	}
 
 	/**
@@ -1278,7 +1289,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
 	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
 	 *         .innerJoin(Address.class, "A", "{A.contactId} = {C.id}")
-	 *         .<b>select(connection, contacts::add, phones:add, emails::add, addresses::add)</b>;
+	 *         .<b>&lt;Phone, Email, Address&gt;select(connection, contacts::add, phones::add,</b>
+	 *             <b>emails::add, addresses::add)</b>;
 	 * </pre></div>
 	 *
 	 * @param <JE1> the entity class of the 1st joined table
@@ -1295,10 +1307,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public <JE1, JE2, JE3> void select(Connection connection,
-			Consumer<? super  E > consumer,
-			Consumer<? super JE1> consumer1,
-			Consumer<? super JE2> consumer2,
-			Consumer<? super JE3> consumer3) {
+		Consumer<? super  E > consumer,
+		Consumer<? super JE1> consumer1,
+		Consumer<? super JE2> consumer2,
+		Consumer<? super JE3> consumer3) {
 		if (joinInfos.size() < 3) throw new IllegalStateException("Sql.select: joinInfos.size < 3");
 
 	// 1.8.2
@@ -1308,12 +1320,20 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
-		executeQuery(connection, sql, parameters, resultSet -> {
-			getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
-			getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
-			getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2).accept(resultSet);
-			getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3).accept(resultSet);
-		});
+	// 1.8.3
+	//	executeQuery(connection, sql, parameters, resultSet -> {
+	//		getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
+	//		getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
+	//		getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2).accept(resultSet);
+	//		getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3).accept(resultSet);
+	//	});
+		executeQuery(connection, sql, parameters,
+			getRowConsumer(connection, this, consumer)
+			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
+			.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
+			.andThen(getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3))
+		);
+	////
 	}
 
 	/**
@@ -1331,7 +1351,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
 	 *         .innerJoin(Address.class, "A", "{A.contactId} = {C.id}")
 	 *         .innerJoin(Url.class, "U", "{U.contactId} = {C.id}")
-	 *         .<b>select(connection, contacts::add, phones:add, emails::add, addresses::add urls::add)</b>;
+	 *         .<b>&lt;Phone, Email, Address, Url&gt;select(connection, contacts::add, phones::add,</b>
+	 *             <b>emails::add, addresses::add, urls::add)</b>;
 	 * </pre></div>
 	 *
 	 * @param <JE1> the entity class of the 1st joined table
@@ -1350,11 +1371,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public <JE1, JE2, JE3, JE4> void select(Connection connection,
-			Consumer<? super  E > consumer,
-			Consumer<? super JE1> consumer1,
-			Consumer<? super JE2> consumer2,
-			Consumer<? super JE3> consumer3,
-			Consumer<? super JE4> consumer4) {
+		Consumer<? super  E > consumer,
+		Consumer<? super JE1> consumer1,
+		Consumer<? super JE2> consumer2,
+		Consumer<? super JE3> consumer3,
+		Consumer<? super JE4> consumer4) {
 		if (joinInfos.size() < 4) throw new IllegalStateException("Sql.select: joinInfos.size < 4");
 
 	// 1.8.2
@@ -1364,13 +1385,22 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
-		executeQuery(connection, sql, parameters, resultSet -> {
-			getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
-			getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
-			getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2).accept(resultSet);
-			getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3).accept(resultSet);
-			getRowConsumer(connection, (JoinInfo<JE4>)joinInfos.get(3), consumer4).accept(resultSet);
-		});
+	// 1.8.3
+	//	executeQuery(connection, sql, parameters, resultSet -> {
+	//		getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
+	//		getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
+	//		getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2).accept(resultSet);
+	//		getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3).accept(resultSet);
+	//		getRowConsumer(connection, (JoinInfo<JE4>)joinInfos.get(3), consumer4).accept(resultSet);
+	//	});
+		executeQuery(connection, sql, parameters,
+			getRowConsumer(connection, this, consumer)
+			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
+			.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
+			.andThen(getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3))
+			.andThen(getRowConsumer(connection, (JoinInfo<JE4>)joinInfos.get(3), consumer4))
+		);
+	////
 	}
 
 	/**
@@ -1380,7 +1410,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
 	 *     Contact contact = new Sql&lt;&gt;(Contact.class)
-	 *         .where("{id} = ", contactId)
+	 *         .where("{id} = {}", contactId)
 	 *         .<b>select(connection)</b>.orElse(null);
 	 * </pre></div>
 	 *

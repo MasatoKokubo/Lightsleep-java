@@ -29,20 +29,22 @@ public interface Condition extends SqlComponent {
 		return false;
 	}
 
-	/**
-		条件式を生成して返します。
-
-		@see Expression
-
-		@param content 条件式の文字列内容
-
-		@return 条件式
-
-		@throws NullPointerException <b>content</b> が <b>null</b> の場合
-	*/
-	static Condition of(String content) {
-		return null;
-	}
+// 1.8.3
+//	/**
+//		条件式を生成して返します。
+//
+//		@see Expression
+//
+//		@param content 条件式の文字列内容
+//
+//		@return 条件式
+//
+//		@throws NullPointerException <b>content</b> が <b>null</b> の場合
+//	*/
+//	static Condition of(String content) {
+//		return null;
+//	}
+////
 
 	/**
 		条件式を生成して返します。

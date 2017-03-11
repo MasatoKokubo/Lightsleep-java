@@ -14,7 +14,7 @@ import java.lang.annotation.*;
  * <div class="sampleCode"><pre>
  * public class Contact {
  *
- *  <b>{@literal @}ColumnType("Long")</b>
+ *  <b>{@literal @}ColumnType(Long.class)</b>
  *   public Date birthday;
  * </pre></div>
  * 

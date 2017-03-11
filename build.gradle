@@ -34,7 +34,11 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '1.8.2'
+version             = '1.8.3'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.4'
+}
 
 compileJava {
 	options.encoding     = 'UTF-8'
