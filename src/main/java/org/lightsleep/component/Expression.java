@@ -54,7 +54,7 @@ public class Expression implements Condition {
 	 * @param content the content of the expression
 	 * @param arguments the arguments of the expression
 	 *
-	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is null
 	 */
 	public Expression(String content, Object... arguments) {
 		if (content == null) throw new NullPointerException("Expression.<init>: content == null");

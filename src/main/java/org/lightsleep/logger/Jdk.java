@@ -21,7 +21,7 @@ public class Jdk implements Logger {
 	 *
 	 * @param name the name
 	 *
-	 * @throws NullPointerException <b>name</b> is <b>null</b>
+	 * @throws NullPointerException <b>name</b> is null
 	 */
 	public Jdk(String name) {
 		logger = java.util.logging.Logger.getLogger(name);

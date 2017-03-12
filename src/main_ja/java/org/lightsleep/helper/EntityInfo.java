@@ -20,7 +20,7 @@ public class EntityInfo<E> {
 
 		@param entityClass エンティティクラス
 
-		@throws NullPointerException <b>entityClass</b> が <b>null</b> の場合
+		@throws NullPointerException <b>entityClass</b> が null の場合
 	*/
 	public EntityInfo(Class<E> entityClass) {
 	}
@@ -59,7 +59,7 @@ public class EntityInfo<E> {
 
 		@return カラム情報
 
-		@throws NullPointerException <b>propertyName</b> が <b>null</b> の場合
+		@throws NullPointerException <b>propertyName</b> が null の場合
 		@throws IllegalArgumentException プロパティ名に関連するカラム情報が見つからない場合
 	*/
 	public ColumnInfo getColumnInfo(String propertyName) {

@@ -37,7 +37,7 @@ public class OrderBy implements SqlComponent {
 		 * @param content the content of the expression
 		 * @param arguments arguments embedded in the expression
 		 *
-		 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
+		 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 		 */
 		public Element(String content, Object... arguments) {
 			super(content, arguments);
@@ -87,7 +87,7 @@ public class OrderBy implements SqlComponent {
 	 * @param element an element to be added
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>element</b> is <b>null</b>
+	 * @throws NullPointerException if <b>element</b> is null
 	 */
 	public OrderBy add(Element element) {
 		if (element == null) throw new NullPointerException("OrderBy.add: element == null");

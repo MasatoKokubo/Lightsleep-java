@@ -39,7 +39,7 @@ public interface Condition extends SqlComponent {
 //
 //		@return 条件式
 //
-//		@throws NullPointerException <b>content</b> が <b>null</b> の場合
+//		@throws NullPointerException <b>content</b> が null の場合
 //	*/
 //	static Condition of(String content) {
 //		return null;
@@ -56,7 +56,7 @@ public interface Condition extends SqlComponent {
 
 		@return 条件式
 
-		@throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+		@throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	*/
 	static Condition of(String content, Object... arguments) {
 		return null;
@@ -91,7 +91,7 @@ public interface Condition extends SqlComponent {
 
 		@return サブクエリ条件
 
-		@throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が <b>null</b> の場合
+		@throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が null の場合
 	*/
 	static <E, SE> Condition of(String content, Sql<E> outerSql, Sql<SE> subSql) {
 		return null;
@@ -117,7 +117,7 @@ public interface Condition extends SqlComponent {
 
 		@return この条件 AND 指定の条件
 
-		@throws NullPointerException <b>condition</b> が <b>null</b> の場合
+		@throws NullPointerException <b>condition</b> が null の場合
 	*/
 	default Condition and(Condition condition) {
 		return null;
@@ -134,7 +134,7 @@ public interface Condition extends SqlComponent {
 
 		@return この条件 AND 指定の条件
 
-		@throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+		@throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	*/
 	default Condition and(String content, Object... arguments) {
 		return null;
@@ -155,7 +155,7 @@ public interface Condition extends SqlComponent {
 
 		@return この条件 AND 指定の条件
 
-		@throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が <b>null</b> の場合
+		@throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が null の場合
 	*/
 	default <E, SE> Condition and(String content, Sql<E> outerSql, Sql<SE> subSql) {
 		return null;
@@ -170,7 +170,7 @@ public interface Condition extends SqlComponent {
 
 		@return この条件 OR 指定の条件
 
-		@throws NullPointerException <b>condition</b> が <b>null</b> の場合
+		@throws NullPointerException <b>condition</b> が null の場合
 	*/
 	default Condition or(Condition condition) {
 		return null;
@@ -187,7 +187,7 @@ public interface Condition extends SqlComponent {
 
 		@return この条件 OR 指定の条件
 
-		@throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+		@throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	*/
 	default Condition or(String content, Object... arguments) {
 		return null;
@@ -208,7 +208,7 @@ public interface Condition extends SqlComponent {
 
 		@return この条件 OR 指定の条件
 
-		@throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が <b>null</b> の場合
+		@throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が null の場合
 	*/
 	default <E, SE> Condition or(String content, Sql<E> outerSql, Sql<SE> subSql) {
 		return null;

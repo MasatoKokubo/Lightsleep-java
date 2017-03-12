@@ -37,7 +37,7 @@ public interface PreInsert {
 
 		@return 挿入された行数
 
-		@throws NullPointerException <b>connection</b> が <b>null</b> の場合
+		@throws NullPointerException <b>connection</b> が null の場合
 	*/
 	int preInsert(Connection connection);
 }

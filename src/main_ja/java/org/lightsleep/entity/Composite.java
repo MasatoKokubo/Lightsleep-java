@@ -88,7 +88,7 @@ public interface Composite {
 
 		@param connection データベース・コネクション
 
-		@throws NullPointerException <b>connection</b> が <b>null</b> の場合
+		@throws NullPointerException <b>connection</b> が null の場合
 	*/
 	void postSelect(Connection connection);
 
@@ -99,7 +99,7 @@ public interface Composite {
 
 		@return 挿入された行数
 
-		@throws NullPointerException <b>connection</b> が <b>null</b> の場合
+		@throws NullPointerException <b>connection</b> が null の場合
 	*/
 	int postInsert(Connection connection);
 
@@ -110,7 +110,7 @@ public interface Composite {
 
 		@return 更新された行数
 
-		@throws NullPointerException <b>connection</b> が <b>null</b> の場合
+		@throws NullPointerException <b>connection</b> が null の場合
 	*/
 	int postUpdate(Connection connection);
 
@@ -121,7 +121,7 @@ public interface Composite {
 
 		@return 削除された行数
 
-		@throws NullPointerException <b>connection</b> が <b>null</b> の場合
+		@throws NullPointerException <b>connection</b> が null の場合
 	*/
 	int postDelete(Connection connection);
 }

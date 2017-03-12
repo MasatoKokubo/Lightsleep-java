@@ -7,7 +7,6 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
-import org.lightsleep.Sql;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
 

@@ -18,7 +18,7 @@ public class SqlColumnInfo {
 		@param tableAlias テーブル別名
 		@param columnInfo カラム情報
 
-		@throws NullPointerException <b>tableAlias</b> または <b>columnInfo</b> が <b>null</b> の場合
+		@throws NullPointerException <b>tableAlias</b> または <b>columnInfo</b> が null の場合
 	*/
 	public SqlColumnInfo(String tableAlias, ColumnInfo columnInfo) {
 	}
@@ -54,7 +54,7 @@ public class SqlColumnInfo {
 
 		@return マッチするな <b>true</b>、そうでなければ <b>false</b>
 
-		@throws NullPointerException <b>name</b> が <b>null</b> の場合
+		@throws NullPointerException <b>name</b> が null の場合
 	*/
 	public boolean matches(String name) {
 		return false;

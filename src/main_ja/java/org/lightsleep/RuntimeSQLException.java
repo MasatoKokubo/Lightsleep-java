@@ -17,7 +17,7 @@ public class RuntimeSQLException extends RuntimeException {
 	/**
 		<b>RuntimeSQLException</b> を構築します。
 
-		@param cause  原因 (不明の場合は <b>null</b>)
+		@param cause  原因 (不明の場合は null)
 	*/
 	public RuntimeSQLException(Throwable cause) {
 	}

@@ -37,7 +37,7 @@ public interface Condition extends SqlComponent {
 //	 * @param content the content of the expression condition
 //	 * @return a new expression condition
 //	 *
-//	 * @throws NullPointerException if <b>content</b> is <b>null</b>
+//	 * @throws NullPointerException if <b>content</b> is null
 //	 *
 //	 * @see Expression
 //	 */
@@ -53,7 +53,7 @@ public interface Condition extends SqlComponent {
 	 * @param arguments the arguments of the expression condition
 	 * @return a new expression condition
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 *
 	 * @see Expression
 	 */
@@ -68,7 +68,7 @@ public interface Condition extends SqlComponent {
 	 * @param entity the entity of the entity condition
 	 * @return a new entity condition
 	 *
-	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
+	 * @throws NullPointerException if <b>entity</b> is null
 	 */
 	static <E> Condition of(E entity) {
 	// 1.8.3
@@ -82,14 +82,14 @@ public interface Condition extends SqlComponent {
 	/**
 	 * Returns a new subquery condition.
 	 *
-	 * @param <E> the entity class corresponding to table of the outer sql.
-	 * @param <SE> the entity class corresponding to table of the subquery.
+	 * @param <E> the entity class related to table of the outer sql.
+	 * @param <SE> the entity class related to table of the subquery.
 	 * @param content the content of the subquery condition.
 	 * @param outerSql the <b>Sql</b> object of the outer query
 	 * @param subSql the <b>Sql</b> of the subquery condition.
 	 * @return a new subquery condition
 	 *
-	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is null
 	 */
 	static <E, SE> Condition of(String content, Sql<E> outerSql, Sql<SE> subSql) {
 		return new SubqueryCondition<SE>(new Expression(content), outerSql, subSql);
@@ -110,7 +110,7 @@ public interface Condition extends SqlComponent {
 	 * @param condition the condition
 	 * @return this AND <b>condition</b>
 	 *
-	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
+	 * @throws NullPointerException if <b>condition</b> is null
 	 *
 	 * @see And
 	 */
@@ -127,7 +127,7 @@ public interface Condition extends SqlComponent {
 	 * @param arguments the arguments of the expression condition
 	 * @return this AND the expression condition
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 *
 	 * @see And
 	 * @see Expression
@@ -139,14 +139,14 @@ public interface Condition extends SqlComponent {
 	/**
 	 * Returns (this AND the subquery condition).
 	 *
-	 * @param <E> the entity class corresponding to table of the outer sql.
-	 * @param <SE> the entity class corresponding to table of the subquery.
+	 * @param <E> the entity class related to table of the outer sql.
+	 * @param <SE> the entity class related to table of the subquery.
 	 * @param content the content of the subquery condition.
 	 * @param outerSql the <b>Sql</b> object of the outer query
 	 * @param subSql the <b>Sql</b> of the subquery condition.
 	 * @return this OR the subquery condition
 	 *
-	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is null
 	 *
 	 * @see And
 	 * @see SubqueryCondition
@@ -161,7 +161,7 @@ public interface Condition extends SqlComponent {
 	 * @param condition the condition
 	 * @return this OR <b>condition</b>
 	 *
-	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
+	 * @throws NullPointerException if <b>condition</b> is null
 	 *
 	 * @see Or
 	 */
@@ -178,7 +178,7 @@ public interface Condition extends SqlComponent {
 	 * @param arguments the arguments of the expression condition
 	 * @return this OR the expression condition
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 *
 	 * @see Or
 	 * @see Expression
@@ -190,14 +190,14 @@ public interface Condition extends SqlComponent {
 	/**
 	 * Returns (this OR the subquery condition).
 	 *
-	 * @param <E> the entity class corresponding to table of the outer sql.
-	 * @param <SE> the entity class corresponding to table of the subquery.
+	 * @param <E> the entity class related to table of the outer sql.
+	 * @param <SE> the entity class related to table of the subquery.
 	 * @param content the content of the subquery condition.
 	 * @param outerSql the <b>Sql</b> object of the outer query
 	 * @param subSql the <b>Sql</b> of the subquery condition.
 	 * @return this OR the subquery condition
 	 *
-	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is null
 	 *
 	 * @see Or
 	 * @see SubqueryCondition

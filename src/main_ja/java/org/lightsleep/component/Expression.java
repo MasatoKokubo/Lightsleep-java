@@ -25,7 +25,7 @@ public class Expression implements Condition {
 		@param content 式の文字列内容
 		@param arguments 式に埋め込む引数配列
 
-		@throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+		@throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	*/
 	public Expression(String content, Object... arguments) {
 	}

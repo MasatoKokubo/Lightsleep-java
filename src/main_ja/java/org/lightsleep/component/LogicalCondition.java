@@ -44,7 +44,7 @@ public abstract class LogicalCondition implements Condition {
 
 		@param operator 論理演算子
 
-		@throws NullPointerException <b>operator</b> が <b>null</b> の場合
+		@throws NullPointerException <b>operator</b> が null の場合
 	*/
 	public LogicalCondition(Operator operator) {
 	}
@@ -55,7 +55,7 @@ public abstract class LogicalCondition implements Condition {
 		@param operator 論理演算子
 		@param conditionStream 条件ストリーム
 
-		@throws NullPointerException <b>operator</b>, <b>conditionStream</b> または <b>conditionStream</b> の要素が <b>null</b> の場合
+		@throws NullPointerException <b>operator</b>, <b>conditionStream</b> または <b>conditionStream</b> の要素が null の場合
 	*/
 	public LogicalCondition(Operator operator, Stream<Condition> conditionStream) {
 	}

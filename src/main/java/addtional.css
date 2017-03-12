@@ -1,5 +1,5 @@
 
-/* Followings are additional for Lightsleep. */
+/* The following is added for Lightsleep. */
 body, div.block, dd {
 	font-family: 'Segoe UI', sans-serif;
 	font-size: 14px;
@@ -10,7 +10,7 @@ body, div.block, dd {
 	font-size: 14px;
 }
 
-pre, code, tt, dt code, table tr td dt code {
+pre, code, .code, tt, dt code, table tr td dt code {
 	font-family: Consolas, monospace;
 }
 
@@ -19,10 +19,12 @@ i {
 	color: #CC5555;
 }
 
-b, b i, .code {
+b, b i {
 	font-family: Consolas, monospace;
-	font-weight: bold;
-	color: #5555CC;
+	font-weight: normal;
+	background-color: #E7E7E7;
+	border-radius: 2px;
+	padding: 1px 2px 1px 2px;
 }
 
 .title {
@@ -61,7 +63,7 @@ b, b i, .code {
 }
 
 .sampleTitle {
-	margin: 10px 0px -4px 12px;
+	margin: 12px 0px -4px 12px;
 }
 
 table.additional caption {
@@ -104,14 +106,10 @@ table.additional caption {
 }
 
 ul.additional {
-	margin: 4px 0px 0px 8px;
-	padding: 0px 0px 0px 0px;
 	list-style-type: disc;
 }
 
 ol.additional {
-	margin: 0px 0px 0px 0px;
-	padding: 0px 0px 0px 0px;
 	list-style-type: decimal;
 }
 

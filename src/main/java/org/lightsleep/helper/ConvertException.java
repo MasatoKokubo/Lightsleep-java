@@ -74,7 +74,7 @@ public class ConvertException extends RuntimeException {
 	 * Constructs a new <b>ConvertException</b>.
 	 *
 	 * @param sourceType the source data type
-	 * @param source the source object (permit <b>null</b>)
+	 * @param source the source object (permit null)
 	 * @param destinType the destination data type
 	 */
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType) {
@@ -85,9 +85,9 @@ public class ConvertException extends RuntimeException {
 	 * Constructs a new <b>ConvertException</b>.
 	 *
 	 * @param sourceType the source data type
-	 * @param source the source object (permit <b>null</b>)
+	 * @param source the source object (permit null)
 	 * @param destinType the destination data type
-	 * @param destin the destination object (permit <b>null</b>)
+	 * @param destin the destination object (permit null)
 	 */
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType, Object destin) {
 		super(toString(sourceType, source, destinType, destin, null));
@@ -101,9 +101,9 @@ public class ConvertException extends RuntimeException {
 	 * Constructs a new <b>ConvertException</b>.
 	 *
 	 * @param sourceType the source data type
-	 * @param source the source object (permit <b>null</b>)
+	 * @param source the source object (permit null)
 	 * @param destinType the destination data type
-	 * @param destin the destination object (permit <b>null</b>)
+	 * @param destin the destination object (permit null)
 	 * @param cause the cause
 	 */
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType, Object destin, Throwable cause) {
@@ -118,9 +118,9 @@ public class ConvertException extends RuntimeException {
 	 * Returns a string representation of the exception contents.
 	 *
 	 * @param sourceType the source data type
-	 * @param source the source object (permit <b>null</b>)
+	 * @param source the source object (permit null)
 	 * @param destinType the destination data type
-	 * @param destin the destination object (permit <b>null</b>)
+	 * @param destin the destination object (permit null)
 	 * @param cause the cause
 	 */
 	private static String toString(Class<?> sourceType, Object source, Class<?> destinType, Object destin, Throwable cause) {

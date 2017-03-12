@@ -34,7 +34,7 @@ public class GroupBy implements SqlComponent {
 	 * @param expression an element to be added
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>expression</b> is <b>null</b>
+	 * @throws NullPointerException if <b>expression</b> is null
 	 */
 	public GroupBy add(Expression expression) {
 		GroupBy groupBy = this == EMPTY ? new GroupBy() : this;

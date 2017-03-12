@@ -34,7 +34,7 @@ public interface SqlComponent {
 
 		@return SQL 文字列
 
-		@throws NullPointerException <b>sql</b> または <b>parameters</b> が <b>null</b> の場合
+		@throws NullPointerException <b>sql</b> または <b>parameters</b> が null の場合
 	*/
 	<E> String toString(Sql<E> sql, List<Object> parameters);
 }

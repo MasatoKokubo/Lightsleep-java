@@ -28,7 +28,7 @@ public class OrderBy implements SqlComponent {
 			@param content 式の文字列内容
 			@param arguments 式に埋め込む引数配列
 
-			@throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+			@throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 		*/
 		public Element(String content, Object... arguments) {
 			super(content, arguments);
@@ -74,7 +74,7 @@ public class OrderBy implements SqlComponent {
 
 		@return このオブジェクト
 
-		@throws NullPointerException <b>element</b> が <b>null</b> の場合
+		@throws NullPointerException <b>element</b> が null の場合
 	*/
 	public OrderBy add(Element element) {
 		return null;

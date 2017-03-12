@@ -22,7 +22,7 @@ public class SqlColumnInfo {
 	 * @param tableAlias the table alias
 	 * @param columnInfo the column information
 	 *
-	 * @throws NullPointerException <b>tableAlias</b> or <b>columnInfo</b> is <b>null</b>
+	 * @throws NullPointerException <b>tableAlias</b> or <b>columnInfo</b> is null
 	 */
 	public SqlColumnInfo(String tableAlias, ColumnInfo columnInfo) {
 		this.tableAlias = tableAlias;
@@ -58,7 +58,7 @@ public class SqlColumnInfo {
 	 * @param name the name
 	 * @return <b>true</b> if matches, otherwose <b>false</b>
 	 *
-	 * @throws NullPointerException <b>name</b> is <b>null</b>
+	 * @throws NullPointerException <b>name</b> is null
 	 */
 	public boolean matches(String name) {
 		boolean result = false;

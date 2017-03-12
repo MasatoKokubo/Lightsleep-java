@@ -26,7 +26,7 @@ public class SubqueryCondition<SE> implements Condition {
 		@param outerSql 外側の Sql オブジェクト
 		@param subSql サブクエリ用の <b>Sql</b> オブジェクト
 
-		@throws NullPointerException <b>expression</b>, <b>outerSql</b> または <b>subSql</b> が <b>null</b> の場合
+		@throws NullPointerException <b>expression</b>, <b>outerSql</b> または <b>subSql</b> が null の場合
 	*/
 	public <E> SubqueryCondition(Expression expression, Sql<E> outerSql, Sql<SE> subSql) {
 	}

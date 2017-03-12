@@ -44,11 +44,11 @@ public class ColumnInfo {
 	 * @param entityInfo the entity information
 	 * @param propertyName the property name
 	 * @param columnName the column name
-	 * @param columnType the column type (permit <b>null</b>)
+	 * @param columnType the column type (permit null)
 	 * @param isKey <b>true</b> if key, <b>false</b> otherwise
-	 * @param selectExpression the expression to be used to create SELECT SQL (permit <b>null</b>)
-	 * @param insertExpression the expression to be used to create INSERT SQL (permit <b>null</b>)
-	 * @param updateExpression the expression to be used to create UPDATE SQL (permit <b>null</b>)
+	 * @param selectExpression the expression to be used to create SELECT SQL (permit null)
+	 * @param insertExpression the expression to be used to create INSERT SQL (permit null)
+	 * @param updateExpression the expression to be used to create UPDATE SQL (permit null)
 	 *
 	 * @throws NullPointerException <code>entityInfo</code>, <code>propertyName</code> または <code>columnName</code> が null の場合
 	 */
@@ -152,7 +152,7 @@ public class ColumnInfo {
 	/**
 	 * Returns the expression to be used to create SELECT SQL.
 	 *
-	 * @return the expression to be used to create SELECT SQL (<b>null</b> if not used)
+	 * @return the expression to be used to create SELECT SQL (null if not used)
 	 */
 	public Expression selectExpression() {
 		return selectExpression;
@@ -161,7 +161,7 @@ public class ColumnInfo {
 	/**
 	 * Returns the expression to be used to create INSERT SQL.
 	 *
-	 * @return the expression to be used to create INSERT SQL (<b>null</b> if not used)
+	 * @return the expression to be used to create INSERT SQL (null if not used)
 	 */
 	public Expression insertExpression() {
 		return insertExpression;
@@ -170,7 +170,7 @@ public class ColumnInfo {
 	/**
 	 * Returns the expression to be used to create UPDATE SQL.
 	 *
-	 * @return the expression to be used to create UPDATE SQL (<b>null</b> if not used)
+	 * @return the expression to be used to create UPDATE SQL (null if not used)
 	 */
 	public Expression updateExpression() {
 		return updateExpression;

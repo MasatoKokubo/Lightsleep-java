@@ -163,7 +163,7 @@ public class TypeConverter<ST, DT> {
 
 		@return キー
 
-		@throws NullPointerException <b>sourceType</b> または <b>destinType</b> が <b>null</b> の場合
+		@throws NullPointerException <b>sourceType</b> または <b>destinType</b> が null の場合
 	*/
 	public static String key(Class<?> sourceType, Class<?> destinType) {
 		return null;
@@ -175,7 +175,7 @@ public class TypeConverter<ST, DT> {
 		@param typeConverterMap <b>TypeConverter</b> マップ
 		@param typeConverters <b>TypeConverter</b> オブジェクト配列
 
-		@throws NullPointerException <b>typeConverterMap</b>, <b>typeConverters</b> または <b>typeConverters</b> の要素が <b>null</b> の場合
+		@throws NullPointerException <b>typeConverterMap</b>, <b>typeConverters</b> または <b>typeConverters</b> の要素が null の場合
 	*/
 	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?>... typeConverters) {
 	}
@@ -188,7 +188,7 @@ public class TypeConverter<ST, DT> {
 		<b>TypeConverter</b> オブジェクトが見つからない場合は、
 		<b>sourceType</b> のスーパークラスやインタフェースでマッチするのを探します。<br>
 
-		それでも見つからない場合は、<b>null</b> を返します。<br>
+		それでも見つからない場合は、null を返します。<br>
 
 		スーパークラスまたはインターフェースで見つかった場合は、次回は直接見つかるようにマップに登録します。<br>
 
@@ -199,16 +199,16 @@ public class TypeConverter<ST, DT> {
 		@param sourceType 変換元のデータ型クラス
 		@param destinType 変換先のデータ型クラス
 
-		@return TypeConverter オブジェクト (見つからない場合は <b>null</b>)
+		@return TypeConverter オブジェクト (見つからない場合は null)
 
-		@throws NullPointerException typeConverterMap, <b>sourceType</b> または <b>destinType</b> が <b>null</b> の場合
+		@throws NullPointerException typeConverterMap, <b>sourceType</b> または <b>destinType</b> が null の場合
 	*/
 	public static <ST, DT> TypeConverter<ST, DT> get(Map<String, TypeConverter<?, ?>> typeConverterMap, Class<ST> sourceType, Class<DT> destinType) {
 		return null;
 	}
 
 	/**
-		<b>source</b> == <b>null</b> の場合は、<b>null</b> を返します。<br>
+		<b>source</b> == null の場合は、null を返します。<br>
 		<b>destinType.isInstance(source)</b> の場合は、<b>source</b> を変換しないで返します。<br>
 		コンバータが見つかった場合は、そのコンバータで <b>source</b> を変換したオブジェクトを返します。
 
@@ -216,12 +216,12 @@ public class TypeConverter<ST, DT> {
 		@param <DT> 変換先のデータ型
 
 		@param typeConverterMap <b>TypeConverter</b> マップ
-		@param source 変換元のオブジェクト (<b>null</b> 可)
+		@param source 変換元のオブジェクト (null 可)
 		@param destinType 変換先のデータ型クラス (プリミティブ型以外)
 
-		@return データ型を変換されたオブジェクト (<b>null</b> 有)
+		@return データ型を変換されたオブジェクト (null 有)
 
-		@throws NullPointerException <b>typeConverterMap</b> または <b>destinType</b> が <b>null</b> の場合
+		@throws NullPointerException <b>typeConverterMap</b> または <b>destinType</b> が null の場合
 		@throws ConvertException コンバータが見つからない場合か変換処理で精度が落ちた場合
 	*/
 	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
@@ -246,7 +246,7 @@ public class TypeConverter<ST, DT> {
 	 * @param destinType 変換先のデータ型クラス
 	 * @param function 変換を実行する関数
 	 *
-	 * @throws NullPointerException <b>sourceType</b>, <b>destinType</b> または <b>function</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>sourceType</b>, <b>destinType</b> または <b>function</b> が null の場合
 	*/
 	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, ? extends DT> function) {
 	}
@@ -258,7 +258,7 @@ public class TypeConverter<ST, DT> {
 	 * @param typeConverter1 コンバーター1
 	 * @param typeConverter2 コンバーター2
 	 *
-	 * @throws NullPointerException <b>typeConverter1</b> または <b>typeConverter2</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>typeConverter1</b> または <b>typeConverter2</b> が null の場合
 	 *
 	 * @since 1.8.0
 	 */

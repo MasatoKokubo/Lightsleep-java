@@ -22,7 +22,7 @@ public class Not implements Condition {
 
 		@param condition 否定対象の条件
 
-		@throws NullPointerException <b>condition</b> が <b>null</b> の場合
+		@throws NullPointerException <b>condition</b> が null の場合
 	*/
 	public Not( Condition condition) {
 	}

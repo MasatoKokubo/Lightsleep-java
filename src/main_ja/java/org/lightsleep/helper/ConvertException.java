@@ -30,7 +30,7 @@ public class ConvertException extends RuntimeException {
 		<b>ConvertException</b> を構築します。
 
 		@param message 詳細メッセージ
-		@param cause 原因 (<b>null</b> 可)
+		@param cause 原因 (null 可)
 	*/
 	public ConvertException(String message, Throwable cause) {
 	}
@@ -38,7 +38,7 @@ public class ConvertException extends RuntimeException {
 	/**
 		<b>ConvertException</b> を構築します。
 
-		@param cause 原因 (<b>null</b> 可)
+		@param cause 原因 (null 可)
 	*/
 	public ConvertException(Throwable cause) {
 	}
@@ -47,7 +47,7 @@ public class ConvertException extends RuntimeException {
 		<b>ConvertException</b> を構築します。
 
 		@param sourceType 変換元型
-		@param source 変換元オブジェクト (<b>null</b> 可)
+		@param source 変換元オブジェクト (null 可)
 		@param destinType 変換先型
 	*/
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType) {
@@ -57,9 +57,9 @@ public class ConvertException extends RuntimeException {
 		<b>ConvertException</b> を構築します。
 
 		@param sourceType 変換元型
-		@param source 変換元オブジェクト (<b>null</b> 可)
+		@param source 変換元オブジェクト (null 可)
 		@param destinType 変換先型
-		@param destin 変換先オブジェクト (<b>null</b> 可)
+		@param destin 変換先オブジェクト (null 可)
 	*/
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType, Object destin) {
 	}
@@ -68,10 +68,10 @@ public class ConvertException extends RuntimeException {
 		ConvertException を構築します。
 
 		@param sourceType 変換元型
-		@param source 変換元オブジェクト (<b>null</b> 可)
+		@param source 変換元オブジェクト (null 可)
 		@param destinType 変換先型
-		@param destin 変換先オブジェクト (<b>null</b> 可)
-		@param cause 原因 (<b>null</b> 可)
+		@param destin 変換先オブジェクト (null 可)
+		@param cause 原因 (null 可)
 	*/
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType, Object destin, Throwable cause) {
 	}
@@ -97,7 +97,7 @@ public class ConvertException extends RuntimeException {
 	/**
 		変換元オブジェクトを返します。
 
-		@return 変換元オブジェクト (<b>null</b> 有)
+		@return 変換元オブジェクト (null 有)
 	*/
 	public Object sourceObject() {
 		return null;
@@ -106,7 +106,7 @@ public class ConvertException extends RuntimeException {
 	/**
 		変換先オブジェクトを返します。
 
-		@return 変換先オブジェクト (<b>null</b> 有)
+		@return 変換先オブジェクト (null 有)
 	*/
 	public Object destinObject() {
 		return null;

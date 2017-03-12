@@ -38,7 +38,7 @@ public class Resource {
 
 		@return 文字列
 
-		@throws NullPointerException <b>key</b> が <b>null</b> の場合
+		@throws NullPointerException <b>key</b> が null の場合
 		@throws MissingResourceException リソースファイルが見つからない場合か指定のキーの文字列が見つからない場合
 	*/
 	protected String get(String key) {
@@ -50,11 +50,11 @@ public class Resource {
 		リソースファイルが見つからない場合か指定のキーの文字列が見つからない場合は、<b>defaultValue</b> を返します。
 
 		@param key キー
-		@param defaultValue デフォルト値 (<b>null</b> 可)
+		@param defaultValue デフォルト値 (null 可)
 
 		@return 文字列リソースまたはデフォルト値
 
-		@throws NullPointerException <b>key</b> が <b>null</b> の場合
+		@throws NullPointerException <b>key</b> が null の場合
 	*/
 	protected String get(String key, String defaultValue) {
 		return null;
@@ -79,7 +79,7 @@ public class Resource {
 
 		@return リソースファイルから取得したプロパティ値
 
-		@throws NullPointerException <b>key</b> または <b>objectType</b> が <b>null</b> の場合
+		@throws NullPointerException <b>key</b> または <b>objectType</b> が null の場合
 		@throws MissingResourceException リソースファイルが見つからない場合か指定のキーの値が見つからない場合
 		@throws ConvertException 指定の型のオブジェクトに変換できない場合
 	*/
@@ -96,11 +96,11 @@ public class Resource {
 
 		@param key キー
 		@param objectType 取得するオブジェクトの型 (プリミティブ型以外)
-		@param defaultObject デフォルトオブジェクト (<b>null</b> 可)
+		@param defaultObject デフォルトオブジェクト (null 可)
 
 		@return リソースファイルから取得したプロパティ値またはデフォルトオブジェクト
 
-		@throws NullPointerException <b>key</b> または <b>objectType</b> が <b>null</b> の場合
+		@throws NullPointerException <b>key</b> または <b>objectType</b> が null の場合
 	*/
 	public <T> T get(String key, Class<T> objectType, T defaultObject) {
 		return null;
@@ -115,9 +115,9 @@ public class Resource {
 		@param objectType 登録するオブジェクトの型
 		@param object 登録するオブジェクト
 
-		@return 登録する以前のオブジェクト (なければ <b>null</b>)
+		@return 登録する以前のオブジェクト (なければ null)
 
-		@throws NullPointerException <b>key</b> または <b>objectType</b> が <b>null</b> の場合
+		@throws NullPointerException <b>key</b> または <b>objectType</b> が null の場合
 	*/
 	public synchronized <T> T put(String key, Class<T> objectType, T object) {
 		return null;
@@ -131,9 +131,9 @@ public class Resource {
 		@param key キー
 		@param objectType 削除するオブジェクトの型
 
-		@return 削除したオブジェクト (なければ  <b>null</b>)
+		@return 削除したオブジェクト (なければ  null)
 
-		@throws NullPointerException <b>key</b> または <b>objectType</b> が <b>null</b> の場合
+		@throws NullPointerException <b>key</b> または <b>objectType</b> が null の場合
 	*/
 	public synchronized <T> T remove(String key, Class<T> objectType) {
 		return null;
@@ -174,7 +174,7 @@ public class Resource {
 
 		@return Properties オブジェクト
 
-		@throws NullPointerException <b>baseKey</b> が <b>null</b> の場合
+		@throws NullPointerException <b>baseKey</b> が null の場合
 	*/
 	public Properties getProperties(String baseKey) {
 		return null;

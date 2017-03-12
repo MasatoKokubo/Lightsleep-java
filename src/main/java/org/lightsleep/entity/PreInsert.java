@@ -37,7 +37,7 @@ public interface PreInsert {
 	 * @param connection the database connection
 	 * @return the number of inserted rows
 	 *
-	 * @throws NullPointerException if <b>connection</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b> is null
 	 */
 	int preInsert(Connection connection);
 }

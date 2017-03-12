@@ -26,7 +26,7 @@ public class Or extends LogicalCondition {
 	 *
 	 * @param conditionStream the stream of conditions
 	 *
-	 * @throws NullPointerException <b>conditionStream</b> or any of <b>conditionStream</b> is <b>null</b>
+	 * @throws NullPointerException <b>conditionStream</b> or any of <b>conditionStream</b> is null
 	 */
 	public Or(Stream<Condition> conditionStream) {
 		super(Operator.OR, conditionStream);
@@ -37,7 +37,7 @@ public class Or extends LogicalCondition {
 	 *
 	 * @param conditions the collection of conditions
 	 *
-	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is <b>null</b>
+	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is null
 	 */
 	public Or(Collection<Condition> conditions) {
 		super(Operator.OR, conditions.stream());
@@ -48,7 +48,7 @@ public class Or extends LogicalCondition {
 
 	 * @param conditions the array of conditions
 
-	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is <b>null</b>
+	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is null
 	 */
 	public Or(Condition... conditions) {
 		super(Operator.OR, Arrays.stream(conditions));

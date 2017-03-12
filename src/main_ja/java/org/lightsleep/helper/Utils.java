@@ -21,9 +21,9 @@ public class Utils {
 	/**
 		プリミティブ型をクラス型に変換します。
 
-		@param type 型 (<b>null</b> 可)
+		@param type 型 (null 可)
 
-		@return type がプリミティブ型なら対応するクラス型、そうでなければ <b>type</b> (<b>type</b> == <b>null</b> の場合も)
+		@return type がプリミティブ型なら対応するクラス型、そうでなければ <b>type</b> (<b>type</b> == null の場合も)
 	*/
 	public static Class<?> toClassType(Class<?> type) {
 		return null;
@@ -32,7 +32,7 @@ public class Utils {
 	/**
 		クラス型をプリミティブ型に変換します。
 
-		@param type 型 (<b>null</b> 可)
+		@param type 型 (null 可)
 
 		@return type に対応するプリミティブ型があればそのプリミティブ型、なければ <b>nul</b>l
 	*/
@@ -52,11 +52,11 @@ public class Utils {
 			String, java.util.Date, java.sql.Date, Time, Timestamp
 		</div>
 
-		@param type 型 (<b>null</b> 可)
+		@param type 型 (null 可)
 
 		@return <b>type</b> が値型なら <b>true</b>、そうでなければ <b>false</b>
 
-		@throws NullPointerException <b>type</b> が <b>null</b> の場合
+		@throws NullPointerException <b>type</b> が null の場合
 	*/
 	public static boolean isValueType(Class<?> type) {
 		return false;
@@ -69,7 +69,7 @@ public class Utils {
 
 		@return パッケージなしのクラス
 
-		@throws NullPointerException <b>clazz</b> が <b>null</b> の場合
+		@throws NullPointerException <b>clazz</b> が null の場合
 	*/
 	public static String nameWithoutPackage(Class<?> clazz) {
 		return null;
@@ -86,7 +86,7 @@ public class Utils {
 
 		@return elementType 型の配列
 
-		@throws NullPointerException <b>elementType</b> が <b>null</b> の場合
+		@throws NullPointerException <b>elementType</b> が null の場合
 		@throws IndexOutOfBoundsException <b>length </b>&lt; 0 の場合
 		@throws RuntimeException インスタンスの生成が失敗した場合 (<b>InstantiationException)</b> かコンストラクタにアクセスできない場合 (<b>IllegalAccessException</b>)
 	*/
@@ -185,7 +185,7 @@ public class Utils {
 	/**
 		指定のオブジェクトのグ出力用の文字列表現を返します。
 
-		@param value 値 (<b>null</b> 可)
+		@param value 値 (null 可)
 
 		@return ログ出力用の文字列表現
 	*/
@@ -202,7 +202,7 @@ public class Utils {
 
 		@return アノテーションのリスト
 
-		@throws NullPointerException <b>clazz</b> または <b>annotationClass</b> が <b>null</b> の場合
+		@throws NullPointerException <b>clazz</b> または <b>annotationClass</b> が null の場合
 
 		@since 1.5.1
 	*/

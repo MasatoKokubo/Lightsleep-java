@@ -32,7 +32,7 @@ public interface SqlComponent {
 	 *
 	 * @return a SQL string representation
 	 *
-	 * @throws NullPointerException if <b>sql</b> or <b>parameters</b> is <b>null</b>
+	 * @throws NullPointerException if <b>sql</b> or <b>parameters</b> is null
 	 */
 	<E> String toString(Sql<E> sql, List<Object> parameters);
 }

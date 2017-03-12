@@ -130,7 +130,7 @@ public class Resource {
 	 * If can not find in the resource file, returns <b>defaultValue</b>
 	 *
 	 * @param key the key
-	 * @param defaultValue the default value (permit <b>null</b>)
+	 * @param defaultValue the default value (permit null)
 	 * @return the string associated with <b>key</b>
 	 *
 	 * @throws NullPointerException if <b>key</b> is null
@@ -164,7 +164,7 @@ public class Resource {
 	 * @param objectType the object type (other than primitive types)
 	 * @return an object converted from a string associated with <b>key</b>
 	 *
-	 * @throws NullPointerException if <b>key</b> or <b>objectType</b> is <b>null</b>
+	 * @throws NullPointerException if <b>key</b> or <b>objectType</b> is null
 	 * @throws MissingResourceException if can not find the resource fils or can not find the string associated with <b>key</b>
 	 * @throws ConvertException if can not convert to <b>objectType</b>
 	 */
@@ -238,10 +238,10 @@ public class Resource {
 	 * @param <T> the object type
 	 * @param key the key
 	 * @param objectType the object type (other than primitive types)
-	 * @param defaultObject the default object (permit <b>null</b>)
+	 * @param defaultObject the default object (permit null)
 	 * @return an object converted from a string associated with <b>key</b> or <b>defaultObject</b>
 	 *
-	 * @throws NullPointerException if key or objectType is <b>null</b>
+	 * @throws NullPointerException if key or objectType is null
 	 *
 	 * @see #get(java.lang.Class, java.lang.String)
 	 */
@@ -263,9 +263,9 @@ public class Resource {
 	 * @param objectType the object type
 	 * @param key the key
 	 * @param object the object to be put
-	 * @return the previous value associated with <b>key</b> (or <b>null</b>)
+	 * @return the previous value associated with <b>key</b> (or null)
 	 *
-	 * @throws NullPointerException if <b>objectType</b>, <b>key</b> or <b>object</b> is <b>null</b>
+	 * @throws NullPointerException if <b>objectType</b>, <b>key</b> or <b>object</b> is null
 	 */
 	public synchronized <T> T put(Class<T> objectType, String key, T object) {
 		T beforeObject = objectType.cast(objectMap.put(key, object));
@@ -282,9 +282,9 @@ public class Resource {
 	 * @param <T> the object type
 	 * @param objectType the object type to be deleted
 	 * @param key the key
-	 * @return the removed object (or <b>null</b>)
+	 * @return the removed object (or null)
 	 *
-	 * @throws NullPointerException if <b>key</b>, <b>objectType</b> is <b>null</b>
+	 * @throws NullPointerException if <b>key</b>, <b>objectType</b> is null
 	 */
 	public synchronized <T> T remove(Class<T> objectType, String key) {
 		T beforeObject = objectType.cast(objectMap.remove(key));
@@ -325,7 +325,7 @@ public class Resource {
 	 * @param index the index
 	 * @return a key appended <b>index</b>
 	 *
-	 * @throws NullPointerException if <b>key</b> is <b>null</b>
+	 * @throws NullPointerException if <b>key</b> is null
 	 */
 	private String toIndexedKey(String key, int index) {
 		return key + "." + index;
@@ -374,7 +374,7 @@ public class Resource {
 	 * @param baseKey the base key
 	 * @return Properties a Properties object
 	 *
-	 * @throws NullPointerException if <b>baseKey</b> is <b>null</b>
+	 * @throws NullPointerException if <b>baseKey</b> is null
 	 */
 	public Properties getProperties(String baseKey) {
 		if (baseKey == null) throw new NullPointerException("Resource.getProperties: baseKey == null");

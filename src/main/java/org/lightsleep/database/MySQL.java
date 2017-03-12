@@ -3,7 +3,6 @@
 
 package org.lightsleep.database;
 
-import org.lightsleep.Sql;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
 

@@ -361,7 +361,7 @@ public class Accessor<T> {
 	 * @param objectClass the class of target object
 	 * @param fieldName the name of the field
 	 * @param fieldType the type of the field
-	 * @return the getter <b>Method</b> (<b>null</b> if not found)
+	 * @return the getter <b>Method</b> (null if not found)
 	 */
 	private Method getGetterMethod(Class<?> objectClass, String fieldName, Class<?> fieldType) {
 		Method getterMethod = null;
@@ -390,7 +390,7 @@ public class Accessor<T> {
 	 * @param objectClass the class of target object
 	 * @param fieldName the name of the field
 	 * @param fieldType the type of the field
-	 * @return the getter <b>Method</b> (<b>null</b> if not found)
+	 * @return the getter <b>Method</b> (null if not found)
 	 */
 	private Method getSetterMethod(Class<?> objectClass, String fieldName, Class<?> fieldType) {
 		Method setterMethod = null;
@@ -500,9 +500,9 @@ public class Accessor<T> {
 	 *
 	 * @param object an object
 	 * @param propertyName the property name of the field
-	 * @return a value (might be <b>null</b>)
+	 * @return a value (might be null)
 	 *
-	 * @throws NullPointerException if <b>object</b> is <b>null</b>
+	 * @throws NullPointerException if <b>object</b> is null
 	 * @throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
 	 * @throws RuntimeException if <b>IllegalAccessException</b> was thrown
 	 */
@@ -534,9 +534,9 @@ public class Accessor<T> {
 	 *
 	 * @param object an object
 	 * @param propertyName the property name of the field
-	 * @param value a value to be set the field (permit <b>null</b>)
+	 * @param value a value to be set the field (permit null)
 	 *
-	 * @throws NullPointerException if <b>object</b> is <b>null</b>
+	 * @throws NullPointerException if <b>object</b> is null
 	 * @throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
 	 * @throws RuntimeException if <b>IllegalAccessException</b> or <b>InvocationTargetException</b> was thrown
 	 */

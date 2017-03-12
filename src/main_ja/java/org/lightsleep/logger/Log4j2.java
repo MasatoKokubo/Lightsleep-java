@@ -20,7 +20,7 @@ public class Log4j2 implements Logger {
 
 		@param name 名前
 
-		@throws NullPointerException <b>name</b> が <b>null</b> の場合
+		@throws NullPointerException <b>name</b> が null の場合
 	*/
 	public Log4j2(String name) {
 	}

@@ -23,7 +23,7 @@ public class SLF4J implements Logger {
 	 *
 	 * @param name the name
 	 *
-	 * @throws NullPointerException <b>name</b> is <b>null</b>
+	 * @throws NullPointerException <b>name</b> is null
 	 */
 	public SLF4J(String name) {
 		logger = LoggerFactory.getLogger(name);

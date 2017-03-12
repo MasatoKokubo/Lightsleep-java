@@ -54,7 +54,7 @@ public abstract class LogicalCondition implements Condition {
 	 *
 	 * @param operator the operator
 	 *
-	 * @throws NullPointerException if <b>operator</b> is <b>null</b>
+	 * @throws NullPointerException if <b>operator</b> is null
 	 */
 	public LogicalCondition(Operator operator) {
 		if (operator == null) throw new NullPointerException("LogicalCondition.<init>: operator == null");
@@ -69,7 +69,7 @@ public abstract class LogicalCondition implements Condition {
 	 * @param operator the operator
 	 * @param conditionStream the stream of conditions
 	 *
-	 * @throws NullPointerException <b>operator</b>, <b>conditionStream</b> or any of <b>conditions</b> is <b>null</b>
+	 * @throws NullPointerException <b>operator</b>, <b>conditionStream</b> or any of <b>conditions</b> is null
 	 */
 	public LogicalCondition(Operator operator, Stream<Condition> conditionStream) {
 		if (operator == null) throw new NullPointerException("LogicalCondition.<init>: operator == null");

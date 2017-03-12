@@ -35,7 +35,7 @@ public class EntityCondition<E> implements Condition {
 	 *
 	 * @param entity the entity
 	 *
-	 * @throws NullPointerException <b>entity</b> is <b>null</b>
+	 * @throws NullPointerException <b>entity</b> is null
 	 */
 	@SuppressWarnings("unchecked")
 	public EntityCondition(E entity) {
