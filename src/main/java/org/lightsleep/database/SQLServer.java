@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.lightsleep.Sql;
+import org.lightsleep.component.Expression;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
 
@@ -243,6 +244,57 @@ public class SQLServer extends Standard {
 		// HAVING ...
 		appendsHaving(buff, sql, parameters);
 	////
+
+		return buff.toString();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.8.4
+	 */
+	@Override
+	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
+		if (sql.getJoinInfos().size() == 0)
+			return super.updateSql(sql, parameters);
+
+		StringBuilder buff = new StringBuilder();
+
+		Sql<E> sql2 = new Sql<>(sql.entityInfo().entityClass())
+			.setColumns(sql.getColumns())
+			.setEntity(sql.entity());
+
+		// Sets expressions to sql2 from sql.
+		sql.columnInfoStream().forEach(columnInfo -> {
+			String propertyName = columnInfo.getPropertyName("");
+			Expression expression = sql.getExpression(propertyName);
+			if (!expression.isEmpty())
+				sql2.expression(propertyName, expression);
+		});
+
+		// UPDATE table name
+		buff.append("UPDATE");
+
+		// main table name and alias
+		appendsMainTable(buff, sql2);
+
+		// SET column name =  value, ...
+		appendsUpdateColumnsAndValues(buff, sql2, parameters);
+
+		// FROM
+		buff.append(" FROM");
+
+		// main table name and alias
+		appendsMainTable(buff, sql);
+
+		// INNER / OUTER JOIN ...
+		appendsJoinTables(buff, sql, parameters);
+
+		// WHERE ...
+		appendsWhere(buff, sql, parameters);
+
+		// ORDER BY ...
+		appendsOrderBy(buff, sql, parameters);
 
 		return buff.toString();
 	}

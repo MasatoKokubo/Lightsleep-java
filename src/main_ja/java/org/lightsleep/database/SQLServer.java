@@ -66,6 +66,16 @@ public class SQLServer extends Standard {
 	/**
 	 * {@inheritDoc}
 	 *
+	 * @since 1.8.4
+	 */
+	@Override
+	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
 	 * @since 1.8.2
 	 */
 	@Override

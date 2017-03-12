@@ -914,38 +914,41 @@ public class Standard implements Database {
 		appendsMainTable(buff, sql);
 
 		// ( column name, ...
-		buff.append(" (");
-		String[] delimiter = new String[] {""};
-
-		sql.columnInfoStream()
-			.filter(ColumnInfo::insertable)
-			.forEach(columnInfo -> {
-				buff.append(delimiter[0]).append(columnInfo.columnName());
-				delimiter[0] = ", ";
-			});
-
+	// 1.8.4
+	//	buff.append(" (");
+	//	String[] delimiter = new String[] {""};
+	//
+	//	sql.columnInfoStream()
+	//		.filter(ColumnInfo::insertable)
+	//		.forEach(columnInfo -> {
+	//			buff.append(delimiter[0]).append(columnInfo.columnName());
+	//			delimiter[0] = ", ";
+	//		});
+	////
 		// ) VALUES (value, ...)
-		buff.append(") VALUES (");
-		delimiter[0] = "";
-
-		sql.columnInfoStream()
-			.filter(ColumnInfo::insertable)
-			.forEach(columnInfo -> {
-				String propertyName = columnInfo.propertyName();
-
-				// gets expression
-				Expression expression = sql.getExpression(propertyName);
-				if (expression.isEmpty())
-					expression = columnInfo.insertExpression();
-
-				if (expression.isEmpty())
-					expression = new Expression("{#" + propertyName + "}");
-
-				buff.append(delimiter[0])
-					.append(expression.toString(sql, parameters));
-				delimiter[0] = ", ";
-			});
-		buff.append(")");
+	// 1.8.4
+	//	buff.append(") VALUES (");
+	//	delimiter[0] = "";
+	//
+	//	sql.columnInfoStream()
+	//		.filter(ColumnInfo::insertable)
+	//		.forEach(columnInfo -> {
+	//			String propertyName = columnInfo.propertyName();
+	//
+	//			// gets expression
+	//			Expression expression = sql.getExpression(propertyName);
+	//			if (expression.isEmpty())
+	//				expression = columnInfo.insertExpression();
+	//
+	//			if (expression.isEmpty())
+	//				expression = new Expression("{#" + propertyName + "}");
+	//
+	//			buff.append(delimiter[0])
+	//				.append(expression.toString(sql, parameters));
+	//			delimiter[0] = ", ";
+	//		});
+	//	buff.append(")");
+		appendsInsertColumnsAndValues(buff, sql, parameters);
 	////
 
 		return buff.toString();
@@ -1005,31 +1008,34 @@ public class Standard implements Database {
 		appendsJoinTables(buff, sql, parameters);
 
 		// SET column name =  value, ...
-		buff.append(" SET ");
-		String[] delimiter = new String[] {""};
-
-		sql.selectedSqlColumnInfoStream()
-			.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().updatable())
-			.forEach(sqlColumnInfo -> {
-				ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
-				String tableAlias   = sqlColumnInfo.tableAlias();
-				String propertyName = columnInfo.propertyName();
-				String columnName   = columnInfo.getColumnName(tableAlias);
-
-				// gets expression
-				Expression expression = sql.getExpression(propertyName);
-				if (expression.isEmpty())
-					expression = columnInfo.updateExpression();
-
-				if (expression.isEmpty())
-					expression = new Expression("{#" + propertyName + "}");
-
-				buff.append(delimiter[0])
-					.append(columnName)
-					.append("=")
-					.append(expression.toString(sql, parameters));
-				delimiter[0] = ", ";
-			});
+	// 1.8.4
+	//	buff.append(" SET ");
+	//	String[] delimiter = new String[] {""};
+	//
+	//	sql.selectedSqlColumnInfoStream()
+	//		.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().updatable())
+	//		.forEach(sqlColumnInfo -> {
+	//			ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
+	//			String tableAlias   = sqlColumnInfo.tableAlias();
+	//			String propertyName = columnInfo.propertyName();
+	//			String columnName   = columnInfo.getColumnName(tableAlias);
+	//
+	//			// gets expression
+	//			Expression expression = sql.getExpression(propertyName);
+	//			if (expression.isEmpty())
+	//				expression = columnInfo.updateExpression();
+	//
+	//			if (expression.isEmpty())
+	//				expression = new Expression("{#" + propertyName + "}");
+	//
+	//			buff.append(delimiter[0])
+	//				.append(columnName)
+	//				.append("=")
+	//				.append(expression.toString(sql, parameters));
+	//			delimiter[0] = ", ";
+	//		});
+		appendsUpdateColumnsAndValues(buff, sql, parameters);
+	////
 
 		// WHERE ...
 		appendsWhere(buff, sql, parameters);
@@ -1071,7 +1077,14 @@ public class Standard implements Database {
 	//	if (sql.getLimit() != Integer.MAX_VALUE)
 	//		buff.append(" LIMIT ").append(sql.getLimit());
 		// DELETE FROM
-		buff.append("DELETE FROM");
+	// 1.8.4
+	//	buff.append("DELETE FROM");
+		buff.append("DELETE");
+		if (sql.getJoinInfos().size() > 0)
+			buff.append(' ')
+				.append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
+		buff.append(" FROM");
+	////
 
 		// main table name and alias
 		appendsMainTable(buff, sql);
@@ -1148,6 +1161,91 @@ public class Standard implements Database {
 			if (!joinInfo.on().isEmpty())
 				buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
 		});
+	}
+
+	/**
+	 * Appends INSERT column names and values to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 * @param parameters a list to add the parameters of the SQL
+	 *
+	 * @since 1.8.4
+	 */
+	protected <E> void appendsInsertColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+		// ( column name, ...
+		buff.append(" (");
+		String[] delimiter = new String[] {""};
+
+		sql.columnInfoStream()
+			.filter(ColumnInfo::insertable)
+			.forEach(columnInfo -> {
+				buff.append(delimiter[0]).append(columnInfo.columnName());
+				delimiter[0] = ", ";
+			});
+
+		// ) VALUES (value, ...)
+		buff.append(") VALUES (");
+		delimiter[0] = "";
+
+		sql.columnInfoStream()
+			.filter(ColumnInfo::insertable)
+			.forEach(columnInfo -> {
+				String propertyName = columnInfo.propertyName();
+
+				// gets expression
+				Expression expression = sql.getExpression(propertyName);
+				if (expression.isEmpty())
+					expression = columnInfo.insertExpression();
+
+				if (expression.isEmpty())
+					expression = new Expression("{#" + propertyName + "}");
+
+				buff.append(delimiter[0])
+					.append(expression.toString(sql, parameters));
+				delimiter[0] = ", ";
+			});
+		buff.append(")");
+	}
+
+	/**
+	 * Appends UPDATE column names and values to <b>buff</b>.
+	 *
+	 * @param <E> type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 * @param parameters a list to add the parameters of the SQL
+	 *
+	 * @since 1.8.4
+	 */
+	protected <E> void appendsUpdateColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+		// SET column name =  value, ...
+		buff.append(" SET ");
+		String[] delimiter = new String[] {""};
+
+		sql.selectedSqlColumnInfoStream()
+			.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().updatable())
+			.forEach(sqlColumnInfo -> {
+				ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
+				String tableAlias   = sqlColumnInfo.tableAlias();
+				String propertyName = columnInfo.propertyName();
+				String columnName   = columnInfo.getColumnName(tableAlias);
+
+				// gets expression
+				Expression expression = sql.getExpression(propertyName);
+				if (expression.isEmpty())
+					expression = columnInfo.updateExpression();
+
+				if (expression.isEmpty())
+					expression = new Expression("{#" + propertyName + "}");
+
+				buff.append(delimiter[0])
+					.append(columnName)
+					.append("=")
+					.append(expression.toString(sql, parameters));
+				delimiter[0] = ", ";
+			});
 	}
 
 	/**

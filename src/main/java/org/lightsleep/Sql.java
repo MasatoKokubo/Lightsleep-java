@@ -64,7 +64,7 @@ import org.lightsleep.logger.LoggerFactory;
  * SELECT id, familyName, givenName, ... FROM Contact WHERE familyName='Apple'
  * </pre></div>
  *
- * @param <E> the entity class corresponding to the main table
+ * @param <E> the entity class related to the main table
  *
  * @since 1.0.0
  * @author Masato Kokubo
@@ -77,7 +77,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	// The version resource
 	private static final String version = new Resource("lightsleep-version").get("version");
 
-	// Cass resources
+	// Class resources
 	private static final Resource resource = new Resource(Sql.class);
 	private static final String messageDatabaseHandler            = resource.get("messageDatabaseHandler");
 	private static final String messageDatabaseHandlerNotFound    = resource.get("messageDatabaseHandlerNotFound");
@@ -144,8 +144,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	// The connection supplier
 	private static ConnectionSupplier connectionSupplier;
 
-	// Recently generated SQL @since 1.5.0
-	private String sql;
+	// The generated SQL @since 1.5.0
+	private String generatedSql;
 
 	static {
 		logger.info("Lightsleep " + version + " / logger: " + LoggerFactory.loggerClass.getName());
@@ -165,7 +165,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @param database the database handler
 	 *
-	 * @throws NullPointerException if <b>database</b> is <b>null</b>
+	 * @throws NullPointerException if <b>database</b> is null
 	 */
 	public static void setDatabase(Database database) {
 		if (database == null) throw new NullPointerException("Sql.setDatabase: database == null");
@@ -214,7 +214,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @param supplier the connection supplier
 	 *
-	 * @throws NullPointerException if <b>supplier</b> is <b>null</b>
+	 * @throws NullPointerException if <b>supplier</b> is null
 	 */
 	public static void setConnectionSupplier(ConnectionSupplier supplier) {
 		if (supplier == null) throw new NullPointerException("Sql.setConnectionSupplier: supplier == null");
@@ -257,11 +257,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Returns the entity information related to the specified entity class.
 	 *
-	 * @param <E> the entity class corresponding to the main table
+	 * @param <E> the entity class related to the main table
 	 * @param entityClass the entity class
 	 * @return the entity information
 	 *
-	 * @throws NullPointerException if <b>entityClass</b> is <b>null</b>
+	 * @throws NullPointerException if <b>entityClass</b> is null
 	 */
 	public static <E> EntityInfo<E> getEntityInfo(Class<E> entityClass) {
 		if (entityClass == null) throw new NullPointerException("Sql.getEntityInfo: entityClass == null");
@@ -304,11 +304,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entityClass the entity class
 	 * @param tableAlias the table alias
 	 *
-	 * @throws NullPointerException if <b>entityClass</b> or <b>tableAlias</b> is <b>null</b>
+	 * @throws NullPointerException if <b>entityClass</b> or <b>tableAlias</b> is null
 	 */
 	public Sql(Class<E> entityClass, String tableAlias) {
 		if (entityClass == null) throw new NullPointerException("Sql.<init>: entityClass == null");
-		if (tableAlias == null) throw new NullPointerException("Sql.<init>: alias == null");
+		if (tableAlias == null) throw new NullPointerException("Sql.<init>: tableAlias == null");
 
 		entityInfo = getEntityInfo(entityClass);
 		this.tableAlias = tableAlias;
@@ -379,7 +379,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the columns for SELECT SQL.
+	 * Specifies the columns used in SELECT and UPDATE SQL.
 	 * Specify the property names that related to the columns.
 	 * You can also be specified <b>"*"</b> or <b>"<i>&lt;table alias&gt;</i>.*"</b>.
 	 * If this method is not called it will be in the same manner as <b>"*"</b> is specified.
@@ -401,7 +401,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>columns</b> or any of <b>columns</b> is <b>null</b>
+	 * @throws NullPointerException if <b>columns</b> or any of <b>columns</b> is null
 	 */
 	public Sql<E> columns(String... columns) {
 		if (columns == null) throw new NullPointerException("Sql.columns: columns == null");
@@ -415,12 +415,38 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Returns the columns for SELECT SQL.
+	 * Returns a set of property names related to the columns used in SELECT and UPDATE SQL.
 	 *
-	 * @return a set of the specified property names in <b>columns</b> method
+	 * @return a set of property names
 	 */
 	public Set<String> getColumns() {
-		return columns;
+	// 1.8.4
+	//	return columns;
+	//	return new HashSet<String>(columns);
+		try {
+			return (Set<String>)columns.getClass().getMethod("clone").invoke(columns);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	////
+	}
+
+	/**
+	 * Sets the set of property names related to the columns used in SELECT and UPDATE SQL.
+	 *
+	 * @param columns the set of property names
+	 * @return this object
+	 *
+	 * @throws NullPointerException if <b>columns</b> is null
+	 *
+	 * @since 1.8.4
+	 */
+	public Sql<E> setColumns(Set<String> columns) {
+		if (columns == null) throw new NullPointerException("Sql.expression: columns == null");
+
+		this.columns = columns;
+		return this;
 	}
 
 	/**
@@ -437,7 +463,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param expression the expression
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>propertyName</b> or <b>expression</b> is <b>null</b>
+	 * @throws NullPointerException if <b>propertyName</b> or <b>expression</b> is null
 	 */
 	public Sql<E> expression(String propertyName, Expression expression) {
 		if (propertyName == null) throw new NullPointerException("Sql.expression: propertyName == null");
@@ -460,7 +486,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments the arguments of the expression
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>propertyName</b>, <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>propertyName</b>, <b>content</b> or <b>arguments</b> is null
 	 */
 	public Sql<E> expression(String propertyName, String content, Object... arguments) {
 		return expression(propertyName, new Expression(content, arguments));
@@ -472,7 +498,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param propertyName the property name
 	 * @return the expression associated <b>propertyName</b> or <b>Expression.EMPTY</b>
 	 *
-	 * @throws NullPointerException if <b>propertyName</b> is <b>null</b>
+	 * @throws NullPointerException if <b>propertyName</b> is null
 	 */
 	public Expression getExpression(String propertyName) {
 		if (propertyName == null) throw new NullPointerException("Sql.expression: propertyName == null");
@@ -490,13 +516,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
-	 * @param <JE> the entity class that relateed to the table to join
-	 * @param entityClass the entity class that relateed to the table to join
+	 * @param <JE> the entity class that related to the table to join
+	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is null
 	 */
 	public <JE> Sql<E> innerJoin(Class<JE> entityClass, String tableAlias, Condition on) {
 		return join(JoinInfo.JoinType.INNER, entityClass, tableAlias, on);
@@ -505,14 +531,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Add an information of the table that join with <b>INNER JOIN</b>.
 	 *
-	 * @param <JE> the entity class that relateed to the table to join
-	 * @param entityClass the entity class that relateed to the table to join
+	 * @param <JE> the entity class that related to the table to join
+	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
 	 * @param arguments the arguments of the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is null
 	 */
 	public <JE> Sql<E> innerJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return join(JoinInfo.JoinType.INNER, entityClass, tableAlias, Condition.of(on, arguments));
@@ -528,13 +554,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
-	 * @param <JE> the entity class that relateed to the table to join
-	 * @param entityClass the entity class that relateed to the table to join
+	 * @param <JE> the entity class that related to the table to join
+	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is null
 	 */
 	public <JE> Sql<E> leftJoin(Class<JE> entityClass, String tableAlias, Condition on) {
 		return join(JoinInfo.JoinType.LEFT, entityClass, tableAlias, on);
@@ -543,14 +569,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Add an information of the table that join with <b>LEFT OUTER JOIN</b>.
 	 *
-	 * @param <JE> the entity class that relateed to the table to join
-	 * @param entityClass the entity class that relateed to the table to join
+	 * @param <JE> the entity class that related to the table to join
+	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
 	 * @param arguments the arguments of the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is null
 	 */
 	public <JE> Sql<E> leftJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return join(JoinInfo.JoinType.LEFT, entityClass, tableAlias, Condition.of(on, arguments));
@@ -566,13 +592,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
-	 * @param <JE> the entity class that relateed to the table to join
-	 * @param entityClass the entity class that relateed to the table to join
+	 * @param <JE> the entity class that related to the table to join
+	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is null
 	 */
 	public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, Condition on) {
 		return join(JoinInfo.JoinType.RIGHT, entityClass, tableAlias, on);
@@ -581,14 +607,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Add an information of the table that join with <b>RIGHT OUTER JOIN</b>.
 	 *
-	 * @param <JE> the entity class that relateed to the table to join
-	 * @param entityClass the entity class that relateed to the table to join
+	 * @param <JE> the entity class that related to the table to join
+	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
 	 * @param arguments the arguments of the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is null
 	 */
 	public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return join(JoinInfo.JoinType.RIGHT, entityClass, tableAlias, Condition.of(on, arguments));
@@ -598,14 +624,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Add an information of the table that join with
  	 *   <b>INNER JOIN</b>, <b>LEFT OUTER JOIN</b> or <b>RIGHT OUTER JOIN</b>.
 	 *
-	 * @param <JE> the entity class that relateed to the table to join
+	 * @param <JE> the entity class that related to the table to join
 	 * @param joinType the join type
-	 * @param entityClass the entity class that relateed to the table to join
+	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>joinType</b>, <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
+	 * @throws NullPointerException if <b>joinType</b>, <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is null
 	 */
 	private <JE> Sql<E> join(JoinInfo.JoinType joinType, Class<JE> entityClass, String tableAlias, Condition on) {
 		EntityInfo<JE> entityInfo = Sql.getEntityInfo(entityClass);
@@ -637,7 +663,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param condition the condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
+	 * @throws NullPointerException if <b>condition</b> is null
 	 */
 	public Sql<E> where(Condition condition) {
 		if (condition == null) throw new NullPointerException("Sql.where: condition == null");
@@ -660,7 +686,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments the arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 */
 	public Sql<E> where(String content, Object... arguments) {
 		where = Condition.of(content, arguments);
@@ -683,7 +709,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entity the entity of the EntityCondition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
+	 * @throws NullPointerException if <b>entity</b> is null
 	 */
 	public Sql<E> where(E entity) {
 		where = Condition.of(entity);
@@ -704,12 +730,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
-	 * @param <SE> the entity class of the subquery
+	 * @param <SE> the entity class related to the subquery
 	 * @param content the content of the SubqueryCondition
 	 * @param subSql the Sql object of the SubqueryCondition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
 	 */
 	public <SE> Sql<E> where(String content, Sql<SE> subSql) {
 		where = Condition.of(content, this, subSql);
@@ -733,7 +759,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param condition the condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
+	 * @throws NullPointerException if <b>condition</b> is null
 	 */
 	public Sql<E> and(Condition condition) {
 		if (condition == null) throw new NullPointerException("Sql.and: condition == null");
@@ -762,7 +788,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments the arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 */
 	public Sql<E> and(String content, Object... arguments) {
 		return and(Condition.of(content, arguments));
@@ -773,12 +799,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * add a SubqueryCondition condition to the <b>HAVING</b> condition useing <b>AND</b>.
 	 * Otherwise, add the condition to the <b>WHERE</b> condition.
 	 *
-	 * @param <SE> the entity class of the subquery
+	 * @param <SE> the entity class related to the subquery
 	 * @param content the content of the SubqueryCondition
 	 * @param subSql the Sql object of the SubqueryCondition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
 	 */
 	public <SE> Sql<E> and(String content, Sql<SE> subSql) {
 		return and(Condition.of(content, this, subSql));
@@ -792,7 +818,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param condition the condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
+	 * @throws NullPointerException if <b>condition</b> is null
 	 */
 	public Sql<E> or(Condition condition) {
 		if (condition == null) throw new NullPointerException("Sql.and: condition == null");
@@ -821,7 +847,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments the arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 */
 	public Sql<E> or(String content, Object... arguments) {
 		return or(Condition.of(content, arguments));
@@ -832,12 +858,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * add a SubqueryCondition condition to the <b>HAVING</b> condition useing <b>OR</b>.
 	 * Otherwise, add the condition to the <b>WHERE</b> condition.
 	 *
-	 * @param <SE> the entity class of the subquery
+	 * @param <SE> the entity class related to the subquery
 	 * @param content the content of the SubqueryCondition
 	 * @param subSql the Sql object of the SubqueryCondition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
 	 */
 	public <SE> Sql<E> or(String content, Sql<SE> subSql) {
 		return or(Condition.of(content, this, subSql));
@@ -850,7 +876,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments the arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 */
 	public Sql<E> groupBy(String content, Object... arguments) {
 		groupBy = groupBy.add(new Expression(content, arguments));
@@ -872,7 +898,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param condition the condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
+	 * @throws NullPointerException if <b>condition</b> is null
 	 */
 	public Sql<E> having(Condition condition) {
 		if (condition == null) throw new NullPointerException("Sql.having: condition == null");
@@ -888,7 +914,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments the arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 */
 	public Sql<E> having(String content, Object... arguments) {
 		having = Condition.of(content, arguments);
@@ -898,12 +924,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the <b>HAVING</b> condition by SubqueryCondition.
 	 *
-	 * @param <SE> the entity class of the subquery
+	 * @param <SE> the entity class related to the subquery
 	 * @param content the content of the SubqueryCondition
 	 * @param subSql the Sql object of the SubqueryCondition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
 	 */
 	public <SE> Sql<E> having(String content, Sql<SE> subSql) {
 		having = Condition.of(content, this, subSql);
@@ -933,7 +959,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments the arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 */
 	public Sql<E> orderBy(String content, Object... arguments) {
 		orderBy = orderBy.add(new OrderBy.Element(content, arguments));
@@ -1119,12 +1145,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Returns the <b>SqlEntityInfo</b> object corresponding to the specified table alias.
+	 * Returns the <b>SqlEntityInfo</b> object related to the specified table alias.
 	 *
 	 * @param tableAlias a table alias
 	 * @return the SqlEntityInfo objcet
 	 *
-	 * @throws NullPointerException if <b>tableAlias</b> is <b>null</b>
+	 * @throws NullPointerException if <b>tableAlias</b> is null
 	 */
 	public SqlEntityInfo<?> getSqlEntityInfo(String tableAlias) {
 		return sqlEntityInfoMap.get(tableAlias);
@@ -1153,7 +1179,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Generates and executes a SELECT SQL that joins no tables.
+	 * Generates and executes a SELECT SQL that joins no tables.<br>
+	 * Adds following string to <b>columns</b> set
+	 * if <b>columns</b> method is not called and
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called. <i>(since 1.8.4)</i><br>
+	 * <br>
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;Main Table Alias&gt;.*"</li>
+	 * </ul>
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1163,15 +1196,19 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * </pre></div>
 	 *
 	 * @param connection the database connection
-	 * @param consumer a consumer for the entities
+	 * @param consumer the consumer of the entities generated from retrieved rows
 	 *
-	 * @throws NullPointerException if <b>connection</b> or consumer is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b> or consumer is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public void select(Connection connection, Consumer<? super E> consumer) {
 	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
+	////
+	// 1.8.4
+		if (columns.size() == 0 && joinInfos.size() > 0)
+			columns.add(tableAlias + ".*");
 	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
@@ -1180,7 +1217,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Generates and executes a SELECT SQL that joins one table.
+	 * Generates and executes a SELECT SQL that joins one table.<br>
+	 * Adds following strings to <b>columns</b> set
+	 * if <b>columns</b> method is not called and
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than once. <i>(since 1.8.4)</i><br>
+	 * <br>
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;Main Table Alias&gt;.*"</li>
+	 *   <li>"&lt;Joined Table Alias&gt;.*"</li>
+	 * </ul>
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1191,12 +1236,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .<b>&lt;Phone&gt;select(connection, contacts::add, phones::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> the entity class of the joined table
+	 * @param <JE1> the entity class related to the joined table
 	 * @param connection the database connection
-	 * @param consumer a consumer for the entities of the main table
-	 * @param consumer1 a consumer for the entities of the joined table
+	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
+	 * @param consumer1 the consumer of the entities related to the joined table generated from retrieved rows
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b> or consumer1 is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b> or consumer1 is null
 	 * @throws IllegalStateException if joinInfo information is less than 1
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
@@ -1208,6 +1253,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
+	////
+	// 1.8.4
+		if (columns.size() == 0 && joinInfos.size() > 1) {
+			columns.add(tableAlias + ".*");
+			columns.add(joinInfos.get(0).tableAlias() + ".*");
+		}
 	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
@@ -1225,7 +1276,16 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Generates and executes a SELECT SQL that joins two tables.
+	 * Generates and executes a SELECT SQL that joins two tables.<br>
+	 * Adds following strings to <b>columns</b> set
+	 * if <b>columns</b> method is not called and
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than twice. <i>(since 1.8.4)</i><br>
+	 * <br>
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;Main Table Alias&gt;.*"</li>
+	 *   <li>"&lt;1st Joined Table Alias&gt;.*"</li>
+	 *   <li>"&lt;2nd Joined Table Alias&gt;.*"</li>
+	 * </ul>
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1238,14 +1298,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .<b>&lt;Phone, Email&gt;select(connection, contacts::add, phones::add, emails::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> the entity class of the 1st joined table
-	 * @param <JE2> the entity class of the 2nd joined table
+	 * @param <JE1> the entity class related to the 1st joined table
+	 * @param <JE2> the entity class related to the 2nd joined table
 	 * @param connection the database connection
-	 * @param consumer a consumer for the entities of the main table
-	 * @param consumer1 a consumer for the entities of the 1st join table
-	 * @param consumer2 a consumer for the entities of the 2nd join table
+	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
+	 * @param consumer1 the consumer of the entities related to the 1st joined table generated from retrieved rows
+	 * @param consumer2 the consumer of the entities related to the 2nd joined table generated from retrieved rows
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b> or <b>consumer2</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b> or <b>consumer2</b> is null
 	 * @throws IllegalStateException if join information is less than 2
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
@@ -1258,6 +1318,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
+	////
+	// 1.8.4
+		if (columns.size() == 0 && joinInfos.size() > 2) {
+			columns.add(tableAlias + ".*");
+			columns.add(joinInfos.get(0).tableAlias() + ".*");
+			columns.add(joinInfos.get(1).tableAlias() + ".*");
+		}
 	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
@@ -1277,7 +1344,17 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Generates and executes a SELECT SQL that joins three tables.
+	 * Generates and executes a SELECT SQL that joins three tables.<br>
+	 * Adds following strings to <b>columns</b> set
+	 * if <b>columns</b> method is not called and
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than 3 times. <i>(since 1.8.4)</i><br>
+	 * <br>
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;Main Table Alias&gt;.*"</li>
+	 *   <li>"&lt;1st Joined Table Alias&gt;.*"</li>
+	 *   <li>"&lt;2nd Joined Table Alias&gt;.*"</li>
+	 *   <li>"&lt;3rd Joined Table Alias&gt;.*"</li>
+	 * </ul>
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1293,16 +1370,16 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *             <b>emails::add, addresses::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> the entity class of the 1st joined table
-	 * @param <JE2> the entity class of the 2nd joined table
-	 * @param <JE3> the entity class of the 3rd joined table
+	 * @param <JE1> the entity class related to the 1st joined table
+	 * @param <JE2> the entity class related to the 2nd joined table
+	 * @param <JE3> the entity class related to the 3rd joined table
 	 * @param connection the database connection
-	 * @param consumer a consumer for the entities of the main table
-	 * @param consumer1 a consumer for the entities of the 1st join table
-	 * @param consumer2 a consumer for the entities of the 2nd join table
-	 * @param consumer3 a consumer for the entities of the 3rd join table
+	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
+	 * @param consumer1 the consumer of the entities related to the 1st joined table generated from retrieved rows
+	 * @param consumer2 the consumer of the entities related to the 2nd joined table generated from retrieved rows
+	 * @param consumer3 the consumer of the entities related to the 3rd joined table generated from retrieved rows
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> or <b>consumer3</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> or <b>consumer3</b> is null
 	 * @throws IllegalStateException if join information is less than 3
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
@@ -1316,6 +1393,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
+	////
+	// 1.8.4
+		if (columns.size() == 0 && joinInfos.size() > 3) {
+			columns.add(tableAlias + ".*");
+			columns.add(joinInfos.get(0).tableAlias() + ".*");
+			columns.add(joinInfos.get(1).tableAlias() + ".*");
+			columns.add(joinInfos.get(2).tableAlias() + ".*");
+		}
 	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
@@ -1337,7 +1422,18 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Generates and executes a SELECT SQL that joins four tables.
+	 * Generates and executes a SELECT SQL that joins four tables.<br>
+	 * Adds following strings to <b>columns</b> set
+	 * if <b>columns</b> method is not called and
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than 4 times. <i>(since 1.8.4)</i><br>
+	 * <br>
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;Main Table Alias&gt;.*"</li>
+	 *   <li>"&lt;1st Joined Table Alias&gt;.*"</li>
+	 *   <li>"&lt;2nd Joined Table Alias&gt;.*"</li>
+	 *   <li>"&lt;3rd Joined Table Alias&gt;.*"</li>
+	 *   <li>"&lt;4th Joined Table Alias&gt;.*"</li>
+	 * </ul>
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1355,18 +1451,18 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *             <b>emails::add, addresses::add, urls::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> the entity class of the 1st joined table
-	 * @param <JE2> the entity class of the 2nd joined table
-	 * @param <JE3> the entity class of the 3rd joined table
-	 * @param <JE4> the entity class of the 4th joined table
+	 * @param <JE1> the entity class related to the 1st joined table
+	 * @param <JE2> the entity class related to the 2nd joined table
+	 * @param <JE3> the entity class related to the 3rd joined table
+	 * @param <JE4> the entity class related to the 4th joined table
 	 * @param connection the database connection
-	 * @param consumer a consumer for the entities of the main table
-	 * @param consumer1 a consumer for the entities of the 1st join table
-	 * @param consumer2 a consumer for the entities of the 2nd join table
-	 * @param consumer3 a consumer for the entities of the 3rd join table
-	 * @param consumer4 a consumer for the entities of the 4th join table
+	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
+	 * @param consumer1 the consumer of the entities related to the 1st join table generated from retrieved rows
+	 * @param consumer2 the consumer of the entities related to the 2nd join table generated from retrieved rows
+	 * @param consumer3 the consumer of the entities related to the 3rd join table generated from retrieved rows
+	 * @param consumer4 the consumer of the entities related to the 4th join table generated from retrieved rows
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> or <b>consumer4</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> or <b>consumer4</b> is null
 	 * @throws IllegalStateException if join information is less than 4
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
@@ -1381,6 +1477,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
+	////
+	// 1.8.4
+		if (columns.size() == 0 && joinInfos.size() > 4) {
+			columns.add(tableAlias + ".*");
+			columns.add(joinInfos.get(0).tableAlias() + ".*");
+			columns.add(joinInfos.get(1).tableAlias() + ".*");
+			columns.add(joinInfos.get(2).tableAlias() + ".*");
+			columns.add(joinInfos.get(3).tableAlias() + ".*");
+		}
 	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
@@ -1417,7 +1522,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param connection the database connection
 	 * @return an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise
 	 *
-	 * @throws NullPointerException if <b>connection</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 * @throws ManyRowsException if more than one row searched
 	 */
@@ -1427,7 +1532,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			if (entities.size() > 0)
 			// 1.5.0
 			//	throw new ManyRowsException();
-				throw new ManyRowsException(sql);
+				throw new ManyRowsException(generatedSql);
 			////
 			entities.add(entity);
 		});
@@ -1446,7 +1551,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param connection the database connection
 	 * @return the row count
 	 *
-	 * @throws NullPointerException if <b>connection</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int selectCount(Connection connection) {
@@ -1485,7 +1590,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entity the entity to be inserted
 	 * @return the row count
 	 *
-	 * @throws NullPointerException if <b>connection</b> or <b>entity</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b> or <b>entity</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int insert(Connection connection, E entity) {
@@ -1529,7 +1634,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the row count
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>entities</b> or any element of <b>entities</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b>, <b>entities</b> or any element of <b>entities</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int insert(Connection connection, Iterable<? extends E> entities) {
@@ -1557,7 +1662,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entity the entity to be updated
 	 * @return the row count
 	 *
-	 * @throws NullPointerException if <b>connection</b> or <b>entity</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b> or <b>entity</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int update(Connection connection, E entity) {
@@ -1599,7 +1704,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the row count
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>entities</b> or any element of <b>entities</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b>, <b>entities</b> or any element of <b>entities</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int update(Connection connection, Iterable<? extends E> entities) {
@@ -1628,7 +1733,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param connection the database connection
 	 * @return the row count
 	 *
-	 * @throws NullPointerException if <b>connection</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int delete(Connection connection) {
@@ -1658,7 +1763,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entity the entity to be deleted
 	 * @return the row count
 	 *
-	 * @throws NullPointerException if <b>connection</b> or <b>entity</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b> or <b>entity</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int delete(Connection connection, E entity) {
@@ -1692,7 +1797,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the row count
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>entities</b> or any element of <b>entities</b> is <b>null</b>
+	 * @throws NullPointerException if <b>connection</b>, <b>entities</b> or any element of <b>entities</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int delete(Connection connection, Iterable<? extends E> entities) {
@@ -1791,7 +1896,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (consumer == null) throw new NullPointerException("Sql.executeQuery: consumer == null");
 
 	// 1.5.0
-		this.sql = sql;
+		generatedSql = sql;
 	////
 		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
 
@@ -1880,7 +1985,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (parameters == null) throw new NullPointerException("Sql.executeUpdate: parameters == null");
 
 	// 1.5.0
-		this.sql = sql;
+		generatedSql = sql;
 	////
 		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
 
@@ -1917,6 +2022,17 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			return rowCount;
 		}
 		catch (SQLException e) {throw new RuntimeSQLException(e);}
+	}
+
+	/**
+	 * Returns generated SQL.
+	 *
+	 * @return generated SQL
+	 *
+	 * @since 1.8.4
+	 */
+	public String generatedSql() {
+		return generatedSql;
 	}
 
 	/**

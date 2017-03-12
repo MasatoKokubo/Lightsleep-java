@@ -237,6 +237,32 @@ public class Standard implements Database {
 	}
 
 	/**
+	 * 挿入するカラム名と値を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 * @param parameters SQL のパラメータを格納するリスト
+	 *
+	 * @since 1.8.4
+	 */
+	protected <E> void appendsInsertColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	}
+
+	/**
+	 * 更新するカラム名と値を <b>buff</b> に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b> オブジェクト
+	 * @param parameters SQL のパラメータを格納するリスト
+	 *
+	 * @since 1.8.4
+	 */
+	protected <E> void appendsUpdateColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	}
+
+	/**
 	 * WHERE 句を <b>buff</b> に追加します。
 	 *
 	 * @param <E> エンティティの型

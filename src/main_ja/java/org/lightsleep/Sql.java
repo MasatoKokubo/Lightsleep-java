@@ -56,7 +56,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @param database データベース・ハンドラ
 	 *
-	 * @throws NullPointerException <b>database</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>database</b> が null の場合
 	 */
 	public static void setDatabase(Database database) {
 	}
@@ -76,7 +76,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @param supplier コネクション・サプライヤー
 	 *
-	 * @throws NullPointerException <b>supplier</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>supplier</b> が null の場合
 	 */
 	public static void setConnectionSupplier(ConnectionSupplier supplier) {
 	}
@@ -88,7 +88,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entityClass エンティティ・クラス
 	 * @return エンティティ情報
 	 *
-	 * @throws NullPointerException <b>entityClass</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>entityClass</b> が null の場合
 	*/
 	public static <E> EntityInfo<E> getEntityInfo(Class<E> entityClass) {
 		return null;
@@ -104,7 +104,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 
 	 * @param entityClass エンティティ・クラス
 	 * 
-	 * @throws NullPointerException <b>entityClass</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>entityClass</b> が null の場合
 	 */
 	public Sql(Class<E> entityClass) {
 	}
@@ -120,7 +120,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entityClass エンティティ・クラス
 	 * @param tableAlias テーブルの別名
 	 * 
-	 * @throws NullPointerException <b>entityClass</b> または <b>tableAlias</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>entityClass</b> または <b>tableAlias</b> が null の場合
 	 */
 	public Sql(Class<E> entityClass, String tableAlias) {
 	}
@@ -209,14 +209,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param columns カラムに関連するプロパティ名の配列
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>columns</b> または <b>columns</b> の要素が <b>null</b> の場合
+	 * @throws NullPointerException <b>columns</b> または <b>columns</b> の要素が null の場合
 	 */
 	public Sql<E> columns(String... columns) {
 		return null;
 	}
 
 	/**
-	 * SELECT SQL で使用されるカラム列のセットを返します。
+	 * SELECT SQL および UPDATE SQL で使用されるカラムに対応するプロパティ名のセットを返します。
 	 *
 	 * @return columns メソッドで指定されたプロパティ名のセット
 	 */
@@ -224,6 +224,19 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		return null;
 	}
 
+	/**
+	 * SELECT SQL および UPDATE SQL で使用されるカラムに対応するプロパティ名のセットを設定します。
+	 *
+	 * @param columns プロパティ名のセット
+	 * @return このオブジェクト
+	 *
+	 * @throws NullPointerException <b>columns</b> が null の場合
+	 *
+	 * @since 1.8.4
+	 */
+	public Sql<E> setColumns(Set<String> columns) {
+		return null;
+	}
 	/**
 	 * プロパティ名に関連するカラムに式を関連付けします。<br>
 	 * 式が空の場合、以前のこのプロパティ名の関連付けを解除します。
@@ -238,7 +251,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param expression 式
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>propertyName</b> または <b>expression</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>propertyName</b> または <b>expression</b> が null の場合
 	*/
 	public Sql<E> expression(String propertyName, Expression expression) {
 		return null;
@@ -254,7 +267,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>propertyName</b>, <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>propertyName</b>, <b>content</b> または <b>arguments</b> が null の場合
 	 */
 	public Sql<E> expression(String propertyName, String content, Object... arguments) {
 		return null;
@@ -268,7 +281,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @return プロパティ名に関連する式または <b>Expression.EMPTY</b>
 	 *
-	 * @throws NullPointerException <b>propertyName</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>propertyName</b> が null の場合
 	 */
 	public Expression getExpression(String propertyName) {
 		return null;
@@ -290,7 +303,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param on 結合条件式
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b> または <b>on</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b> または <b>on</b> が null の場合
 	 */
 	public <JE> Sql<E> innerJoin(Class<JE> entityClass, String tableAlias, Condition on) {
 		return null;
@@ -306,7 +319,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments 結合条件式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
 	 */
 	public <JE> Sql<E> innerJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return null;
@@ -328,7 +341,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param on 結合条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
 	 */
 	public <JE> Sql<E> leftJoin(Class<JE> entityClass, String tableAlias, Condition on) {
 		return null;
@@ -345,7 +358,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments 結合条件式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
 	 */
 	public <JE> Sql<E> leftJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return null;
@@ -367,7 +380,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param on 結合条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
 	 */
 	public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, Condition on) {
 		return null;
@@ -383,7 +396,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments 結合条件式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
 	*/
 	public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return null;
@@ -411,7 +424,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param condition 条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>condition</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>condition</b> が null の場合
 	 */
 	public Sql<E> where(Condition condition) {
 		return this;
@@ -431,7 +444,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments 条件式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 *
 	 * @see org.lightsleep.component.Condition#of(java.lang.String, java.lang.Object...)
 	 */
@@ -480,7 +493,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param subSql サブクエリの SELECT SQL 部分
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>subSql</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>content</b> または <b>subSql</b> が null の場合
 	 *
 	 * @see org.lightsleep.component.Condition#of(java.lang.String, Sql, Sql)
 	*/
@@ -504,7 +517,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param condition 条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>condition</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>condition</b> が null の場合
 	 */
 	public Sql<E> and(Condition condition) {
 		return this;
@@ -526,7 +539,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments 条件式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 *
 	 * @see org.lightsleep.component.Condition#of(java.lang.String, java.lang.Object...)
 	 */
@@ -556,7 +569,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param condition 条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>condition</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>condition</b> が null の場合
 	 */
 	public Sql<E> or(Condition condition) {
 		return this;
@@ -578,7 +591,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments 条件式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 *
 	 * @see org.lightsleep.component.Condition#of(java.lang.String, java.lang.Object...)
 	 */
@@ -595,7 +608,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param subSql サブクエリの SELECT SQL 部分
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>subSql</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>content</b> または <b>subSql</b> が null の場合
 	 *
 	 * @see org.lightsleep.component.Condition#of(java.lang.String, Sql, Sql)
 	 */
@@ -610,7 +623,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments 式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 */
 	public Sql<E> groupBy(String content, Object... arguments) {
 		return this;
@@ -631,7 +644,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param condition 条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>condition</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>condition</b> が null の場合
 	 */
 	public Sql<E> having(Condition condition) {
 		return this;
@@ -644,7 +657,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments 条件式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 *
 	 * @see org.lightsleep.component.Condition#of(java.lang.String, java.lang.Object...)
 	 */
@@ -675,7 +688,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param arguments 式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 */
 	public Sql<E> orderBy(String content, Object... arguments) {
 		return this;
@@ -846,7 +859,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param tableAlias テーブル別名
 	 * @return SqlEntityInfo オブジェクト
 	 *
-	 * @throws NullPointerException <b>tableAlias</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>tableAlias</b> が null の場合
 	 */
 	public SqlEntityInfo<?> getSqlEntityInfo(String tableAlias) {
 		return null;
@@ -861,7 +874,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * テーブルを結合しない SELECT SQL を生成して実行します。
+	 * テーブルを結合しない SELECT SQL を生成して実行します。<br>
+	 * <b>columns</b> がコールされてなく、
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれかコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
+	 * <br>
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
+	 * </ul>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -871,16 +891,24 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * </pre></div>
 	 *
 	 * @param connection データベース・コネクション
-	 * @param consumer エンティティのコンシューマ
+	 * @param consumer 取得した行から生成されたエンティティのコンシューマ
 	 *
-	 * @throws NullPointerException <b>connection</b> または <b>consumer</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b> または <b>consumer</b> が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
 	public void select(Connection connection, Consumer<? super E> consumer) {
 	}
 
 	/**
-	 * 1つのテーブルを結合する SELECT SQL を生成して実行します。
+	 * 1つのテーブルを結合する SELECT SQL を生成して実行します。<br>
+	 * <b>columns</b> がコールされてなく、
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか1回より多くコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
+	 * <br>
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
+	 * </ul>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -893,10 +921,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @param <JE1> 結合テーブル1のエンティティ・クラス
 	 * @param connection データベース・コネクション
-	 * @param consumer メイン・テーブルのエンティティのコンシューマ
-	 * @param consumer1 結合テーブル1のエンティティのコンシューマ
+	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
+	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
 	 *
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b> または <b>consumer1</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b>, <b>consumer</b> または <b>consumer1</b> が null の場合
 	 * @throws IllegalStateException 結合テーブル情報がない場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
@@ -906,7 +934,16 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * 2つのテーブルを結合する SELECT SQL を生成して実行します。
+	 * 2つのテーブルを結合する SELECT SQL を生成して実行します。<br>
+	 * <b>columns</b> がコールされてなく、
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか2回より多くコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
+	 * <br>
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル2の別名&gt;.*"</li>
+	 * </ul>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -922,11 +959,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param <JE1> 結合テーブル1のエンティティ・クラス
 	 * @param <JE2> 結合テーブル2のエンティティ・クラス
 	 * @param connection データベース・コネクション
-	 * @param consumer メイン・テーブルのエンティティのコンシューマ
-	 * @param consumer1 結合テーブル1のエンティティのコンシューマ
-	 * @param consumer2 結合テーブル2のエンティティのコンシューマ
+	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
+	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
+	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
 	 *
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b> または <b>consumer2</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b> または <b>consumer2</b> が null の場合
 	 * @throws IllegalStateException 結合テーブル情報が2より少ない場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
@@ -937,7 +974,17 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * 3つのテーブルを結合する SELECT SQL を生成して実行します。
+	 * 3つのテーブルを結合する SELECT SQL を生成して実行します。<br>
+	 * <b>columns</b> がコールされてなく、
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか3回より多くコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
+	 * <br>
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル2の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル3の別名&gt;.*"</li>
+	 * </ul>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -957,12 +1004,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param <JE2> 結合テーブル2のエンティティ・クラス
 	 * @param <JE3> 結合テーブル3のエンティティ・クラス
 	 * @param connection データベース・コネクション
-	 * @param consumer メイン・テーブルのエンティティのコンシューマ
-	 * @param consumer1 結合テーブル1のエンティティのコンシューマ
-	 * @param consumer2 結合テーブル2のエンティティのコンシューマ
-	 * @param consumer3 結合テーブル3のエンティティのコンシューマ
+	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
+	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
+	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
+	 * @param consumer3 取得した行から生成された結合テーブル3のエンティティのコンシューマ
 	 * 
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> または <b>consumer3</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> または <b>consumer3</b> が null の場合
 	 * @throws IllegalStateException 結合テーブル情報が3より少ない場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
@@ -974,7 +1021,18 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * 4つのテーブルを結合する SELECT SQL を生成して実行します。
+	 * 4つのテーブルを結合する SELECT SQL を生成して実行します。<br>
+	 * <b>columns</b> がコールされてなく、
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか4回より多くコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
+	 * <br>
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル2の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル3の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル4の別名&gt;.*"</li>
+	 * </ul>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -997,13 +1055,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param <JE3> 結合テーブル3のエンティティ・クラス
 	 * @param <JE4> 結合テーブル4のエンティティ・クラス
 	 * @param connection データベース・コネクション
-	 * @param consumer メイン・テーブルのエンティティのコンシューマ
-	 * @param consumer1 結合テーブル1のエンティティのコンシューマ
-	 * @param consumer2 結合テーブル2のエンティティのコンシューマ
-	 * @param consumer3 結合テーブル3のエンティティのコンシューマ
-	 * @param consumer4 結合テーブル4のエンティティのコンシューマ
+	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
+	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
+	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
+	 * @param consumer3 取得した行から生成された結合テーブル3のエンティティのコンシューマ
+	 * @param consumer4 取得した行から生成された結合テーブル4のエンティティのコンシューマ
 	 * 
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> または <b>consumer4</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> または <b>consumer4</b> が null の場合
 	 * @throws IllegalStateException 結合テーブル情報が4より少ない場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
@@ -1017,7 +1075,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * SELECT SQL を生成して実行します。<br>
-	 * 検索されない場合は、<b>Optional.empty()</b> を返します。
+	 * 取得されない場合は、<b>Optional.empty()</b> を返します。
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1027,9 +1085,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * </pre></div>
 	 *
 	 * @param connection データベース・コネクション
-	 * @return 検索されたエンティティ (検索されない場合は <b>Optional.empty()</b>)
+	 * @return 取得した行から生成されたエンティティ (取得されない場合は <b>Optional.empty()</b>)
 	 *
-	 * @throws NullPointerException <b>connection</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b> が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 * @throws ManyRowsException 複数行が検索された場合
 	 */
@@ -1049,7 +1107,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param connection データベース・コネクション
 	 * @return 実行結果行数
 	 *
-	 * @throws NullPointerException connection が <b>null</b> の場合
+	 * @throws NullPointerException connection が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
 	public int selectCount(Connection connection) {
@@ -1071,7 +1129,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entity 挿入対象のエンティティ
 	 * @return 実行結果行数
 	 *
-	 * @throws NullPointerException <b>connection</b> または <b>entity</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b> または <b>entity</b> が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
 	public int insert(Connection connection, E entity) {
@@ -1093,7 +1151,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
  	 * @param entities 挿入対象のエンティティの <b>Iterable</b>
 	 * @return 実行結果行数
 	 *
-	 * @throws NullPointerException <b>connection</b>, <b>entities</b> または <b>entities</b> の要素のいずれか <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b>, <b>entities</b> または <b>entities</b> の要素のいずれか null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
 	public int insert(Connection connection, Iterable<? extends E> entities) {
@@ -1117,7 +1175,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entity 更新対象のエンティティ
 	 * @return 実行結果行数
 	 *
-	 * @throws NullPointerException <b>connection</b> または <b>entity</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b> または <b>entity</b> が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 *
 	 * @see org.lightsleep.component.Condition#ALL
@@ -1142,7 +1200,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entities 更新対象のエンティティの <b>Iterable</b>
 	 * @return 実行結果行数
 	 *
-	 * @throws NullPointerException <b>connection</b>, <b>entityStream</b> または <b>entityStream</b> の要素のいずれかが <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b>, <b>entityStream</b> または <b>entityStream</b> の要素のいずれかが null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
 	public int update(Connection connection, Iterable<? extends E> entities) {
@@ -1164,7 +1222,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param connection データベース・コネクション
 	 * @return 実行結果行数
 	 *
-	 * @throws NullPointerException <b>connection</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b> が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 *
 	 * @see org.lightsleep.component.Condition#ALL
@@ -1188,7 +1246,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entity 削除対象のエンティティ
 	 * @return 実行結果行数
 	 *
-	 * @throws NullPointerException <b>connection</b> または <b>entity</b> が <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b> または <b>entity</b> が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
 	public int delete(Connection connection, E entity) {
@@ -1210,11 +1268,22 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entities 削除対象のエンティティの <b>Iterable</b>
 	 * @return 実行結果行数
 	 *
-	 * @throws NullPointerException <b>connection</b>, <b>entityStream</b> または <b>entityStream</b> の要素のいずれか <b>null</b> の場合
+	 * @throws NullPointerException <b>connection</b>, <b>entityStream</b> または <b>entityStream</b> の要素のいずれか null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
 	public int delete(Connection connection, Iterable<? extends E> entities) {
 		return 0;
+	}
+
+	/**
+	 * 生成された SQL を返します。
+	 *
+	 * @return 生成された SQL
+	 *
+	 * @since 1.8.4
+	 */
+	public String generatedSql() {
+		return null;
 	}
 
 	/**
