@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -68,7 +69,8 @@ public class Resource {
 	 * @throws MissingResourceException if can not find the resource fils or can not find the string associated with <b>key</b>
 	 */
 	public String get(String key) {
-		if (key == null) throw new NullPointerException("Resource.get: key == null");
+	//	if (key == null) throw new NullPointerException("Resource.get: key == null");
+		Objects.requireNonNull(key, "key");
 
 		String string = null;
 
@@ -169,9 +171,12 @@ public class Resource {
 	 * @throws ConvertException if can not convert to <b>objectType</b>
 	 */
 	public <T> T get(Class<T> objectType, String key) {
-		if (objectType == null) throw new NullPointerException("Resource.get: key = " + key + ", objectType == null");
-		if (objectType.isPrimitive()) throw new IllegalArgumentException("Resource.get: key = " + key + ", objectType.isPrimitive() = true");
-		if (key == null) throw new NullPointerException("Resource.get: key = null, objectType = " + objectType);
+	//	if (objectType == null) throw new NullPointerException("Resource.get: key = " + key + ", objectType == null");
+		Objects.requireNonNull(objectType, "objectType");
+	//	if (objectType.isPrimitive()) throw new IllegalArgumentException("Resource.get: key = " + key + ", objectType.isPrimitive() = true");
+		if (objectType.isPrimitive()) throw new IllegalArgumentException("key: " + key + ", objectType.isPrimitive() = true");
+	//	if (key == null) throw new NullPointerException("Resource.get: key = null, objectType = " + objectType);
+		Objects.requireNonNull(key, "key");
 
 		// gets from the map
 		T object = objectType.cast(objectMap.get(key));
@@ -377,7 +382,8 @@ public class Resource {
 	 * @throws NullPointerException if <b>baseKey</b> is null
 	 */
 	public Properties getProperties(String baseKey) {
-		if (baseKey == null) throw new NullPointerException("Resource.getProperties: baseKey == null");
+	//	if (baseKey == null) throw new NullPointerException("Resource.getProperties: baseKey == null");
+		Objects.requireNonNull(baseKey, "baseKey");
 
 		Properties properties = new Properties();
 

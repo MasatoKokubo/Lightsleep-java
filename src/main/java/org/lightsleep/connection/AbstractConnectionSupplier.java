@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Consumer;
 
@@ -67,8 +68,9 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 * @since 1.5.0
 	 */
 	public AbstractConnectionSupplier(Consumer<Properties> modifier) {
-		if (modifier == null)
-			throw new NullPointerException(getClass().getSimpleName() + ".<init>: modifier == null");
+	//	if (modifier == null)
+	//		throw new NullPointerException(getClass().getSimpleName() + ".<init>: modifier == null");
+		Objects.requireNonNull(modifier, "modifier");
 
 		properties.remove(Logger.class.getSimpleName());
 		properties.remove(Database.class.getSimpleName());

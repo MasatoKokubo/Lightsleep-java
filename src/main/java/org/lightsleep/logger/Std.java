@@ -6,6 +6,7 @@ package org.lightsleep.logger;
 import java.io.PrintStream;
 import java.sql.Timestamp;
 import java.util.function.Supplier;
+import java.util.Objects;
 
 /**
  * Outputs logs to stdout or stderr.
@@ -205,10 +206,12 @@ public abstract class Std implements Logger {
 	 * @param level the logging level
 	 */
 	protected Std(PrintStream stream, Level level) {
-		if (stream == null) throw new NullPointerException("Std.<init>: stream == null");
-		if (level == null) throw new NullPointerException("Std.<init>: level == null");
-		this.stream = stream;
-		this.level = level;
+	//	if (stream == null) throw new NullPointerException("Std.<init>: stream == null");
+	//	if (level == null) throw new NullPointerException("Std.<init>: level == null");
+	//	this.stream = stream;
+	//	this.level = level;
+		this.stream = Objects.requireNonNull(stream, "stream");
+		this.level  = Objects.requireNonNull(level , "level");
 	}
 
 	/**

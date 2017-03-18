@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -168,7 +169,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>database</b> is null
 	 */
 	public static void setDatabase(Database database) {
-		if (database == null) throw new NullPointerException("Sql.setDatabase: database == null");
+	//	if (database == null) throw new NullPointerException("Sql.setDatabase: database == null");
+		Objects.requireNonNull(database, "database");
 
 		Sql.database = database;
 		logger.info(() -> MessageFormat.format(messageDatabaseHandler, Sql.database.getClass().getName()));
@@ -217,7 +219,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>supplier</b> is null
 	 */
 	public static void setConnectionSupplier(ConnectionSupplier supplier) {
-		if (supplier == null) throw new NullPointerException("Sql.setConnectionSupplier: supplier == null");
+	//	if (supplier == null) throw new NullPointerException("Sql.setConnectionSupplier: supplier == null");
+		Objects.requireNonNull(supplier, "supplier");
 
 		connectionSupplier = supplier;
 		logger.debug(() -> MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getName()));
@@ -264,7 +267,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>entityClass</b> is null
 	 */
 	public static <E> EntityInfo<E> getEntityInfo(Class<E> entityClass) {
-		if (entityClass == null) throw new NullPointerException("Sql.getEntityInfo: entityClass == null");
+	//	if (entityClass == null) throw new NullPointerException("Sql.getEntityInfo: entityClass == null");
+		Objects.requireNonNull(entityClass, "entityClass");
 
 		EntityInfo<E> entityInfo = (EntityInfo<E>)entityInfoMap.get(entityClass);
 
@@ -307,8 +311,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>entityClass</b> or <b>tableAlias</b> is null
 	 */
 	public Sql(Class<E> entityClass, String tableAlias) {
-		if (entityClass == null) throw new NullPointerException("Sql.<init>: entityClass == null");
-		if (tableAlias == null) throw new NullPointerException("Sql.<init>: tableAlias == null");
+	//	if (entityClass == null) throw new NullPointerException("Sql.<init>: entityClass == null");
+	//	if (tableAlias == null) throw new NullPointerException("Sql.<init>: tableAlias == null");
+		Objects.requireNonNull(entityClass, "entityClass");
+		Objects.requireNonNull(tableAlias, "tableAlias");
 
 		entityInfo = getEntityInfo(entityClass);
 		this.tableAlias = tableAlias;
@@ -404,7 +410,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>columns</b> or any of <b>columns</b> is null
 	 */
 	public Sql<E> columns(String... columns) {
-		if (columns == null) throw new NullPointerException("Sql.columns: columns == null");
+	//	if (columns == null) throw new NullPointerException("Sql.columns: columns == null");
+		Objects.requireNonNull(columns, "columns");
 
 	// 1.8.2
 	//	for (String column : columns)
@@ -443,7 +450,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @since 1.8.4
 	 */
 	public Sql<E> setColumns(Set<String> columns) {
-		if (columns == null) throw new NullPointerException("Sql.expression: columns == null");
+	//	if (columns == null) throw new NullPointerException("Sql.expression: columns == null");
+		Objects.requireNonNull(columns, "columns");
 
 		this.columns = columns;
 		return this;
@@ -466,8 +474,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>propertyName</b> or <b>expression</b> is null
 	 */
 	public Sql<E> expression(String propertyName, Expression expression) {
-		if (propertyName == null) throw new NullPointerException("Sql.expression: propertyName == null");
-		if (expression == null) throw new NullPointerException("Sql.expression: expression == null");
+	//	if (propertyName == null) throw new NullPointerException("Sql.expression: propertyName == null");
+	//	if (expression == null) throw new NullPointerException("Sql.expression: expression == null");
+		Objects.requireNonNull(propertyName, "propertyName");
+		Objects.requireNonNull(expression, "expression");
 
 		if (expression.content().isEmpty())
 			expressionMap.remove(propertyName);
@@ -501,7 +511,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>propertyName</b> is null
 	 */
 	public Expression getExpression(String propertyName) {
-		if (propertyName == null) throw new NullPointerException("Sql.expression: propertyName == null");
+	//	if (propertyName == null) throw new NullPointerException("Sql.expression: propertyName == null");
+		Objects.requireNonNull(propertyName, "propertyName");
 
 		return expressionMap.getOrDefault(propertyName, Expression.EMPTY);
 	}
@@ -666,7 +677,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>condition</b> is null
 	 */
 	public Sql<E> where(Condition condition) {
-		if (condition == null) throw new NullPointerException("Sql.where: condition == null");
+	//	if (condition == null) throw new NullPointerException("Sql.where: condition == null");
+		Objects.requireNonNull(condition, "condition");
 
 		where = condition;
 		return this;
@@ -762,7 +774,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>condition</b> is null
 	 */
 	public Sql<E> and(Condition condition) {
-		if (condition == null) throw new NullPointerException("Sql.and: condition == null");
+	//	if (condition == null) throw new NullPointerException("Sql.and: condition == null");
+		Objects.requireNonNull(condition, "condition");
 
 		if (having.isEmpty())
 			where = where.and(condition);
@@ -821,7 +834,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>condition</b> is null
 	 */
 	public Sql<E> or(Condition condition) {
-		if (condition == null) throw new NullPointerException("Sql.and: condition == null");
+	//	if (condition == null) throw new NullPointerException("Sql.and: condition == null");
+		Objects.requireNonNull(condition, "condition");
 
 		if (having.isEmpty())
 			where = where.or(condition);
@@ -901,7 +915,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>condition</b> is null
 	 */
 	public Sql<E> having(Condition condition) {
-		if (condition == null) throw new NullPointerException("Sql.having: condition == null");
+	//	if (condition == null) throw new NullPointerException("Sql.having: condition == null");
+		Objects.requireNonNull(condition, "condition");
 
 		having = condition;
 		return this;
@@ -1116,7 +1131,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return this object
 	 */
 	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action) {
-		if (action == null) throw new NullPointerException("Sql.doIf: action == null");
+	//	if (action == null) throw new NullPointerException("Sql.doIf: action == null");
+		Objects.requireNonNull(action, "action");
 
 		if (condition)
 			action.accept(this);
@@ -1133,8 +1149,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return this object
 	 */
 	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction) {
-		if (action == null) throw new NullPointerException("Sql.doIf: action == null");
-		if (elseAction == null) throw new NullPointerException("Sql.doIf: elseAction == null");
+	//	if (action == null) throw new NullPointerException("Sql.doIf: action == null");
+	//	if (elseAction == null) throw new NullPointerException("Sql.doIf: elseAction == null");
+		Objects.requireNonNull(action, "action");
+		Objects.requireNonNull(elseAction, "elseAction");
 
 		if (condition)
 			action.accept(this);
@@ -1248,7 +1266,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public <JE1> void select(Connection connection,
 		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1) {
-		if (joinInfos.size() < 1) throw new IllegalStateException("Sql.select: joinInfos.size < 1");
+	//	if (joinInfos.size() < 1) throw new IllegalStateException("Sql.select: joinInfos.size < 1");
+		if (joinInfos.size() < 1) throw new IllegalStateException("joinInfos.size < 1");
 
 	// 1.8.2
 		if (where.isEmpty())
@@ -1313,7 +1332,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Consumer<? super  E > consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2) {
-		if (joinInfos.size() < 2) throw new IllegalStateException("Sql.select: joinInfos.size < 2");
+	//	if (joinInfos.size() < 2) throw new IllegalStateException("Sql.select: joinInfos.size < 2");
+		if (joinInfos.size() < 2) throw new IllegalStateException("joinInfos.size < 2");
 
 	// 1.8.2
 		if (where.isEmpty())
@@ -1388,7 +1408,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2,
 		Consumer<? super JE3> consumer3) {
-		if (joinInfos.size() < 3) throw new IllegalStateException("Sql.select: joinInfos.size < 3");
+	//	if (joinInfos.size() < 3) throw new IllegalStateException("Sql.select: joinInfos.size < 3");
+		if (joinInfos.size() < 3) throw new IllegalStateException("joinInfos.size < 3");
 
 	// 1.8.2
 		if (where.isEmpty())
@@ -1472,7 +1493,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Consumer<? super JE2> consumer2,
 		Consumer<? super JE3> consumer3,
 		Consumer<? super JE4> consumer4) {
-		if (joinInfos.size() < 4) throw new IllegalStateException("Sql.select: joinInfos.size < 4");
+	//	if (joinInfos.size() < 4) throw new IllegalStateException("Sql.select: joinInfos.size < 4");
+		if (joinInfos.size() < 4) throw new IllegalStateException("joinInfos.size < 4");
 
 	// 1.8.2
 		if (where.isEmpty())
@@ -1594,7 +1616,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int insert(Connection connection, E entity) {
-		if (entity == null) throw new NullPointerException("Sql.insert: entity == null");
+	//	if (entity == null) throw new NullPointerException("Sql.insert: entity == null");
+		Objects.requireNonNull(entity, "entity");
 
 	// 1.6.0
 		if (entity instanceof PreStore)
@@ -1638,7 +1661,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int insert(Connection connection, Iterable<? extends E> entities) {
-		if (entities == null) throw new NullPointerException("Sql.insert: entities == null");
+	//	if (entities == null) throw new NullPointerException("Sql.insert: entities == null");
+		Objects.requireNonNull(entities, "entities");
 
 		int[] count = new int[1];
 		entities.forEach(entity -> count[0] += insert(connection, entity));
@@ -1666,7 +1690,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int update(Connection connection, E entity) {
-		if (entity == null) throw new NullPointerException("Sql.update: entity == null");
+	//	if (entity == null) throw new NullPointerException("Sql.update: entity == null");
+		Objects.requireNonNull(entity, "entity");
 
 	// 1.6.0
 		if (entity instanceof PreStore)
@@ -1708,7 +1733,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int update(Connection connection, Iterable<? extends E> entities) {
-		if (entities == null) throw new NullPointerException("Sql.update: entities == null");
+	//	if (entities == null) throw new NullPointerException("Sql.update: entities == null");
+		Objects.requireNonNull(entities, "entities");
 
 		int[] count = new int[1];
 		entities.forEach(entity -> {
@@ -1767,7 +1793,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int delete(Connection connection, E entity) {
-		if (entity == null) throw new NullPointerException("Sql.delete: entity == null");
+	//	if (entity == null) throw new NullPointerException("Sql.delete: entity == null");
+		Objects.requireNonNull(entity, "entity");
 
 		where = Condition.of(entity);
 
@@ -1801,7 +1828,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int delete(Connection connection, Iterable<? extends E> entities) {
-		if (entities == null) throw new NullPointerException("Sql.delete: entities == null");
+	//	if (entities == null) throw new NullPointerException("Sql.delete: entities == null");
+		Objects.requireNonNull(entities, "entities");
 
 		int[] count = new int[1];
 		entities.forEach(entity -> count[0] += delete(connection, entity));
@@ -1890,10 +1918,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	private void executeQuery(Connection connection, String sql, List<Object> parameters, Consumer<ResultSet> consumer) {
-		if (connection == null) throw new NullPointerException("Sql.executeQuery: connection == null");
-		if (sql == null) throw new NullPointerException("Sql.executeQuery: sql == null");
-		if (parameters == null) throw new NullPointerException("Sql.executeQuery: parameters == null");
-		if (consumer == null) throw new NullPointerException("Sql.executeQuery: consumer == null");
+	//	if (connection == null) throw new NullPointerException("Sql.executeQuery: connection == null");
+	//	if (sql == null) throw new NullPointerException("Sql.executeQuery: sql == null");
+	//	if (parameters == null) throw new NullPointerException("Sql.executeQuery: parameters == null");
+	//	if (consumer == null) throw new NullPointerException("Sql.executeQuery: consumer == null");
+		Objects.requireNonNull(connection, "connection");
+		Objects.requireNonNull(sql, "sql");
+		Objects.requireNonNull(parameters, "parameters");
+		Objects.requireNonNull(consumer, "consumer");
 
 	// 1.5.0
 		generatedSql = sql;
@@ -1980,9 +2012,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	private int executeUpdate(Connection connection, String sql, List<Object> parameters) {
-		if (connection == null) throw new NullPointerException("Sql.executeUpdate: connection == null");
-		if (sql == null) throw new NullPointerException("Sql.executeUpdate: sql == null");
-		if (parameters == null) throw new NullPointerException("Sql.executeUpdate: parameters == null");
+	//	if (connection == null) throw new NullPointerException("Sql.executeUpdate: connection == null");
+	//	if (sql == null) throw new NullPointerException("Sql.executeUpdate: sql == null");
+	//	if (parameters == null) throw new NullPointerException("Sql.executeUpdate: parameters == null");
+		Objects.requireNonNull(connection, "connection");
+		Objects.requireNonNull(sql, "sql");
+		Objects.requireNonNull(parameters, "parameters");
 
 	// 1.5.0
 		generatedSql = sql;

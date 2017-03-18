@@ -5,6 +5,7 @@ package org.lightsleep.component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,9 +58,10 @@ public abstract class LogicalCondition implements Condition {
 	 * @throws NullPointerException if <b>operator</b> is null
 	 */
 	public LogicalCondition(Operator operator) {
-		if (operator == null) throw new NullPointerException("LogicalCondition.<init>: operator == null");
-
-		this.operator = operator;
+	//	if (operator == null) throw new NullPointerException("LogicalCondition.<init>: operator == null");
+	//
+	//	this.operator = operator;
+		this.operator = Objects.requireNonNull(operator, "operator");
 		conditions = new ArrayList<>();
 	}
 
@@ -72,10 +74,12 @@ public abstract class LogicalCondition implements Condition {
 	 * @throws NullPointerException <b>operator</b>, <b>conditionStream</b> or any of <b>conditions</b> is null
 	 */
 	public LogicalCondition(Operator operator, Stream<Condition> conditionStream) {
-		if (operator == null) throw new NullPointerException("LogicalCondition.<init>: operator == null");
-
-		this.operator = operator;
-		conditions = conditionStream
+	//	if (operator == null) throw new NullPointerException("LogicalCondition.<init>: operator == null");
+	//
+	//	this.operator = operator;
+		this.operator = Objects.requireNonNull(operator, "operator");
+	//	conditions = conditionStream
+		conditions = Objects.requireNonNull(conditionStream, "conditionStream")
 			.flatMap(condition -> condition instanceof LogicalCondition && ((LogicalCondition)condition).operator == operator
 				? ((LogicalCondition)condition).conditions().stream()
 				: Stream.of(condition))

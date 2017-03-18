@@ -3,6 +3,8 @@
 
 package org.lightsleep.component;
 
+import java.util.Objects;
+
 import org.lightsleep.Sql;
 
 /**
@@ -115,7 +117,8 @@ public interface Condition extends SqlComponent {
 	 * @see And
 	 */
 	default Condition and(Condition condition) {
-		if (condition == null) throw new NullPointerException("Condition.and: condition == null");
+	//	if (condition == null) throw new NullPointerException("Condition.and: condition == null");
+		Objects.requireNonNull(condition, "condition");
 
 		return condition.isEmpty() ? this : isEmpty() ? condition : new And(this, condition);
 	}
@@ -166,7 +169,8 @@ public interface Condition extends SqlComponent {
 	 * @see Or
 	 */
 	default Condition or(Condition condition) {
-		if (condition == null) throw new NullPointerException("Condition.and: condition == null");
+	//	if (condition == null) throw new NullPointerException("Condition.and: condition == null");
+		Objects.requireNonNull(condition, "condition");
 
 		return condition.isEmpty() ? this : isEmpty() ? condition : new Or(this, condition);
 	}

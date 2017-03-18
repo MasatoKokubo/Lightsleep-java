@@ -4,6 +4,7 @@
 package org.lightsleep.component;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.lightsleep.Sql;
 
@@ -22,9 +23,10 @@ public class Not implements Condition {
 	 * @param condition a condition
 	 */
 	public Not(Condition condition) {
-		if (condition == null) throw new NullPointerException("Not.<init>: condition == null");
-
-		this.condition = condition;
+	//	if (condition == null) throw new NullPointerException("Not.<init>: condition == null");
+	//
+	//	this.condition = condition;
+		this.condition = Objects.requireNonNull(condition, "condition");
 	}
 
 	/**

@@ -5,6 +5,7 @@ package org.lightsleep.component;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 
 import org.lightsleep.Sql;
 import org.lightsleep.helper.Accessor;
@@ -39,7 +40,8 @@ public class EntityCondition<E> implements Condition {
 	 */
 	@SuppressWarnings("unchecked")
 	public EntityCondition(E entity) {
-		if (entity == null) throw new NullPointerException("EntityCondition.<init>: entity == null");
+	//	if (entity == null) throw new NullPointerException("EntityCondition.<init>: entity == null");
+		Objects.requireNonNull(entity, "entity");
 
 		entityInfo = Sql.getEntityInfo((Class<E>)entity.getClass());
 		if (entityInfo.keyColumnInfos().size() == 0)

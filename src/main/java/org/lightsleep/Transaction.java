@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.Objects;
 
 import org.lightsleep.connection.ConnectionSupplier;
 import org.lightsleep.helper.Resource;
@@ -102,10 +103,12 @@ public interface Transaction {
 //	static void execute(Transaction transaction) {
 	static void execute(ConnectionSupplier connectionSupplier, Transaction transaction) {
 ////
-		if (connectionSupplier == null)
-			throw new NullPointerException("Transaction.execute: connectionSupplier == null");
-		if (transaction == null)
-			throw new NullPointerException("Transaction.execute: transaction == null");
+	//	if (connectionSupplier == null)
+	//		throw new NullPointerException("Transaction.execute: connectionSupplier == null");
+	//	if (transaction == null)
+	//		throw new NullPointerException("Transaction.execute: transaction == null");
+		Objects.requireNonNull(connectionSupplier, "connectionSupplier");
+		Objects.requireNonNull(transaction, "transaction");
 
 		Connection connection = null;
 		boolean committed = false;

@@ -6,6 +6,7 @@ package org.lightsleep.component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.lightsleep.Sql;
 import org.lightsleep.helper.Resource;
@@ -90,7 +91,8 @@ public class OrderBy implements SqlComponent {
 	 * @throws NullPointerException if <b>element</b> is null
 	 */
 	public OrderBy add(Element element) {
-		if (element == null) throw new NullPointerException("OrderBy.add: element == null");
+	//	if (element == null) throw new NullPointerException("OrderBy.add: element == null");
+		Objects.requireNonNull(element, "element");
 
 		OrderBy orderBy = this == EMPTY ? new OrderBy() : this;
 		orderBy.elements.add(element);

@@ -19,6 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -118,9 +119,10 @@ public class Accessor<T> {
 	 * @param objectClass the class of access target object
 	 */
 	public Accessor(Class<T> objectClass) {
-		if (objectClass == null) throw new NullPointerException("Accessor.<init>: objectClass == null");
-
-		this.objectClass = objectClass;
+	//	if (objectClass == null) throw new NullPointerException("Accessor.<init>: objectClass == null");
+	//
+	//	this.objectClass = objectClass;
+		this.objectClass = Objects.requireNonNull(objectClass, "objectClass");
 
 // 1.3.0
 		// @NonColumnProperty, @NonColumnProperties
@@ -507,7 +509,8 @@ public class Accessor<T> {
 	 * @throws RuntimeException if <b>IllegalAccessException</b> was thrown
 	 */
 	public Object getValue(T object, String propertyName) {
-		if (object == null) throw new NullPointerException("Accessor.getValue: object = null, propertyName = " + propertyName);
+	//	if (object == null) throw new NullPointerException("Accessor.getValue: object = null, propertyName = " + propertyName);
+		Objects.requireNonNull(object, () -> "object: null, propertyName: " + propertyName);
 
 		Function<T, Object> getter = getterMap.get(propertyName);
 		if (getter == null)
@@ -541,7 +544,8 @@ public class Accessor<T> {
 	 * @throws RuntimeException if <b>IllegalAccessException</b> or <b>InvocationTargetException</b> was thrown
 	 */
 	public void setValue(T object, String propertyName, Object value) {
-		if (object == null) throw new NullPointerException("Accessor.setValue: object = null, propertyName = " + propertyName);
+	//	if (object == null) throw new NullPointerException("Accessor.setValue: object = null, propertyName = " + propertyName);
+		Objects.requireNonNull(object, () -> "object: null, propertyName: " + propertyName);
 
 		BiConsumer<T, Object> setter = setterMap.get(propertyName);
 		if (setter == null)

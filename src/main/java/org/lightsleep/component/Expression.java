@@ -6,6 +6,7 @@ package org.lightsleep.component;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.lightsleep.Sql;
 import org.lightsleep.helper.ColumnInfo;
@@ -57,11 +58,13 @@ public class Expression implements Condition {
 	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is null
 	 */
 	public Expression(String content, Object... arguments) {
-		if (content == null) throw new NullPointerException("Expression.<init>: content == null");
-		if (arguments == null) throw new NullPointerException("Expression.<init>: arguments == null");
-
-		this.content = content;
-		this.arguments = arguments;
+	//	if (content == null) throw new NullPointerException("Expression.<init>: content == null");
+	//	if (arguments == null) throw new NullPointerException("Expression.<init>: arguments == null");
+	//
+	//	this.content = content;
+	//	this.arguments = arguments;
+		this.content = Objects.requireNonNull(content, "content");
+		this.arguments = Objects.requireNonNull(arguments, "arguments");
 	}
 
 	/**
@@ -196,8 +199,9 @@ public class Expression implements Condition {
 
 						} else {
 							// Refers the entity value
-							if (entity == null)
-								throw new NullPointerException("Expression.toString: sql.entity == null, content = " + content);
+						//	if (entity == null)
+						//		throw new NullPointerException("Expression.toString: sql.entity == null, content = " + content);
+							Objects.requireNonNull(entity, "sql.entity");
 
 							value = entityInfo.accessor().getValue(entity, propertyName);
 						// 1.8.0

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * There are utility methods.
@@ -378,8 +379,9 @@ public class Utils {
 	 */
 	@SuppressWarnings("rawtypes")
 	private static StringBuilder append(StringBuilder buff, Class<?> type, Object value) {
-		if (type == null)
-			throw new NullPointerException("Utils.append(StringBuilder, Class, Object): type == null");
+	//	if (type == null)
+	//		throw new NullPointerException("Utils.append(StringBuilder, Class, Object): type == null");
+		Objects.requireNonNull(type, "type");
 
 		long length = -1L;
 		int  size   = -1;

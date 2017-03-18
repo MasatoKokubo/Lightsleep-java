@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -249,8 +250,10 @@ public class TypeConverter<ST, DT> {
 	 * @throws NullPointerException <b>sourceType</b> or <b>destinType</b> is null
 	 */
 	public static String key(Class<?> sourceType, Class<?> destinType) {
-		if (sourceType == null) throw new NullPointerException("TypeConverter.key: sourceType == null");
-		if (destinType == null) throw new NullPointerException("TypeConverter.key: destinType == null");
+	//	if (sourceType == null) throw new NullPointerException("TypeConverter.key: sourceType == null");
+	//	if (destinType == null) throw new NullPointerException("TypeConverter.key: destinType == null");
+		Objects.requireNonNull(sourceType, "sourceType");
+		Objects.requireNonNull(destinType, "destinType");
 
 		sourceType = Utils.toClassType(sourceType);
 		destinType = Utils.toClassType(destinType);
@@ -288,8 +291,10 @@ public class TypeConverter<ST, DT> {
 //		});
 //	}
 	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?> typeConverter) {
-		if (typeConverterMap == null) throw new NullPointerException("TypeConverter.put: typeConverterMap == null");
-		if (typeConverter == null) throw new NullPointerException("TypeConverter.put: typeConverter == null");
+	//	if (typeConverterMap == null) throw new NullPointerException("TypeConverter.put: typeConverterMap == null");
+	//	if (typeConverter == null) throw new NullPointerException("TypeConverter.put: typeConverter == null");
+		Objects.requireNonNull(typeConverterMap, "typeConverterMap");
+		Objects.requireNonNull(typeConverter, "typeConverter");
 
 		TypeConverter<?, ?> beforeTypeConverter = typeConverterMap.put(typeConverter.key, typeConverter);
 		logger.debug(() -> "TypeConverter.put: " + typeConverter + (beforeTypeConverter != null ? " (overwrite)" : ""));
@@ -325,7 +330,8 @@ public class TypeConverter<ST, DT> {
 	@SuppressWarnings("unchecked")
 	public static <ST, DT> TypeConverter<ST, DT> get(Map<String, TypeConverter<?, ?>> typeConverterMap,
 			Class<ST> sourceType, Class<DT> destinType) {
-		if (typeConverterMap == null) throw new NullPointerException("TypeConverter.put: typeConverterMap == null");
+	//	if (typeConverterMap == null) throw new NullPointerException("TypeConverter.put: typeConverterMap == null");
+		Objects.requireNonNull(typeConverterMap, "typeConverterMap");
 
 		String key = TypeConverter.key(sourceType, destinType);
 		TypeConverter<ST, DT> typeConverter = (TypeConverter<ST, DT>)typeConverterMap.get(key);
@@ -485,7 +491,8 @@ public class TypeConverter<ST, DT> {
 	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b> or <b>function</b> is null
 	 */
 	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<ST, DT> function) {
-		if (function == null) throw new NullPointerException("TypeConverter.<init>: function == null");
+	//	if (function == null) throw new NullPointerException("TypeConverter.<init>: function == null");
+		Objects.requireNonNull(function, "function");
 
 		this.sourceType = sourceType;
 		this.destinType = destinType;
@@ -506,8 +513,10 @@ public class TypeConverter<ST, DT> {
 	 * @since 1.8.0
 	 */
 	public <MT> TypeConverter(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2) {
-		if (typeConverter1 == null) throw new NullPointerException("TypeConverter.<init>: typeConverter1 == null");
-		if (typeConverter2 == null) throw new NullPointerException("TypeConverter.<init>: typeConverter2 == null");
+	//	if (typeConverter1 == null) throw new NullPointerException("TypeConverter.<init>: typeConverter1 == null");
+	//	if (typeConverter2 == null) throw new NullPointerException("TypeConverter.<init>: typeConverter2 == null");
+		Objects.requireNonNull(typeConverter1, "typeConverter1");
+		Objects.requireNonNull(typeConverter2, "typeConverter2");
 
 		this.sourceType = typeConverter1.sourceType;
 		this.destinType = typeConverter2.destinType;
