@@ -44,4 +44,8 @@ The MIT License (MIT)
 
 [API 仕様](http://masatokokubo.github.io/Lightsleep/javadoc_ja/index.html)
 
+Qiita 記事
+- <a href="http://qiita.com/MasatoKokubo/items/ab46696b203d7f67036c" target="_blank">Java Runtime と JDBC ドライバーだけで動作する O/R マッピング・ライブラリ Lightsleep の紹介</a>
+- <a href="http://qiita.com/MasatoKokubo/items/1080d1277e2b51d88f89" target="_blank">Java 8 用 O/R マッピング・ライブラリ Lightsleep の柔軟なデータ型変換の仕組み</a>
+
 [English](README.md)

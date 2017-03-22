@@ -4,9 +4,11 @@
 package org.lightsleep.component;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.lightsleep.Sql;
 import org.lightsleep.helper.ColumnInfo;
@@ -34,6 +36,9 @@ public class Expression implements Condition {
 	private static final String messageMoreArguments      = resource.get("messageMoreArguments");
 ////
 	private static final String messagePropertyIsNotFound = resource.get("messagePropertyIsNotFound");
+// 1.8.5
+	private static final String messagePropertiesAreNotFound = resource.get("messagePropertiesAreNotFound");
+////
 
 	/** The empty expression */
 	public static final Expression EMPTY = new Expression("");
@@ -320,6 +325,9 @@ public class Expression implements Condition {
 
 	// Appends a column name
 	private <E> void appendsColumnName(StringBuilder buff, Sql<E> sql, EntityInfo<E> entityInfo, String propertyName) {
+	// 1.8.5
+		List<String> propertyNames = new ArrayList<>();
+	////
 		try {
 			// Converts to a column name
 			ColumnInfo columnInfo = entityInfo.getColumnInfo(propertyName);
@@ -327,6 +335,9 @@ public class Expression implements Condition {
 			return;
 		}
 		catch (IllegalArgumentException e) {
+		// 1.8.5
+			propertyNames.add(propertyName);
+		////
 		}
 
 		// Try with the table alias and column alias
@@ -348,13 +359,21 @@ public class Expression implements Condition {
 						return;
 					}
 					catch (IllegalArgumentException e) {
+					// 1.8.5
+						propertyNames.add(propertyName2);
+					////
 					}
 				}
 			}
 		}
 
+		propertyNames = propertyNames.stream().map(name -> '"' + name + '"').collect(Collectors.toList());
 		throw new IllegalArgumentException(MessageFormat.format(
-			messagePropertyIsNotFound, entityInfo.entityClass().getName(), propertyName));
+		// 1.8.5
+		//	messagePropertyIsNotFound, entityInfo.entityClass().getName(), propertyName));
+			propertyNames.size() == 1 ? messagePropertyIsNotFound : messagePropertiesAreNotFound,
+			entityInfo.entityClass().getName(), String.join(", ", propertyNames)));
+		////
 	}
 ////
 }
