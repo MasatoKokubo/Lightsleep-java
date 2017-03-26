@@ -1,11 +1,128 @@
 Lightsleep / Manual
 ===========
 
-### 1. Entity Class
-Entity class is a class for storing the retrieved data in SELECT SQL, create it for each database table.
+This document is a manual of Lightsleep that is an O/R (Object-Relational) mapping library.
+<div id="TOC"></div>
 
-#### 1-1. Annotations to be used in the entity classes
-##### 1-1-1. Table Annotation
+### Table of Contents
+
+1. [Package](#Package)
+1. [Create entity classes](#EntityClass)
+    1. [Annotations to be used in entity classes](#Entity-Annotation)
+        1. [@Table](#Entity-Table)
+        1. [@Key](#Entity-Key)
+        1. [@Column](#Entity-Column)
+        1. [@ColumnType](#Entity-ColumnType)
+        1. [@NonColumn](#Entity-NonColumn)
+        1. [@NonSelect](#Entity-NonSelect)
+        1. [@NonInsert](#Entity-NonInsert)
+        1. [@NonUpdate](#Entity-NonUpdate)
+        1. [@Select](#Entity-Select)
+        1. [@Insert](#Entity-Insert)
+        1. [@Update](#Entity-Update)
+        1. [@KeyProperty, @ColumnProperty, ... @UpdateProperty](#Entity-XxxxxProperty)
+    1. [Interfaces implemented by entity classes](#Entity-Interface)
+        1. [PreInsert Interface](#Entity-PreInsert)
+        1. [Composite Interface](#Entity-Composite)
+        1. [PreStore Interface](#Entity-PreStore)
+        1. [PostLoad Interface](#Entity-PostLoad)
+1. [Definition of lightsleep.properties](#lightsleep-properties)
+    1. [Specifying a logging library class](#Logger)
+    1. [Specifying a database handler class](#Database)
+    1. [Specifying a connection supplier class](#ConnectionSupplier)
+1. [Transaction](#Transaction)
+1. [Execution of SQL](#ExecuteSQL)
+    1. [SELECT](#ExecuteSQL-select)
+        1. [SELECT 1 row with an Expression condition](#ExecuteSQL-select-1-Expression)
+        1. [SELECT 1 row with an Entity condition](#ExecuteSQL-select-Entity)
+        1. [SELECT multiple rows with an Expression condition](#ExecuteSQL-select-N-Expression)
+        1. [SELECT with a Subquery condition](#ExecuteSQL-select-Subquery)
+        1. [SELECT with Expression conditions (AND)](#ExecuteSQL-select-Expression-and)
+        1. [SELECT with Expression conditions (OR)](#ExecuteSQL-select-Expression-or)
+        1. [SELECT with Expression conditions (A AND B) OR (C AND D)](#ExecuteSQL-select-Expression-andor)
+        1. [SELECT with selection of columns](#ExecuteSQL-select-columns)
+        1. [SELECT with GROUP BY and HAVING](#ExecuteSQL-select-groupBy-having)
+        1. [SELECT with ORDER BY, OFFSET and LIMIT](#ExecuteSQL-select-orderBy-offset-limit)
+        1. [SELECT with FOR UPDATE](#ExecuteSQL-select-forUpdate)
+        1. [SELECT with INNER JOIN](#ExecuteSQL-select-innerJoin)
+        1. [SELECT with LEFT OUTER JOIN](#ExecuteSQL-select-leftJoin)
+        1. [SELECT with RIGHT OUTER JOIN](#ExecuteSQL-select-rightJoin)
+    1. [INSERT](#ExecuteSQL-insert)
+        1. [INSERT 1 row](#ExecuteSQL-insert-1)
+        1. [INSERT multiple rows](#ExecuteSQL-insert-N)
+    1. [UPDATE](#ExecuteSQL-update)
+        1. [UPDATE 1 row](#ExecuteSQL-update-1)
+        1. [UPDATE multiple rows](#ExecuteSQL-update-N)
+        1. [UPDATE with a Condition and selection of columns](#ExecuteSQL-update-Condition)
+        1. [UPDATE all rows](#ExecuteSQL-update-all)
+    1. [DELETE](#ExecuteSQL-delete)
+        1. [DELETE 1 row](#ExecuteSQL-delete-1)
+        1. [DELETE multiple rows](#ExecuteSQL-delete-N)
+        1. [DELETE with a Condition](#ExecuteSQL-delete-Condition)
+        1. [DELETE all rows](#ExecuteSQL-delete-all)
+1. [Expression Conversion](#Expression)
+
+<div id="Package"></div>
+
+[[To TOC]](#TOC)
+
+### 1. Packages
+
+Has the following packages.
+
+|Packages|Classes|
+|:--|:--|
+|org.lightsleep           |Main classes|
+|org.lightsleep.component |Classes for creating SQL components|
+|org.lightsleep.connection|Class for supplying connection|
+|org.lightsleep.database  |Database handler classes|
+|org.lightsleep.entity    |Annotation classes and interfaces to use when creating entity classes|
+|org.lightsleep.helper    |Helper classes mainly used internally|
+|org.lightsleep.logger    |Classes for using various log libraries|
+
+<div id="EntityClass"></div>
+
+[[To TOC]](#TOC)
+
+### 2. Create entity classes
+Entity classes are for storing data retrieved with SELECT SQL, create them for each database table.
+
+<div id="Entity-Annotation"></div>
+
+#### 2-1. Annotations to be used in entity classes
+Lihgtsleep automatically associates with tables in methods with an entity class or object as an argument, but you may also need to use annotations for entity classes.
+
+Lightsleep has the following annotations.
+
+|Annotation|Content|Target|
+|:--|:--|:--|
+|[`@Table`             ](#Entity-Table        )|Related table name|Class|
+|[`@Key`               ](#Entity-Key          )|Related to the primary key|Field|
+|[`@Column`            ](#Entity-Column       )|Column name|Field|
+|[`@ColumnType`        ](#Entity-ColumnType   )|Column type|Field|
+|[`@NonColumn`         ](#Entity-NonColumn    )|Not related to columns|Field|
+|[`@NonSelect`         ](#Entity-NonSelect    )|Not used in SELECT SQL|Field|
+|[`@NonInsert`         ](#Entity-NonInsert    )|Not used in INSERT SQL|Field|
+|[`@NonUpdate`         ](#Entity-NonUpdate    )|Not used in UPDATE SQL|Field|
+|[`@Select`            ](#Entity-Select       )|Expression used in SELECT SQL|Field|
+|[`@Insert`            ](#Entity-Insert       )|Expression used in INSERT SQL|Field|
+|[`@Update`            ](#Entity-Update       )|Expression used in UPDATE SQL|Field|
+|[`@KeyProperty`       ](#Entity-XxxxxProperty)|Related to the primary key|Class|
+|[`@ColumnProperty`    ](#Entity-XxxxxProperty)|Column name|Class|
+|[`@ColumnTypeProperty`](#Entity-XxxxxProperty)|Column type|Class|
+|[`@NonColumnProperty` ](#Entity-XxxxxProperty)|Not related to columns|Class|
+|[`@NonSelectProperty` ](#Entity-XxxxxProperty)|Not used in SELECT SQL|Class|
+|[`@NonInsertProperty` ](#Entity-XxxxxProperty)|Not used in INSERT SQL|Class|
+|[`@NonUpdateProperty` ](#Entity-XxxxxProperty)|Not used in UPDATE SQL|Class|
+|[`@SelectProperty`    ](#Entity-XxxxxProperty)|Expression used in SELECT SQL|Class|
+|[`@InsertProperty`    ](#Entity-XxxxxProperty)|Expression used in INSERT SQL|Class|
+|[`@UpdateProperty`    ](#Entity-XxxxxProperty)|Expression used in UPDATE SQL|Class|
+
+<div id="Entity-Table"></div>
+
+[[To TOC]](#TOC) [[To Annotation List]](#Entity-Annotation)
+
+##### 2-1-1. @Table
 Specifies the table name associated with the class.
 If the table name is the same as the class name, you do not need to specify this annotation.
 
@@ -29,7 +146,9 @@ public class Contact1 extends Contact {
 }
 ```
 
-##### 1-1-2. Key Annotation
+<div id="Entity-Key"></div>
+
+##### 2-1-2. @Key
 Indicates that the column associated with the field is part of the primary key.
 
 ```java:Java
@@ -37,7 +156,9 @@ Indicates that the column associated with the field is part of the primary key.
 public String id;
 ```
 
-##### 1-1-3. Column Annotation
+<div id="Entity-Column"></div>
+
+##### 2-1-3. @Column
 Indicates the name of column associated with the field.
 If the column name is the same as the field name, you do not need to specify it.
 
@@ -46,7 +167,9 @@ If the column name is the same as the field name, you do not need to specify it.
     public String familyName;
 ```
 
-##### 1-1-4. ColumnType Annotation
+<div id="Entity-ColumnType"></div>
+
+##### 2-1-4. @ColumnType
 Indicates the type of column associated with the field.
 If the field type and column type are the same type, you do not need to specify it.
 Specify if field type (e.g. date type) and column type (e.g. numerical type) are different.
@@ -56,7 +179,11 @@ Specify if field type (e.g. date type) and column type (e.g. numerical type) are
     public Date birhtday;
 ```
 
-##### 1-1-5. NonColumn Annotation
+<div id="Entity-NonColumn"></div>
+
+[[To TOC]](#TOC) [[To Annotation List]](#Entity-Annotation)
+
+##### 2-1-5. @NonColumn
 Indicates that the field not related to any column.
 
 ```java:Java
@@ -64,16 +191,20 @@ Indicates that the field not related to any column.
     public List<Phone> phones = new ArrayList<>();
 ```
 
-##### 1-1-6. NonSelect Annotation
-Indicates that the column related the field are not used in the SELECT SQL.
+<div id="Entity-NonSelect"></div>
+
+##### 2-1-6. @NonSelect
+Indicates that the column related the field is not used in SELECT SQL.
 
 ```java:Java
     @NonSelect
     public String givenName;
 ```
 
-##### 1-1-7. NonInsert Annotation
-Indicates that the column related the field are not used in the INSERT SQL.
+<div id="Entity-NonInsert"></div>
+
+##### 2-1-7. @NonInsert
+Indicates that the column related the field is not used in INSERT SQL.
 
 ```java:Java
     @Select("CONCAT({givenName}, ' ', {familyName})") // MySQL, Oracle
@@ -81,8 +212,10 @@ Indicates that the column related the field are not used in the INSERT SQL.
     public String fullName;
 ```
 
-##### 1-1-8. NonUpdate Annotation
-Indicates that the column related the field are not used in the UPDATE SQL.
+<div id="Entity-NonUpdate"></div>
+
+##### 2-1-8. @NonUpdate
+Indicates that the column related the field is not used in UPDATE SQL.
 
 ```java:Java
     @Insert("CURRENT_TIMESTAMP")
@@ -90,8 +223,12 @@ Indicates that the column related the field are not used in the UPDATE SQL.
     public Timestamp created;
 ```
 
-##### 1-1-9. Select Annotation
-Indicates a column expression instead of the column name of the SELECT SQL.
+<div id="Entity-Select"></div>
+
+[[To TOC]](#TOC) [[To Annotation List]](#Entity-Annotation)
+
+##### 2-1-9. @Select
+Indicates a column expression instead of the column name in SELECT SQL.
 
 ```java:Java
     @Select("CONCAT({givenName}, ' ', {familyName})") // MySQL, Oracle
@@ -99,8 +236,10 @@ Indicates a column expression instead of the column name of the SELECT SQL.
     public String fullName;
 ```
 
-##### 1-1-10. Insert Annotation
-Indicates an expression as a value of the INSERT SQL.
+<div id="Entity-Insert"></div>
+
+##### 2-1-10. @Insert
+Indicates an expression instead of the field value in INSERT SQL.
 If this annotation is specified, the value of the field is not used.
 
 ```java:Java
@@ -109,8 +248,10 @@ If this annotation is specified, the value of the field is not used.
     public Timestamp created;
 ```
 
-##### 1-1-11. Update Annotation
-Indicates an expression as a value of the UPDATE SQL.
+<div id="Entity-Update"></div>
+
+##### 2-1-11. @Update
+Indicates an expression instead of the field value in UPDATE SQL.
 If this annotation is specified, the value of the field is not used.
 
 ```java:Java
@@ -119,11 +260,11 @@ If this annotation is specified, the value of the field is not used.
     public Timestamp modified;
 ```
 
-##### 1-1-12. XxxxxProperty Annotations
+<div id="Entity-XxxxxProperty"></div>
 
-ColumnProperty, ColumnTypeProperty, NonColumnProperty, NonSelectProperty, NonInsertProperty, NonUpdateProperty, SelectProperty, InsertProperty and UpdateProperty are the same as the Column, NonColumn, NonSelect, NonInsert, NonUpdate, Select, Insert and Update annotations. They are specified for classes, not fields.
-
-These annotations are used when relating to fields defined in the superclass.
+##### 2-1-12. @XxxxxProperty
+`@XxxxxProperty` is used to specify for fields defined in superclass.
+You can specify multiple same annotations for a class.
 
 ```java:Java
 import org.lightsleep.entity.*;
@@ -133,8 +274,15 @@ import org.lightsleep.entity.*;
 public class Contact1 extends Contact {
 ```
 
-### 1-2. Interfaces that Entity Class to implement
-#### 1-2-1. PreInsert Interface
+<div id="Entity-Interface"></div>
+
+[[To TOC]](#TOC) [[To Annotation List]](#Entity-Annotation)
+
+### 2-2. Interfaces implemented by entity classes
+
+<div id="Entity-PreInsert"></div>
+
+#### 2-2-1. PreInsert Interface
 If an entity class implements this interface, `insert` method of Sql class calls `preInsert` method of the entity before INSERT SQL execution.
 In `preInsert` method, do the implementation of the numbering of the primary key or etc.
 
@@ -155,7 +303,11 @@ public class Contact implements PreInsert {
 }
 ```
 
-#### 1-2-2. Composite Interface
+<div id="Entity-Composite"></div>
+
+[[To TOC]](#TOC)
+
+#### 2-2-2. Composite Interface
 If an entity class implements this interface, `select`, `insert`, `update` or `delete` method of `Sql` class calls `postSelect`, `postInsert`, `postUpdate` or `postDelete` method of the entity class after the execution of each execute SQL.
 However if `update` or `delete` method dose not have entity parameter, dose not call.
 If an entity is enclose another entity, by implementing this interface, You can perform SQL processing to the enclosed entity in conjunction the entity which encloses.
@@ -208,7 +360,198 @@ public class ContactComposite extends Contact implements Composite {
 }
 ```
 
-### 2. Transaction
+<div id="Entity-PreStore"></div>
+
+[[To TOC]](#TOC)
+
+#### 2-2-3. PreStore Interface
+If the entity class implements this interface, the `preStore` method of the entity class is called in the `insert` and `update` methods of the `Sql` class before each SQL is executed.
+
+<div id="Entity-PostLoad"></div>
+
+#### 2-2-4. PostLoad Interface
+If the entity class implements this interface, `postLoad` method of the entity class is called in the `select` methods of the `Sql` class after the SELECT SQL is executed and the entity's value obtained from the database is set.
+
+```java:Java
+import org.lightsleep.entity.*;
+
+public class Contact implements PreStore, PostLoad {
+
+    @Column("phone")
+    public String[] phones_
+
+    @NonColumn
+    public final List<String> phones = new ArrayList<>();
+
+    public void preStore() {
+        phones_ = phones.toArray(new String[phones.size()]);
+    }
+
+    public void postLoad() {
+        phones.clear();
+        Arrays.stream(phones_).forEach(phones::add);
+    }
+```
+<div id="lightsleep-properties"></div>
+
+[[To TOC]](#TOC)
+
+### 3. Definition of lightsleep.properties
+
+Lightsleep.properties is a properties file referenced by Lightsleep and define the following contents.
+|Property Name|What to specify|
+|:--|:--|
+|[Logger            ](#Logger            )|The class corresponding to the logging library that Lightsleep uses for log output.|
+|[Database          ](#Database          )|The database handler class corresponding to the DBMS to be used.|
+|[ConnectionSupplier](#ConnectionSupplier)|The class corresponding to the connection supplier (Connection pool library etc.).|
+
+In addition to the above define the properties used by the connection pool library.
+
+Example of lightsleep.properties:
+
+```properties:lightsleep.properties
+Logger             = Log4j2
+Database           = PostgreSQL
+ConnectionSupplier = Dbcp
+url                = jdbc:postgresql://postgresqlserver/article
+username           = article
+password           = _article_
+initialSize        = 10
+maxTotal           = 100
+```
+
+<div id="Logger"></div>
+
+[[To TOC]](#TOC) [[To Properties List]](#lightsleep-properties)
+
+#### 3-1. Specifying a logging library class
+
+Select the value of the `Logger` property from the following.
+
+|Value|Logging library etc.|Log level|Definition file used by the logging library|
+|:--|:--|:-:|:--|
+|`Jdk`   |Java Runtime|-|logging.properties|
+|`Log4j` |Log4j       |-|log4j.properties or log4j.xml|
+|`Log4j2`|Log4j 2     |-|log4j2.xml|
+|`SLF4J` |SLF4J       |-|Depends on target logging library implementation|
+|`Std$Out$Trace`|Output to System.out|trace|(*nothing*)|
+|`Std$Out$Debug`|*(same as above)*|debug|*(nothing)*|
+|`Std$Out$Info` |*(same as above)*|info |*(nothing)*|
+|`Std$Out$Warn` |*(same as above)*|warn |*(nothing)*|
+|`Std$Out$Error`|*(same as above)*|error|*(nothing)*|
+|`Std$Out$Fatal`|*(same as above)*|fatal|*(nothing)*|
+|`Std$Err$Trace`|Output to System.err|trace|*(nothing)*|
+|`Std$Err$Debug`|*(same as above)*|debug|*(nothing)*|
+|`Std$Err$Info` |*(same as above)*|info |*(nothing)*|
+|`Std$Err$Warn` |*(same as above)*|warn |*(nothing)*|
+|`Std$Err$Error`|*(same as above)*|error|*(nothing)*|
+|`Std$Err$Fatal`|*(same as above)*|fatal|*(nothing)*|
+
+If not specified, `Std$Out$Info` is selected.
+
+<div id="Database"></div>
+
+[[To TOC]](#TOC) [[To Properties List]](#lightsleep-properties)
+
+#### 3-2. Specifying a database handler class
+
+Select the value of the `Database` property from the following.
+
+If you are using a DBMS other than the above, specify `Standard` or nothing.
+However, in that case, DBMS specific functions can not be used.
+
+|Value|DBMS|
+|:--|:--|
+|MySQL     |<a href="https://www.mysql.com/" target="_blank">MySQL</a>|
+|Oracle    |<a href="https://www.oracle.com/database/index.html" target="_blank">Oracle Database</a>|
+|PostgreSQL|<a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a>|
+|SQLite    |<a href="https://sqlite.org/index.html" target="_blank">SQLite</a>|
+|SQLServer |<a href="https://www.microsoft.com/ja-jp/sql-server/sql-server-2016" target="_blank">Microsoft SQL Server</a>|
+
+<div id="ConnectionSupplier"></div>
+
+[[To TOC]](#TOC) [[To Properties List]](#lightsleep-properties)
+
+#### 3-3. Specifying a connection supplier class
+
+Select the value of the `ConnectionSupplier` property from the following.
+
+|Value|Connection Supplier etc.|
+|:--|:--|
+|C3p0    |<a href="http://www.mchange.com/projects/c3p0/" target="_blank">c3p0</a>|
+|Dbcp    |<a href="https://commons.apache.org/proper/commons-dbcp/" target="_blank">Apache Commons DBCP</a>|
+|HikariCP|<a href="http://brettwooldridge.github.io/HikariCP/" target="_blank">HikariCP</a>|
+|TomcatCP|<a href="http://tomcat.apache.org/tomcat-8.5-doc/jdbc-pool.html" target="_blank">Tomcat JDBC Connection Pool</a>|
+|Jndi    |Java Naming and Directory Interface (JNDI) (<a href="http://tomcat.apache.org/tomcat-8.5-doc/jndi-datasource-examples-howto.html" target="_blank">In the case of Tomcat</a>)|
+|Jdbc    |DriverManager#getConnection(String url, Properties info) Method|
+
+Also define the information required by the connection pool library in the lightsleep.properties file.
+Below the ConnectionSupplier (from `url`) in definition examples of lightsleep.properties are the definition contents to be passed to the connection supplier.
+
+```properties:lightsleep.properties
+# lightsleep.properties / C3p0
+ConnectionSupplier = C3p0
+url                = jdbc:mysql://mysql57/test
+user               = test
+password           = _test_
+```
+
+```properties:c3p0.properties
+# c3p0.properties
+c3p0.initialPoolSize = 20
+c3p0.minPoolSize     = 10
+c3p0.maxPoolSize     = 30
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / Dbcp
+ConnectionSupplier = Dbcp
+url                = jdbc:oracle:thin:@oracle121:1521:test
+username           = test
+password           = _test_
+initialSize        = 20
+maxTotal           = 30
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / HikariCP
+ConnectionSupplier = HikariCP
+jdbcUrl            = jdbc:postgresql://postgres96/test
+username           = test
+password           = _test_
+minimumIdle        = 10
+maximumPoolSize    = 30
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / TomcatCP
+ConnectionSupplier = TomcatCP
+url                = jdbc:sqlserver://sqlserver13;database=test
+username           = test
+password           = _test_
+initialSize        = 20
+maxActive          = 30
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / Jndi
+ConnectionSupplier = Jndi
+dataSource         = jdbc/Sample
+```
+
+```properties:lightsleep.properties
+# lightsleep.properties / Jdbc
+ConnectionSupplier = Jdbc
+url                = jdbc:mysql://mysql57/test
+user               = test
+password           = _test_
+```
+
+<div id="Transaction"></div>
+
+[[To TOC]](#TOC)
+
+### 4. Transaction
 Execution of `Transaction.execute` method is equivalent to the execution of a transaction.
 Define contents of the transaction by the argument `transaction` as a lambda expression.
 The lambda expression is equivalent to the contents of `Transaction.executeBody` method and the argument of this method is a `Connection`.
@@ -248,86 +591,20 @@ Transaction.execute {
 If an exception is thrown during the transaction, `Transaction.rollback` method is called.
 Otherwise, `Transaction.commit` method is called.
 
-### 3. Connection Supplier
-Getting of database connection (`java.sql.Connection`) is done in the `Transaction.execute` method.
-Lightsleep has following classes to supply connections.
+<div id="ExecuteSQL"></div>
 
-1. org.lightsleep.connection.C3p0
-1. org.lightsleep.connection.Dbcp
-1. org.lightsleep.connection.HikariCP
-1. org.lightsleep.connection.TomcatCP
-1. org.lightsleep.connection.Jdbc
-1. org.lightsleep.connection.Jndi
+[[To TOC]](#TOC)
 
-`C3p0`, `Dbcp 2`, `HikariCP` and `TomcatCP` class gets database connectiona using the corresponding connection pool library.  
-`JdbcConnection` class gets database connections using the `java.sql.DriverManager.getConnection` method.  
-`JndiConnection` class gets database connections from the data source (`javax.sql.DataSource`) that was obtained using JNDI (Java Naming and Directory Interface).  
-Define the connection supplier class and information needed to connect in the **lightsleep.properties** file.
-
-```properties:lightsleep.properties
-# lightsleep.properties / Example for C3p0
-ConnectionSupplier = C3p0
-url                = jdbc:mysql://mysql57/test
-user               = test
-password           = _test_
-```
-
-```properties:c3p0.properties
-# c3p0.properties
-c3p0.initialPoolSize = 20
-c3p0.minPoolSize     = 10
-c3p0.maxPoolSize     = 30
-```
-
-```properties:lightsleep.properties
-# lightsleep.properties / Example for Dbcp
-ConnectionSupplier = Dbcp
-url                = jdbc:oracle:thin:@oracle121:1521:test
-username           = test
-password           = _test_
-initialSize        = 20
-maxTotal           = 30
-```
-
-```properties:lightsleep.properties
-# lightsleep.properties / Example for HikariCP
-ConnectionSupplier = HikariCP
-jdbcUrl            = jdbc:postgresql://postgres96/test
-username           = test
-password           = _test_
-minimumIdle        = 10
-maximumPoolSize    = 30
-```
-
-```properties:lightsleep.properties
-# lightsleep.properties / Example for TomcatCP
-ConnectionSupplier = TomcatCP
-url                = jdbc:sqlserver://sqlserver13;database=test
-username           = test
-password           = _test_
-initialSize        = 20
-maxActive          = 30
-```
-
-```properties:lightsleep.properties
-# lightsleep.properties / Example for Jdbc
-ConnectionSupplier = Jdbc
-url                = jdbc:sqlite:C:/sqlite/test
-user               = test
-password           = _test_
-```
-
-```properties:lightsleep.properties
-# lightsleep.properties / Example for Jndi
-ConnectionSupplier = Jndi
-dataSource         = jdbc/Sample
-```
-
-### 4. Execution of SQL
+### 5. Execution of SQL
 Use the various methods of `Sql` class to execute SQLs and define it in the lambda expression argument of `Transaction.execute` method.
 
-#### 4-1. SELECT
-#### 4-1-1. SELECT / 1 row / Expression Condition
+<div id="ExecuteSQL-select"></div>
+
+#### 5-1. SELECT
+
+<div id="ExecuteSQL-select-1-Expression"></div>
+
+#### 5-1-1. SELECT 1 row with an Expression condition
 
 ```java:Java
 // Java
@@ -351,7 +628,11 @@ Transaction.execute {
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
 
-#### 4-1-2. SELECT / 1 row / Entity Condition
+<div id="ExecuteSQL-select-Entity"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-2. SELECT 1 row with an Entity condition
 
 ```java:Java
 // Java
@@ -379,7 +660,11 @@ Transaction.execute {
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
 
-#### 4-1-3. SELECT / Multiple rows / Expression Condition
+<div id="ExecuteSQL-select-N-Expression"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-3. SELECT multiple rows with an Expression condition
 
 ```java:Java
 // Java
@@ -405,7 +690,11 @@ Transaction.execute {
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
 ```
 
-#### 4-1-4. SELECT / Subquery Condition
+<div id="ExecuteSQL-select-Subquery"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-4. SELECT with a Subquery condition
 
 ```java:Java
 // Java
@@ -437,7 +726,11 @@ Transaction.execute {
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime FROM Contact C WHERE EXISTS (SELECT * FROM Phone P WHERE P.contactId=C.id)
 ```
 
-#### 4-1-5. SELECT / Expression Condition / AND
+<div id="ExecuteSQL-select-Expression-and"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-5. SELECT with Expression conditions (AND)
 
 ```java:Java
 // Java
@@ -465,7 +758,11 @@ Transaction.execute {
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE (familyName='Apple' AND givenName='Akane')
 ```
 
-#### 4-1-6. SELECT / Expression Condition / OR
+<div id="ExecuteSQL-select-Expression-or"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-6. SELECT with Expression Condition (OR)
 
 ```java:Java
 // Java
@@ -493,7 +790,11 @@ Transaction.execute {
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE (familyName='Apple' OR familyName='Orange')
 ```
 
-#### 4-1-7. SELECT / Expression Condition / (A AND B) OR (C AND D)
+<div id="ExecuteSQL-select-Expression-andor"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-7. SELECT with Expression conditions (A AND B) OR (C AND D)
 
 ```java:Java
 // Java
@@ -533,7 +834,11 @@ Transaction.execute {
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE ((familyName='Apple' AND givenName='Akane') OR (familyName='Orange' AND givenName='Setoka'))
 ```
 
-#### 4-1-8. SELECT / Select Columns
+<div id="ExecuteSQL-select-columns"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-8. SELECT with selection of columns
 
 ```java:Java
 // Java
@@ -561,7 +866,11 @@ Transaction.execute {
 SELECT familyName, givenName FROM Contact WHERE familyName='Apple'
 ```
 
-#### 4-1-9. SELECT / GROUP BY, HAVING
+<div id="ExecuteSQL-select-groupBy-having"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-9. SELECT with GROUP BY and HAVING
 
 ```java:Java
 // Java
@@ -591,7 +900,11 @@ Transaction.execute {
 SELECT MIN(C.familyName) AS C_familyName FROM Contact C GROUP BY C.familyName HAVING COUNT(C.familyName)>=2
 ```
 
-#### 4-1-10. SELECT / ORDER BY, OFFSET, LIMIT
+<div id="ExecuteSQL-select-orderBy-offset-limit"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-10. SELECT with ORDER BY, OFFSET and LIMIT
 
 ```java:Java
 // Java
@@ -629,7 +942,11 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY familyName ASC, givenName ASC, id ASC
 ```
 
-#### 4-1-11. SELECT / FOR UPDATE
+<div id="ExecuteSQL-select-forUpdate"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-11. SELECT with FOR UPDATE
 
 ```java:Java
 // Java
@@ -662,7 +979,11 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WITH (ROWLOCK,UPDLOCK) WHERE id=1
 ```
 
-#### 4-1-12. SELECT / INNER JOIN
+<div id="ExecuteSQL-select-innerJoin"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-12. SELECT with INNER JOIN
 
 ```java:Java
 // Java
@@ -692,7 +1013,11 @@ Transaction.execute {
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C INNER JOIN Phone P ON P.contactId=C.id WHERE C.id=1
 ```
 
-#### 4-1-13. SELECT / LEFT OUTER JOIN
+<div id="ExecuteSQL-select-leftJoin"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-13. SELECT with LEFT OUTER JOIN
 ```java:Java
 // Java
 List<Contact> contacts = new ArrayList<>();
@@ -721,7 +1046,11 @@ Transaction.execute {
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C LEFT OUTER JOIN Phone P ON P.contactId=C.id WHERE C.familyName='Apple'
 ```
 
-#### 4-1-14. SELECT / RIGHT OUTER JOIN
+<div id="ExecuteSQL-select-rightJoin"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-1-14. SELECT with RIGHT OUTER JOIN
 ```java:Java
 // Java
 List<Contact> contacts = new ArrayList<>();
@@ -751,8 +1080,15 @@ Transaction.execute {
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C RIGHT OUTER JOIN Phone P ON P.contactId=C.id WHERE P.label='Main'
 ```
 
-#### 4-2. INSERT
-#### 4-2-1. INSERT / 1 row
+<div id="ExecuteSQL-insert"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-2. INSERT
+
+<div id="ExecuteSQL-insert-1"></div>
+
+#### 5-2-1. INSERT 1 row
 
 ```java:Java
 // Java
@@ -798,7 +1134,11 @@ INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTi
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', CAST('2001-01-01' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
-#### 4-2-2. INSERT / Multiple rows
+<div id="ExecuteSQL-insert-N"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-2-2. INSERT multiple rows
 
 ```java:Java
 // Java
@@ -863,8 +1203,15 @@ INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTi
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', CAST('2001-01-03' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
-#### 4-3. UPDATE
-#### 4-3-1. UPDATE / 1 row
+<div id="ExecuteSQL-update"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-3. UPDATE
+
+<div id="ExecuteSQL-update-1"></div>
+
+#### 5-3-1. UPDATE 1 row
 
 ```java:Java
 // Java
@@ -910,7 +1257,11 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
-#### 4-3-2. UPDATE / Multiple rows
+<div id="ExecuteSQL-update-N"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-3-2. UPDATE multiple rows
 
 ```java:Java
 // Java
@@ -964,7 +1315,11 @@ UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday=CAST('2001-0
 UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday=CAST('2001-01-03' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
 ```
 
-#### 4-3-3. UPDATE / Specified Condition, Select Columns
+<div id="ExecuteSQL-update-Condition"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-3-3. UPDATE with a Condition and selection of columns
 
 ```java:Java
 // Java
@@ -994,7 +1349,11 @@ Transaction.execute {
 UPDATE Contact SET familyName='Pomme' WHERE familyName='Apfel'
 ```
 
-#### 4-3-4. UPDATE / All rows
+<div id="ExecuteSQL-update-all"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-3-4. UPDATE all rows
 
 ```java:Java
 // Java
@@ -1022,8 +1381,16 @@ Transaction.execute {
 UPDATE Contact SET birthday=NULL
 ```
 
-#### 4-4. DELETE
-#### 4-4-1. DELETE / 1 row
+
+<div id="ExecuteSQL-delete"></div>
+
+[[To TOC]](#TOC)
+
+#### 5-4. DELETE
+
+<div id="ExecuteSQL-delete-1"></div>
+
+#### 5-4-1. DELETE 1 row
 
 ```java:Java
 // Java
@@ -1053,7 +1420,10 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 DELETE FROM Contact WHERE id=1
 ```
 
-#### 4-4-2. DELETE / Multiple rows
+
+<div id="ExecuteSQL-delete-N"></div>
+
+#### 5-4-2. DELETE multiple rows
 
 ```java:Java
 // Java
@@ -1083,7 +1453,9 @@ DELETE FROM Contact WHERE id=2
 DELETE FROM Contact WHERE id=3
 ```
 
-#### 4-4-3. DELETE / Specified Condition
+<div id="ExecuteSQL-delete-Condition"></div>
+
+#### 5-4-3. DELETE with a Condition
 
 ```java:Java
 // Java
@@ -1107,7 +1479,9 @@ Transaction.execute {
 DELETE FROM Contact WHERE familyName='Orange'
 ```
 
-#### 4-4-4. DELETE / All rows
+<div id="ExecuteSQL-delete-all"></div>
+
+#### 5-4-4. DELETE all rows
 
 ```java:Java
 // Java
@@ -1131,7 +1505,11 @@ Transaction.execute {
 DELETE FROM Phone
 ```
 
-### 5. Expression conversion processing
+<div id="Expression"></div>
+
+[[To TOC]](#TOC)
+
+### 6. Expression Conversion
 
 When generating SQL, evaluates the following character string as an expression and perform conversion processing.
 
@@ -1171,65 +1549,3 @@ Conversion of expressions has the followings.
 |`{A.xxx}`|`"A."` + The column name associated with property `xxx` (`A` is a table alias)|
 |`{A_xxx}`|The column alias associated with table alias `A` and `xxx` property|
 |`{#xxx}`|The value of property `xxx` of an entity set on the `Sql` object (or an entity argument of `Sql#insert` or `Sql#update` method)|
-
-### 6. Logging
-Lightsleep is compatible with the following logging Libraries.
-
-- java.util.logging.Logger
-- Apache Log4j
-- Apache Log4j2
-- SLF4J
-
-You can also log to stdout and stderr.
-
-Specify the logging library in the ```lightsleep.properties```.
-
-```properties:lightsleep.properties
-# Using java.util.logging.Logger class
-Logger = Jdk
-
-# Using Apache Log4j
-Logger = Log4j
-
-# Using Apache Log4j2
-Logger = Log4j2
-
-# Using SLF4J
-Logger = SLF4J
-
-# Output the FATAL level to stdout
-Logger = Std$Out$Fatal
-
-# Output the ERROR and FATAL level to stdout
-Logger = Std$Out$Error
-
-# Output the WARN, ERROR and FATAL level to stdout
-Logger = Std$Out$Warn
-
-# Output the INFO, WARN, ERROR and FATAL level to stdout
-Logger = Std$Out$Info
-
-# Output the DEBUG, INFO, WARN, ERROR and FATAL level to stdout
-Logger = Std$Out$Debug
-
-# Output the TRACE, DEBUG, INFO, WARN, ERROR and FATAL level to stdout
-Logger = Std$Out$Trace
-
-# Output the FATAL level to stderr
-Logger = Std$Err$Fatal
-
-# Output the ERROR and FATAL level to stderr
-Logger = Std$Err$Error
-
-# Output the WARN, ERROR and FATAL level to stderr
-Logger = Std$Err$Warn
-
-# Output the INFO, WARN, ERROR and FATAL level to stderr
-Logger = Std$Err$Info
-
-# Output the DEBUG, INFO, WARN, ERROR and FATAL level to stderr
-Logger = Std$Err$Debug
-
-# Output the TRACE, DEBUG, INFO, WARN, ERROR and FATAL level to stderr
-Logger = Std$Err$Trace
-```

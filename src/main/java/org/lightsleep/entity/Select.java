@@ -6,7 +6,7 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * Indicates the expression instead of the column name in SELECT SQL.
+ * Indicates ta column expression instead of the column name in SELECT SQL.
  *
  * <div class="sampleTitle"><span>Example of use</span></div>
  * <div class="sampleCode"><pre>

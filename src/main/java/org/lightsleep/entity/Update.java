@@ -6,7 +6,7 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * Indicates the expression instead of the field value used in UPDATE SQL.
+ * Indicates an expression instead of the field value used in UPDATE SQL.
  *
  * <div class="sampleTitle"><span>Example</span></div>
  * <div class="sampleCode"><pre>
