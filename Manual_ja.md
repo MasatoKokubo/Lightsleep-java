@@ -263,7 +263,7 @@ UPDATE SQL の更新値の式を指定します。
 <div id="Entity-XxxxxProperty"></div>
 
 ##### 2-1-12. @KeyProperty, @ColumnProperty, ... @UpdateProperty
-スーパークラスで定義されているフィールドに対して指定する場合に使用します。
+これらのアノテーションは、スーパークラスで定義されているフィールドに対して指定する場合に使用します。
 同一アノテーションを1つのクラスに複数付与できます。
 
 ```java:Java

@@ -20,7 +20,7 @@ This document is a manual of Lightsleep that is an O/R (Object-Relational) mappi
         1. [@Select](#Entity-Select)
         1. [@Insert](#Entity-Insert)
         1. [@Update](#Entity-Update)
-        1. [@KeyProperty, @ColumnProperty, ... @UpdateProperty](#Entity-XxxxxProperty)
+        1. [@KeyProperty, @ColumnProperty, ... and @UpdateProperty](#Entity-XxxxxProperty)
     1. [Interfaces implemented by entity classes](#Entity-Interface)
         1. [PreInsert Interface](#Entity-PreInsert)
         1. [Composite Interface](#Entity-Composite)
@@ -262,8 +262,8 @@ If this annotation is specified, the value of the field is not used.
 
 <div id="Entity-XxxxxProperty"></div>
 
-##### 2-1-12. @XxxxxProperty
-`@XxxxxProperty` is used to specify for fields defined in superclass.
+##### 2-1-12. @KeyProperty, @ColumnProperty, ... and @UpdateProperty
+These annotations are used to specify for fields defined in superclass.
 You can specify multiple same annotations for a class.
 
 ```java:Java
