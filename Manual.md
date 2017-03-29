@@ -399,6 +399,7 @@ public class Contact implements PreStore, PostLoad {
 ### 3. Definition of lightsleep.properties
 
 Lightsleep.properties is a properties file referenced by Lightsleep and define the following contents.
+
 |Property Name|What to specify|
 |:--|:--|
 |[Logger            ](#Logger            )|The class corresponding to the logging library that Lightsleep uses for log output.|
