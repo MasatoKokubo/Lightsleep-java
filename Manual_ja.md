@@ -1551,3 +1551,5 @@ SQL を生成する時に、以下の文字列を式として評価し、変換�
 |`{A.xxx}`|`"A."` + `xxx` プロパティに関連するカラム名 (`A` はテーブル別名)|
 |`{A_xxx}`|テーブル別名 `A` と `xxx` プロパティに関連するカラム別名|
 |`{#xxx}`|`Sql` オブジェクトに設定されたエンティティ(または `Sql#insert`, `Sql#update` メソッドのエンティティ引数) の `xxx` プロパティの値|
+
+<div style="text-align:center; margin-top:20px"><i>&copy; 2016 Masato Kokubo</i></div>

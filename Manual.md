@@ -2,6 +2,7 @@ Lightsleep / Manual
 ===========
 
 This document is a manual of Lightsleep that is an O/R (Object-Relational) mapping library.
+
 <div id="TOC"></div>
 
 ### Table of Contents
@@ -1550,3 +1551,5 @@ Conversion of expressions has the followings.
 |`{A.xxx}`|`"A."` + The column name associated with property `xxx` (`A` is a table alias)|
 |`{A_xxx}`|The column alias associated with table alias `A` and `xxx` property|
 |`{#xxx}`|The value of property `xxx` of an entity set on the `Sql` object (or an entity argument of `Sql#insert` or `Sql#update` method)|
+
+<div style="text-align:center; margin-top:20px"><i>&copy; 2016 Masato Kokubo</i></div>

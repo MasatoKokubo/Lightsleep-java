@@ -211,3 +211,5 @@ Sample1 を実行すると以下がコンソールに表示されます。
 2: Name: Third Sample, Birthday: 1993-03-03
 3: Name: Fourth Sample, Birthday: 1994-04-04
 ```
+
+<div style="text-align:center; margin-top:20px"><i>&copy; 2016 Masato Kokubo</i></div>
