@@ -43,6 +43,6 @@ The MIT License (MIT)
 
 [API Specification](http://masatokokubo.github.io/Lightsleep/javadoc/index.html)
 
-<a href="http://masatokokubo.blogspot.com/" target="_blank">BLOG @Blogger</a>
+<a href="http://lightsleep.hatenablog.com/" target="_blank">BLOG @Hatena</a>
 
 [Japanese](README_ja.md)
