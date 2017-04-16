@@ -18,7 +18,7 @@ Lightsleep は、軽量の O/R マッピング・ライブラリで、Java 8 で
 - Oracle Database
 - PostgreSQL
 - SQLite (since 1.7.0)
-- SQL Server
+- Microsoft SQL Server
 - 標準SQL準拠DBMS
 
 #### *build.gradle* での記述例

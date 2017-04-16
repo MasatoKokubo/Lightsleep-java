@@ -18,7 +18,7 @@ It is not compatible with the Java Persistence API (JPA).
 - Oracle Database
 - PostgreSQL
 - SQLite (since 1.7.0)
-- SQL Server
+- Microsoft SQL Server
 - DBMSs that conforms to the standard SQL
 
 #### Description example in *build.gradle*
