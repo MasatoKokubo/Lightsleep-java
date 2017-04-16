@@ -34,7 +34,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '1.8.4'
+version             = '1.8.5'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.4'
