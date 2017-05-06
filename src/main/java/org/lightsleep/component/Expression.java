@@ -30,14 +30,20 @@ public class Expression implements Condition {
 
 	// Class resources
 	private static final Resource resource = new Resource(Expression.class);
-// 1.8.2
-//	private static final String messageParametersIsLess   = resource.get("messageParametersIsLess");
-	private static final String messageLessArguments      = resource.get("messageLessArguments");
-	private static final String messageMoreArguments      = resource.get("messageMoreArguments");
-////
-	private static final String messagePropertyIsNotFound = resource.get("messagePropertyIsNotFound");
-// 1.8.5
-	private static final String messagePropertiesAreNotFound = resource.get("messagePropertiesAreNotFound");
+// 1.9.0
+//// 1.8.2
+////	private static final String messageParametersIsLess   = resource.get("messageParametersIsLess");
+//	private static final String messageLessArguments      = resource.get("messageLessArguments");
+//	private static final String messageMoreArguments      = resource.get("messageMoreArguments");
+//////
+//	private static final String messagePropertyIsNotFound = resource.get("messagePropertyIsNotFound");
+//// 1.8.5
+//	private static final String messagePropertiesAreNotFound = resource.get("messagePropertiesAreNotFound");
+//////
+	private static final String messageLessArguments         = resource.getString("messageLessArguments");
+	private static final String messageMoreArguments         = resource.getString("messageMoreArguments");
+	private static final String messagePropertyIsNotFound    = resource.getString("messagePropertyIsNotFound");
+	private static final String messagePropertiesAreNotFound = resource.getString("messagePropertiesAreNotFound");
 ////
 
 	/** The empty expression */
@@ -63,11 +69,6 @@ public class Expression implements Condition {
 	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is null
 	 */
 	public Expression(String content, Object... arguments) {
-	//	if (content == null) throw new NullPointerException("Expression.<init>: content == null");
-	//	if (arguments == null) throw new NullPointerException("Expression.<init>: arguments == null");
-	//
-	//	this.content = content;
-	//	this.arguments = arguments;
 		this.content = Objects.requireNonNull(content, "content");
 		this.arguments = Objects.requireNonNull(arguments, "arguments");
 	}

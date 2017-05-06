@@ -1,0 +1,25 @@
+<!-- logback.xml -->
+<configuration>
+	<appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/logback.log</file>
+		<append>false</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/logback_%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>10</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %c{16}: %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.lightsleep"             level="info" additivity="false"><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.lightsleep.Sql"         level="info" additivity="false"><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.lightsleep.Transaction" level="info" additivity="false"><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.lightsleep.connection"  level="info" additivity="false"><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.lightsleep.helper"      level="info" additivity="false"><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.debugtrace"             level="trace" additivity="false"><appender-ref ref="RollingFile"/></logger>
+	<logger name="com.mchange"                level="info" additivity="false"><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.apache"                 level="info" additivity="false"><appender-ref ref="RollingFile"/></logger>
+
+	<root level="info"><appender-ref ref="RollingFile"/></root>
+</configuration>

@@ -100,7 +100,9 @@ public class Standard implements Database {
 	 */
 // 1.7.0
 //	protected static final int maxStringLiteralLength = Resource.globalResource.get(Integer.class, "maxStringLiteralLength", 128);
-	public static final int maxStringLiteralLength = Resource.globalResource.get(Integer.class, "maxStringLiteralLength", 128);
+// 1.8.6
+//	public static final int maxStringLiteralLength = Resource.globalResource.get(Integer.class, "maxStringLiteralLength", 128);
+	public static final int maxStringLiteralLength = Resource.globalResource.getInt("maxStringLiteralLength", 128);
 ////
 
 	/**
@@ -111,7 +113,9 @@ public class Standard implements Database {
 	 */
 // 1.7.0
 //	protected static final int maxBinaryLiteralLength = Resource.globalResource.get(Integer.class, "maxBinaryLiteralLength", 128);
-	public static final int maxBinaryLiteralLength = Resource.globalResource.get(Integer.class, "maxBinaryLiteralLength", 128);
+// 1.8.6
+//	public static final int maxBinaryLiteralLength = Resource.globalResource.get(Integer.class, "maxBinaryLiteralLength", 128);
+	public static final int maxBinaryLiteralLength = Resource.globalResource.getInt("maxBinaryLiteralLength", 128);
 ////
 
 // 1.8.0

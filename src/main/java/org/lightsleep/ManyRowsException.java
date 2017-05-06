@@ -13,13 +13,13 @@ package org.lightsleep;
 @SuppressWarnings("serial")
 public class ManyRowsException extends RuntimeException {
 	/**
-	 * Constructs a new <b>ManyRowsException</b>.
+	 * Constructs a new <b>ManyRowsException</b> with null as its detail message.
 	 */
 	public ManyRowsException() {
 	}
 
 	/**
-	 * Constructs a new <b>ManyRowsException</b>.
+	 * Constructs a new <b>ManyRowsException</b> with the specified detail message.
 	 *
 	 * @param message the detail message
 	 *

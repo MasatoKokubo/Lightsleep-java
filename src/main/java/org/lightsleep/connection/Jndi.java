@@ -61,7 +61,10 @@ public class Jndi extends AbstractConnectionSupplier {
 		try {
 			if (dataSourceName == null) {
 				// If the data source name is not specified, gets it from properties.
-				dataSourceName = Resource.globalResource.get("dataSource");
+			// 1.8.6
+			//	dataSourceName = Resource.globalResource.get("dataSource");
+				dataSourceName = Resource.globalResource.getString("dataSource");
+			////
 				if (dataSourceName == null) {
 					logger.error("Jndi.getDataSource: property dataSource: " + dataSourceName);
 					return null;

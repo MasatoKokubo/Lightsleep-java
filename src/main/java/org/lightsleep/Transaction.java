@@ -34,12 +34,20 @@ public interface Transaction {
 
 	// Class resources
 	static final Resource resource = new Resource(Transaction.class);
-	static final String messageGet      = resource.get("messageGet");
-	static final String messageClose    = resource.get("messageClose");
-	static final String messageStart    = resource.get("messageStart");
-	static final String messageEnd      = resource.get("messageEnd");
-	static final String messageCommit   = resource.get("messageCommit");
-	static final String messageRollback = resource.get("messageRollback");
+// 1.8.6
+//	static final String messageGet      = resource.get("messageGet");
+//	static final String messageClose    = resource.get("messageClose");
+//	static final String messageStart    = resource.get("messageStart");
+//	static final String messageEnd      = resource.get("messageEnd");
+//	static final String messageCommit   = resource.get("messageCommit");
+//	static final String messageRollback = resource.get("messageRollback");
+	static final String messageGet      = resource.getString("messageGet");
+	static final String messageClose    = resource.getString("messageClose");
+	static final String messageStart    = resource.getString("messageStart");
+	static final String messageEnd      = resource.getString("messageEnd");
+	static final String messageCommit   = resource.getString("messageCommit");
+	static final String messageRollback = resource.getString("messageRollback");
+////
 
 	/**
 	 * Describe the body of the transaction in this method.

@@ -25,10 +25,16 @@ import java.util.Objects;
  */
 public class Utils {
 	// Class resources
-	private static final int maxLogStringLength    = Resource.globalResource.get(Integer.class, "maxLogStringLength"   , 200);
-	private static final int maxLogByteArrayLength = Resource.globalResource.get(Integer.class, "maxLogByteArrayLength", 200);
-	private static final int maxLogArrayLength     = Resource.globalResource.get(Integer.class, "maxLogArrayLength"    , 100);
-	private static final int maxLogMapSize         = Resource.globalResource.get(Integer.class, "maxLogMapSize"        , 100);
+// 1.8.6
+//	private static final int maxLogStringLength    = Resource.globalResource.get(Integer.class, "maxLogStringLength"   , 200);
+//	private static final int maxLogByteArrayLength = Resource.globalResource.get(Integer.class, "maxLogByteArrayLength", 200);
+//	private static final int maxLogArrayLength     = Resource.globalResource.get(Integer.class, "maxLogArrayLength"    , 100);
+//	private static final int maxLogMapSize         = Resource.globalResource.get(Integer.class, "maxLogMapSize"        , 100);
+	private static final int maxLogStringLength    = Resource.globalResource.getInt("maxLogStringLength"   , 200);
+	private static final int maxLogByteArrayLength = Resource.globalResource.getInt("maxLogByteArrayLength", 200);
+	private static final int maxLogArrayLength     = Resource.globalResource.getInt("maxLogArrayLength"    , 100);
+	private static final int maxLogMapSize         = Resource.globalResource.getInt("maxLogMapSize"        , 100);
+////
 
 	// A map to convert the primitive type to class type
 	private static final Map<Class<?>, Class<?>> toClassMap = new LinkedHashMap<>();

@@ -20,7 +20,10 @@ import org.lightsleep.helper.Resource;
 public class OrderBy implements SqlComponent {
 	//  class resources
 	private static final Resource resource = new Resource(OrderBy.class);
-	private static final String messageNoOrderByElement = resource.get("messageNoOrderByElement");
+// 1.8.6
+//	private static final String messageNoOrderByElement = resource.get("messageNoOrderByElement");
+	private static final String messageNoOrderByElement = resource.getString("messageNoOrderByElement");
+////
 
 	/** The empty <b>OrderBy</b> */
 	public static final OrderBy EMPTY = new OrderBy();
@@ -91,7 +94,6 @@ public class OrderBy implements SqlComponent {
 	 * @throws NullPointerException if <b>element</b> is null
 	 */
 	public OrderBy add(Element element) {
-	//	if (element == null) throw new NullPointerException("OrderBy.add: element == null");
 		Objects.requireNonNull(element, "element");
 
 		OrderBy orderBy = this == EMPTY ? new OrderBy() : this;
@@ -124,9 +126,9 @@ public class OrderBy implements SqlComponent {
 	}
 
 	/**
-	 * Returns a list of the elements of the <b>OrderBy</b>.
+	 * Returns an unmodifiable list of the elements of the <b>OrderBy</b>.
 	 *
-	 * @return a list of the elements
+	 * @return an unmodifiable list of the elements
 	 */
 	public List<Element> elements() {
 		return Collections.unmodifiableList(elements);

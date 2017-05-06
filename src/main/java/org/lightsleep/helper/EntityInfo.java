@@ -51,9 +51,6 @@ public class EntityInfo<E> {
 	 * @throws NullPointerException <b>entityClass</b> is null
 	 */
 	public EntityInfo(Class<E> entityClass) {
-	//	if (entityClass == null) throw new NullPointerException("EntityInfo.<init>: entityClass == null");
-	//
-	//	this.entityClass = entityClass;
 		this.entityClass = Objects.requireNonNull(entityClass, "entityClass");
 		accessor = new Accessor<>(entityClass);
 
@@ -377,7 +374,6 @@ public class EntityInfo<E> {
 	 * @throws IllegalArgumentException if the column information related to <b>propertyName</b> can not be found
 	 */
 	public ColumnInfo getColumnInfo(String propertyName) {
-	//	if (propertyName == null) throw new NullPointerException("EntityInfo.getColumnInfo: propertyName == null");
 		Objects.requireNonNull(propertyName, "propertyName");
 
 		ColumnInfo columnInfo = columnInfoMap.get(propertyName);

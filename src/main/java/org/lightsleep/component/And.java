@@ -14,12 +14,14 @@ import java.util.stream.Stream;
  * @author Masato Kokubo
  */
 public class And extends LogicalCondition {
-	/**
-	 * Constructs an empty <b>And</b>.
-	 */
-	public And() {
-		super(Operator.AND);
-	}
+// 1.8.6
+//	/**
+//	 * Constructs an empty <b>And</b>.
+//	 */
+//	public And() {
+//		super(Operator.AND);
+//	}
+////
 
 	/**
 	 * Constructs an <b>And</b> consisting of the conditions.

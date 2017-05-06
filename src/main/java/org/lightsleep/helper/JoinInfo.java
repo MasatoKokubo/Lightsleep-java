@@ -72,15 +72,6 @@ public class JoinInfo<JE> implements SqlEntityInfo<JE> {
 	 * @throws NullPointerException if <b>joinType</b>, <b>entityInfo</b>, <b>tableAlias</b> or <b>on</b> is null
 	 */
 	public JoinInfo(JoinType joinType, EntityInfo<JE> entityInfo, String tableAlias, Condition on) {
-	//	if (joinType == null) throw new NullPointerException("JoinInfo.<init>: joinType == null");
-	//	if (entityInfo == null) throw new NullPointerException("JoinInfo.<init>: entityInfo == null");
-	//	if (tableAlias == null) throw new NullPointerException("JoinInfo.<init>: tableAlias == null");
-	//	if (on == null) throw new NullPointerException("JoinInfo.<init>: on == null");
-	//
-	//	this.joinType   = joinType;
-	//	this.entityInfo = entityInfo;
-	//	this.tableAlias = tableAlias;
-	//	this.on         = on;
 		this.joinType   = Objects.requireNonNull(joinType  , "joinType");
 		this.entityInfo = Objects.requireNonNull(entityInfo, "entityInfo");
 		this.tableAlias = Objects.requireNonNull(tableAlias, "tableAlias");

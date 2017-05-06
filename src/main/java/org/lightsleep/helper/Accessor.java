@@ -44,11 +44,16 @@ public class Accessor<T> {
 
 	// Class Resources
 	private static final Resource resource = new Resource(Accessor.class);
-	private static final String messagePropertyIsNotFound       = resource.get("messagePropertyIsNotFound");
-// 1.5.1 #0011
-	private static final String messagePropertyExceededMaxNest  = resource.get("messagePropertyExceededMaxNest");
+// 1.8.6
+//	private static final String messagePropertyIsNotFound       = resource.get("messagePropertyIsNotFound");
+//// 1.5.1 #0011
+//	private static final String messagePropertyExceededMaxNest  = resource.get("messagePropertyExceededMaxNest");
+//////
+//	private static final String messageIntermediateObjectIsNull = resource.get("messageIntermediateObjectIsNull");
+	private static final String messagePropertyIsNotFound       = resource.getString("messagePropertyIsNotFound");
+	private static final String messagePropertyExceededMaxNest  = resource.getString("messagePropertyExceededMaxNest");
+	private static final String messageIntermediateObjectIsNull = resource.getString("messageIntermediateObjectIsNull");
 ////
-	private static final String messageIntermediateObjectIsNull = resource.get("messageIntermediateObjectIsNull");
 
 // 1.5.1
 	// Maximum nesting level of property
@@ -119,9 +124,6 @@ public class Accessor<T> {
 	 * @param objectClass the class of access target object
 	 */
 	public Accessor(Class<T> objectClass) {
-	//	if (objectClass == null) throw new NullPointerException("Accessor.<init>: objectClass == null");
-	//
-	//	this.objectClass = objectClass;
 		this.objectClass = Objects.requireNonNull(objectClass, "objectClass");
 
 // 1.3.0
@@ -196,6 +198,9 @@ public class Accessor<T> {
 			if (Modifier.isStatic(modifier)) continue; // static
 
 			String fieldName = field.getName();
+		// 1.8.6
+			if (fieldName.equals("metaClass")) continue; // When defined in Groovy
+		////
 			Class<?> fieldType = field.getType();
 			String propertyName = basePropertyName + fieldName;
 		// 1.3.0
@@ -509,7 +514,6 @@ public class Accessor<T> {
 	 * @throws RuntimeException if <b>IllegalAccessException</b> was thrown
 	 */
 	public Object getValue(T object, String propertyName) {
-	//	if (object == null) throw new NullPointerException("Accessor.getValue: object = null, propertyName = " + propertyName);
 		Objects.requireNonNull(object, () -> "object: null, propertyName: " + propertyName);
 
 		Function<T, Object> getter = getterMap.get(propertyName);
@@ -544,7 +548,6 @@ public class Accessor<T> {
 	 * @throws RuntimeException if <b>IllegalAccessException</b> or <b>InvocationTargetException</b> was thrown
 	 */
 	public void setValue(T object, String propertyName, Object value) {
-	//	if (object == null) throw new NullPointerException("Accessor.setValue: object = null, propertyName = " + propertyName);
 		Objects.requireNonNull(object, () -> "object: null, propertyName: " + propertyName);
 
 		BiConsumer<T, Object> setter = setterMap.get(propertyName);

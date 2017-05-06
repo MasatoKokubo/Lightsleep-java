@@ -18,3 +18,4 @@ build_back.gradle
 *.java_
 *.gradle_
 Notes.txt
+*.groovy_

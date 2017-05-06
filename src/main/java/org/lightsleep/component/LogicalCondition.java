@@ -3,7 +3,7 @@
 
 package org.lightsleep.component;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -18,9 +18,7 @@ import org.lightsleep.Sql;
  * @author Masato Kokubo
  */
 public abstract class LogicalCondition implements Condition {
-	/**
-		Logical operator.
-	 */
+	/** Logical operator. */
 	protected enum Operator {
 		/** AND */
 		AND(" AND "),
@@ -50,20 +48,19 @@ public abstract class LogicalCondition implements Condition {
 	// The list of the conditions
 	private final List<Condition> conditions;
 
-	/**
-	 * Constructs an empty <b>LogicalCondition</b>.
-	 *
-	 * @param operator the operator
-	 *
-	 * @throws NullPointerException if <b>operator</b> is null
-	 */
-	public LogicalCondition(Operator operator) {
-	//	if (operator == null) throw new NullPointerException("LogicalCondition.<init>: operator == null");
-	//
-	//	this.operator = operator;
-		this.operator = Objects.requireNonNull(operator, "operator");
-		conditions = new ArrayList<>();
-	}
+// 1.8.6
+//	/**
+//	 * Constructs an empty <b>LogicalCondition</b>.
+//	 *
+//	 * @param operator the operator
+//	 *
+//	 * @throws NullPointerException if <b>operator</b> is null
+//	 */
+//	public LogicalCondition(Operator operator) {
+//		this.operator = Objects.requireNonNull(operator, "operator");
+//		conditions = new ArrayList<>();
+//	}
+////
 
 	/**
 	 * Constructs an <b>And</b> consisting of the conditions.
@@ -74,11 +71,7 @@ public abstract class LogicalCondition implements Condition {
 	 * @throws NullPointerException <b>operator</b>, <b>conditionStream</b> or any of <b>conditions</b> is null
 	 */
 	public LogicalCondition(Operator operator, Stream<Condition> conditionStream) {
-	//	if (operator == null) throw new NullPointerException("LogicalCondition.<init>: operator == null");
-	//
-	//	this.operator = operator;
 		this.operator = Objects.requireNonNull(operator, "operator");
-	//	conditions = conditionStream
 		conditions = Objects.requireNonNull(conditionStream, "conditionStream")
 			.flatMap(condition -> condition instanceof LogicalCondition && ((LogicalCondition)condition).operator == operator
 				? ((LogicalCondition)condition).conditions().stream()
@@ -88,12 +81,15 @@ public abstract class LogicalCondition implements Condition {
 	}
 
 	/**
-	 * Returns the list of the conditions.
+	 * Returns an unmodifiable list of the conditions.
 	 *
-	 * @return the list of the conditions
+	 * @return an unmodifiable list of the conditions
 	 */
 	public List<Condition> conditions() {
-		return conditions;
+	// 1.8.6
+	//	return conditions;
+		return Collections.unmodifiableList(conditions);
+	////
 	}
 
 	/**

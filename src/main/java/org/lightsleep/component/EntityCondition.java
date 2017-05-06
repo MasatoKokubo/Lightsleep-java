@@ -23,7 +23,10 @@ import org.lightsleep.helper.Resource;
 public class EntityCondition<E> implements Condition {
 	// Class resources
 	private static final Resource resource = new Resource(EntityCondition.class);
-	private static final String messageEntityNotHaveKeyColumns = resource.get("messageEntityNotHaveKeyColumns");
+// 1.8.6
+//	private static final String messageEntityNotHaveKeyColumns = resource.get("messageEntityNotHaveKeyColumns");
+	private static final String messageEntityNotHaveKeyColumns = resource.getString("messageEntityNotHaveKeyColumns");
+////
 
 	// The entity
 	private E entity;
@@ -40,7 +43,6 @@ public class EntityCondition<E> implements Condition {
 	 */
 	@SuppressWarnings("unchecked")
 	public EntityCondition(E entity) {
-	//	if (entity == null) throw new NullPointerException("EntityCondition.<init>: entity == null");
 		Objects.requireNonNull(entity, "entity");
 
 		entityInfo = Sql.getEntityInfo((Class<E>)entity.getClass());

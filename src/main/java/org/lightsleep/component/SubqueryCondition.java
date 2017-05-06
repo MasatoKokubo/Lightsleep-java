@@ -34,12 +34,6 @@ public class SubqueryCondition<SE> implements Condition {
 	 * @throws NullPointerException if <b>expression</b>, <b>outerSql</b> or <b>subSql</b> is null
 	 */
 	public <E> SubqueryCondition(Expression expression, Sql<E> outerSql, Sql<SE> subSql) {
-	//	if (expression == null) throw new NullPointerException("SubqueryCondition.<init>: expression == null");
-	//	if (outerSql == null) throw new NullPointerException("SubqueryCondition.<init>: outerSql == null");
-	//	if (subSql == null) throw new NullPointerException("SubqueryCondition.<init>: subSql == null");
-	//
-	//	this.expression = expression;
-	//	this.subSql = subSql;
 		this.expression = Objects.requireNonNull(expression, "expression");
 		this.subSql = Objects.requireNonNull(subSql, "subSql");
 		subSql.addSqlEntityInfo(Objects.requireNonNull(outerSql, "outerSql"));

@@ -19,10 +19,16 @@ import org.lightsleep.helper.Utils;
 public class ConvertException extends RuntimeException {
 	// Class resources
 	private static final Resource resource = new Resource(ConvertException.class);
-	private static final String messageCantConvert     = resource.get("messageCantConvert");
-	private static final String messageCantConvert_e   = resource.get("messageCantConvert_e");
-	private static final String messageCantConvert_d   = resource.get("messageCantConvert_d");
-	private static final String messageCantConvert_d_e = resource.get("messageCantConvert_d_e");
+// 1.9.0
+//	private static final String messageCantConvert     = resource.get("messageCantConvert");
+//	private static final String messageCantConvert_e   = resource.get("messageCantConvert_e");
+//	private static final String messageCantConvert_d   = resource.get("messageCantConvert_d");
+//	private static final String messageCantConvert_d_e = resource.get("messageCantConvert_d_e");
+	private static final String messageCantConvert     = resource.getString("messageCantConvert");
+	private static final String messageCantConvert_e   = resource.getString("messageCantConvert_e");
+	private static final String messageCantConvert_d   = resource.getString("messageCantConvert_d");
+	private static final String messageCantConvert_d_e = resource.getString("messageCantConvert_d_e");
+////
 
 	// The source data type
 	private Class<?> sourceType;

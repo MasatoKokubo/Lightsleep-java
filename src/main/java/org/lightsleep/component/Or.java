@@ -14,12 +14,14 @@ import java.util.stream.Stream;
  * @author Masato Kokubo
  */
 public class Or extends LogicalCondition {
-	/**
-	 * Constructs an empty <b>Or</b>.
-	 */
-	public Or() {
-		super(Operator.OR);
-	}
+// 1.8.6
+//	/**
+//	 * Constructs an empty <b>Or</b>.
+//	 */
+//	public Or() {
+//		super(Operator.OR);
+//	}
+////
 
 	/**
 	 * Constructs an <b>Or</b> consisting of the conditions.

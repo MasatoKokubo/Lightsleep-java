@@ -43,9 +43,9 @@ public class GroupBy implements SqlComponent {
 	}
 
 	/**
-	 * Returns a list of the elements of the <b>GroupBy</b>.
+	 * Returns an unmodifiable list of the elements of the <b>GroupBy</b>.
 	 *
-	 * @return a list of the elements
+	 * @return an unmodifiable list of the elements
 	 */
 	public List<Expression> elements() {
 		return Collections.unmodifiableList(elements);

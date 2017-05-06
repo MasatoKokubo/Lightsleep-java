@@ -15,7 +15,7 @@ package org.lightsleep;
 @SuppressWarnings("serial")
 public class RuntimeSQLException extends RuntimeException {
 	/**
-	 * Constructs a new <b>RuntimeSQLException</b>.
+	 * Constructs a new <b>RuntimeSQLException</b> with the specified cause.
 	 *
 	 * @param cause the cause (or null if unknown)
 	 */

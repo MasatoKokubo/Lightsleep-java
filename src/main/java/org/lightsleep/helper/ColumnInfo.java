@@ -61,13 +61,6 @@ public class ColumnInfo {
 	////
 		Expression selectExpression, Expression insertExpression, Expression updateExpression) {
 
-	//	if (entityInfo == null) throw new NullPointerException("ColumnInfo.<init>: entityInfo == null");
-	//	if (propertyName == null) throw new NullPointerException("ColumnInfo.<init>: propertyName == null");
-	//	if (columnName == null) throw new NullPointerException("ColumnInfo.<init>: columnName == null");
-	//
-	//	this.entityInfo       = entityInfo;
-	//	this.propertyName     = propertyName;
-	//	this.columnName       = columnName;
 		this.entityInfo       = Objects.requireNonNull(entityInfo, "entityInfo");
 		this.propertyName     = Objects.requireNonNull(propertyName, "propertyName");
 		this.columnName       = Objects.requireNonNull(columnName, "columnName");
