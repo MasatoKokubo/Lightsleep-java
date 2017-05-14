@@ -14,7 +14,7 @@ import spock.lang.*
 // AndOrSpec
 @Unroll
 class AndOrSpec extends Specification {
-	def "01 (((A OR B) AND (C OR D)) OR ((E OR F) AND (G OR H)))"() {
+	def "01 ((A OR B) AND (C OR D)) OR ((E OR F) AND (G OR H))"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -37,7 +37,7 @@ class AndOrSpec extends Specification {
 		/**/DebugTrace.print('string', string)
 
 		then:
-			string == '(((A OR B) AND (C OR D)) OR ((E OR F) AND (G OR H)))'
+			string == '(A OR B) AND (C OR D) OR (E OR F) AND (G OR H)'
 
 	/**/DebugTrace.leave()
 	}
@@ -65,12 +65,12 @@ class AndOrSpec extends Specification {
 		/**/DebugTrace.print('string', string)
 
 		then:
-			string == '(A AND B AND C AND D AND E AND F AND G AND H)'
+			string == 'A AND B AND C AND D AND E AND F AND G AND H'
 
 	/**/DebugTrace.leave()
 	}
 
-	def "03 (A OR B OR C OR D OR E OR F OR G OR H)"() {
+	def "03 A OR B OR C OR D OR E OR F OR G OR H"() {
  	/**/DebugTrace.enter()
 
 		when:
@@ -93,12 +93,12 @@ class AndOrSpec extends Specification {
 		/**/DebugTrace.print('string', string)
 
 		then:
-			string == '(A OR B OR C OR D OR E OR F OR G OR H)'
+			string == 'A OR B OR C OR D OR E OR F OR G OR H'
 
 	/**/DebugTrace.leave()
 	}
 
-	def "04 (A AND B AND C AND D)"() {
+	def "04 A AND B AND C AND D"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -112,12 +112,12 @@ class AndOrSpec extends Specification {
 		/**/DebugTrace.print('string', string)
 
 		then:
-			string == '(A AND B AND C AND D)'
+			string == 'A AND B AND C AND D'
 
 	/**/DebugTrace.leave()
 	}
 
-	def "05 (A OR B OR C OR D)"() {
+	def "05 A OR B OR C OR D"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -131,12 +131,12 @@ class AndOrSpec extends Specification {
 		/**/DebugTrace.print('string', string)
 
 		then:
-			string == '(A OR B OR C OR D)'
+			string == 'A OR B OR C OR D'
 
 	/**/DebugTrace.leave()
 	}
 
-	def "06 (((A OR B) AND C) OR D)"() {
+	def "06 ((A OR B) AND C) OR D"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -150,7 +150,7 @@ class AndOrSpec extends Specification {
 		/**/DebugTrace.print('string', string)
 
 		then:
-			string == '(((A OR B) AND C) OR D)'
+			string == '(A OR B) AND C OR D'
 
 	/**/DebugTrace.leave()
 	}

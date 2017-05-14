@@ -115,7 +115,7 @@ class SelectSpec extends Specification {
 
 			product.productName = 'Product' + index
 			product.price       = 1000 + index * 10
-			product.productSize        =
+			product.productSize =
 				sizeIndex == 0 ? Size.XS :
 				sizeIndex == 1 ? Size.S  :
 				sizeIndex == 2 ? Size.M  :
@@ -309,8 +309,8 @@ class SelectSpec extends Specification {
 		when:
 			Transaction.execute(connectionSupplier) {
 				contact = new Sql<>(Contact.class) // without table alias
-					.expression('id', 'MAX({id})')         // without table alias
-					.columns('id')                         // without table alias
+					.expression('id', 'MAX({id})') // without table alias
+					.columns('id')                 // without table alias
 					.select(it).orElse(null)
 			}
 			/**/DebugTrace.print('contact', contact)
@@ -322,8 +322,8 @@ class SelectSpec extends Specification {
 		when:
 			Transaction.execute(connectionSupplier) {
 				contact = new Sql<>(Contact.class, 'C')// with table alias
-					.expression('id', 'MAX({C.id})')           // with table alias
-					.columns('C.id')                           // with table alias
+					.expression('id', 'MAX({C.id})')   // with table alias
+					.columns('C.id')                   // with table alias
 					.select(it).orElse(null)
 			}
 		/**/DebugTrace.print('contact', contact)
@@ -335,8 +335,8 @@ class SelectSpec extends Specification {
 		when:
 			Transaction.execute(connectionSupplier) {
 				contact = new Sql<>(Contact.class, 'C') // with table alias
-					.expression('id', 'MAX({id})')              // without table alias
-					.columns('C.id')                            // with table alias
+					.expression('id', 'MAX({id})')      // without table alias
+					.columns('C.id')                    // with table alias
 					.select(it).orElse(null)
 			}
 		/**/DebugTrace.print('contact', contact)
@@ -348,8 +348,8 @@ class SelectSpec extends Specification {
 		when:
 			Transaction.execute(connectionSupplier) {
 				contact = new Sql<>(Contact.class, 'C') // with table alias
-					.expression('id', 'MAX({C.id})')            // with table alias
-					.columns('id')                              // without table alias
+					.expression('id', 'MAX({C.id})')    // with table alias
+					.columns('id')                      // without table alias
 					.select(it).orElse(null)
 			}
 		/**/DebugTrace.print('contact', contact)
@@ -357,6 +357,84 @@ class SelectSpec extends Specification {
 		then:
 			contact != null
 			contact.id != 0
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplierClass << connectionSupplierClasses
+			connectionSupplierName = connectionSupplierClass.simpleName
+	}
+
+	// select(Connection connection) / where A and B or C and D
+	def "where A and B or C and D #connectionSupplierName"(
+		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	/**/DebugTrace.enter()
+
+		setup:
+		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
+			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
+			List<Contact> contacts = []
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				new Sql<>(Contact.class)
+					.where('{name.family} = {}', 'Family0')
+					.and  ('{name.given} = {}' , 'Given0')
+					.or(Condition
+						.of ('{name.family} = {}', 'Family1')
+						.and('{name.given} = {}' , 'Given1')
+					)
+					.orderBy('{name.family}')
+					.orderBy('{name.given}')
+					.select(it, {contacts << it})
+			}
+
+		then:
+			contacts.size() == 2
+			contacts[0].name.family == 'Family0'
+			contacts[0].name.given  == 'Given0'
+			contacts[1].name.family == 'Family1'
+			contacts[1].name.given  == 'Given1'
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplierClass << connectionSupplierClasses
+			connectionSupplierName = connectionSupplierClass.simpleName
+	}
+
+	// select(Connection connection) / where (A or B) and (C or D)
+	def "where (A or B) and (C or D) #connectionSupplierName"(
+		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	/**/DebugTrace.enter()
+
+		setup:
+		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
+			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
+			List<Contact> contacts = []
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				new Sql<>(Contact.class)
+					.where('{name.family} = {}', 'Family0')
+					.or   ('{name.family} = {}', 'Family1')
+					.and(Condition
+						.of('{name.given} = {}', 'Given0')
+						.or('{name.given} = {}', 'Given1')
+					)
+					.orderBy('{name.family}')
+					.orderBy('{name.given}')
+					.select(it, {contacts << it})
+			}
+
+		then:
+			contacts.size() == 4
+			contacts[0].name.family == 'Family0'
+			contacts[0].name.given  == 'Given0'
+			contacts[1].name.family == 'Family0'
+			contacts[1].name.given  == 'Given1'
+			contacts[2].name.family == 'Family1'
+			contacts[2].name.given  == 'Given0'
+			contacts[3].name.family == 'Family1'
+			contacts[3].name.given  == 'Given1'
 
 	/**/DebugTrace.leave()
 		where:
@@ -406,8 +484,8 @@ class SelectSpec extends Specification {
 		when:
 			Transaction.execute(connectionSupplier) {
 				new Sql<>(Contact.class)
-					.where('{name.family } IN ({},{},{},{},{})', 'Family0', 'Family1', 'Family2', 'Family3', 'Family4')
-					  .and('{name.given} IN ({},{},{},{},{})', 'Given5', 'Given6', 'Given7', 'Given8', 'Given9')
+					.where('{name.family} IN {}', ['Family0', 'Family1', 'Family2', 'Family3', 'Family4'])
+					  .and('{name.given} IN {}', ['Given5', 'Given6', 'Given7', 'Given8', 'Given9'])
 					.orderBy('{name.family}').desc()
 					.orderBy('{name.given}').desc()
 					.offset(5).limit(15)
@@ -559,7 +637,7 @@ class SelectSpec extends Specification {
 			connectionSupplierName = connectionSupplierClass.simpleName
 	}
 
-	// select(Connection connection) / innerJoin x 4
+	// select(Connection connection) / innerJoin x 3 + leftJoin
 	def "joinTest4 #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
@@ -597,7 +675,7 @@ class SelectSpec extends Specification {
 			connectionSupplierName = connectionSupplierClass.simpleName
 	}
 
-	// select(Connection connection) / innerJoin x 4
+	// select(Connection connection) / innerJoin x 3 + leftJoin
 	def "select join x 4 #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()

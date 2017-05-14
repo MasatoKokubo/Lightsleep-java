@@ -5,6 +5,7 @@ package org.lightsleep.component;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -42,7 +43,10 @@ public class And extends LogicalCondition {
 	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is null
 	 */
 	public And(Collection<Condition> conditions) {
-		super(Operator.AND, conditions.stream());
+	// 1.8.7
+	//	super(Operator.AND, conditions.stream());
+		super(Operator.AND, Objects.requireNonNull(conditions, "Collection<Condition> conditions").stream());
+	////
 	}
 
 	/**
@@ -53,6 +57,9 @@ public class And extends LogicalCondition {
 	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is null
 	 */
 	public And(Condition... conditions) {
-		super(Operator.AND, Arrays.stream(conditions));
+	// 1.8.7
+	//	super(Operator.AND, Arrays.stream(conditions));
+		super(Operator.AND, Arrays.stream(Objects.requireNonNull(conditions, "Condition[] conditions")));
+	////
 	}
 }

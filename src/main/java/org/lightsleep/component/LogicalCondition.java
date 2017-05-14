@@ -73,6 +73,9 @@ public abstract class LogicalCondition implements Condition {
 	public LogicalCondition(Operator operator, Stream<Condition> conditionStream) {
 		this.operator = Objects.requireNonNull(operator, "operator");
 		conditions = Objects.requireNonNull(conditionStream, "conditionStream")
+		// 1.8.7
+			.map(condition -> Objects.requireNonNull(condition, "an element of conditions"))
+		////
 			.flatMap(condition -> condition instanceof LogicalCondition && ((LogicalCondition)condition).operator == operator
 				? ((LogicalCondition)condition).conditions().stream()
 				: Stream.of(condition))
@@ -105,25 +108,36 @@ public abstract class LogicalCondition implements Condition {
 	 */
 	@Override
 	public <E> String toString(Sql<E> sql, List<Object> parameters) {
-		StringBuilder buff = new StringBuilder();
-		if (!conditions.isEmpty()) {
-			if (conditions.size() >= 2)
-				buff.append('(');
-
-			String[] delimiter = new String[] {""};
-		// 1.5.1
-		//	conditions.stream()
-			conditions
-		////
-				.forEach(condition -> {
-					buff.append(delimiter[0])
-						.append(condition.toString(sql, parameters));
-					delimiter[0] = operator.sql();
-				});
-
-			if (conditions.size() >= 2)
-				buff.append(')');
-		}
-		return buff.toString();
+	// 1.8.7
+	//	StringBuilder buff = new StringBuilder();
+	//	if (!conditions.isEmpty()) {
+	//		if (conditions.size() >= 2)
+	//			buff.append('(');
+	//
+	//		String[] delimiter = new String[] {""};
+	//	// 1.5.1
+	//	//	conditions.stream()
+	//		conditions
+	//	////
+	//			.forEach(condition -> {
+	//				buff.append(delimiter[0])
+	//					.append(condition.toString(sql, parameters));
+	//				delimiter[0] = operator.sql();
+	//			});
+	//
+	//		if (conditions.size() >= 2)
+	//			buff.append(')');
+	//	}
+	//	return buff.toString();
+		return String.join(operator.sql(),
+			conditions.stream()
+				.map(condition ->
+					operator == Operator.AND && condition instanceof Or
+					? '(' + condition.toString(sql, parameters) + ')'
+					: condition.toString(sql, parameters)
+				)
+				.toArray(String[]::new)
+		);
+	////
 	}
 }
