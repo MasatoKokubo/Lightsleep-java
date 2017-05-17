@@ -40,7 +40,7 @@ Lightsleep / マニュアル
         1. [SELECT サブクエリ条件](#ExecuteSQL-select-Subquery)
         1. [SELECT 式条件 / AND](#ExecuteSQL-select-Expression-and)
         1. [SELECT 式条件 / OR](#ExecuteSQL-select-Expression-or)
-        1. [SELECT 式条件 / SELECT 式条件 / (A AND B) OR (C AND D)](#ExecuteSQL-select-Expression-andor)
+        1. [SELECT 式条件 / SELECT 式条件 / A AND B OR C AND D](#ExecuteSQL-select-Expression-andor)
         1. [SELECT カラムの選択](#ExecuteSQL-select-columns)
         1. [SELECT GROUP BY, HAVING](#ExecuteSQL-select-groupBy-having)
         1. [SELECT ORDER BY, OFFSET, LIMIT](#ExecuteSQL-select-orderBy-offset-limit)
@@ -416,9 +416,9 @@ lightsleep.properties の例:
 Logger             = Log4j2
 Database           = PostgreSQL
 ConnectionSupplier = Dbcp
-url                = jdbc:postgresql://postgresqlserver/article
-username           = article
-password           = _article_
+url                = jdbc:postgresql://postgresqlserver/example
+username           = example
+password           = _example_
 initialSize        = 10
 maxTotal           = 100
 ```
@@ -497,9 +497,9 @@ ConnectionSupplier プロパティの値を以下から選択します。
 ```properties:lightsleep.properties
 # lightsleep.properties / C3p0
 ConnectionSupplier = C3p0
-url                = jdbc:mysql://mysql57/test
-user               = test
-password           = _test_
+url                = jdbc:mysql://mysql57/example
+user               = example
+password           = _example_
 ```
 
 ```properties:c3p0.properties
@@ -512,9 +512,9 @@ c3p0.maxPoolSize     = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / Dbcp
 ConnectionSupplier = Dbcp
-url                = jdbc:oracle:thin:@oracle121:1521:test
-username           = test
-password           = _test_
+url                = jdbc:oracle:thin:@oracle121:1521:example
+username           = example
+password           = _example_
 initialSize        = 20
 maxTotal           = 30
 ```
@@ -522,9 +522,9 @@ maxTotal           = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / HikariCP
 ConnectionSupplier = HikariCP
-jdbcUrl            = jdbc:postgresql://postgres96/test
-username           = test
-password           = _test_
+jdbcUrl            = jdbc:postgresql://postgres96/example
+username           = example
+password           = _example_
 minimumIdle        = 10
 maximumPoolSize    = 30
 ```
@@ -532,9 +532,9 @@ maximumPoolSize    = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / TomcatCP
 ConnectionSupplier = TomcatCP
-url                = jdbc:sqlserver://sqlserver13;database=test
-username           = test
-password           = _test_
+url                = jdbc:sqlserver://sqlserver13;database=example
+username           = example
+password           = _example_
 initialSize        = 20
 maxActive          = 30
 ```
@@ -542,15 +542,15 @@ maxActive          = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / Jndi
 ConnectionSupplier = Jndi
-dataSource         = jdbc/Sample
+dataSource         = jdbc/example
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / Jdbc
 ConnectionSupplier = Jdbc
-url                = jdbc:mysql://mysql57/test
-user               = test
-password           = _test_
+url                = jdbc:mysql://mysql57/example
+user               = example
+password           = _example_
 ```
 
 [【目次へ】](#TOC)
@@ -756,6 +756,10 @@ Transaction.execute {
 }
 ```
 
+```sql:SQL
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' AND givenName='Akane'
+```
+
 <div id="ExecuteSQL-select-Expression-or"></div>
 
 [【目次へ】](#TOC)
@@ -785,14 +789,14 @@ Transaction.execute {
 ```
 
 ```sql:SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE (familyName='Apple' OR familyName='Orange')
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' OR familyName='Orange'
 ```
 
 <div id="ExecuteSQL-select-Expression-andor"></div>
 
 [【目次へ】](#TOC)
 
-#### 5-1-7. SELECT 式条件 / (A AND B) OR (C AND D)
+#### 5-1-7. SELECT 式条件 / A AND B OR C AND D
 
 ```java:Java
 List<Contact> contacts = new ArrayList<Contact>();
@@ -826,7 +830,7 @@ Transaction.execute(connection ->
 ```
 
 ```sql:SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE ((familyName='Apple' AND givenName='Akane') OR (familyName='Orange' AND givenName='Setoka'))
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' AND givenName='Akane' OR familyName='Orange' AND givenName='Setoka'
 ```
 
 <div id="ExecuteSQL-select-columns"></div>
@@ -1075,6 +1079,30 @@ Transaction.execute {
 ```sql:SQL
 -- SQLite では、RIGHT OUTER JOIN が未サポートのため、例外がスローされます。
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C RIGHT OUTER JOIN Phone P ON P.contactId=C.id WHERE P.label='Main'
+```
+
+#### 5-1-15. SELECT COUNT(*)
+```java:Java
+// Java
+int[] rowCount = new int[1];
+Transaction.execute(connection ->
+    rowCount[0] = new Sql<>(Contact.class)
+        .where("familyName={}", "Apple")
+        .selectCount(connection)
+);
+```
+
+```groovy:Groovy
+// Groovy
+def rowCount = 0
+Transaction.execute {
+    rowCount = new Sql<>(Contact.class)
+        .where('familyName={}', 'Apple')
+        .selectCount(it)
+}
+```
+
+```sql:SQL
 ```
 
 <div id="ExecuteSQL-insert"></div>

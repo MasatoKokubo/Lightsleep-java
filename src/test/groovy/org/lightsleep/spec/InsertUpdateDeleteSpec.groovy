@@ -12,7 +12,8 @@ import org.lightsleep.component.*
 import org.lightsleep.connection.*
 import org.lightsleep.database.*
 import org.lightsleep.test.entity.*
-
+import org.lightsleep.test.exception.DeletedException
+import org.lightsleep.test.exception.UpdateException
 import spock.lang.*
 
 // InsertUpdateDeleteSpec
@@ -124,9 +125,10 @@ class InsertUpdateDeleteSpec extends Specification {
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-		ConnectionSupplier connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 
 		setup:
+			ConnectionSupplier connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
+
 			// Deletes rows of previous test.
 			Transaction.execute(connectionSupplier) {
 				new Sql<>(Contact.class).where(Condition.ALL).delete(it)
@@ -239,9 +241,10 @@ class InsertUpdateDeleteSpec extends Specification {
 		if (Sql.getDatabase() instanceof PostgreSQL) return
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-		ConnectionSupplier connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 
 		setup:
+			ConnectionSupplier connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
+
 			// Deletes rows of previous test.
 			Transaction.execute(connectionSupplier) {
 				new Sql<>(Contact.class).where(Condition.ALL).delete(it)
@@ -440,6 +443,75 @@ class InsertUpdateDeleteSpec extends Specification {
 			thrown NullPointerException
 
 	/**/DebugTrace.leave()
+	}
+
+
+	def "Optimistic lock #connectionSupplierName" (
+		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	/**/DebugTrace.enter()
+	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
+
+		setup:
+			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
+
+			// Deletes rows of previous test.
+			Transaction.execute(connectionSupplier) {
+				new Sql<>(Contact.class).where(Condition.ALL).delete(it)
+			}
+
+			// Insert
+			Calendar calendar = Calendar.getInstance()
+			def contact1 = new Contact()
+			contact1.name.family = "Apple"
+			contact1.name.given  = "Akane"
+			calendar.set(2001, 1-1, 1, 0, 0, 0)
+			contact1.birthday = new Date(calendar.timeInMillis)
+		/**/DebugTrace.print('1 contact1', contact1)
+
+			Transaction.execute(connectionSupplier) {
+				def count = new Sql<>(Contact.class).insert(it, contact1)
+			/**/DebugTrace.print('inserted count', count)
+				assert count == 1
+			}
+		/**/DebugTrace.print('2 contact1', contact1)
+
+			// Update
+			Contact contact2 = null
+			Transaction.execute(connectionSupplier) {
+				contact2 = new Sql<>(Contact.class).where(contact1).select(it).orElse(null)
+			/**/DebugTrace.print('1 contact2', contact2)
+				assert contact2 != null
+
+				calendar.set(2001, 1-1, 2, 0, 0, 0)
+				contact2.birthday = new Date(calendar.timeInMillis)
+			/**/DebugTrace.print('2 contact2', contact2)
+				def count = new Sql<>(Contact.class).update(it, contact2)
+			/**/DebugTrace.print('updated count', count)
+				assert count == 1
+			}
+
+		when:
+			Contact contact1t = null
+			Transaction.execute(connectionSupplier) {
+				contact1t = new Sql<>(Contact.class)
+					.where(contact1)
+					.doIf(!(Sql.database instanceof SQLite)) {Sql sql -> sql.forUpdate()}
+					.select(it).orElse(null)
+			/**/DebugTrace.print('contact1t', contact1t)
+				if (contact1t == null)
+					throw new DeletedException()
+				if (contact1.updateCount != contact1t.updateCount)
+					throw new UpdateException()
+			}
+
+		then:
+			// Optimistic lock error
+			thrown UpdateException
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplierClass << connectionSupplierClasses
+			connectionSupplierName = connectionSupplierClass.simpleName
 	}
 
 	/**

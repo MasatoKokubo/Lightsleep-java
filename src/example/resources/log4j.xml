@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<!-- log4j.xml -->
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+	<appender name="RollingFile" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="logs/example/log4j.log" />
+		<param name="Append" value="false" />
+		<param name="Encoding" value="UTF-8" />
+		<param name="MaxFileSize" value="100MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %c: %m%n"/>
+		</layout>
+	</appender>
+
+	<logger name="org.lightsleep"             additivity="false"><level value ="info"/><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.lightsleep.Sql"         additivity="false"><level value ="info"/><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.lightsleep.Transaction" additivity="false"><level value ="info"/><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.lightsleep.connection"  additivity="false"><level value ="info"/><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.lightsleep.helper"      additivity="false"><level value ="info"/><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.debugtrace"             additivity="false"><level value ="trace"/><appender-ref ref="RollingFile"/></logger>
+	<logger name="com.mchange"                additivity="false"><level value ="info"/><appender-ref ref="RollingFile"/></logger>
+	<logger name="org.apache"                 additivity="false"><level value ="info"/><appender-ref ref="RollingFile"/></logger>
+
+	<root>
+		<appender-ref ref="RollingFile"/>
+	</root>
+</log4j:configuration>

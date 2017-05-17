@@ -4,11 +4,10 @@
 package org.lightsleep.test.exception;
 
 /**
- * It is thrown if can not be found.
+ * It is thrown if the entity is not found.
  *
- * @since 1.0
  * @author Masato Kokubo
-*/
+ */
 @SuppressWarnings("serial")
 public class NotFoundException extends RuntimeException {
 }
