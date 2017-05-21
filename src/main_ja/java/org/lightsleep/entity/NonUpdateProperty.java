@@ -1,7 +1,6 @@
-/*
-	NonUpdateProperty.java
-	(C) 2016 Masato Kokubo
-*/
+// NonUpdateProperty.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.entity;
 
 import java.lang.annotation.*;
@@ -9,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * フィールドに関連するカラムが UPDATE SQL で使用されない事を示します。<br>
  * 対象のフィールドは、<b>value</b> で指定します。
- * 
+ *
  * <div class="sampleTitle"><span>使用例</span></div>
  * <div class="sampleCode"><pre>
  * {@literal @}InsertProperty(property="created", expression="CURRENT_TIMESTAMP")
@@ -20,10 +19,10 @@ import java.lang.annotation.*;
  * </pre></div>
  *
  * @since 1.3.0
+ * @author Masato Kokubo
  * @see NonUpdate
  * @see NonUpdateProperties
- * @author Masato Kokubo
-*/
+ */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

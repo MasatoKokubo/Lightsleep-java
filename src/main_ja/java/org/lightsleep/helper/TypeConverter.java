@@ -156,74 +156,69 @@ import java.util.function.Function;
  */
 public class TypeConverter<ST, DT> {
 	/**
-		変換元のデータ型と変換先のデータ型の組み合わせで、マップのキーとして使用する文字列を作成します。
-
-		@param sourceType 変換元のデータ型クラス
-		@param destinType 変換先のデータ型クラス
-
-		@return キー
-
-		@throws NullPointerException <b>sourceType</b> または <b>destinType</b> が null の場合
-	*/
+	 * 変換元のデータ型と変換先のデータ型の組み合わせで、マップのキーとして使用する文字列を作成します。
+	 *
+	 * @param sourceType 変換元のデータ型クラス
+	 * @param destinType 変換先のデータ型クラス
+	 * @return キー
+	 *
+	 * @throws NullPointerException <b>sourceType</b> または <b>destinType</b> が null の場合
+	 */
 	public static String key(Class<?> sourceType, Class<?> destinType) {
 		return null;
 	}
 
 	/**
-		<b>TypeConverter</b> マップに <b>TypeConverter</b> 配列の各要素を関連付けます。
-
-		@param typeConverterMap <b>TypeConverter</b> マップ
-		@param typeConverters <b>TypeConverter</b> オブジェクト配列
-
-		@throws NullPointerException <b>typeConverterMap</b>, <b>typeConverters</b> または <b>typeConverters</b> の要素が null の場合
-	*/
+	 * <b>TypeConverter</b> マップに <b>TypeConverter</b> 配列の各要素を関連付けます。
+	 *
+	 * @param typeConverterMap <b>TypeConverter</b> マップ
+	 * @param typeConverters <b>TypeConverter</b> オブジェクト配列
+	 *
+	 * @throws NullPointerException <b>typeConverterMap</b>, <b>typeConverters</b> または <b>typeConverters</b> の要素が null の場合
+	 */
 	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?>... typeConverters) {
 	}
 
 	/**
-		<b>typeConverterMap</b> から
-		<b>sourceType</b> を <b>destinType</b> に変換する <b>TypeConverter</b> オブジェクトを返します。<br>
-
-		<b>sourceType</b> と <b>destinType</b> の組み合わせでマッチする
-		<b>TypeConverter</b> オブジェクトが見つからない場合は、
-		<b>sourceType</b> のスーパークラスやインタフェースでマッチするのを探します。<br>
-
-		それでも見つからない場合は、null を返します。<br>
-
-		スーパークラスまたはインターフェースで見つかった場合は、次回は直接見つかるようにマップに登録します。<br>
-
-		@param <ST> 変換元のデータ型
-		@param <DT> 変換先のデータ型
-
-		@param typeConverterMap <b>TypeConverter</b> マップ
-		@param sourceType 変換元のデータ型クラス
-		@param destinType 変換先のデータ型クラス
-
-		@return TypeConverter オブジェクト (見つからない場合は null)
-
-		@throws NullPointerException typeConverterMap, <b>sourceType</b> または <b>destinType</b> が null の場合
-	*/
+	 * <b>typeConverterMap</b> から
+	 * <b>sourceType</b> を <b>destinType</b> に変換する <b>TypeConverter</b> オブジェクトを返します。<br>
+	 *
+	 * <b>sourceType</b> と <b>destinType</b> の組み合わせでマッチする
+	 * <b>TypeConverter</b> オブジェクトが見つからない場合は、
+	 * <b>sourceType</b> のスーパークラスやインタフェースでマッチするのを探します。<br>
+	 *
+	 * それでも見つからない場合は、null を返します。<br>
+	 *
+	 * スーパークラスまたはインターフェースで見つかった場合は、次回は直接見つかるようにマップに登録します。<br>
+	 *
+	 * @param <ST> 変換元のデータ型
+	 * @param <DT> 変換先のデータ型
+	 * @param typeConverterMap <b>TypeConverter</b> マップ
+	 * @param sourceType 変換元のデータ型クラス
+	 * @param destinType 変換先のデータ型クラス
+	 * @return TypeConverter オブジェクト (見つからない場合は null)
+	 *
+	 * @throws NullPointerException typeConverterMap, <b>sourceType</b> または <b>destinType</b> が null の場合
+	 */
 	public static <ST, DT> TypeConverter<ST, DT> get(Map<String, TypeConverter<?, ?>> typeConverterMap, Class<ST> sourceType, Class<DT> destinType) {
 		return null;
 	}
 
 	/**
-		<b>source</b> == null の場合は、null を返します。<br>
-		<b>destinType.isInstance(source)</b> の場合は、<b>source</b> を変換しないで返します。<br>
-		コンバータが見つかった場合は、そのコンバータで <b>source</b> を変換したオブジェクトを返します。
-
-		@param <ST> 変換元のデータ型
-		@param <DT> 変換先のデータ型
-
-		@param typeConverterMap <b>TypeConverter</b> マップ
-		@param source 変換元のオブジェクト (null 可)
-		@param destinType 変換先のデータ型クラス (プリミティブ型以外)
-
-		@return データ型を変換されたオブジェクト (null 有)
-
-		@throws NullPointerException <b>typeConverterMap</b> または <b>destinType</b> が null の場合
-		@throws ConvertException コンバータが見つからない場合か変換処理で精度が落ちた場合
-	*/
+	 * <b>source</b> == null の場合は、null を返します。<br>
+	 * <b>destinType.isInstance(source)</b> の場合は、<b>source</b> を変換しないで返します。<br>
+	 * コンバータが見つかった場合は、そのコンバータで <b>source</b> を変換したオブジェクトを返します。
+	 *
+	 * @param <ST> 変換元のデータ型
+	 * @param <DT> 変換先のデータ型
+	 * @param typeConverterMap <b>TypeConverter</b> マップ
+	 * @param source 変換元のオブジェクト (null 可)
+	 * @param destinType 変換先のデータ型クラス (プリミティブ型以外)
+	 * @return データ型を変換されたオブジェクト (null 有)
+	 *
+	 * @throws NullPointerException <b>typeConverterMap</b> または <b>destinType</b> が null の場合	 *
+	 * @throws ConvertException コンバータが見つからない場合か変換処理で精度が落ちた場合
+	 */
 	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
 		return null;
 	}
@@ -247,7 +242,7 @@ public class TypeConverter<ST, DT> {
 	 * @param function 変換を実行する関数
 	 *
 	 * @throws NullPointerException <b>sourceType</b>, <b>destinType</b> または <b>function</b> が null の場合
-	*/
+	 */
 	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, ? extends DT> function) {
 	}
 
@@ -257,7 +252,7 @@ public class TypeConverter<ST, DT> {
 	 * @param <MT> 中間の型
 	 * @param typeConverter1 コンバーター1
 	 * @param typeConverter2 コンバーター2
-	 *
+	 *	 *
 	 * @throws NullPointerException <b>typeConverter1</b> または <b>typeConverter2</b> が null の場合
 	 *
 	 * @since 1.8.0
@@ -266,71 +261,71 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-		変換元のデータ型を返します。
-
-		@return 変換元のデータ型
-	*/
+	 * 変換元のデータ型を返します。
+	 *
+	 * @return 変換元のデータ型
+	 */
 	public Class<ST> sourceType() {
 		return null;
 	}
 
 	/**
-		変換先のデータ型を返します。
-
-		@return 変換先のデータ型
-	*/
+	 * 変換先のデータ型を返します。
+	 *
+	 * @return 変換先のデータ型
+	 */
 	public Class<DT> destinType() {
 		return null;
 	}
 
 	/**
-		データ型を変換する関数を返します。
-
-		@return データ型を変換する関数
-	*/
+	 * データ型を変換する関数を返します。
+	 *
+	 * @return データ型を変換する関数
+	 */
 	public Function<? super ST, ? extends DT> function() {
 		return null;
 	}
 
 	/**
-		キーを返します。
-
-		@return キー
-	*/
+	 * キーを返します。
+	 *
+	 * @return キー
+	 */
 	public String key() {
 		return null;
 	}
 
 	/**
-		<b>value</b> のデータ型を変換します。
-
-		@param value 変換元のオブジェクト
-
-		@return 変換されたオブジェクト
-	*/
+	 * <b>value</b> のデータ型を変換します。
+	 *
+	 * @param value 変換元のオブジェクト
+	 *
+	 * @return 変換されたオブジェクト
+	 */
 	public DT apply(ST value) {
 		return null;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object object) {
 		return false;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		return 0;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return null;

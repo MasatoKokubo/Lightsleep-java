@@ -1,7 +1,6 @@
-/*
-	SelectProperty.java
-	(C) 2016 Masato Kokubo
-*/
+// SelectProperty.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.entity;
 
 import java.lang.annotation.*;
@@ -9,7 +8,7 @@ import java.lang.annotation.*;
 /**
  * SELECT SQL で、 のカラム名の代わりに使用される式を示します。<br>
  * 対象のフィールドは、<b>property</b> で指定します。
- * 
+ *
  * <div class="sampleTitle"><span>使用例</span></div>
  * <div class="sampleCode"><pre>
  * <b>{@literal @}SelectProperty(property="phoneCount", expression="(SELECT COUNT(*) FROM Phone WHERE contactId=Contact.id)")</b>

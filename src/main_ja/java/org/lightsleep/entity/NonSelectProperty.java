@@ -1,7 +1,6 @@
-/*
-	NonSelectProperty.java
-	(C) 2016 Masato Kokubo
-*/
+// NonSelectProperty.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.entity;
 
 import java.lang.annotation.*;
@@ -23,11 +22,11 @@ import java.lang.annotation.*;
  *   public Timestamp created;
  *   public Timestamp modified;
  * </pre></div>
- * 
+ *
  * @since 1.3.0
+ * @author Masato Kokubo
  * @see NonSelect
  * @see NonSelectProperties
- * @author Masato Kokubo
  */
 @Documented
 @Inherited

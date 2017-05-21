@@ -58,7 +58,7 @@ class ConditionSpec extends Specification {
 
 		then:
 			condition1.toString(sql, []) == 'A'
-			condition2.toString(sql, []) == 'NOT (A)'
+			condition2.toString(sql, []) == 'NOT(A)'
 	}
 
 	def "Condition.and"() {

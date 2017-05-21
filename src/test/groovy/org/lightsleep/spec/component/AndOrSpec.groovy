@@ -159,7 +159,7 @@ class AndOrSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			Condition.EMPTY.and(null)
+			Condition.EMPTY.and((Condition)null)
 
 		then:
 			thrown NullPointerException
@@ -171,7 +171,7 @@ class AndOrSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			Condition.EMPTY.or(null)
+			Condition.EMPTY.or((Condition)null)
 
 		then:
 			thrown NullPointerException

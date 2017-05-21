@@ -1,19 +1,18 @@
-/*
-	SelectProperties.java
-	(C) 2016 Masato Kokubo
-*/
+// SelectProperties.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.entity;
 
 import java.lang.annotation.*;
 
 /**
-	<b>SelectProperty</b> アノテーションの配列を示します。
-
-	@since 1.3.0
-	@see Select
-	@see SelectProperty
-	@author Masato Kokubo
-*/
+ * <b>SelectProperty</b> アノテーションの配列を示します。
+ *
+ * @since 1.3.0
+ * @author Masato Kokubo
+ * @see Select
+ * @see SelectProperty
+ */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

@@ -44,10 +44,22 @@ public class Not implements Condition {
 	}
 
 	/**
+	 * Returns the condition to deny if it is an <b>Not</b>, <b>this</b> otherwise.
+	 *
+	 * @return the condition to deny or <b>this</b>
+	 *
+	 * @since 1.8.8
+	 */
+	public Condition optimized() {
+		if (condition instanceof Not) return ((Not)condition).condition;
+		return this;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public <E> String toString(Sql<E> sql, List<Object> parameters) {
-		return "NOT (" + condition.toString(sql, parameters) + ")";
+		return "NOT(" + condition.toString(sql, parameters) + ")";
 	}
 }

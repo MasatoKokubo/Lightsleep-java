@@ -255,16 +255,16 @@ class TypeConverterSpec extends Specification {
 	def "Double -> Boolean"() {
 	/**/DebugTrace.enter()
 		when:
-			TypeConverter.convert(map, -1.0, Boolean.class)
+			TypeConverter.convert(map, -1.0D, Boolean.class)
 		then:
 			thrown ConvertException
 
 		expect:
-			TypeConverter.convert(map, 0.0, Boolean.class) == false
-			TypeConverter.convert(map, 1.0, Boolean.class) == true
+			TypeConverter.convert(map, 0.0D, Boolean.class) == false
+			TypeConverter.convert(map, 1.0D, Boolean.class) == true
 
 		when:
-			TypeConverter.convert(map, 2.0, Boolean.class)
+			TypeConverter.convert(map, 2.0D, Boolean.class)
 		then:
 			thrown ConvertException
 	/**/DebugTrace.leave()
@@ -292,11 +292,11 @@ class TypeConverterSpec extends Specification {
 	def "Character -> Boolean"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, '0', Boolean.class) == false
-			TypeConverter.convert(map, '1', Boolean.class) == true
+			TypeConverter.convert(map, (char)'0', Boolean.class) == false
+			TypeConverter.convert(map, (char)'1', Boolean.class) == true
 
 		when:
-			TypeConverter.convert(map, '2', Boolean.class)
+			TypeConverter.convert(map, (char)'2', Boolean.class)
 		then:
 			thrown ConvertException
 	/**/DebugTrace.leave()
@@ -409,16 +409,16 @@ class TypeConverterSpec extends Specification {
 	def "Double -> Byte"() {
 	/**/DebugTrace.enter()
 		when:
-			TypeConverter.convert(map, -129.0, Byte.class)
+			TypeConverter.convert(map, -129.0D, Byte.class)
 		then:
 			thrown ConvertException
 
 		expect:
-			TypeConverter.convert(map, -128.0, Byte.class) == (byte)-128
-			TypeConverter.convert(map,  127.0, Byte.class) == (byte) 127
+			TypeConverter.convert(map, -128.0D, Byte.class) == (byte)-128
+			TypeConverter.convert(map,  127.0D, Byte.class) == (byte) 127
 
 		when:
-			TypeConverter.convert(map, 128.0, Byte.class)
+			TypeConverter.convert(map, 128.0D, Byte.class)
 		then:
 			thrown ConvertException
 	/**/DebugTrace.leave()
@@ -565,16 +565,16 @@ class TypeConverterSpec extends Specification {
 	def "Double -> Short"() {
 	/**/DebugTrace.enter()
 		when:
-			TypeConverter.convert(map, -32769.0, Short.class)
+			TypeConverter.convert(map, -32769.0D, Short.class)
 		then:
 			thrown ConvertException
 
 		expect:
-			TypeConverter.convert(map, -32768.0, Short.class) == (short)-32768
-			TypeConverter.convert(map,  32767.0, Short.class) == (short) 32767
+			TypeConverter.convert(map, -32768.0D, Short.class) == (short)-32768
+			TypeConverter.convert(map,  32767.0D, Short.class) == (short) 32767
 
 		when:
-			TypeConverter.convert(map, 32768.0, Short.class)
+			TypeConverter.convert(map, 32768.0D, Short.class)
 		then:
 			thrown ConvertException
 	/**/DebugTrace.leave()
@@ -700,16 +700,16 @@ class TypeConverterSpec extends Specification {
 	def "Double -> Integer"() {
 	/**/DebugTrace.enter()
 		when:
-			TypeConverter.convert(map, -2147483649.0, Integer.class)
+			TypeConverter.convert(map, -2147483649.0D, Integer.class)
 		then:
 			thrown ConvertException
 
 		expect:
-			TypeConverter.convert(map, -2147483648.0, Integer.class) == -2147483648
-			TypeConverter.convert(map,  2147483647.0, Integer.class) ==  2147483647
+			TypeConverter.convert(map, -2147483648.0D, Integer.class) == -2147483648
+			TypeConverter.convert(map,  2147483647.0D, Integer.class) ==  2147483647
 
 		when:
-			TypeConverter.convert(map, 2147483648.0, Integer.class)
+			TypeConverter.convert(map, 2147483648.0D, Integer.class)
 		then:
 			thrown ConvertException
 	/**/DebugTrace.leave()
@@ -843,16 +843,16 @@ class TypeConverterSpec extends Specification {
 	def "Double -> Long"() {
 	/**/DebugTrace.enter()
 		when:
-			TypeConverter.convert(map, -9223372036854780000.0, Long.class)
+			TypeConverter.convert(map, -9223372036854780000.0D, Long.class)
 		then:
 			thrown ConvertException
 
 		expect:
-			TypeConverter.convert(map, -9223372036854775808.0, Long.class) == -9223372036854775808L
-			TypeConverter.convert(map,  9223372036854775807.0, Long.class) ==  9223372036854775807L
+			TypeConverter.convert(map, -9223372036854775808.0D, Long.class) == -9223372036854775808L
+			TypeConverter.convert(map,  9223372036854775807.0D, Long.class) ==  9223372036854775807L
 
 		when:
-			TypeConverter.convert(map, 9223372036854780000.0, Long.class)
+			TypeConverter.convert(map, 9223372036854780000.0D, Long.class)
 		then:
 			thrown ConvertException
 	/**/DebugTrace.leave()
@@ -977,8 +977,8 @@ class TypeConverterSpec extends Specification {
 	def "Double -> Float"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, -1234567.0, Float.class) == -1234567.0F
-			TypeConverter.convert(map,  1234567.0, Float.class) ==  1234567.0F
+			TypeConverter.convert(map, -1234567.0D, Float.class) == -1234567.0F
+			TypeConverter.convert(map,  1234567.0D, Float.class) ==  1234567.0F
 	/**/DebugTrace.leave()
 	}
 
@@ -1158,8 +1158,8 @@ class TypeConverterSpec extends Specification {
 	def "Double -> BigDecimal"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, -12345678901.0625, BigDecimal.class) == new BigDecimal('-12345678901.0625')
-			TypeConverter.convert(map,  12345678901.0625, BigDecimal.class) == new BigDecimal( '12345678901.0625')
+			TypeConverter.convert(map, -12345678901.0625D, BigDecimal.class) == new BigDecimal('-12345678901.0625')
+			TypeConverter.convert(map,  12345678901.0625D, BigDecimal.class) == new BigDecimal( '12345678901.0625')
 	/**/DebugTrace.leave()
 	}
 
@@ -1190,8 +1190,8 @@ class TypeConverterSpec extends Specification {
 	def "Boolean -> Character"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, false, Character.class) == '0'
-			TypeConverter.convert(map, true , Character.class) == '1'
+			TypeConverter.convert(map, false, Character.class) == (char)'0'
+			TypeConverter.convert(map, true , Character.class) == (char)'1'
 	/**/DebugTrace.leave()
 	}
 
@@ -1199,8 +1199,8 @@ class TypeConverterSpec extends Specification {
 	def "Byte -> Character"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, (byte)-128, Character.class) == '\uFF80'
-			TypeConverter.convert(map, (byte) 127, Character.class) == '\u007F'
+			TypeConverter.convert(map, (byte)-128, Character.class) == (char)'\uFF80'
+			TypeConverter.convert(map, (byte) 127, Character.class) == (char)'\u007F'
 	/**/DebugTrace.leave()
 	}
 
@@ -1208,8 +1208,8 @@ class TypeConverterSpec extends Specification {
 	def "Short -> Character"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, (short)-32768, Character.class) == '\u8000'
-			TypeConverter.convert(map, (short) 32767, Character.class) == '\u7FFF'
+			TypeConverter.convert(map, (short)-32768, Character.class) == (char)'\u8000'
+			TypeConverter.convert(map, (short) 32767, Character.class) == (char)'\u7FFF'
 	/**/DebugTrace.leave()
 	}
 
@@ -1274,16 +1274,16 @@ class TypeConverterSpec extends Specification {
 	def "Double -> Character"() {
 	/**/DebugTrace.enter()
 		when:
-			TypeConverter.convert(map, -1.0, Character.class)
+			TypeConverter.convert(map, -1.0D, Character.class)
 		then:
 			thrown ConvertException
 
 		expect:
-			TypeConverter.convert(map,    -0.0, Character.class) == (char)'\u0000'
-			TypeConverter.convert(map, 32767.0, Character.class) == (char)'\u7FFF'
+			TypeConverter.convert(map,    -0.0D, Character.class) == (char)'\u0000'
+			TypeConverter.convert(map, 32767.0D, Character.class) == (char)'\u7FFF'
 
 		when:
-			TypeConverter.convert(map, 65536.0, Character.class)
+			TypeConverter.convert(map, 65536.0D, Character.class)
 		then:
 			thrown ConvertException
 	/**/DebugTrace.leave()
@@ -1323,10 +1323,10 @@ class TypeConverterSpec extends Specification {
 			thrown ConvertException
 
 		expect:
-			TypeConverter.convert(map, '\u0000', Character.class) == '\u0000'
-			TypeConverter.convert(map, '\\', Character.class) == '\\'
-			TypeConverter.convert(map, 'A' , Character.class) == 'A'
-			TypeConverter.convert(map, '漢', Character.class) == '漢'
+			TypeConverter.convert(map, '\u0000', Character.class) == (char)'\u0000'
+			TypeConverter.convert(map, '\\'    , Character.class) == (char)'\\'
+			TypeConverter.convert(map, 'A'     , Character.class) == (char)'A'
+			TypeConverter.convert(map, '漢'    , Character.class) == (char)'漢'
 
 		when:
 			TypeConverter.convert(map, 'AA', Character.class)
@@ -1406,10 +1406,8 @@ class TypeConverterSpec extends Specification {
 	def "Double -> String"() {
 	/**/DebugTrace.enter()
 		expect:
-//			TypeConverter.convert(map, -12345678901.0625, String.class) == '-1.23456789010625E10'
-//			TypeConverter.convert(map,  12345678901.0625, String.class) ==  '1.23456789010625E10'
-			TypeConverter.convert(map, -12345678901.0625, String.class) == '-12345678901.0625'
-			TypeConverter.convert(map,  12345678901.0625, String.class) ==  '12345678901.0625'
+			TypeConverter.convert(map, -12345678901.0625D, String.class) == '-1.23456789010625E10'
+			TypeConverter.convert(map,  12345678901.0625D, String.class) ==  '1.23456789010625E10'
 	/**/DebugTrace.leave()
 	}
 

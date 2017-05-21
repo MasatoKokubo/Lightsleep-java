@@ -1,198 +1,196 @@
-/*
-	Jdk.java
-	(C) 2016 Masato Kokubo
-*/
+// Jdk.java
+// (C) 2016 Masato Kokubo
 
 package org.lightsleep.logger;
 
 import java.util.function.Supplier;
 
 /**
-	<b>java.util.logging.Logger</b> を使用してログを出力します。
-
-	@since 1.0.0
-	@author Masato Kokubo
-*/
+ * <b>java.util.logging.Logger</b> を使用してログを出力します。
+ *
+ * @since 1.0.0
+ * @author Masato Kokubo
+ */
 public class Jdk implements Logger {
 	/**
-		指定の名前で <b>Logger</b> を構築します。
-
-		@param name 名前
-
-		@throws NullPointerException <b>name</b> が null の場合
-	*/
+	 * 指定の名前で <b>Logger</b> を構築します。
+	 *
+	 * @param name 名前
+	 *
+	 * @throws NullPointerException <b>name</b> が null の場合
+	 */
 	public Jdk(String name) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void trace(String message) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void debug(String message) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void info(String message) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void warn(String message) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void error(String message) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void fatal(String message) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void trace(String message, Throwable t) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void debug(String message, Throwable t) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void info(String message, Throwable t) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void warn(String message, Throwable t) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void error(String message, Throwable t) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void fatal(String message, Throwable t) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void trace(Supplier<String> messageSupplier) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void debug(Supplier<String> messageSupplier) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void info(Supplier<String> messageSupplier) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void warn(Supplier<String> messageSupplier) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void error(Supplier<String> messageSupplier) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void fatal(Supplier<String> messageSupplier) {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isTraceEnabled() {
 		return false;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isDebugEnabled() {
 		return false;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isInfoEnabled() {
 		return false;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isWarnEnabled() {
 		return false;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isErrorEnabled() {
 		return false;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isFatalEnabled() {
 		return false;

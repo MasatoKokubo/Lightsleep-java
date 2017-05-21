@@ -25,27 +25,65 @@ class LogicalConditionSpec extends Specification {
 		when:
 			def expressions = elements.collect {new Expression(it)}
 			def condition = null
+			def condition2 = null
 			if (clazz == And.class) {
 				switch (type) {
-				case 'list'  : condition = new And(expressions); break
-				case 'array' : condition = new And(expressions.toArray(new Expression[0])); break
-				case 'stream': condition = new And(expressions.stream()); break
+				case 'list':
+					condition = new And(expressions)
+					condition2 = Condition.and(expressions)
+					break
+				case 'array':
+					condition = new And(expressions as Expression[])
+					condition2 = Condition.and(expressions as Expression[])
+					break
+				case 'stream':
+					condition = new And(expressions.stream())
+					condition2 = Condition.and(expressions.stream())
+					break
 				default: assert false
 				}
 			} else if (clazz == Or.class) {
 				switch (type) {
-				case 'list'  : condition = new Or(expressions); break
-				case 'array' : condition = new Or(expressions.toArray(new Expression[0])); break
-				case 'stream': condition = new Or(expressions.stream()); break
+				case 'list':
+					condition = new Or(expressions)
+					condition2 = Condition.or(expressions)
+					break
+				case 'array':
+					condition = new Or(expressions as Expression[])
+					condition2 = Condition.or(expressions as Expression[])
+					break
+				case 'stream':
+					condition = new Or(expressions.stream())
+					condition2 = Condition.or(expressions.stream())
+					break
 				default: assert false
 				}
 			} else assert false
 		/**/DebugTrace.print('condition', condition)
 			def string = condition.toString(new Sql<>(Entity.class), [])
+			def string2 = condition2.toString(new Sql<>(Entity.class), [])
 		/**/DebugTrace.print('string', string)
+		/**/DebugTrace.print('string2', string2)
 
 		then:
 			string == sql
+			string2 == sql
+
+			if (string.empty)
+				assert condition.empty
+			else
+				assert !condition.empty
+
+			if (string2.empty)
+				assert condition2 == Condition.EMPTY
+			else if (string2.indexOf('AND') >= 0)
+				assert condition2 instanceof And
+			else if (string2.indexOf('OR') >= 0 )
+				assert condition2 instanceof Or
+			else {
+				assert !condition2.empty
+				assert condition2 instanceof Expression
+			}
 
 	/**/DebugTrace.leave()
 

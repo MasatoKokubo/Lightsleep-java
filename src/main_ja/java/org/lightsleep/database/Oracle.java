@@ -26,7 +26,7 @@ import org.lightsleep.Sql;
  *   <tr>                                         <td>java.sql.Time     </td></tr>
  *   <tr>                                         <td>java.sql.Timestamp</td></tr>
  * </table>
- * 
+ *
  * @since 1.0.0
  * @author Masato Kokubo
  * @see org.lightsleep.helper.TypeConverter
@@ -34,17 +34,17 @@ import org.lightsleep.Sql;
  */
 public class Oracle extends Standard {
 	/**
-		<b>Oracle</b> オブジェクトを返します。
-
-		@return Oracle オブジェクト
-	*/
+	 * <b>Oracle</b> オブジェクトを返します。
+	 *
+	 * @return Oracle オブジェクト
+	 */
 	public static Database instance() {
 		return null;
 	}
 
 	/**
-		<b>Oracle</b> を構築します。
-	*/
+	 * <b>Oracle</b> を構築します。
+	 */
 	protected Oracle() {
 	}
 }

@@ -1,19 +1,18 @@
-/*
-	NonInsertProperties.java
-	(C) 2016 Masato Kokubo
-*/
+// NonInsertProperties.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.entity;
 
 import java.lang.annotation.*;
 
 /**
-	<b>NonInsertProperty</b> アノテーションの配列を示します。
-
-	@since 1.3.0
-	@see NonInsert
-	@see NonInsertProperty
-	@author Masato Kokubo
-*/
+ * <b>NonInsertProperty</b> アノテーションの配列を示します。
+ *
+ * @since 1.3.0
+ * @author Masato Kokubo
+ * @see NonInsert
+ * @see NonInsertProperty
+ */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

@@ -1,7 +1,6 @@
-/*
-	NonInsertProperty.java
-	(C) 2016 Masato Kokubo
-*/
+// NonInsertProperty.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.entity;
 
 import java.lang.annotation.*;
@@ -18,9 +17,9 @@ import java.lang.annotation.*;
  * </pre></div>
  *
  * @since 1.3.0
+ * @author Masato Kokubo
  * @see NonInsert
  * @see NonInsertProperties
- * @author Masato Kokubo
  */
 @Documented
 @Inherited

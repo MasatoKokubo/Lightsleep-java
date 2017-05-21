@@ -1,7 +1,6 @@
-/*
-	Sql.java
-	(C) 2016 Masato Kokubo
-*/
+// Sql.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep;
 
 import java.sql.Connection;
@@ -20,7 +19,7 @@ import org.lightsleep.helper.*;
 
 /**
  * SQL を構築および実行するためのクラスです。<br>
- * 
+ *
  * <div class="sampleTitle"><span>使用例</span></div>
  * <div class="sampleCode"><pre>
  * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
@@ -30,14 +29,14 @@ import org.lightsleep.helper.*;
  *         .<b>select</b>(connection, contacts::add);
  * });
  * </pre></div>
- * 
+ *
  * <div class="sampleTitle"><span>SQL</span></div>
  * <div class="sampleCode"><pre>
  * SELECT id, familyName, givenName, ... FROM Contact WHERE familyName='Apple'
  * </pre></div>
- * 
+ *
  * @param <E> メイン・テーブルのエンティティ・クラス
- * 
+ *
  * @since 1.0
  * @author Masato Kokubo
  */
@@ -89,7 +88,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return エンティティ情報
 	 *
 	 * @throws NullPointerException <b>entityClass</b> が null の場合
-	*/
+	 */
 	public static <E> EntityInfo<E> getEntityInfo(Class<E> entityClass) {
 		return null;
 	}
@@ -101,9 +100,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <div class="sampleCode"><pre>
 	 *     new Sql&lt;&gt;(Contact.class)
 	 * </pre></div>
-	 * 
+	 *
 	 * @param entityClass エンティティ・クラス
-	 * 
+	 *
 	 * @throws NullPointerException <b>entityClass</b> が null の場合
 	 */
 	public Sql(Class<E> entityClass) {
@@ -116,10 +115,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <div class="sampleCode"><pre>
 	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 * </pre></div>
-	 * 
+	 *
 	 * @param entityClass エンティティ・クラス
 	 * @param tableAlias テーブルの別名
-	 * 
+	 *
 	 * @throws NullPointerException <b>entityClass</b> または <b>tableAlias</b> が null の場合
 	 */
 	public Sql(Class<E> entityClass, String tableAlias) {
@@ -252,7 +251,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>propertyName</b> または <b>expression</b> が null の場合
-	*/
+	 */
 	public Sql<E> expression(String propertyName, Expression expression) {
 		return null;
 	}
@@ -397,7 +396,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
-	*/
+	 */
 	public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return null;
 	}
@@ -496,7 +495,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException <b>content</b> または <b>subSql</b> が null の場合
 	 *
 	 * @see org.lightsleep.component.Condition#of(java.lang.String, Sql, Sql)
-	*/
+	 */
 	public <SE> Sql<E> where(String content, Sql<SE> subSql) {
 		return this;
 	}
@@ -555,9 +554,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param content サブクエリの SELECT SQL より左側の式
 	 * @param subSql サブクエリの SELECT SQL 部分
 	 * @return このオブジェクト
-	 * 
+	 *
 	 * @see org.lightsleep.component.Condition#of(java.lang.String, Sql, Sql)
-	*/
+	 */
 	public <SE> Sql<E> and(String content, Sql<SE> subSql) {
 		return this;
 	}
@@ -1008,7 +1007,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
 	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
 	 * @param consumer3 取得した行から生成された結合テーブル3のエンティティのコンシューマ
-	 * 
+	 *
 	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> または <b>consumer3</b> が null の場合
 	 * @throws IllegalStateException 結合テーブル情報が3より少ない場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
@@ -1060,7 +1059,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
 	 * @param consumer3 取得した行から生成された結合テーブル3のエンティティのコンシューマ
 	 * @param consumer4 取得した行から生成された結合テーブル4のエンティティのコンシューマ
-	 * 
+	 *
 	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> または <b>consumer4</b> が null の場合
 	 * @throws IllegalStateException 結合テーブル情報が4より少ない場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
@@ -1290,7 +1289,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * メイン・テーブルの <b>ColumnInfo</b> ストリームを返します。<br>
 	 * <br>
 	 * <i>このメソッドは、内部的に使用されます。</i>
-	 * 
+	 *
 	 * @return <b>ColumnInfo</b> ストリーム
 	 */
 	public Stream<ColumnInfo> columnInfoStream() {
@@ -1301,7 +1300,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * メイン・テーブルの選択対象のカラムの <b>SqlColumnInfo</b> ストリームを返します。<br>
 	 * <br>
 	 * <i>このメソッドは、内部的に使用されます。</i>
-	 * 
+	 *
 	 * @return <b>SqlColumnInfo</b> ストリーム
 	 */
 	public Stream<SqlColumnInfo> selectedSqlColumnInfoStream() {
@@ -1312,7 +1311,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * メイン・テーブルと結合テーブルの選択対象のカラムの <b>SqlColumnInfo</b> ストリームを返します。<br>
 	 * <br>
 	 * <i>このメソッドは、内部的に使用されます。</i>
-	 * 
+	 *
 	 * @return <b>SqlColumnInfo</b> ストリーム
 	 */
 	public Stream<SqlColumnInfo> selectedJoinSqlColumnInfoStream() {

@@ -22,57 +22,22 @@ import org.lightsleep.helper.Resource;
  * 
  * If not specified, will be selected <b>StdOut</b>.
  * <br>
-
+ *
  * The log level of
  * <b>Jdk</b>, <b>Log4j</b>, <b>Log4j2</b> and <b>SLF4J</b>
  * are mapped as shown in the following table.
  *
  * <table class="additional">
  *   <caption><span>Mappings of Log Levels</span></caption>
- *   <tr>
- *     <th>This Class</th>
- *     <th>Jdk</th>
- *     <th>Log4j, Log4j2</th>
- *     <th>SLF4J</th>
- *   </tr>
- *   <tr>
- *     <td>trace </td>
- *     <td>finest</td>
- *     <td>trace </td>
- *     <td>trace </td>
- *   </tr>
- *   <tr>
- *     <td>debug</td>
- *     <td>fine </td>
- *     <td>debug</td>
- *     <td>debug </td>
- *   </tr>
- *   <tr>
- *     <td>info</td>
- *     <td>info</td>
- *     <td>info</td>
- *     <td>info</td>
- *   </tr>
- *   <tr>
- *     <td>warn   </td>
- *     <td>warning</td>
- *     <td>warn   </td>
- *     <td>warn   </td>
- *   </tr>
- *   <tr>
- *     <td>error </td>
- *     <td>server</td>
- *     <td>error </td>
- *     <td>error </td>
- *   </tr>
- *   <tr>
- *     <td>fatal </td>
- *     <td>server</td>
- *     <td>fatal </td>
- *     <td>error </td>
- *   </tr>
+ *   <tr><th>This Class</th><th>Jdk    </th><th>Log4j, Log4j2</th><th>SLF4J</th></tr>
+ *   <tr><td>trace     </td><td>finest </td><td>trace        </td><td>trace</td></tr>
+ *   <tr><td>debug     </td><td>fine   </td><td>debug        </td><td>debug</td></tr>
+ *   <tr><td>info      </td><td>info   </td><td>info         </td><td>info </td></tr>
+ *   <tr><td>warn      </td><td>warning</td><td>warn         </td><td>warn </td></tr>
+ *   <tr><td>error     </td><td>server </td><td>error        </td><td>error</td></tr>
+ *   <tr><td>fatal     </td><td>server </td><td>fatal        </td><td>error</td></tr>
  * </table>
-
+ *
  * @since 1.0.0
  * @author Masato Kokubo
  */

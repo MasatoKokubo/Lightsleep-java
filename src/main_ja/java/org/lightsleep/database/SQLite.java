@@ -27,7 +27,7 @@ import org.lightsleep.Sql;
  *   <tr><td>Timestamp     </td><td><code>'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
  *   <tr><td>byte[]        </td><td><code>?</code> <i>(SQLパラメータ)</i></td></tr>
  * </table>
-
+ *
  * @since 1.7.0
  * @author Masato Kokubo
  * @see org.lightsleep.helper.TypeConverter

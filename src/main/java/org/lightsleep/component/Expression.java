@@ -98,7 +98,9 @@ public class Expression implements Condition {
 	public boolean isEmpty() {
 	// 1.8.2
 	//	return content.isEmpty();
-		return this == Condition.EMPTY || content.isEmpty();
+	// 1.8.8
+	//	return this == Condition.EMPTY || content.isEmpty();
+		return content.isEmpty();
 	////
 	}
 

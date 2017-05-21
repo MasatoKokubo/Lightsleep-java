@@ -21,7 +21,7 @@ import java.lang.annotation.*;
  * <div class="sampleCode"><pre>
  * INSERT INTO Contact (..., <b>birthday</b>, ...) VALUES (..., <b>1486210201099</b>, ...)
  * </pre></div>
- * 
+ *
  * @since 1.8.0
  * @author Masato Kokubo
  * @see ColumnType

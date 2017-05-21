@@ -43,7 +43,7 @@ class NotSpec extends Specification {
 		/**/DebugTrace.print('string', string)
 
 		then:
-			string == 'NOT (A = B)'
+			string == 'NOT(A = B)'
 
 	/**/DebugTrace.leave()
 	}

@@ -1,19 +1,18 @@
-/*
-	NonSelectProperties.java
-	(C) 2016 Masato Kokubo
-*/
+// NonSelectProperties.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.entity;
 
 import java.lang.annotation.*;
 
 /**
-	<b>NonSelectProperty</b> アノテーションの配列を示します。
-
-	@since 1.3.0
-	@see NonSelect
-	@see NonSelectProperty
-	@author Masato Kokubo
-*/
+ * <b>NonSelectProperty</b> アノテーションの配列を示します。
+ *
+ * @since 1.3.0
+ * @author Masato Kokubo
+ * @see NonSelect
+ * @see NonSelectProperty
+ */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

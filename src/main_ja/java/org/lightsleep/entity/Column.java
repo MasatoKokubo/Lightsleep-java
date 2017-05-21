@@ -1,7 +1,6 @@
-/*
-	Column.java
-	(C) 2016 Masato Kokubo
-*/
+// Column.java
+// (C) 2016 Masato Kokubo
+
 package org.lightsleep.entity;
 
 import java.lang.annotation.*;
@@ -27,9 +26,9 @@ import java.lang.annotation.*;
  * </pre></div>
  *
  * @since 1.0.0
+ * @author Masato Kokubo
  * @see ColumnProperty
  * @see ColumnProperties
- * @author Masato Kokubo
  */
 @Documented
 @Inherited

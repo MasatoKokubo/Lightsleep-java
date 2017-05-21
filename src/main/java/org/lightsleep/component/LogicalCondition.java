@@ -104,6 +104,23 @@ public abstract class LogicalCondition implements Condition {
 	}
 
 	/**
+	 * Optimizes and returns the components of this condition.<br>
+	 * In particular,
+	 * returns <b>Condition.EMPTY</b> if <b>conditions.isEmpty()</b>,
+	 * <b>conditions.get(0)</b> if <b>conditions.size() == 1</b>,
+	 * <b>this</b> otherwise.
+	 *
+	 * @return condition that is optimizing the components of this condition
+	 *
+	 * @since 1.8.8
+	 */
+	public Condition optimized() {
+		if (conditions.isEmpty()) return Condition.EMPTY;
+		if (conditions.size() == 1) return conditions.get(0);
+		return this;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override

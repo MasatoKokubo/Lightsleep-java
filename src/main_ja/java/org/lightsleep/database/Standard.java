@@ -75,33 +75,33 @@ import org.lightsleep.Sql;
  */
 public class Standard implements Database {
 	/**
-		SQL が作成される時の文字列リテラルの最大長。
-		文字列リテラルがこの長さを超える場合、SQL のパラメータ (?) として生成します。<br>
-		lightsleep.properties の <b>maxStringLiteralLength</b>
-		の値が設定されます。(未定義の場合は 128)
-	*/
+	 * SQL が作成される時の文字列リテラルの最大長。
+	 * 文字列リテラルがこの長さを超える場合、SQL のパラメータ (?) として生成します。<br>
+	 * lightsleep.properties の <b>maxStringLiteralLength</b>
+	 * の値が設定されます。(未定義の場合は 128)
+	 */
 	protected static final int maxStringLiteralLength = 0;
 
 	/**
-		SQL が作成される時のバイナリ列リテラルの最大長。
-		バイナリ列リテラルがこの長さを超える場合、SQL のパラメータ (?) として生成します。<br>
-		lightsleep.properties の <b>maxBinaryLiteralLength</b>
-		の値が設定されます。(未定義の場合は 128)
-	*/
+	 * SQL が作成される時のバイナリ列リテラルの最大長。
+	 * バイナリ列リテラルがこの長さを超える場合、SQL のパラメータ (?) として生成します。<br>
+	 * lightsleep.properties の <b>maxBinaryLiteralLength</b>
+	 * の値が設定されます。(未定義の場合は 128)
+	 */
 	protected static final int maxBinaryLiteralLength = 0;
 
 // 1.8.0
 //	/**
-//		<b>boolean</b> から <b>SqlString</b> (FALSE か TRUE) へ変換する
-//		<b>TypeConverter</b> オブジェクト
-//	*/
+//	 * <b>boolean</b> から <b>SqlString</b> (FALSE か TRUE) へ変換する
+//	 * <b>TypeConverter</b> オブジェクト
+//	 */
 //	public static final TypeConverter<Boolean, SqlString> booleanToSqlFalseTrueConverter = null;
 ////
 
 	/**
-		<b>boolean</b> から <b>SqlString</b> (0 か 1) へ変換する
-		<b>TypeConverter</b> オブジェクト
-	*/
+	 * <b>boolean</b> から <b>SqlString</b> (0 か 1) へ変換する
+	 * <b>TypeConverter</b> オブジェクト
+	 */
 // 1.8.0
 //	public static final TypeConverter<Boolean, SqlString> booleanToSql01Converter = null;
 	protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter = null;
@@ -109,91 +109,91 @@ public class Standard implements Database {
 
 // 1.8.0
 //	/**
-//		<b>boolean</b> から <b>SqlString</b> ('0' か '1') へ変換する
-//		<b>TypeConverter</b> オブジェクト
-//	*/
+//	 * <b>boolean</b> から <b>SqlString</b> ('0' か '1') へ変換する
+//	 * <b>TypeConverter</b> オブジェクト
+//	 */
 //	public static final TypeConverter<Boolean, SqlString> booleanToSqlChar01Converter = null;
 //
 //	/**
-//		<b>boolean</b> から <b>SqlString</b> ('N' か 'Y') へ変換する
-//		<b>TypeConverter</b> オブジェクト
-//	*/
+//	 * <b>boolean</b> から <b>SqlString</b> ('N' か 'Y') へ変換する
+//	 * <b>TypeConverter</b> オブジェクト
+//	 */
 //	public static final TypeConverter<Boolean, SqlString> booleanToSqlNYConverter = null;
 //
 //	/**
-//		<b>String</b> ("N" か "Y") から <b>boolean</b> へ変換する
-//		<b>TypeConverter</b> オブジェクト
-//	*/
+//	 * <b>String</b> ("N" か "Y") から <b>boolean</b> へ変換する
+//	 * <b>TypeConverter</b> オブジェクト
+//	 */
 //	public static final TypeConverter<String, Boolean> stringNYToBooleanConverter = null;
 ////
 
 	/**
-		<b>Standard</b> オブジェクトを返します。
-
-		@return Standard オブジェクト
-	*/
+	 * <b>Standard</b> オブジェクトを返します。
+	 *
+	 * @return Standard オブジェクト
+	 */
 	public static Database instance() {
 		return null;
 	}
 
 	/**
-		<b>Standard</b> を構築します。
-	*/
+	 * <b>Standard</b> を構築します。
+	 */
 	protected Standard() {
 	}
 
 	/**
-		以下のデータ型変換で使用する <b>TypeConverter</b> マップ<br>
-		<ul>
-			<li>SQL 生成時</li>
-			<li>SELECT SQL で取得した値をエンティティに格納する際</li>
-		</ul>
-	*/
+	 * 以下のデータ型変換で使用する <b>TypeConverter</b> マップ<br>
+	 * <ul>
+	 *   <li>SQL 生成時</li>
+	 *   <li>SELECT SQL で取得した値をエンティティに格納する際</li>
+	 * </ul>
+	 */
 	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = null;
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String subSelectSql(Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
 		return null;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String insertSql(Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String deleteSql(Sql<E> sql, List<Object> parameters) {
 		return null;
@@ -351,16 +351,16 @@ public class Standard implements Database {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Map<String, TypeConverter<?, ?>> typeConverterMap() {
 		return null;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <T> T convert(Object value, Class<T> type) {
 		return null;

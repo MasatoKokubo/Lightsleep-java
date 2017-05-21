@@ -11,10 +11,10 @@ import org.lightsleep.Sql;
 /**
  * <a href="https://www.microsoft.com/ja-jp/server-cloud/products-SQL-Server-2014.aspx" target="SQL Server">Microsoft SQL Server</a>
  * 用のデータベース・ハンドラーです。<br>
- * 
+ *
  * スーパークラスで追加された <b>TypeConverter</b> オブジェクトに以下を追加するか置き換えます。<br>
  * <br>
- * 
+ *
  * <table class="additional">
  *   <caption><span>追加される TypeConverter オブジェクト</span></caption>
  *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
@@ -25,7 +25,7 @@ import org.lightsleep.Sql;
  *   <tr><td>String       </td><td><code>'...'</code><br>制御文字は <code>'...'+CHAR(n)+'...'</code> に変換<br>長い場合は<code>?</code> <i>(SQLパラメータ)</i></td></tr>
  *   <tr><td>byte[]</td><td><code>?</code> <i>(SQLパラメータ)</i></td></tr>
  * </table>
- * 
+ *
  * @since 1.0.0
  * @author Masato Kokubo
  * @see org.lightsleep.helper.TypeConverter
@@ -33,31 +33,31 @@ import org.lightsleep.Sql;
  */
 public class SQLServer extends Standard {
 	/**
-		<b>SQLServer</b> オブジェクトを返します。
-
-		@return SQLServer オブジェクト
-	*/
+	 * <b>SQLServer</b> オブジェクトを返します。
+	 *
+	 * @return SQLServer オブジェクト
+	 */
 	public static Database instance() {
 		return null;
 	}
 
 	/**
-		<b>SQLServer</b> を構築します。
-	*/
+	 * <b>SQLServer</b> を構築します。
+	 */
 	protected SQLServer() {
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
 
 	/**
-		{@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
 		return null;
