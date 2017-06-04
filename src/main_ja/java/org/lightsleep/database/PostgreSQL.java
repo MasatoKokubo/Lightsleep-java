@@ -5,16 +5,18 @@ package org.lightsleep.database;
 
 /**
  * <a href="http://www.postgresql.org/" target="PostgreSQL">PostgreSQL</a>
- * 用のデータベース・ハンドラーです。<br>
+ * 用のデータベース・ハンドラーです。
  *
- * スーパークラスで追加された <b>TypeConverter</b> オブジェクトに以下を追加するか置き換えます。<br>
- * <br>
+ * <p>
+ * このクラスのオブジェクトは、{@linkplain Standard#typeConverterMap}
+ * に以下の <b>TypeConverter</b> オブジェクトを追加した<b>TypeConverter</b> マップを持ちます。
+ * </p>
  *
  * <table class="additional">
  *   <caption><span>追加される TypeConverter オブジェクト</span></caption>
  *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
- *   <tr><td>String </td><td rowspan="2">SqlString</td><td><code>'...'</code><br>制御文字は エスケープ・シーケンスに変換<br>長い場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
- *   <tr><td>byte[] </td><td><code>E'\\x...'</code><br>長い場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
+ *   <tr><td>String </td><td rowspan="2">SqlString</td><td><code>'...'</code><br>制御文字は エスケープ・シーケンスに変換<br>変換された文字列がエスケープ・シーケンスを含む場合は E'...' <br>長い文字列の場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
+ *   <tr><td>byte[] </td><td><code>E'\\x...'</code><br>長いバイト配列の場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
  * </table>
  *
  * @since 1.0.0

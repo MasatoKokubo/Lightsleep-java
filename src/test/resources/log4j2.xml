@@ -6,7 +6,7 @@
 			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %c: %msg%n"/>
 			<Policies>
 					<OnStartupTriggeringPolicy />
-					<SizeBasedTriggeringPolicy size="100MB" />
+					<SizeBasedTriggeringPolicy size="16MB" />
 					<TimeBasedTriggeringPolicy />
 			</Policies>
 			<DefaultRolloverStrategy max="2"/>

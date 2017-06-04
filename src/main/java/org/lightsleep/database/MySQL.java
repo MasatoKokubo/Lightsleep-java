@@ -8,17 +8,19 @@ import org.lightsleep.helper.TypeConverter;
 
 /**
  * A database handler for
- * <a href="http://www.mysql.com/" target="MySQL">MySQL</a>.<br>
+ * <a href="http://www.mysql.com/" target="MySQL">MySQL</a>.
  *
+ * <p>
  * The object of this class has a <b>TypeConverter</b> map
  * with the following additional <b>TypeConverter</b> to
  * {@linkplain Standard#typeConverterMap}.
+ * </p>
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
  *   <tr><th>Source Data Type</th><th>Destination Data Type</th><th>Conversion Contents</th></tr>
  *   <tr><td>Boolean</td><td rowspan="2">SqlString</td><td>false -&gt; <code>0</code><br>true -&gt; <code>1</code></td></tr>
- *   <tr><td>String </td><td><code>'...'</code><br>Converts control character to escape sequence.<br><code>?</code> <i>(SQL parameter)</i> if long</td></tr>
+ *   <tr><td>String </td><td><code>'...'</code><br>Converts control characters to escape sequence.<br><code>?</code> <i>(SQL parameter)</i> if the string is long</td></tr>
  * </table>
  *
  * @since 1.0.0
@@ -54,12 +56,10 @@ public class MySQL extends Standard {
 				//	return SqlString.PARAMETER; // SQL Paramter
 					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
 				////
-
+	
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');
-				char[] chars = object.toCharArray();
-				for (int index = 0; index < chars.length; ++index) {
-					char ch = chars[index];
+				for (char ch : object.toCharArray()) {
 					switch (ch) {
 					case '\u0000': buff.append("\\0" ); break; // 00 NUL
 					case '\b'    : buff.append("\\b" ); break; // 07 BEL

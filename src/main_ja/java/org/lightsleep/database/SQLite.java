@@ -20,7 +20,8 @@ import org.lightsleep.Sql;
  * <table class="additional">
  *   <caption><span>追加される TypeConverter オブジェクト</span></caption>
  *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
- *   <tr><td>Boolean       </td><td rowspan="6">SqlString</td><td>false ➔ <code>0</code><br>true ➔ <code>1</code></td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="7">SqlString</td><td>false ➔ <code>0</code><br>true ➔ <code>1</code></td></tr>
+ *   <tr><td>String        </td><td><code>'...'</code><br>長い文字列の場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
  *   <tr><td>java.util.Date</td><td rowspan="2"><code>'yyyy-MM-dd'</code></td></tr>
  *   <tr><td>java.sql.Date </td></tr>
  *   <tr><td>Time          </td><td><code>'HH:mm:ss'</code></td></tr>

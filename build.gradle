@@ -15,6 +15,11 @@ apply plugin: 'groovy'
 
 repositories {
 	jcenter()
+
+	maven {
+		// db2jcc4
+		url "https://artifacts.alfresco.com/nexus/content/repositories/public/"
+	}
 }
 
 dependencies {
@@ -24,7 +29,7 @@ dependencies {
 	testRuntime 'org.apache.logging.log4j:log4j-core:2.+'
 	compile     'org.slf4j:slf4j-api:1.7.+'
 	testRuntime 'ch.qos.logback:logback-classic:1.+'
-	
+
 	compile     'com.mchange:c3p0:0.+'
 	compile     'com.zaxxer:HikariCP:2.+'
 	compile     'org.apache.commons:commons-dbcp2:2.+'
@@ -33,6 +38,7 @@ dependencies {
 	testCompile 'org.codehaus.groovy:groovy-all:2.4.+'
 	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
 
+	testRuntime 'com.ibm.db2.jcc:db2jcc4:10.+'
 	testRuntime 'mysql:mysql-connector-java:5.+'
 	compile     'com.hynnet:oracle-driver-ojdbc:12.+'
 	testRuntime 'org.postgresql:postgresql:9.+'
@@ -44,7 +50,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '1.8.8'
+version             = '1.9.0'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.5'

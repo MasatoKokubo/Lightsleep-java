@@ -59,20 +59,22 @@ public interface Transaction {
 	void executeBody(Connection connection) throws Exception;
 
 	/**
-	 * Executes the transaction in the following order.<br>
-	 * <br>
+	 * Executes the transaction in the following order.
+	 *
 	 * <ol>
 	 *   <li>Gets a database connection by calling <b>Sql.getConnectionSupplier().get()</b>.</li>
 	 *   <li>Calls <b>transaction.executeBody</b> method.</li>
 	 *   <li>Commits the transaction.</li>
 	 *   <li>Closes the database connection.</li>
 	 * </ol>
-	 * <br>
 	 *
-	 * If an exception is thrown executing the transaction body, rollbacks rather than commit.<br>
-	 * <br>
+	 * <p>
+	 * If an exception is thrown executing the transaction body, rollbacks rather than commit.
+	 * </p>
 	 *
+	 * <p>
 	 * Describe the transaction body in <b>transaction</b> using a lumbda expression.
+	 * </p>
 	 *
 	 * @param transaction a <b>Transaction</b> object
 	 *
@@ -84,20 +86,22 @@ public interface Transaction {
 	}
 
 	/**
-	 * Executes the transaction in the following order.<br>
-	 * <br>
+	 * Executes the transaction in the following order.
+	 *
 	 * <ol>
 	 *   <li>Gets a database connection by calling <b>connectionSupplier.get()</b>.</li>
 	 *   <li>Calls <b>transaction.executeBody</b> method.</li>
 	 *   <li>Commits the transaction.</li>
 	 *   <li>Closes the database connection.</li>
 	 * </ol>
-	 * <br>
 	 *
-	 * If an exception is thrown executing the transaction body, rollbacks rather than commit.<br>
-	 * <br>
+	 * <p>
+	 * If an exception is thrown executing the transaction body, rollbacks rather than commit.
+	 * </p>
 	 *
+	 * <p>
 	 * Describe the transaction body in <b>transaction</b> using a lumbda expression.
+	 * </p>
 	 *
 	 * @param connectionSupplier a <b>ConnectionSupplier</b> object
 	 * @param transaction a <b>Transaction</b> object
@@ -181,7 +185,10 @@ public interface Transaction {
 			}
 		}
 		catch (Throwable e) {
-			logger.error("", e);
+		// 1.9.0
+		//	logger.error("", e);
+			logger.error(e.toString(), e);
+		////
 			if (connection != null) {
 				if (!committed) {
 					try {
@@ -192,7 +199,10 @@ public interface Transaction {
 						logger.debug(() -> Sql.getDatabase().getClass().getSimpleName() + ": " + messageEnd);
 					}
 					catch (Throwable e2) {
-						logger.error("", e2);
+					// 1.9.0
+					//	logger.error("", e2);
+						logger.error(e2.toString(), e2);
+					////
 					}
 				}
 
@@ -201,7 +211,10 @@ public interface Transaction {
 					connection.close();
 				}
 				catch (Throwable e2) {
-					logger.error("", e2);
+				// 1.9.0
+				//	logger.error("", e2);
+					logger.error(e2.toString(), e2);
+				////
 				}
 			}
 

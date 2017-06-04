@@ -42,9 +42,17 @@ import org.lightsleep.helper.*;
  */
 public class Sql<E> implements SqlEntityInfo<E> {
 	/**
+	 * 永遠に待つ wait 値
+	 * @since 1.9.0
+	 */
+	public static final int FOREVER = Integer.MAX_VALUE;
+
+	/**
 	 * データベース・ハンドラを返します。
 	 *
 	 * @return データベース・ハンドラ
+	 *
+	 * @see #setDatabase(Database)
 	 */
 	public static Database getDatabase() {
 		return null;
@@ -56,6 +64,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param database データベース・ハンドラ
 	 *
 	 * @throws NullPointerException <b>database</b> が null の場合
+	 *
+	 * @see #getDatabase()
 	 */
 	public static void setDatabase(Database database) {
 	}
@@ -65,6 +75,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @return コネクション・サプライヤー
 	 *
+	 * @see #setConnectionSupplier(ConnectionSupplier)
 	 */
 	public static ConnectionSupplier getConnectionSupplier() {
 		return null;
@@ -76,6 +87,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param supplier コネクション・サプライヤー
 	 *
 	 * @throws NullPointerException <b>supplier</b> が null の場合
+	 *
+	 * @see #getConnectionSupplier()
 	 */
 	public static void setConnectionSupplier(ConnectionSupplier supplier) {
 	}
@@ -88,6 +101,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return エンティティ情報
 	 *
 	 * @throws NullPointerException <b>entityClass</b> が null の場合
+	 *
+	 * @see #entityInfo()
 	 */
 	public static <E> EntityInfo<E> getEntityInfo(Class<E> entityClass) {
 		return null;
@@ -126,6 +141,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @see #getEntityInfo(Class)
 	 */
 	@Override
 	public EntityInfo<E> entityInfo() {
@@ -143,6 +160,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @see #Sql(Class, String)
 	 */
 	@Override
 	public String tableAlias() {
@@ -151,6 +170,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @see #setEntity(Object)
 	 */
 	@Override
 	public E entity() {
@@ -163,6 +184,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entity エンティティ
 	 *
 	 * @return このオブジェクト
+	 *
+	 * @see #entity()
 	 */
 	public Sql<E> setEntity(E entity) {
 		return this;
@@ -172,6 +195,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * SELECT SQL に <b>DISTINCT</b> を追加する事を指定します。
 	 *
 	 * @return このオブジェクト
+	 *
+	 * @see #isDistinct()
 	 */
 	public Sql<E> distinct() {
 		return null;
@@ -181,6 +206,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * SELECT SQL に <b>DISTINCT</b> が追加されるかどうかを返します。
 	 *
 	 * @return 追加されるなら <b>true</b>、そうでなければ <b>false</b>
+	 *
+	 * @see #distinct()
 	 */
 	public boolean isDistinct() {
 		return false;
@@ -188,9 +215,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * SELECT SQL のカラムを指定します。
+	 *
+	 * <p>
 	 * カラムに対応するプロパティ名を指定してください。
 	 * <b>"*"</b> または <b>"<i>テーブル別名</i>.*"</b> で指定する事もできます。
 	 * このメソッドがコールされない場合は、<b>"*"</b> が指定されたのと同様になります。
+	 * </p>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -209,6 +239,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>columns</b> または <b>columns</b> の要素が null の場合
+	 *
+	 * @see #getColumns()
+	 * @see #setColumns(Set)
 	 */
 	public Sql<E> columns(String... columns) {
 		return null;
@@ -218,6 +251,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * SELECT SQL および UPDATE SQL で使用されるカラムに対応するプロパティ名のセットを返します。
 	 *
 	 * @return columns メソッドで指定されたプロパティ名のセット
+	 *
+	 * @see #columns(String...)
+	 * @see #setColumns(Set)
 	 */
 	public Set<String> getColumns() {
 		return null;
@@ -232,13 +268,19 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException <b>columns</b> が null の場合
 	 *
 	 * @since 1.8.4
+	 *
+	 * @see #columns(String...)
+	 * @see #getColumns()
 	 */
 	public Sql<E> setColumns(Set<String> columns) {
 		return null;
 	}
 	/**
-	 * プロパティ名に関連するカラムに式を関連付けします。<br>
+	 * プロパティ名に関連するカラムに式を関連付けします。
+	 *
+	 * <p>
 	 * 式が空の場合、以前のこのプロパティ名の関連付けを解除します。
+	 * </p>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -251,36 +293,48 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>propertyName</b> または <b>expression</b> が null の場合
+	 *
+	 * @see #getExpression(String)
 	 */
 	public Sql<E> expression(String propertyName, Expression expression) {
 		return null;
 	}
 
 	/**
-	 * プロパティ名に関連するカラムに式を関連付けします。<br>
+	 * プロパティ名に関連するカラムに式を関連付けします。
+	 *
+	 * <p>
 	 * 式が空の場合、以前のこのプロパティ名の関連付けを解除します。
+	 * </p>
 	 *
 	 * @param propertyName プロパティ名
 	 * @param content 式の文字列内容
 	 * @param arguments 式に埋め込む引数配列
-	 *
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>propertyName</b>, <b>content</b> または <b>arguments</b> が null の場合
+	 *
+	 * @see #getExpression(String)
+	 * @see Expression#Expression(String, Object...)
 	 */
 	public Sql<E> expression(String propertyName, String content, Object... arguments) {
 		return null;
 	}
 
 	/**
-	 * プロパティ名に関連する式を返します。<br>
+	 * プロパティ名に関連する式を返します。
+	 *
+	 * <p>
 	 * 関連する式がない場合は、<b>Expression.EMPTY</b> を返します。
+	 * </p>
 	 *
 	 * @param propertyName プロパティ名
-	 *
 	 * @return プロパティ名に関連する式または <b>Expression.EMPTY</b>
 	 *
 	 * @throws NullPointerException <b>propertyName</b> が null の場合
+	 *
+	 * @see #expression(String, Expression)
+	 * @see #expression(String, String, Object...)
 	 */
 	public Expression getExpression(String propertyName) {
 		return null;
@@ -303,6 +357,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b> または <b>on</b> が null の場合
+	 *
+	 * @see #getJoinInfos()
+	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
 	 */
 	public <JE> Sql<E> innerJoin(Class<JE> entityClass, String tableAlias, Condition on) {
 		return null;
@@ -319,6 +376,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
+	 *
+	 * @see #getJoinInfos()
+	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
 	 */
 	public <JE> Sql<E> innerJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return null;
@@ -341,6 +401,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
+	 *
+	 * @see #getJoinInfos()
+	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
 	 */
 	public <JE> Sql<E> leftJoin(Class<JE> entityClass, String tableAlias, Condition on) {
 		return null;
@@ -358,6 +421,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
+	 *
+	 * @see #getJoinInfos()
+	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
 	 */
 	public <JE> Sql<E> leftJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return null;
@@ -380,6 +446,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
+	 *
+	 * @see #getJoinInfos()
+	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
 	 */
 	public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, Condition on) {
 		return null;
@@ -396,6 +465,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> または <b>arguments</b> が null の場合
+	 *
+	 * @see #getJoinInfos()
+	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
 	 */
 	public <JE> Sql<E> rightJoin(Class<JE> entityClass, String tableAlias, String on, Object... arguments) {
 		return null;
@@ -405,6 +477,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 追加された結合情報のリストを返します。
 	 *
 	 * @return JOIN 情報リスト
+	 *
+	 * @see #innerJoin(Class, String, Condition)
+	 * @see #innerJoin(Class, String, String, Object...)
+	 * @see #leftJoin(Class, String, Condition)
+	 * @see #leftJoin(Class, String, String, Object...)
+	 * @see #rightJoin(Class, String, Condition)
+	 * @see #rightJoin(Class, String, String, Object...)
 	 */
 	public List<JoinInfo<?>> getJoinInfos() {
 		return null;
@@ -424,6 +503,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>condition</b> が null の場合
+	 *
+	 * @see #getWhere()
 	 */
 	public Sql<E> where(Condition condition) {
 		return this;
@@ -445,7 +526,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 *
-	 * @see org.lightsleep.component.Condition#of(java.lang.String, java.lang.Object...)
+	 * @see #getWhere()
+	 * @see Condition#of(String, Object...)
 	 */
 	public Sql<E> where(String content, Object... arguments) {
 		return this;
@@ -467,7 +549,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param entity エンティティ
 	 * @return this
 	 *
-	 * @see org.lightsleep.component.Condition#of(java.lang.Object)
+	 * @see #getWhere()
+	 * @see Condition#of(Object)
 	 */
 	public Sql<E> where(E entity) {
 		return this;
@@ -494,7 +577,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>subSql</b> が null の場合
 	 *
-	 * @see org.lightsleep.component.Condition#of(java.lang.String, Sql, Sql)
+	 * @see #getWhere()
+	 * @see Condition#of(String, Sql, Sql)
 	 */
 	public <SE> Sql<E> where(String content, Sql<SE> subSql) {
 		return this;
@@ -504,6 +588,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 指定されている <b>WHERE</b> 条件を返します。
 	 *
 	 * @return <b>WHERE</b> 条件
+	 *
+	 * @see #where(Condition)
+	 * @see #where(Object)
+	 * @see #where(String, Object...)
+	 * @see #where(String, Sql)
 	 */
 	public Condition getWhere() {
 		return null;
@@ -517,6 +606,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>condition</b> が null の場合
+	 *
+	 * @see Condition#and(Condition)
 	 */
 	public Sql<E> and(Condition condition) {
 		return this;
@@ -540,7 +631,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 *
-	 * @see org.lightsleep.component.Condition#of(java.lang.String, java.lang.Object...)
+	 * @see Condition#and(String, Object...)
 	 */
 	public Sql<E> and(String content, Object... arguments) {
 		return this;
@@ -555,7 +646,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @param subSql サブクエリの SELECT SQL 部分
 	 * @return このオブジェクト
 	 *
-	 * @see org.lightsleep.component.Condition#of(java.lang.String, Sql, Sql)
+	 * @see Condition#and(String, Sql, Sql)
 	 */
 	public <SE> Sql<E> and(String content, Sql<SE> subSql) {
 		return this;
@@ -569,6 +660,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>condition</b> が null の場合
+	 *
+	 * @see Condition#or(Condition)
 	 */
 	public Sql<E> or(Condition condition) {
 		return this;
@@ -592,7 +685,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 *
-	 * @see org.lightsleep.component.Condition#of(java.lang.String, java.lang.Object...)
+	 * @see Condition#or(String, Object...)
 	 */
 	public Sql<E> or(String content, Object... arguments) {
 		return this;
@@ -609,7 +702,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>subSql</b> が null の場合
 	 *
-	 * @see org.lightsleep.component.Condition#of(java.lang.String, Sql, Sql)
+	 * @see Condition#or(String, Sql, Sql)
 	 */
 	public <SE> Sql<E> or(String content, Sql<SE> subSql) {
 		return this;
@@ -623,6 +716,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
+	 *
+	 * @see #getGroupBy()
+	 * @see GroupBy
+	 * @see Expression#Expression(String, Object...)
 	 */
 	public Sql<E> groupBy(String content, Object... arguments) {
 		return this;
@@ -632,6 +729,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 指定された <b>GROUP BY</b> 情報を返します。
 	 *
 	 * @return <b>GROUP BY</b> 情報
+	 *
+	 * @see #groupBy(String, Object...)
 	 */
 	public GroupBy getGroupBy() {
 		return null;
@@ -644,13 +743,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>condition</b> が null の場合
+	 *
+	 * @see #getHaving()
 	 */
 	public Sql<E> having(Condition condition) {
 		return this;
 	}
 
 	/**
-	 * <b>HAVING</b> 条件を指定します。
+	 * <b>Expression</b> で <b>HAVING</b> 条件を指定します。
 	 *
 	 * @param content 条件式
 	 * @param arguments 条件式の引数
@@ -658,9 +759,27 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 *
-	 * @see org.lightsleep.component.Condition#of(java.lang.String, java.lang.Object...)
+	 * @see #getHaving()
+	 * @see Condition#of(String, Object...)
 	 */
 	public Sql<E> having(String content, Object... arguments) {
+		return this;
+	}
+
+	/**
+	 * <b>SubqueryCondition</b> で <b>HAVING</b> 条件を指定します。
+	 *
+	 * @param <SE> サブクエリの対象テーブルのエンティティ・クラス
+	 * @param content サブクエリの SELECT SQL より左側の式
+	 * @param subSql サブクエリの SELECT SQL 部分
+	 * @return このオブジェクト
+	 *
+	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
+	 *
+	 * @see #getHaving()
+	 * @see Condition#of(String, Sql, Sql)
+	 */
+	public <SE> Sql<E> having(String content, Sql<SE> subSql) {
 		return this;
 	}
 
@@ -668,6 +787,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 指定されている <b>HAVING</b> 条件を返します。
 	 *
 	 * @return HAVING 条件
+	 *
+	 * @see #having(Condition)
+	 * @see #having(String, Object...)
+	 * @see #having(String, Sql)
 	 */
 	public Condition getHaving() {
 		return null;
@@ -688,6 +811,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
+	 *
+	 * @see #asc()
+	 * @see #desc()
+	 * @see #getOrderBy()
+	 * @see OrderBy#add(OrderBy.Element)
+	 * @see OrderBy.Element#Element(String, Object...)
 	 */
 	public Sql<E> orderBy(String content, Object... arguments) {
 		return this;
@@ -704,6 +833,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * </pre></div>
 	 *
 	 * @return このオブジェクト
+	 *
+	 * @see #orderBy(String, Object...)
+	 * @see #desc()
+	 * @see #getOrderBy()
+	 * @see OrderBy#asc
 	 */
 	public Sql<E> asc() {
 		return this;
@@ -720,6 +854,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * </pre></div>
 	 *
 	 * @return このオブジェクト
+	 *
+	 * @see #orderBy(java.lang.String, java.lang.Object...)
+	 * @see #asc()
+	 * @see #getOrderBy()
+	 * @see OrderBy#desc
 	 */
 	public Sql<E> desc() {
 		return this;
@@ -729,6 +868,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 指定されている <b>ORDER BY</b> 情報を返します。
 	 *
 	 * @return ORDER BY 情報
+	 *
+	 * @see #orderBy(java.lang.String, java.lang.Object...)
+	 * @see #asc()
+	 * @see #desc()
 	 */
 	public OrderBy getOrderBy() {
 		return null;
@@ -746,6 +889,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @param limit <b>LIMIT</b> 値
 	 * @return このオブジェクト
+	 *
+	 * @see #getLimit()
 	 */
 	public Sql<E> limit(int limit) {
 		return this;
@@ -755,6 +900,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 指定されている <b>LIMIT</b> 値を返します。
 	 *
 	 * @return <b>LIMIT</b> 値
+	 *
+	 * @see #limit(int)
 	 */
 	public int getLimit() {
 		return 0;
@@ -772,6 +919,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @param offset <b>OFFSET</b> 値
 	 * @return このオブジェクト
+	 *
+	 * @see #getOffset()
 	 */
 	public Sql<E> offset(int offset) {
 		return this;
@@ -781,6 +930,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 指定されている <b>OFFSET</b> 値を返します。
 	 *
 	 * @return <b>OFFSET</b> 値
+	 *
+	 * @see #offset(int)
 	 */
 	public int getOffset() {
 		return 0;
@@ -790,6 +941,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 	SELECT SQL に <b>FOR UPDATE</b> を追加する事を指定します。
 	 *
 	 * @return このオブジェクト
+	 *
+	 * @see #isForUpdate()
 	 */
 	public Sql<E> forUpdate() {
 		return this;
@@ -799,6 +952,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * SELECT SQL に <b>FOR UPDATE</b> が追加されるかどうかを返します。
 	 *
 	 * @return <b>FOR UPDATE</b> が追加されるなら <b>true</b>、そうでなければ <b>false</b>
+	 *
+	 * @see #forUpdate()
 	 */
 	public boolean isForUpdate() {
 		return false;
@@ -808,17 +963,76 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * SELECT SQL に <b>NO WAIT</b> を追加する事を指定します。
 	 *
 	 * @return このオブジェクト
+	 *
+	 * @see #wait()
+	 * @see #getWaitTime()
+	 * @see #isNoWait()
+	 * @see #isWaitForever()
 	 */
 	public Sql<E> noWait() {
 		return this;
 	}
 
 	/**
-	 * SELECT SQL に <b>NO WAIT</b> が追加されるどうかを返します。
+	 * SELECT SQL に <b>WAIT n</b> を追加する事を指定します。
+	 *
+	 * @param waitTime 待ち時間(秒)
+	 * @return このオブジェクト
+	 *
+	 * @since 1.9.0
+	 *
+	 * @see #noWait()
+	 * @see #getWaitTime()
+	 * @see #isNoWait()
+	 * @see #isWaitForever()
+	 */
+	public Sql<E> wait(int waitTime) {
+		return this;
+	}
+
+	/**
+	 * SELECT SQL の <b>WAIT</b> の引数を返します。
+	 *
+	 * @return 待ち時間(秒)
+	 *
+	 * @since 1.9.0
+	 *
+	 * @see #noWait()
+	 * @see #wait(int)
+	 * @see #isNoWait()
+	 * @see #isWaitForever()
+	 */
+	public int getWaitTime() {
+		return 0;
+	}
+
+	/**
+	 * SELECT SQL に <b>NOWAIT</b> が追加されるどうかを返します。
 	 *
 	 * @return <b>NO WAIT</b> が追加されるなら <b>true</b>、そうでなければ <b>false</b>
+	 *
+	 * @see #noWait()
+	 * @see #wait(int)
+	 * @see #getWaitTime()
+	 * @see #isWaitForever()
 	 */
 	public boolean isNoWait() {
+		return false;
+	}
+
+	/**
+	 * SELECT SQL に <b>NOWAIT</b> と <b>WAIT n</b> のどちらも追加されないかどうかを返します。
+	 *
+	 * @return <b>NOWAIT</b> と <b>WAIT n</b> のどちらも追加されないなら t<b>true</b>、そうでなければ <b>false</b>
+	 *
+	 * @since 1.9.0
+	 *
+	 * @see #noWait()
+	 * @see #wait(int)
+	 * @see #getWaitTime()
+	 * @see #isNoWait()
+	 */
+	public boolean isWaitForever() {
 		return false;
 	}
 
@@ -855,6 +1069,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * 指定のテーブル別名に対応する <b>SqlEntityInfo</b> オブジェクトを返します。
 	 *
+	 * <p>
+	 * <i>このメソッドは内部的に使用されます。</i>
+	 * </p>
+	 *
 	 * @param tableAlias テーブル別名
 	 * @return SqlEntityInfo オブジェクト
 	 *
@@ -867,6 +1085,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * SqlEntityInfo オブジェクトを追加します。
 	 *
+	 * <p>
+	 * <i>このメソッドは内部的に使用されます。</i>
+	 * </p>
+	 *
 	 * @param sqlEntityInfo SqlEntityInfo オブジェクト
 	 */
 	public void addSqlEntityInfo(SqlEntityInfo<?> sqlEntityInfo) {
@@ -874,10 +1096,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	/**
 	 * テーブルを結合しない SELECT SQL を生成して実行します。<br>
+	 *
+	 * <p>
 	 * <b>columns</b> がコールされてなく、
 	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれかコールされている場合は、
 	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
-	 * <br>
+	 * </p>
+	 *
 	 * <ul class="code" style="list-style-type:none">
 	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
 	 * </ul>
@@ -899,11 +1124,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * 1つのテーブルを結合する SELECT SQL を生成して実行します。<br>
+	 * 1つのテーブルを結合する SELECT SQL を生成して実行します。
+	 *
+	 * <p>
 	 * <b>columns</b> がコールされてなく、
 	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか1回より多くコールされている場合は、
 	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
-	 * <br>
+	 * </p>
+	 *
 	 * <ul class="code" style="list-style-type:none">
 	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
 	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
@@ -933,11 +1161,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * 2つのテーブルを結合する SELECT SQL を生成して実行します。<br>
+	 * 2つのテーブルを結合する SELECT SQL を生成して実行します。
+	 *
+	 * <p>
 	 * <b>columns</b> がコールされてなく、
 	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか2回より多くコールされている場合は、
-	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
-	 * <br>
+	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i>
+	 * </p>
+	 *
 	 * <ul class="code" style="list-style-type:none">
 	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
 	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
@@ -973,11 +1204,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * 3つのテーブルを結合する SELECT SQL を生成して実行します。<br>
+	 * 3つのテーブルを結合する SELECT SQL を生成して実行します。
+	 *
+	 * <p>
 	 * <b>columns</b> がコールされてなく、
 	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか3回より多くコールされている場合は、
-	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
-	 * <br>
+	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i>
+	 * </p>
+	 *
 	 * <ul class="code" style="list-style-type:none">
 	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
 	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
@@ -1020,11 +1254,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * 4つのテーブルを結合する SELECT SQL を生成して実行します。<br>
+	 * 4つのテーブルを結合する SELECT SQL を生成して実行します。
+	 *
+	 * <p>
 	 * <b>columns</b> がコールされてなく、
 	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか4回より多くコールされている場合は、
-	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
-	 * <br>
+	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i>
+	 * </p>
+	 *
 	 * <ul class="code" style="list-style-type:none">
 	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
 	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
@@ -1073,8 +1310,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * SELECT SQL を生成して実行します。<br>
+	 * SELECT SQL を生成して実行します。
+	 *
+	 * <p>
 	 * 取得されない場合は、<b>Optional.empty()</b> を返します。
+	 * </p>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1158,9 +1398,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * UPDATE SQL を生成して実行します。<br>
+	 * UPDATE SQL を生成して実行します。
+	 *
+	 * <p>
 	 * <b>WHERE</b> 条件が指定されている場合は、その条件で更新が行われます。<br>
 	 * 対象のテーブルのすべての行を更新するには、<b>WHERE</b> 条件に <b>Condition.ALL</b> を指定してください。
+	 * </p>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1184,8 +1427,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * <b>entities</b> の各要素毎に UPDATE SQL を生成して実行します。<br>
+	 * <b>entities</b> の各要素毎に UPDATE SQL を生成して実行します。
+	 *
+	 * <p>
 	 * <b>WHERE</b> 条件が指定されている場合でも、各エンティティ毎に <b>new EntityCondition(entity)</b> が指定されます。
+	 * </p>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1207,9 +1453,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * DELETE SQL を生成して実行します。<br>
+	 * DELETE SQL を生成して実行します。
+	 *
+	 * <p>
 	 * <b>WHERE</b> 条件が指定されていない場合は実行されません。<br>
 	 * 対象のテーブルのすべての行を削除するには、<b>WHERE</b> 条件に <b>Condition.ALL</b> を指定してください。
+	 * </p>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1286,9 +1535,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * メイン・テーブルの <b>ColumnInfo</b> ストリームを返します。<br>
-	 * <br>
-	 * <i>このメソッドは、内部的に使用されます。</i>
+	 * メイン・テーブルの <b>ColumnInfo</b> ストリームを返します。
+	 *
+	 * <p>
+	 * <i>このメソッドは内部的に使用されます。</i>
+	 * </p>
 	 *
 	 * @return <b>ColumnInfo</b> ストリーム
 	 */
@@ -1297,9 +1548,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * メイン・テーブルの選択対象のカラムの <b>SqlColumnInfo</b> ストリームを返します。<br>
-	 * <br>
-	 * <i>このメソッドは、内部的に使用されます。</i>
+	 * メイン・テーブルの選択対象のカラムの <b>SqlColumnInfo</b> ストリームを返します。
+	 *
+	 * <p>
+	 * <i>このメソッドは内部的に使用されます。</i>
+	 * </p>
 	 *
 	 * @return <b>SqlColumnInfo</b> ストリーム
 	 */
@@ -1308,9 +1561,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * メイン・テーブルと結合テーブルの選択対象のカラムの <b>SqlColumnInfo</b> ストリームを返します。<br>
-	 * <br>
-	 * <i>このメソッドは、内部的に使用されます。</i>
+	 * メイン・テーブルと結合テーブルの選択対象のカラムの <b>SqlColumnInfo</b> ストリームを返します。
+	 *
+	 * <p>
+	 * <i>このメソッドは内部的に使用されます。</i>
+	 * </p>
 	 *
 	 * @return <b>SqlColumnInfo</b> ストリーム
 	 */

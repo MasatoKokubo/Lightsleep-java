@@ -34,20 +34,22 @@ public interface Transaction {
 	void executeBody(Connection connection);
 
 	/**
-	 * 以下の順でトランザクションを実行します。<br>
-	 * <br>
+	 * 以下の順でトランザクションを実行します。
+	 *
 	 * <ol>
 	 *   <li><b>Sql.connectionSupplier().get()</b> をコールしてデータベース・コネクションを取得</li>
 	 *   <li><b>transaction.executeBody</b> メソッドを実行</li>
 	 *   <li>トランザクションをコミット</li>
 	 *   <li>データベース・コネクションをクローズ</li>
 	 * </ol>
-	 * <br>
-	 * 
-	 * トランザクションの本体の実行中に例外がスローされた場合、コミットではなくロールバックを行います。<br>
-	 * <br>
 	 *
+	 * <p>
+	 * トランザクションの本体の実行中に例外がスローされた場合、コミットではなくロールバックを行います。
+	 * </p>
+	 *
+	 * <p>
 	 * <b>transaction</b> にラムダ式でトランザクションの実体を記述してください。
+	 * </p>
 	 *
 	 * @param transaction <b>Transaction</b> オブジェクト
 	 *
@@ -58,20 +60,22 @@ public interface Transaction {
 	}
 
 	/**
-	 * 以下の順でトランザクションを実行します。<br>
-	 * <br>
+	 * 以下の順でトランザクションを実行します。
+	 *
 	 * <ol>
 	 *   <li><b>connectionSupplier.get()</b> をコールしてデータベース・コネクションを取得</li>
 	 *   <li><b>transaction.executeBody</b> メソッドを実行</li>
 	 *   <li>トランザクションをコミット</li>
 	 *   <li>データベース・コネクションをクローズ</li>
 	 * </ol>
-	 * <br>
 	 *
-	 * トランザクションの本体の実行中に例外がスローされた場合、コミットではなくロールバックを行います。<br>
-	 * <br>
+	 * <p>
+	 * トランザクションの本体の実行中に例外がスローされた場合、コミットではなくロールバックを行います。
+	 * </p>
 	 *
+	 * <p>
 	 * <b>transaction</b> にラムダ式でトランザクションの実体を記述してください。
+	 * </p>
 	 *
 	 * @param connectionSupplier <b>ConnectionSupplier</b> オブジェクト
 	 * @param transaction <b>Transaction</b> オブジェクト

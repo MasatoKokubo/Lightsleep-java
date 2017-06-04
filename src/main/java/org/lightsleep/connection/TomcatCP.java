@@ -87,7 +87,10 @@ public class TomcatCP extends AbstractConnectionSupplier {
 			return dataSource;
 		}
 		catch (Exception e) {
-			logger.error("TomcatCP.getDataSource:", e);
+		// 1.9.0
+		//	logger.error("TomcatCP.getDataSource:", e);
+			logger.error("TomcatCP.getDataSource: " + e, e);
+		////
 		}
 		return null;
 	}

@@ -105,7 +105,7 @@ CREATE TABLE SaleItem (
 -- Various
 DROP TABLE IF EXISTS Various;
 CREATE TABLE Various (
-	id               INT         NOT NULL,
+	id               INT              NOT NULL,
 
 	booleanPValue    BOOLEAN          NOT NULL DEFAULT FALSE,
 	char1PValue      CHAR(1)          NOT NULL DEFAULT ' ',

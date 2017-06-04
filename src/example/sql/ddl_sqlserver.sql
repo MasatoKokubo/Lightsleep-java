@@ -6,8 +6,8 @@
 DROP TABLE Contact;
 CREATE TABLE Contact (
 	id          INT          NOT NULL,
-	familyName  VARCHAR(20)      NULL,
-	givenName   VARCHAR(20)      NULL,
+	familyName  VARCHAR( 20)     NULL,
+	givenName   VARCHAR( 20)     NULL,
 	birthday    DATE             NULL,
 
 	updateCount INT          NOT NULL,
@@ -22,8 +22,8 @@ DROP TABLE Phone;
 CREATE TABLE Phone (
 	contactId   INT          NOT NULL,
 	childIndex  SMALLINT     NOT NULL,
-	label       VARCHAR(20)  NOT NULL, -- double length
-	content     VARCHAR(20)  NOT NULL,
+	label       VARCHAR( 20) NOT NULL, -- double length
+	content     VARCHAR( 20) NOT NULL,
 
 	PRIMARY KEY(contactId, childIndex)
 );
@@ -53,14 +53,14 @@ CREATE TABLE Url (
 -- Address
 DROP TABLE Address;
 CREATE TABLE Address (
-	contactId   INT         NOT NULL,
-	childIndex  SMALLINT    NOT NULL,
-	label       VARCHAR(20) NOT NULL, -- double length
-	postCode    VARCHAR(10)     NULL,
-	content0    VARCHAR(40) NOT NULL,
-	content1    VARCHAR(40)     NULL,
-	content2    VARCHAR(40)     NULL,
-	content3    VARCHAR(40)     NULL,
+	contactId   INT          NOT NULL,
+	childIndex  SMALLINT     NOT NULL,
+	label       VARCHAR( 20) NOT NULL, -- double length
+	postCode    VARCHAR( 10)     NULL,
+	content0    VARCHAR( 40) NOT NULL,
+	content1    VARCHAR( 40)     NULL,
+	content2    VARCHAR( 40)     NULL,
+	content3    VARCHAR( 40)     NULL,
 
 	PRIMARY KEY(contactId, childIndex)
 );

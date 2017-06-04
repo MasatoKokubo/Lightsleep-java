@@ -150,42 +150,42 @@ class VariousTypeSpce extends Specification {
 		/**/DebugTrace.print('various types: obtained value', various2)
 
 		then:
-			various2.id               == various1.id
+			various2.id                == various1.id
 
-			various2.booleanPValue    == various1.booleanPValue
-			various2.char1PValue      == various1.char1PValue
-			various2.tinyIntPValue    == various1.tinyIntPValue
-			various2.smallIntPValue   == various1.smallIntPValue
-			various2.intPValue        == various1.intPValue
-			various2.bigIntPValue     == various1.bigIntPValue
-			various2.floatPValue      == various1.floatPValue
-			various2.doublePValue     == various1.doublePValue
+			various2.booleanPValue     == various1.booleanPValue
+			various2.char1PValue       == various1.char1PValue
+			various2.tinyIntPValue     == various1.tinyIntPValue
+			various2.smallIntPValue    == various1.smallIntPValue
+			various2.intPValue         == various1.intPValue
+			various2.bigIntPValue      == various1.bigIntPValue
+			various2.floatPValue       == various1.floatPValue
+			various2.doublePValue      == various1.doublePValue
 
-			various2.booleanValue     == various1.booleanValue
-			various2.char1Value       == various1.char1Value
-			various2.tinyIntValue     == various1.tinyIntValue
-			various2.smallIntValue    == various1.smallIntValue
-			various2.intValue         == various1.intValue
-			various2.bigIntValue      == various1.bigIntValue
-			various2.floatValue       == various1.floatValue
-			various2.doubleValue      == various1.doubleValue
-			various2.decimalValue     == various1.decimalValue
+			various2.booleanValue      == various1.booleanValue
+			various2.char1Value        == various1.char1Value
+			various2.tinyIntValue      == various1.tinyIntValue
+			various2.smallIntValue     == various1.smallIntValue
+			various2.intValue          == various1.intValue
+			various2.bigIntValue       == various1.bigIntValue
+			various2.floatValue        == various1.floatValue
+			various2.doubleValue       == various1.doubleValue
+			various2.decimalValue      == various1.decimalValue
 
-			various2.dateValue        == various1.dateValue
-			various2.timeValue        == various1.timeValue
-			various2.timeTZValue      == various1.timeTZValue
-			various2.dateTimeValue    == various1.dateTimeValue
-			various2.timestampValue   == various1.timestampValue
-			various2.timestampTZValue == various1.timestampTZValue
-			various2.longDate         == various1.longDate
-			various2.longTime         == various1.longTime
-			various2.longTimestamp    == various1.longTimestamp
-			various2.charValue.trim() == various1.charValue
-			various2.varCharValue     == various1.varCharValue
-			various2.binaryValue      == Arrays.copyOf(various1.binaryValue, various2.binaryValue.length)
-			various2.varBinaryValue   == various1.varBinaryValue
-			various2.textValue        == various1.textValue
-			various2.blobValue        == various1.blobValue
+			various2.dateValue         == various1.dateValue
+			various2.timeValue         == various1.timeValue
+			various2.timeTZValue       == various1.timeTZValue
+			various2.dateTimeValue     == various1.dateTimeValue
+			various2.timestampValue    == various1.timestampValue
+			various2.timestampTZValue  == various1.timestampTZValue
+			various2.longDate          == various1.longDate
+			various2.longTime          == various1.longTime
+			various2.longTimestamp     == various1.longTimestamp
+			various2.charValue?.trim() == various1.charValue
+			various2.varCharValue      == various1.varCharValue
+			various2.binaryValue       == (various1.binaryValue == null ? null : Arrays.copyOf(various1.binaryValue, various2.binaryValue.length))
+			various2.varBinaryValue    == various1.varBinaryValue
+			various2.textValue         == various1.textValue
+			various2.blobValue         == various1.blobValue
 
 			if (various2 instanceof Various.PostgreSQL) {
 				Various.PostgreSQL various1p = various1 as Various.PostgreSQL

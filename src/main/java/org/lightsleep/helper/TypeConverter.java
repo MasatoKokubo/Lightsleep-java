@@ -293,7 +293,7 @@ public class TypeConverter<ST, DT> {
 		Objects.requireNonNull(typeConverter, "typeConverter");
 
 		TypeConverter<?, ?> beforeTypeConverter = typeConverterMap.put(typeConverter.key, typeConverter);
-		logger.debug(() -> "TypeConverter.put: " + typeConverter + (beforeTypeConverter != null ? " (overwrite)" : ""));
+		logger.debug(() -> "put: " + typeConverter + (beforeTypeConverter != null ? " (overwrite)" : ""));
 	}
 ////
 
@@ -340,14 +340,14 @@ public class TypeConverter<ST, DT> {
 				TypeConverter<ST, DT> typeConverter3 = new TypeConverter<>(sourceType, destinType, typeConverter2.function());
 				typeConverterMap.put(key, typeConverter3);
 
-				logger.info(() -> "TypeConverter.put: " + typeConverter3 + " (key: " + key + ")");
+				logger.info(() -> "put: " + typeConverter3 + " (key: " + key + ")");
 
 				typeConverter = typeConverter3;
 			}
 		}
 
 		if (typeConverter == null) {
-			logger.error("TypeConverter.get: search("+ TypeConverter.key(sourceType, destinType) + ") = null"
+			logger.error("get: search("+ TypeConverter.key(sourceType, destinType) + ") -> not found"
 				+ ", sourceType: " + sourceType.getCanonicalName()
 				+ ", destinType: " + destinType.getCanonicalName()
 				);
@@ -384,7 +384,7 @@ public class TypeConverter<ST, DT> {
 			Map<String, TypeConverter<?, ?>> typeConverterMap,
 			Class<? super ST> sourceType, Class<? extends DT> destinType) {
 		logger.debug(() ->
-			"TypeConverter.search: sourceType: " + Utils.toLogString(sourceType)
+			"search: sourceType: " + Utils.toLogString(sourceType)
 			+ ", destinType: " + Utils.toLogString(destinType));
 
 		String key = TypeConverter.key(sourceType, destinType);
@@ -435,29 +435,36 @@ public class TypeConverter<ST, DT> {
 	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
 		DT destin = null;
 		if (source == null) {
-			logger.debug(() -> "TypeConverter.convert: null -> null");
+			logger.debug(() -> "convert: null -> null");
 		} else {
 			if (destinType.isInstance(source)) {
-				logger.debug(() -> "TypeConverter.convert: (" + Utils.toLogString(source) + " -> cast to " + Utils.toLogString(destinType));
+				logger.debug(() -> "convert: " + Utils.toLogString(source) + " -> cast to " + Utils.toLogString(destinType));
 				destin = destinType.cast(source);
 			} else {
 				Class<ST> sourceType = (Class<ST>)source.getClass();
 				TypeConverter<ST, DT> typeConverter = get(typeConverterMap, sourceType, destinType);
 				if (typeConverter == null) {
-					logger.error("TypeConverter.convert: " + Utils.toLogString(source) + " -> (" + Utils.toLogString(destinType) + ")");
-					throw new ConvertException(sourceType, source, destinType);
+				// 1.9.0
+				//	logger.error("convert: " + Utils.toLogString(source) + " -> (" + Utils.toLogString(destinType) + ")");
+				//	throw new ConvertException(sourceType, source, destinType);
+					ConvertException e = new ConvertException(sourceType, source, destinType);
+					logger.error("convert: " + Utils.toLogString(source) + " -> " + Utils.toLogString(destinType), e);
+					throw e;
+				////
 				}
 
 				try {
 					destin = typeConverter.apply(source);
 				}
 				catch (RuntimeException e) {
-					logger.error("TypeConverter.convert: converter:" + typeConverter.key + ", " + Utils.toLogString(source) + " -> (" + Utils.toLogString(destinType) + ")");
+					logger.error("convert: converter: " + typeConverter.key
+						+ ", conversion: " + Utils.toLogString(source) + " -> " + Utils.toLogString(destinType), e);
 					throw e;
 				}
 
 				if (logger.isDebugEnabled())
-					logger.debug("TypeConverter.convert: converter:" + typeConverter.key + ", " + Utils.toLogString(source) + " -> " + Utils.toLogString(destin));
+					logger.debug("convert: converter: " + typeConverter.key
+						+ ", conversion: " + Utils.toLogString(source) + " -> " + Utils.toLogString(destin));
 			}
 		}
 

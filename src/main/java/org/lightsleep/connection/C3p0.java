@@ -88,7 +88,10 @@ public class C3p0 extends AbstractConnectionSupplier {
 			return dataSource;
 		}
 		catch (SQLException e) {
-			logger.error("C3p0.<init>:", e);
+		// 1.9.0
+		//	logger.error("C3p0.<init>:", e);
+			logger.error("C3p0.<init>: " + e, e);
+		////
 		}
 		return null;
 	}

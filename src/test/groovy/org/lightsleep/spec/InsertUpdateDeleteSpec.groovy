@@ -236,9 +236,10 @@ class InsertUpdateDeleteSpec extends Specification {
 	 */
 	def "update delete - with condition - #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
-		if (Sql.getDatabase() instanceof SQLite) return
+		if (Sql.getDatabase() instanceof DB2) return
 		if (Sql.getDatabase() instanceof Oracle) return
 		if (Sql.getDatabase() instanceof PostgreSQL) return
+		if (Sql.getDatabase() instanceof SQLite) return
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
 

@@ -21,6 +21,7 @@ import spock.lang.*
 class SqlSpec extends Specification {
 	static databases = [
 		Standard  .instance(),
+		DB2       .instance(),
 		MySQL     .instance(),
 		Oracle    .instance(),
 		PostgreSQL.instance(),
@@ -714,15 +715,36 @@ class SqlSpec extends Specification {
 	// Sql.forUpdate()
 	// Sql.isForUpdate()
 	// Sql.noWait()
+	// Sql.wait(waitTime)
+	// Sql.getWaitTime()
 	// Sql.isNoWait()
-	def "21 forUpdate, isForUpdate, noWait, isNoWait"() {
+	// Sql.isWaitForever()
+	def "21 forUpdate, isForUpdate, noWait, wait, getWaitTime, isNoWait, isWaitForever"() {
 	/**/DebugTrace.enter()
 
 		expect:
 			new Sql<>(Contact.class).forUpdate == false
 			new Sql<>(Contact.class).forUpdate().forUpdate
-			new Sql<>(Contact.class).isNoWait() == false
+
+			new Sql<>(Contact.class).noWait == false
+			new Sql<>(Contact.class).waitForever
+			new Sql<>(Contact.class).waitTime == Sql.FOREVER
+
 			new Sql<>(Contact.class).noWait().noWait
+			new Sql<>(Contact.class).noWait().waitForever == false
+			new Sql<>(Contact.class).noWait().waitTime == 0
+
+			new Sql<>(Contact.class).wait(0).noWait
+			new Sql<>(Contact.class).wait(0).waitForever == false
+			new Sql<>(Contact.class).wait(0).waitTime == 0
+
+			new Sql<>(Contact.class).wait(10).noWait == false
+			new Sql<>(Contact.class).wait(10).waitForever == false
+			new Sql<>(Contact.class).wait(10).waitTime == 10
+
+			new Sql<>(Contact.class).wait(Sql.FOREVER).noWait == false
+			new Sql<>(Contact.class).wait(Sql.FOREVER).waitForever
+			new Sql<>(Contact.class).wait(Sql.FOREVER).waitTime == Sql.FOREVER
 
 	/**/DebugTrace.leave()
 	}

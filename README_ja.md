@@ -14,6 +14,7 @@ Lightsleep は、軽量の O/R マッピング・ライブラリで、Java 8 で
 
 #### 対応DBMS
 
+- DB2
 - MySQL
 - Oracle Database
 - PostgreSQL

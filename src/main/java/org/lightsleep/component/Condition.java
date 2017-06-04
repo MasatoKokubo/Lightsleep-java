@@ -3,7 +3,7 @@
 
 package org.lightsleep.component;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 import org.lightsleep.Sql;
@@ -62,7 +62,7 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 *
-	 * @see Expression
+	 * @see Expression#Expression(String, Object...)
 	 */
 	static Condition of(String content, Object... arguments) {
 		return new Expression(content, arguments);
@@ -77,7 +77,7 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException if <b>entity</b> is null
 	 *
-	 * @see EntityCondition
+	 * @see EntityCondition#EntityCondition(Object)
 	 */
 	static <E> Condition of(E entity) {
 	// 1.8.3
@@ -100,7 +100,7 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is null
 	 *
-	 * @see SubqueryCondition
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	static <E, SE> Condition of(String content, Sql<E> outerSql, Sql<SE> subSql) {
 		return new SubqueryCondition<>(new Expression(content), outerSql, subSql);
@@ -111,7 +111,8 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @return optimized <b>(NOT this)</b>
 	 *
-	 * @see Not
+	 * @see Not#Not(Condition)
+	 * @see LogicalCondition#optimized()
 	 */
 	default Condition not() {
 	// 1.8.0
@@ -128,7 +129,7 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException if <b>condition</b> is null
 	 *
-	 * @see And
+	 * @see And#And(Condition...)
 	 * @see LogicalCondition#optimized()
 	 */
 	default Condition and(Condition condition) {
@@ -148,8 +149,8 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 *
-	 * @see And
-	 * @see Expression
+	 * @see And#And(Condition...)
+	 * @see Expression#Expression(String, Object...)
 	 * @see LogicalCondition#optimized()
 	 */
 	default Condition and(String content, Object... arguments) {
@@ -171,8 +172,9 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is null
 	 *
-	 * @see And
-	 * @see SubqueryCondition
+	 * @see And#And(Condition...)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
+	 * @see Expression#Expression(String, Object...)
 	 * @see LogicalCondition#optimized()
 	 */
 	default <E, SE> Condition and(String content, Sql<E> outerSql, Sql<SE> subSql) {
@@ -190,7 +192,7 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException if <b>condition</b> is null
 	 *
-	 * @see Or
+	 * @see Or#Or(Condition...)
 	 * @see LogicalCondition#optimized()
 	 */
 	default Condition or(Condition condition) {
@@ -210,8 +212,8 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 *
-	 * @see Or
-	 * @see Expression
+	 * @see Or#Or(Condition...)
+	 * @see Expression#Expression(String, Object...)
 	 * @see LogicalCondition#optimized()
 	 */
 	default Condition or(String content, Object... arguments) {
@@ -233,8 +235,9 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is null
 	 *
-	 * @see Or
-	 * @see SubqueryCondition
+	 * @see Or#Or(Condition...)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
+	 * @see Expression#Expression(String, Object...)
 	 * @see LogicalCondition#optimized()
 	 */
 	default <E, SE> Condition or(String content, Sql<E> outerSql, Sql<SE> subSql) {
@@ -253,7 +256,8 @@ public interface Condition extends SqlComponent {
 	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
 	 *
 	 * @since 1.8.8
-	 * @see And
+	 *
+	 * @see And#And(Stream)
 	 * @see LogicalCondition#optimized()
 	 */
 	static Condition and(Stream<Condition> conditions) {
@@ -263,16 +267,20 @@ public interface Condition extends SqlComponent {
 	/**
 	 * Returns <b>new And(conditions).optimized()</b>.
 	 *
-	 * @param conditions a list of conditions
+	 * @param conditions a collection of conditions
 	 * @return an optimized <b>new And(conditions)</b>
 	 *
 	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
 	 *
 	 * @since 1.8.8
-	 * @see And
+	 *
+	 * @see And#And(Collection)
 	 * @see LogicalCondition#optimized()
 	 */
-	static Condition and(List<Condition> conditions) {
+// 1.9.0
+//	static Condition and(List<Condition> conditions) {
+	static Condition and(Collection<Condition> conditions) {
+////
 		return new And(conditions).optimized();
 	}
 
@@ -285,7 +293,8 @@ public interface Condition extends SqlComponent {
 	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
 	 *
 	 * @since 1.8.8
-	 * @see And
+	 *
+	 * @see And#And(Condition...)
 	 * @see LogicalCondition#optimized()
 	 */
 	static Condition and(Condition... conditions) {
@@ -301,7 +310,8 @@ public interface Condition extends SqlComponent {
 	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
 	 *
 	 * @since 1.8.8
-	 * @see And
+	 *
+	 * @see Or#Or(Stream)
 	 * @see LogicalCondition#optimized()
 	 */
 	static Condition or(Stream<Condition> conditions) {
@@ -317,10 +327,14 @@ public interface Condition extends SqlComponent {
 	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
 	 *
 	 * @since 1.8.8
-	 * @see Or
+	 *
+	 * @see Or#Or(Collection)
 	 * @see LogicalCondition#optimized()
 	 */
-	static Condition or(List<Condition> conditions) {
+// 1.9.0
+//	static Condition or(List<Condition> conditions) {
+	static Condition or(Collection<Condition> conditions) {
+////
 		return new Or(conditions).optimized();
 	}
 
@@ -333,7 +347,8 @@ public interface Condition extends SqlComponent {
 	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
 	 *
 	 * @since 1.8.8
-	 * @see Or
+	 *
+	 * @see Or#Or(Condition...)
 	 * @see LogicalCondition#optimized()
 	 */
 	static Condition or(Condition... conditions) {

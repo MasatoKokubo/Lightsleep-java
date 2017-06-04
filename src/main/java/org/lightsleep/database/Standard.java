@@ -33,9 +33,11 @@ import org.lightsleep.helper.Utils;
 /**
  * A database handler that does not depend on the particular DBMS.
  *
+ * <p>
  * The object of this class has a <b>TypeConverter</b> map
  * with the following additional <b>TypeConverter</b> to
  * {@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}.
+ * </p>
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
@@ -63,13 +65,13 @@ import org.lightsleep.helper.Utils;
  *   <tr><td>Object         </td><td rowspan="2"><code>'...'</code></td></tr>
  *   <tr><td>Character      </td></tr>
  *   <tr><td>BigDecimal     </td><td></td></tr>
- *   <tr><td>String         </td><td><code>'...'</code><br><code>?</code> <i>(SQL parameter)</i> if long</td></tr>
+ *   <tr><td>String         </td><td><code>'...'</code><br>Converts control characters to <code>'...'||CHR(n)||'...'</code>.<br><code>?</code> <i>(SQL parameter)</i> if the string is long</td></tr>
  *   <tr><td>java.util.Date</td><td rowspan="2"><code>DATE'yyyy-MM-dd'</code></td></tr>
  *   <tr><td>java.sql.Date  </td></tr>
  *   <tr><td>Time           </td><td><code>TIME'HH:mm:ss'</code></td></tr>
  *   <tr><td>Timestamp      </td><td><code>TIMESTAMP'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
  *   <tr><td>Enum           </td><td><code>'...'</code> (Using toString())</td></tr>
- *   <tr><td>byte[]         </td><td><code>X'...'</code><br><code>?</code> <i>(SQL parameter)</i> if long</td></tr>
+ *   <tr><td>byte[]         </td><td><code>X'...'</code><br><code>?</code> <i>(SQL parameter)</i> if the byte array is long</td></tr>
  *   <tr><td>boolean[]      </td><td rowspan="14"><code>ARRAY[x,y,z,...]</code><br>Convert each element to a SqlString with TypeConverter.</td></tr>
  *   <tr><td>char[]         </td></tr>
  *   <tr><td>byte[][]       </td></tr>
@@ -176,7 +178,13 @@ public class Standard implements Database {
 		return instance;
 	}
 
-	// The TypeConverter map
+	/**
+	 * <b>TypeConverter</b> map used for the following data type conversion
+	 * <ul>
+	 *   <li>When generating SQL</li>
+	 *   <li>When storing the value obtained by SELECT SQL in the entity</li>
+	 * </ul>
+	 */
 // 1.8.1
 //	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = new LinkedHashMap<>(TypeConverter.typeConverterMap);
 	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = new ConcurrentHashMap<>(TypeConverter.typeConverterMap());
@@ -330,17 +338,40 @@ public class Standard implements Database {
 
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');
-				char[] chars = object.toCharArray();
-			// 1.7.0
-			//	for (int index = 0; index < chars.length; ++index) {
-			//		char ch = chars[index];
-				for (char ch : chars) {
-			////
-					if (ch == '\'')
+			// 1.9.0
+				boolean inLiteral = true;
+			//
+				for (char ch : object.toCharArray()) {
+				// 1.9.0
+				//	if (ch == '\'')
+				//		buff.append(ch);
+				//	buff.append(ch);
+					if (ch >= ' ' && ch != '\u007F') {
+						// Literal representation
+						if (!inLiteral) {
+							// Outside of the literal
+							buff.append("||'");
+							inLiteral = true;
+						}
+						if (ch == '\'') buff.append('\'');
 						buff.append(ch);
-					buff.append(ch);
+					} else {
+						// Functional representation
+						if (inLiteral) {
+							// Inside of the literal
+							buff.append('\'');
+							inLiteral = false;
+						}
+						buff.append("||CHR(").append((int)ch).append(')');
+					}
+				//
 				}
-				buff.append('\'');
+
+			// 1.9.0
+				if (inLiteral)
+			////
+					buff.append('\'');
+
 				return new SqlString(buff.toString());
 			})
 		);
@@ -474,8 +505,8 @@ public class Standard implements Database {
 					buff.append(ch);
 				}
 				buff.append('\'');
-				return new SqlString(buff.toString());
 
+				return new SqlString(buff.toString());
 			})
 		////
 		);
@@ -608,7 +639,16 @@ public class Standard implements Database {
 
 	}
 
-	// Converts an Array to a primitive java array
+	/**
+	 * Converts a java.sql.Array to an array.
+	 *
+	 * @param <AT> array type
+	 * @param <CT> component type
+	 * @param object an object to be converted
+	 * @param arrayType the array type
+	 * @param componentType the component type
+	 * @return the converted array
+	 */
 	@SuppressWarnings("unchecked")
 	protected <AT, CT> AT toArray(java.sql.Array object, Class<AT> arrayType, Class<CT> componentType) {
 		try {
@@ -643,7 +683,14 @@ public class Standard implements Database {
 		}
 	}
 
-	// Converts an array to a String
+	/**
+	 * Converts an array object to a <b>SqlString</b>.
+	 *
+	 * @param <CT> component type
+	 * @param array an array object to be converted
+	 * @param componentType the component type
+	 * @return the converted <b>SqlString</b>
+	 */
 	@SuppressWarnings("unchecked")
 	protected <CT> SqlString toSqlString(Object array, Class<CT> componentType) {
 	// 1.4.0
@@ -706,18 +753,18 @@ public class Standard implements Database {
 	//			buff.append(" NO WAIT");
 	//	}
 		// ORDER BY ...
-		appendsOrderBy(buff, sql, parameters);
+		appendOrderBy(buff, sql, parameters);
 
 		if (supportsOffsetLimit()) {
 			// LIMIT ...
-			appendsLimit(buff, sql);
+			appendLimit(buff, sql);
 
 			// OFFSET ...
-			appendsOffset(buff, sql);
+			appendOffset(buff, sql);
 		}
 
 		// FOR UPDATE
-		appendsForUpdate(buff, sql);
+		appendForUpdate(buff, sql);
 	////
 
 		return buff.toString();
@@ -841,7 +888,7 @@ public class Standard implements Database {
 		buff.append("SELECT");
 
 		// DISTINCT
-		appendsDistinct(buff, sql);
+		appendDistinct(buff, sql);
 
 		//  column name, ...
 		buff.append(' ').append(columnsSupplier.get());
@@ -850,19 +897,19 @@ public class Standard implements Database {
 		buff.append(" FROM");
 
 		// main table name and alias
-		appendsMainTable(buff, sql);
+		appendMainTable(buff, sql);
 
 		// INNER / OUTER JOIN ...
-		appendsJoinTables(buff, sql, parameters);
+		appendJoinTables(buff, sql, parameters);
 
 		// WHERE ...
-		appendsWhere(buff, sql, parameters);
+		appendWhere(buff, sql, parameters);
 
 		// GROUP BY ...
-		appendsGroupBy(buff, sql, parameters);
+		appendGroupBy(buff, sql, parameters);
 
 		// HAVING ...
-		appendsHaving(buff, sql, parameters);
+		appendHaving(buff, sql, parameters);
 	////
 
 		return buff.toString();
@@ -915,7 +962,7 @@ public class Standard implements Database {
 		buff.append("INSERT INTO");
 
 		// table name and alias
-		appendsMainTable(buff, sql);
+		appendMainTable(buff, sql);
 
 		// ( column name, ...
 	// 1.8.4
@@ -952,7 +999,7 @@ public class Standard implements Database {
 	//			delimiter[0] = ", ";
 	//		});
 	//	buff.append(")");
-		appendsInsertColumnsAndValues(buff, sql, parameters);
+		appendInsertColumnsAndValues(buff, sql, parameters);
 	////
 
 		return buff.toString();
@@ -1006,10 +1053,10 @@ public class Standard implements Database {
 		buff.append("UPDATE");
 
 		// main table name and alias
-		appendsMainTable(buff, sql);
+		appendMainTable(buff, sql);
 
 		// INNER / OUTER JOIN ...
-		appendsJoinTables(buff, sql, parameters);
+		appendJoinTables(buff, sql, parameters);
 
 		// SET column name =  value, ...
 	// 1.8.4
@@ -1038,17 +1085,17 @@ public class Standard implements Database {
 	//				.append(expression.toString(sql, parameters));
 	//			delimiter[0] = ", ";
 	//		});
-		appendsUpdateColumnsAndValues(buff, sql, parameters);
+		appendUpdateColumnsAndValues(buff, sql, parameters);
 	////
 
 		// WHERE ...
-		appendsWhere(buff, sql, parameters);
+		appendWhere(buff, sql, parameters);
 
 		// ORDER BY ...
-		appendsOrderBy(buff, sql, parameters);
+		appendOrderBy(buff, sql, parameters);
 
 		// LIMIT ...
-		appendsLimit(buff, sql);
+		appendLimit(buff, sql);
 	////
 
 		return buff.toString();
@@ -1091,19 +1138,19 @@ public class Standard implements Database {
 	////
 
 		// main table name and alias
-		appendsMainTable(buff, sql);
+		appendMainTable(buff, sql);
 
 		// INNER / OUTER JOIN ...
-		appendsJoinTables(buff, sql, parameters);
+		appendJoinTables(buff, sql, parameters);
 
 		// WHERE ...
-		appendsWhere(buff, sql, parameters);
+		appendWhere(buff, sql, parameters);
 
 		// ORDER BY ...
-		appendsOrderBy(buff, sql, parameters);
+		appendOrderBy(buff, sql, parameters);
 
 		// LIMIT ...
-		appendsLimit(buff, sql);
+		appendLimit(buff, sql);
 	////
 
 		return buff.toString();
@@ -1118,7 +1165,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsDistinct(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendDistinct(StringBuilder buff, Sql<E> sql) {
 		// DISTINCT
 		if (sql.isDistinct())
 			buff.append(" DISTINCT");
@@ -1133,7 +1180,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsMainTable(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendMainTable(StringBuilder buff, Sql<E> sql) {
 		// main table name
 		buff.append(' ').append(sql.entityInfo().tableName());
 
@@ -1152,7 +1199,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsJoinTables(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendJoinTables(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		sql.getJoinInfos().forEach(joinInfo -> {
 			// INNER/OUTER JOIN table name
 			buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());
@@ -1177,7 +1224,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.4
 	 */
-	protected <E> void appendsInsertColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendInsertColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		// ( column name, ...
 		buff.append(" (");
 		String[] delimiter = new String[] {""};
@@ -1223,7 +1270,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.4
 	 */
-	protected <E> void appendsUpdateColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendUpdateColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		// SET column name =  value, ...
 		buff.append(" SET ");
 		String[] delimiter = new String[] {""};
@@ -1262,7 +1309,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (sql.getWhere() != Condition.ALL)
 			buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
 	}
@@ -1277,7 +1324,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (!sql.getGroupBy().isEmpty())
 			buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
 	}
@@ -1292,7 +1339,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (!sql.getHaving().isEmpty())
 			buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
 	}
@@ -1307,7 +1354,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (!sql.getOrderBy().isEmpty())
 			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
 	}
@@ -1321,7 +1368,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsLimit(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendLimit(StringBuilder buff, Sql<E> sql) {
 		if (sql.getLimit() != Integer.MAX_VALUE)
 			buff.append(" LIMIT ").append(sql.getLimit());
 	}
@@ -1335,7 +1382,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsOffset(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendOffset(StringBuilder buff, Sql<E> sql) {
 		if (sql.getOffset() != 0)
 			buff.append(" OFFSET ").append(sql.getOffset());
 	}
@@ -1349,14 +1396,22 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsForUpdate(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
 		// FOR UPDATE
 		if (sql.isForUpdate()) {
 			buff.append(" FOR UPDATE");
 
 			// NO WAIT
 			if (sql.isNoWait())
-				buff.append(" NO WAIT");
+			// 1.9.0
+			//	buff.append(" NO WAIT");
+				throw new UnsupportedOperationException("noWait");
+			////
+		// 1.9.0
+			// WAIT n
+			else if (!sql.isWaitForever())
+				throw new UnsupportedOperationException("wait N");
+		////
 		}
 	}
 

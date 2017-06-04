@@ -16,11 +16,13 @@ import org.lightsleep.helper.TypeConverter;
 
 /**
  * A database handler for
- * <a href="https://www.microsoft.com/ja-jp/server-cloud/products-SQL-Server-2014.aspx" target="SQL Server">Microsoft SQL Server</a>.<br>
+ * <a href="https://www.microsoft.com/ja-jp/server-cloud/products-SQL-Server-2014.aspx" target="SQL Server">Microsoft SQL Server</a>.
  *
+ * <p>
  * The object of this class has a <b>TypeConverter</b> map
  * with the following additional <b>TypeConverter</b> to
  * {@linkplain Standard#typeConverterMap}.
+ * </p>
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
@@ -29,7 +31,7 @@ import org.lightsleep.helper.TypeConverter;
  *   <tr><td>java.sql.Date</td><td><code>CAST('yyyy:MM:dd' AS DATE)</code></td></tr>
  *   <tr><td>Time         </td><td><code>CAST('HH:mm:ss' AS DATE)</code></td></tr>
  *   <tr><td>Timestamp    </td><td><code>CAST('yyyy-MM-dd HH:mm:ss.SSS' AS DATETIME2)</code></td></tr>
- *   <tr><td>String       </td><td><code>'...'</code><br>Converts control character to <code>'...'+CHAR(n)+'...'</code>.<br><code>?</code> <i>(SQL parameter)</i> if long</td></tr>
+*   <tr><td>String       </td><td><code>'...'</code><br>Converts control characters to <code>'...'+CHAR(n)+'...'</code>.<br><code>?</code> <i>(SQL parameter)</i> if the string is long</td></tr>
  *   <tr><td>byte[]</td><td><code>?</code> <i>(SQL parameter)</i></td></tr>
  * </table>
 
@@ -69,14 +71,8 @@ public class SQLServer extends Standard {
 
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');
-
-				char[] chars = object.toCharArray();
 				boolean inLiteral = true;
-			// 1.7.0
-			//	for (int index = 0; index < chars.length; ++index) {
-			//		char ch = chars[index];
-				for (char ch : chars) {
-			////
+				for (char ch : object.toCharArray()) {
 					if (ch >= ' ' && ch != '\u007F') {
 						// Literal representation
 						if (!inLiteral) {
@@ -96,10 +92,10 @@ public class SQLServer extends Standard {
 						buff.append("+CHAR(").append((int)ch).append(')');
 					}
 				}
-
+	
 				if (inLiteral)
 					buff.append('\'');
-
+	
 				return new SqlString(buff.toString());
 			})
 		);
@@ -143,7 +139,7 @@ public class SQLServer extends Standard {
 		// ORDER BY ...
 	// 1.8.2
 	//	buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
-		appendsOrderBy(buff, sql, parameters);
+		appendOrderBy(buff, sql, parameters);
 	////
 
 		return buff.toString();
@@ -218,7 +214,7 @@ public class SQLServer extends Standard {
 		buff.append("SELECT");
 	
 		// DISTINCT
-		appendsDistinct(buff, sql);
+		appendDistinct(buff, sql);
 	
 		// the column names, ...
 		buff.append(' ').append(columnsSupplier.get());
@@ -227,22 +223,22 @@ public class SQLServer extends Standard {
 		buff.append(" FROM");
 
 		// main table name and alias
-		appendsMainTable(buff, sql);
+		appendMainTable(buff, sql);
 
 		// FOR UPDATE
-		appendsForUpdate(buff, sql);
+		appendForUpdate(buff, sql);
 	
 		// INNER / OUTER JOIN ...
-		appendsJoinTables(buff, sql, parameters);
+		appendJoinTables(buff, sql, parameters);
 	
 		// WHERE ...
-		appendsWhere(buff, sql, parameters);
+		appendWhere(buff, sql, parameters);
 	
 		// GROUP BY ...
-		appendsGroupBy(buff, sql, parameters);
+		appendGroupBy(buff, sql, parameters);
 	
 		// HAVING ...
-		appendsHaving(buff, sql, parameters);
+		appendHaving(buff, sql, parameters);
 	////
 
 		return buff.toString();
@@ -276,25 +272,25 @@ public class SQLServer extends Standard {
 		buff.append("UPDATE");
 
 		// main table name and alias
-		appendsMainTable(buff, sql2);
+		appendMainTable(buff, sql2);
 
 		// SET column name =  value, ...
-		appendsUpdateColumnsAndValues(buff, sql2, parameters);
+		appendUpdateColumnsAndValues(buff, sql2, parameters);
 
 		// FROM
 		buff.append(" FROM");
 
 		// main table name and alias
-		appendsMainTable(buff, sql);
+		appendMainTable(buff, sql);
 
 		// INNER / OUTER JOIN ...
-		appendsJoinTables(buff, sql, parameters);
+		appendJoinTables(buff, sql, parameters);
 
 		// WHERE ...
-		appendsWhere(buff, sql, parameters);
+		appendWhere(buff, sql, parameters);
 
 		// ORDER BY ...
-		appendsOrderBy(buff, sql, parameters);
+		appendOrderBy(buff, sql, parameters);
 
 		return buff.toString();
 	}
@@ -305,14 +301,23 @@ public class SQLServer extends Standard {
 	 * @since 1.8.2
 	 */
 	@Override
-	protected <E> void appendsForUpdate(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
 		// FOR UPDATE
 		if (sql.isForUpdate()) {
 			// NO WAIT
 			if (sql.isNoWait())
 				buff.append(" WITH (ROWLOCK,UPDLOCK,NOWAIT)");
-			else
+		// 1.9.0
+		//	else
+			// WAIT
+			else if (sql.isWaitForever())
+		////
 				buff.append(" WITH (ROWLOCK,UPDLOCK)");
+		// 1.9.0
+			// WAIT n
+			else
+				throw new UnsupportedOperationException("wait N");
+		////
 		}
 	}
 }

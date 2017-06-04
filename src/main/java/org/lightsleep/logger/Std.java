@@ -231,7 +231,7 @@ public abstract class Std implements Logger {
 	 * @param t a Throwable
 	 */
 	private void println(Level level, String message, Throwable t) {
-		println(level, message + " " + t.toString());
+		println(level, message + ", " + t.toString());
 	}
 
 	/**

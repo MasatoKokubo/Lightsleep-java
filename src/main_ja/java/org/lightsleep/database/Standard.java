@@ -12,12 +12,17 @@ import org.lightsleep.helper.TypeConverter;
 import org.lightsleep.Sql;
 
 /**
- * 特定の DBMS に依存しないデータベース・ハンドラーです。<br>
+ * 特定の DBMS に依存しないデータベース・ハンドラーです。
  *
+ * <p>
  * {@linkplain org.lightsleep.helper.TypeConverter} クラスが持つ
  * <b>TypeConverter</b> オブジェクトおよび以下の変換を行う
- * <b>TypeConverter</b> オブジェクトを持ちます。<br>
- * <br>
+ * <b>TypeConverter</b> オブジェクトを持ちます。
+ * </p>
+ * <p>
+ * このクラスのオブジェクトは、{@linkplain org.lightsleep.helper.TypeConverter#typeConverterMap}
+ * に以下の <b>TypeConverter</b> オブジェクトを追加した<b>TypeConverter</b> マップを持ちます。
+ * </p>
  *
  * <table class="additional">
  *   <caption><span>追加される TypeConverter オブジェクト</span></caption>
@@ -45,13 +50,13 @@ import org.lightsleep.Sql;
  *   <tr><td>Object         </td><td rowspan="2"><code>'...'</code></td></tr>
  *   <tr><td>Character      </td></tr>
  *   <tr><td>BigDecimal     </td><td></td></tr>
- *   <tr><td>String         </td><td><code>'...'</code><br>長い場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
+ *   <tr><td>String         </td><td><code>'...'</code><br>制御文字は <code>'...'||CHR(n)||'...'</code> に変換<br>長い文字列場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
  *   <tr><td>java.util.Date</td><td rowspan="2"><code>DATE'yyyy-MM-dd'</code></td></tr>
  *   <tr><td>java.sql.Date  </td></tr>
  *   <tr><td>Time           </td><td><code>TIME'HH:mm:ss'</code></td></tr>
  *   <tr><td>Timestamp      </td><td><code>TIMESTAMP'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
  *   <tr><td>Enum           </td><td><code>'...'</code> (toString() で変換)</td></tr>
- *   <tr><td>byte[]         </td><td><code>X'...'</code><br>長い場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
+ *   <tr><td>byte[]         </td><td><code>X'...'</code><br>長いバイト配列の場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
  *   <tr><td>boolean[]      </td><td rowspan="14"><code>ARRAY[x,y,z,...]</code><br>各要素を TypeConverter で SqlString に変換</td></tr>
  *   <tr><td>char[]         </td></tr>
  *   <tr><td>byte[][]       </td></tr>
@@ -137,19 +142,45 @@ public class Standard implements Database {
 	}
 
 	/**
-	 * <b>Standard</b> を構築します。
-	 */
-	protected Standard() {
-	}
-
-	/**
-	 * 以下のデータ型変換で使用する <b>TypeConverter</b> マップ<br>
+	 * 以下のデータ型変換で使用する <b>TypeConverter</b> マップ
 	 * <ul>
 	 *   <li>SQL 生成時</li>
 	 *   <li>SELECT SQL で取得した値をエンティティに格納する際</li>
 	 * </ul>
 	 */
 	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = null;
+
+	/**
+	 * <b>Standard</b> を構築します。
+	 */
+	protected Standard() {
+	}
+
+	/**
+	 * java.sql.Array を配列に変換します。
+	 *
+	 * @param <AT> 配列の型
+	 * @param <CT> コンポーネントの型
+	 * @param object 変換するオブジェクト
+	 * @param arrayType 配列の型
+	 * @param componentType コンポーネントの型
+	 * @return 変換された配列
+	 */
+	protected <AT, CT> AT toArray(java.sql.Array object, Class<AT> arrayType, Class<CT> componentType) {
+		return null;
+	}
+
+	/**
+	 * 配列オブジェクトを <b>SqlString</b> に変換します。
+	 *
+	 * @param <CT> コンポーネントの型
+	 * @param array 変換する配列
+	 * @param componentType コンポーネントの型
+	 * @return 変換された <b>SqlString</b>
+	 */
+	protected <CT> SqlString toSqlString(Object array, Class<CT> componentType) {
+		return null;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -208,7 +239,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsDistinct(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendDistinct(StringBuilder buff, Sql<E> sql) {
 	}
 
 	/**
@@ -220,7 +251,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsMainTable(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendMainTable(StringBuilder buff, Sql<E> sql) {
 	}
 
 	/**
@@ -233,7 +264,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsJoinTables(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendJoinTables(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 	}
 
 	/**
@@ -246,7 +277,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.4
 	 */
-	protected <E> void appendsInsertColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendInsertColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 	}
 
 	/**
@@ -259,7 +290,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.4
 	 */
-	protected <E> void appendsUpdateColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendUpdateColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 	}
 
 	/**
@@ -272,7 +303,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 	}
 
 	/**
@@ -285,7 +316,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 	}
 
 	/**
@@ -298,7 +329,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 	}
 
 	/**
@@ -311,7 +342,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	protected <E> void appendOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 	}
 
 	/**
@@ -323,7 +354,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsLimit(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendLimit(StringBuilder buff, Sql<E> sql) {
 	}
 
 	/**
@@ -335,7 +366,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsOffset(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendOffset(StringBuilder buff, Sql<E> sql) {
 	}
 
 	/**
@@ -347,7 +378,7 @@ public class Standard implements Database {
 	 *
 	 * @since 1.8.2
 	 */
-	protected <E> void appendsForUpdate(StringBuilder buff, Sql<E> sql) {
+	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
 	}
 
 	/**

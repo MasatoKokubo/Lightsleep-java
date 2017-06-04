@@ -5,6 +5,7 @@
 		<append>false</append>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<fileNamePattern>logs/logback_%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxFileSize>16MB</maxFileSize>
 			<maxHistory>10</maxHistory>
 		</rollingPolicy>
 		<encoder>

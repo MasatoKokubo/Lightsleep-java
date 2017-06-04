@@ -9,16 +9,17 @@ import org.lightsleep.Sql;
 
 /**
  * <a href="https://www.oracle.com/database/index.html" target="Oracle">Oracle Database</a>
- * 用のデータベース・ハンドラーです。<br>
+ * 用のデータベース・ハンドラーです。
  *
- * スーパークラスで追加された <b>TypeConverter</b> オブジェクトに以下を追加するか置き換えます。<br>
- * <br>
+ * <p>
+ * このクラスのオブジェクトは、{@linkplain Standard#typeConverterMap}
+ * に以下の <b>TypeConverter</b> オブジェクトを追加した<b>TypeConverter</b> マップを持ちます。
+ * </p>
  *
  * <table class="additional">
  *   <caption><span>追加される TypeConverter オブジェクト</span></caption>
  *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
- *   <tr><td>Boolean</td><td rowspan="4">SqlString</td><td>false ➔ <code>0</code><br>true ➔ <code>1</code></td></tr>
- *   <tr><td>String </td><td><code>'...'</code><br>制御文字は <code>'...'||CHR(n)||'...'</code> に変換<br>長い場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
+ *   <tr><td>Boolean</td><td rowspan="3">SqlString</td><td>false ➔ <code>0</code><br>true ➔ <code>1</code></td></tr>
  *   <tr><td>Time   </td><td><code>TO_TIMESTAMP('1970-01-01 HH:mm:ss','YYYY-MM-DD HH24:MI:SS.FF3')</code></td></tr>
  *   <tr><td>byte[]</td><td><code>?</code> <i>(SQLパラメータ)</i></td></tr>
  *   <tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date</td><td rowspan="4">値の取得時に SQLException がスローされた場合 ConvertException をスロー</td></tr>

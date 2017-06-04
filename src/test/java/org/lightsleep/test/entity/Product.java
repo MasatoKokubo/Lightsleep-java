@@ -19,6 +19,7 @@ public class Product extends Common {
 		);
 
 		TypeConverter.put(Standard  .instance().typeConverterMap(), typeConverter);
+		TypeConverter.put(DB2       .instance().typeConverterMap(), typeConverter); // 1.9.0
 		TypeConverter.put(MySQL     .instance().typeConverterMap(), typeConverter);
 		TypeConverter.put(Oracle    .instance().typeConverterMap(), typeConverter);
 		TypeConverter.put(PostgreSQL.instance().typeConverterMap(), typeConverter);

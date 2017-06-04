@@ -198,6 +198,7 @@ class SelectSpec extends Specification {
 	// select(Connection connection)
 	def "select - exception"() {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('select - exception')
 
 		setup:
 			List<Contact> contacts = []
@@ -267,6 +268,7 @@ class SelectSpec extends Specification {
 	def "select1 #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('select1')
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
 
 		setup:
@@ -300,6 +302,7 @@ class SelectSpec extends Specification {
 	def "select MAX #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('select MAX')
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
 
 		setup:
@@ -368,6 +371,7 @@ class SelectSpec extends Specification {
 	def "where A and B or C and D #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('where A and B or C and D')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -405,6 +409,7 @@ class SelectSpec extends Specification {
 	def "where (A or B) and (C or D) #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('where (A or B) and (C or D)')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -446,6 +451,7 @@ class SelectSpec extends Specification {
 	def "selectCount #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('selectCount')
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
 
 		setup:
@@ -475,6 +481,7 @@ class SelectSpec extends Specification {
 	def "limit, offset #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('limit, offset')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -506,9 +513,10 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin
-	def "joinTest #connectionSupplierName"(
+	def "innerJoin #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('innerJoin')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -542,9 +550,10 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin
-	def "joinTest1 #connectionSupplierName"(
+	def "innerJoin2 #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('innerJoin')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -571,9 +580,10 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin x 2
-	def "joinTest2 #connectionSupplierName"(
+	def "innerJoin innerJoin #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('innerJoin innerJoin')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -603,9 +613,10 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin x 3
-	def "joinTest3 #connectionSupplierName"(
+	def "innerJoin innerJoin innerJoin #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('innerJoin innerJoin innerJoin')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -638,9 +649,10 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin x 3 + leftJoin
-	def "joinTest4 #connectionSupplierName"(
+	def "innerJoin innerJoin innerJoin leftJoin #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('innerJoin innerJoin innerJoin leftJoin')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -679,6 +691,7 @@ class SelectSpec extends Specification {
 	def "select join x 4 #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('innerJoin innerJoin innerJoin leftJoin 2')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -725,6 +738,7 @@ class SelectSpec extends Specification {
 	def "gourpBy #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('gourpBy')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -757,8 +771,9 @@ class SelectSpec extends Specification {
 	// select(Connection connection) / forUpdate
 	def "forUpdate #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
-		if (Sql.getDatabase() instanceof SQLite) return
+		if (Sql.database instanceof SQLite) return
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('forUpdate')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -788,8 +803,8 @@ class SelectSpec extends Specification {
 							.where('{id} = {}', contact0.id)
 							.forUpdate()
 							.select(it).orElse(null)
-						assert contact != null
 					/**/DebugTrace.print('2-' + myIndex + ' contact', contact)
+						assert contact != null
 
 						contact.name.given  += myIndex
 					/**/DebugTrace.print('contact.name.given' , contact.name.given )
@@ -836,15 +851,354 @@ class SelectSpec extends Specification {
 		then:
 			true
 
+		cleanup:
+			if (contact0 != null)
+				Transaction.execute(connectionSupplier) {new Sql<>(Contact.class).update(it, contact0)}
+
 	/**/DebugTrace.leave()
 		where:
 			connectionSupplierClass << connectionSupplierClasses
 			connectionSupplierName = connectionSupplierClass.simpleName
 	}
 
-	// exceptionTest
-	def "exception"() {
+	// select(Connection connection) / forUpdate noWait
+	def "forUpdate noWait #connectionSupplierName"(
+		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+		if (Sql.database instanceof DB2) return
+		if (Sql.database instanceof MySQL) return
+		if (Sql.database instanceof PostgreSQL) return
+		if (Sql.database instanceof SQLite) return
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('forUpdate noWait')
+
+		setup:
+		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
+			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
+			Contact contact0 = null
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				contact0 = new Sql<>(Contact.class)
+					.limit(1)
+					.orderBy('{id}')
+					.select(it).orElse(null)
+			}
+		/**/DebugTrace.print('1 contact0', contact0)
+			
+		then:
+			assert contact0 != null
+
+		when:
+			def threads = new Thread[10]
+			(0..<threads.length).each {index ->
+				threads[index] = new Thread({
+					Transaction.execute(connectionSupplier) {
+						try {
+							def myIndex = index
+						/**/DebugTrace.print('1 myIndex', myIndex)
+							Contact contact = new Sql<>(Contact.class)
+								.where('{id} = {}', contact0.id)
+								.forUpdate().noWait()
+								.select(it).orElse(null)
+						/**/DebugTrace.print('2-' + myIndex + ' contact', contact)
+
+							contact.name.given  += myIndex
+						/**/DebugTrace.print('contact.name.given' , contact.name.given )
+
+							if (myIndex == 0)
+								Thread.sleep(1500L)
+
+						/**/DebugTrace.print('2 myIndex', myIndex)
+							new Sql<>(Contact.class).update(it, contact)
+						}
+						catch (RuntimeSQLException e) {
+						/**/DebugTrace.print('e', e)
+						}
+					}
+				})
+				threads[index].start()
+				Thread.sleep(100L)
+			}
+
+		then:
+			true
+
+		when:
+			// Waits for all threads to finish.
+			(0..<threads.length).each {threads[it].join()}
+
+			Contact contact1 = null
+			Transaction.execute(connectionSupplier) {
+				contact1 = new Sql<>(Contact.class)
+					.where('{id} = {}', contact0.id)
+					.select(it).orElse(null)
+			/**/DebugTrace.print('3 contact1', contact1)
+				assert contact1 != null
+				assert contact1.name.given.indexOf('0') >= 0
+				assert contact1.name.given.indexOf('1') == -1
+				assert contact1.name.given.indexOf('2') == -1
+				assert contact1.name.given.indexOf('3') == -1
+				assert contact1.name.given.indexOf('4') == -1
+				assert contact1.name.given.indexOf('5') == -1
+				assert contact1.name.given.indexOf('6') == -1
+				assert contact1.name.given.indexOf('7') == -1
+				assert contact1.name.given.indexOf('8') == -1
+				assert contact1.name.given.indexOf('9') == -1
+
+				new Sql<>(Contact.class).update(it, contact1)
+			}
+
+		then:
+			true
+
+		cleanup:
+			if (contact0 != null)
+				Transaction.execute(connectionSupplier) {new Sql<>(Contact.class).update(it, contact0)}
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplierClass << connectionSupplierClasses
+			connectionSupplierName = connectionSupplierClass.simpleName
+	}
+
+	// select(Connection connection) / forUpdate wait N
+	def "forUpdate wait N #connectionSupplierName"(
+		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+		if (Sql.database instanceof DB2) return
+		if (Sql.database instanceof MySQL) return
+		if (Sql.database instanceof PostgreSQL) return
+		if (Sql.database instanceof SQLite) return
+		if (Sql.database instanceof SQLServer) return
+	/**/DebugTrace.enter()
+	/**/DebugTrace.print('forUpdate wait N')
+
+		setup:
+		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
+			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
+			Contact contact0 = null
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				contact0 = new Sql<>(Contact.class)
+					.limit(1)
+					.orderBy('{id}')
+					.select(it).orElse(null)
+			}
+		/**/DebugTrace.print('1 contact0', contact0)
+			
+		then:
+			assert contact0 != null
+
+		when:
+			def threads = new Thread[10]
+			(0..<threads.length).each {index ->
+				threads[index] = new Thread({
+					Transaction.execute(connectionSupplier) {
+						try {
+							def myIndex = index
+						/**/DebugTrace.print('1 myIndex', myIndex)
+							Contact contact = new Sql<>(Contact.class)
+								.where('{id} = {}', contact0.id)
+								.forUpdate().wait(1) // wait 1000ms
+								.select(it).orElse(null)
+						/**/DebugTrace.print('2-' + myIndex + ' contact', contact)
+
+							contact.name.given  += myIndex
+						/**/DebugTrace.print('contact.name.given' , contact.name.given )
+
+							if (myIndex == 0)
+								Thread.sleep(1550L)
+
+						/**/DebugTrace.print('2 myIndex', myIndex)
+							new Sql<>(Contact.class).update(it, contact)
+						}
+						catch (RuntimeSQLException e) {
+						/**/DebugTrace.print('e', e)
+						}
+					}
+				})
+				threads[index].start()
+				Thread.sleep(100L)
+			}
+
+		then:
+			true
+
+		when:
+			// Waits for all threads to finish.
+			(0..<threads.length).each {threads[it].join()}
+
+			Contact contact1 = null
+			Transaction.execute(connectionSupplier) {
+				contact1 = new Sql<>(Contact.class)
+					.where('{id} = {}', contact0.id)
+					.select(it).orElse(null)
+			/**/DebugTrace.print('3 contact1', contact1)
+				assert contact1 != null
+				assert contact1.name.given.indexOf('0') >= 0  //   0~1550ms
+				assert contact1.name.given.indexOf('1') == -1 // 100~1100ms
+				assert contact1.name.given.indexOf('2') == -1 // 200~1200ms
+				assert contact1.name.given.indexOf('3') == -1 // 300~1300ms
+				assert contact1.name.given.indexOf('4') == -1 // 400~1400ms
+				assert contact1.name.given.indexOf('5') >= 0 || // 500~1500ms
+				       contact1.name.given.indexOf('6') >= 0 || // 600~1600ms
+				       contact1.name.given.indexOf('7') >= 0  // 700~1700ms
+				assert contact1.name.given.indexOf('8') == -1 // 800~1800ms
+				assert contact1.name.given.indexOf('9') == -1 // 900~1900ms
+
+				new Sql<>(Contact.class).update(it, contact1)
+			}
+
+		then:
+			true
+
+		cleanup:
+			if (contact0 != null)
+				Transaction.execute(connectionSupplier) {new Sql<>(Contact.class).update(it, contact0)}
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplierClass << connectionSupplierClasses
+			connectionSupplierName = connectionSupplierClass.simpleName
+	}
+
+	// select(Connection connection) / forUpdate - exception
+	def "forUpdate - exception #connectionSupplierName"(
+		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+		if (Sql.database instanceof DB2) return
+		if (Sql.database instanceof MySQL) return
+		if (Sql.database instanceof Oracle) return
+		if (Sql.database instanceof PostgreSQL) return
+		if (Sql.database instanceof SQLServer) return
+	/**/DebugTrace.enter()
+	/**/DebugTrace.print('forUpdate - exception')
+
+		setup:
+		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
+			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
+			Contact contact0 = null
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				contact0 = new Sql<>(Contact.class)
+					.limit(1)
+					.orderBy('{id}')
+					.select(it).orElse(null)
+			}
+		/**/DebugTrace.print('1 contact0', contact0)
+			
+		then:
+			assert contact0 != null
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				new Sql<>(Contact.class)
+					.where('{id} = {}', contact0.id)
+					.forUpdate()
+					.select(it)
+			}
+
+		then:
+			def e =thrown UnsupportedOperationException
+			e.message.indexOf('forUpdate') >= 0
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplierClass = Jdbc.class
+			connectionSupplierName = connectionSupplierClass.simpleName
+	}
+
+	// select(Connection connection) / forUpdate noWait - exception
+	def "forUpdate noWait - exception #connectionSupplierName"(
+		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+		if (Sql.database instanceof Oracle) return
+		if (Sql.database instanceof SQLite) return
+		if (Sql.database instanceof SQLServer) return
+	/**/DebugTrace.enter()
+	/**/DebugTrace.print('forUpdate noWait - exception')
+
+		setup:
+		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
+			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
+			Contact contact0 = null
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				contact0 = new Sql<>(Contact.class)
+					.limit(1)
+					.orderBy('{id}')
+					.select(it).orElse(null)
+			}
+		/**/DebugTrace.print('1 contact0', contact0)
+			
+		then:
+			assert contact0 != null
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				new Sql<>(Contact.class)
+					.where('{id} = {}', contact0.id)
+					.forUpdate().noWait()
+					.select(it)
+			}
+
+		then:
+			def e = thrown UnsupportedOperationException
+			e.message.indexOf('noWait') >= 0
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplierClass = Jdbc.class
+			connectionSupplierName = connectionSupplierClass.simpleName
+	}
+
+	// select(Connection connection) / forUpdate wait N - exception
+	def "forUpdate wait N - exception #connectionSupplierName"(
+		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+		if (Sql.database instanceof Oracle) return
+		if (Sql.database instanceof SQLite) return
+	/**/DebugTrace.enter()
+	/**/DebugTrace.print('forUpdate noWait N - exception')
+
+		setup:
+		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
+			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
+			Contact contact0 = null
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				contact0 = new Sql<>(Contact.class)
+					.limit(1)
+					.orderBy('{id}')
+					.select(it).orElse(null)
+			}
+		/**/DebugTrace.print('1 contact0', contact0)
+			
+		then:
+			assert contact0 != null
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				new Sql<>(Contact.class)
+					.where('{id} = {}', contact0.id)
+					.forUpdate().wait(5)
+					.select(it)
+			}
+
+		then:
+			def e = thrown UnsupportedOperationException
+			e.message.indexOf('wait N') >= 0
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplierClass = Jdbc.class
+			connectionSupplierName = connectionSupplierClass.simpleName
+	}
+
+	// exceptionTest
+	def "exception - ManyRowsException"() {
+	/**/DebugTrace.enter()
+	/**/DebugTrace.print('exception - ManyRowsException')
 
 		when:
 			Transaction.execute(connectionSupplier) {
@@ -865,8 +1219,11 @@ class SelectSpec extends Specification {
 		public String fullName
 	}
 
+	@SelectProperty(property = 'fullName', expression = "{name.given}||' '||{name.family}")
+	static class ContactFnDB2 extends ContactFn {}
+
 	@SelectProperty(property = 'fullName', expression = "CONCAT({name.given},' ',{name.family})")
-	static class ContactFnMyMySQL extends ContactFn {}
+	static class ContactFnMySQL extends ContactFn {}
 
 	@SelectProperty(property = 'fullName', expression = "{name.given}||' '||{name.family}")
 	static class ContactFnOracle extends ContactFn {}
@@ -884,6 +1241,7 @@ class SelectSpec extends Specification {
 	def "extends Class #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
+	/**/DebugTrace.print('extends Class')
 
 		setup:
 		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -891,7 +1249,8 @@ class SelectSpec extends Specification {
 
 		when:
 			Class<? extends ContactFn> contactClass =
-				Sql.database instanceof MySQL      ? ContactFnMyMySQL   .class :
+				Sql.database instanceof DB2        ? ContactFnDB2       .class :
+				Sql.database instanceof MySQL      ? ContactFnMySQL     .class :
 				Sql.database instanceof Oracle     ? ContactFnOracle    .class :
 				Sql.database instanceof PostgreSQL ? ContactFnPostgreSQL.class :
 				Sql.database instanceof SQLite     ? ContactFnSQLite    .class :

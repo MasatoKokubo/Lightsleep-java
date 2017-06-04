@@ -462,6 +462,7 @@ Database プロパティの値を以下から選択します。
 
 |指定値|DBMS|
 |:--|:--|
+|DB2 *(since 1.9.0)*|<a href="https://www.ibm.com/us-en/marketplace/db2-express-c" target="_blank">DB2</a>|
 |MySQL     |<a href="https://www.mysql.com/" target="_blank">MySQL</a>|
 |Oracle    |<a href="https://www.oracle.com/database/index.html" target="_blank">Oracle Database</a>|
 |PostgreSQL|<a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a>|
@@ -493,6 +494,14 @@ ConnectionSupplier プロパティの値を以下から選択します。
 `Jdbc` クラスは、`java.sql.DriverManager.getConnection` メソッドを使用してデータベース・コネクションを取得します。  
 コネクション・プール・ライブラリが必要する情報も lightsleep.properties ファイルに定義してください。
 以下の lightsleep.properties の定義例の ConnectionSupplier より下 (url ~) は、コネクション・プール・ライブラリに渡す内容です。
+
+```properties:lightsleep.properties
+# lightsleep.properties / Jdbc
+ConnectionSupplier = Jdbc
+url                = jdbc:db2://db2-11:50000/example
+user               = example
+password           = _example_
+```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / C3p0
@@ -545,14 +554,6 @@ ConnectionSupplier = Jndi
 dataSource         = jdbc/example
 ```
 
-```properties:lightsleep.properties
-# lightsleep.properties / Jdbc
-ConnectionSupplier = Jdbc
-url                = jdbc:mysql://mysql57/example
-user               = example
-password           = _example_
-```
-
 [【目次へ】](#TOC)
 
 ### 4. トランザクション
@@ -562,7 +563,7 @@ password           = _example_
 ラムダ式は、`Transaction.executeBody` メソッドの内容に相当し、このメソッドの引数は、`Connection` です。
 
 ```java:Java
-// Java
+// Java での例
 import org.lightsleep.*;
 contact.id = 1;
 contact.familyName = "Apple";
@@ -579,7 +580,7 @@ Transaction.execute(connection -> {
 
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contact = new Contact()
 contact.id = 1
 contact.familyName = 'Apple'
@@ -613,7 +614,7 @@ SQLの実行は、`Sql` クラスの各種メソッドを使用し、`Transactio
 #### 5-1-1. SELECT 1行 / 式条件
 
 ```java:Java
-// Java
+// Java での例
 Transaction.execute(connection -> {
     Optional<Contact> contactOpt = new Sql<>(Contact.class)
         .where("{id}={}", 1)
@@ -622,7 +623,7 @@ Transaction.execute(connection -> {
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 Transaction.execute {
     def contactOpt = new Sql<>(Contact.class)
         .where('{id}={}', 1)
@@ -631,6 +632,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
 
@@ -641,7 +643,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 5-1-2. SELECT 1行 / エンティティ条件
 
 ```java:Java
-// Java
+// Java での例
 Contact contact = new Contact();
 contact.id = 1;
 Transaction.execute(connection -> {
@@ -652,7 +654,7 @@ Transaction.execute(connection -> {
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contact = new Contact()
 contact.id = 1
 Transaction.execute {
@@ -663,6 +665,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
 
@@ -673,7 +676,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 5-1-3. SELECT 複数行 / 式条件
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -683,7 +686,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
@@ -699,7 +702,7 @@ Transaction.execute {
 #### 5-1-4. SELECT サブクエリ条件
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class, "C")
@@ -712,7 +715,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class, 'C')
@@ -725,6 +728,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime FROM Contact C WHERE EXISTS (SELECT * FROM Phone P WHERE P.contactId=C.id)
 ```
 
@@ -735,7 +739,7 @@ SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C
 #### 5-1-5. SELECT 式条件 / AND
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -746,7 +750,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
@@ -757,6 +761,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' AND givenName='Akane'
 ```
 
@@ -767,7 +772,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 5-1-6. SELECT 式条件 / OR
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -778,7 +783,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
@@ -789,6 +794,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' OR familyName='Orange'
 ```
 
@@ -830,6 +836,7 @@ Transaction.execute(connection ->
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' AND givenName='Akane' OR familyName='Orange' AND givenName='Setoka'
 ```
 
@@ -840,7 +847,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 5-1-8. SELECT カラムの選択
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -851,7 +858,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
@@ -862,6 +869,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT familyName, givenName FROM Contact WHERE familyName='Apple'
 ```
 
@@ -872,7 +880,7 @@ SELECT familyName, givenName FROM Contact WHERE familyName='Apple'
 #### 5-1-9. SELECT GROUP BY, HAVING
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class, "C")
@@ -884,7 +892,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class, 'C')
@@ -896,6 +904,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT MIN(C.familyName) AS C_familyName FROM Contact C GROUP BY C.familyName HAVING COUNT(C.familyName)>=2
 ```
 
@@ -906,7 +915,7 @@ SELECT MIN(C.familyName) AS C_familyName FROM Contact C GROUP BY C.familyName HA
 #### 5-1-10. SELECT ORDER BY, OFFSET, LIMIT
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -919,7 +928,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
@@ -932,12 +941,12 @@ Transaction.execute {
 ```
 
 ```sql:SQL
--- MySQL, PostgreSQL, SQLite
+-- 実行される SQL / DB2, MySQL, PostgreSQL, SQLite
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY familyName ASC, givenName ASC, id ASC LIMIT 5 OFFSET 10
 ```
 
 ```sql:SQL
--- Oracle, SQLServer (取得時に行をスキップする)
+-- 実行される SQL / Oracle, SQLServer (取得時に行をスキップする)
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY familyName ASC, givenName ASC, id ASC
 ```
 
@@ -948,7 +957,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 5-1-11. SELECT FOR UPDATE
 
 ```java:Java
-// Java
+// Java での例
 Transaction.execute(connection -> {
     Optional<Contact> contactOpt = new Sql<>(Contact.class)
         .where("{id}={}", 1)
@@ -958,7 +967,7 @@ Transaction.execute(connection -> {
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 Transaction.execute {
     def contactOpt = new Sql<>(Contact.class)
         .where('{id}={}', 1)
@@ -968,15 +977,26 @@ Transaction.execute {
 ```
 
 ```sql:SQL
--- MySQL, Oracle, PostgreSQL, SQLite
--- SQLite では、FOR UPDATE が未サポートのため、例外がスローされます。
+-- 実行される SQL / DB2
+SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE WITH RS
+```
+
+```sql:SQL
+-- 実行される SQL / MySQL, Oracle, PostgreSQL, SQLite
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE
 ```
 
 ```sql:SQL
--- SQLServer
+-- 実行される SQL / SQLite
+-- SQLite では FOR UPDATE をサポートしていないので UnsupportedOperationException がスローされます。
+```
+
+```sql:SQL
+-- 実行される SQL / SQLServer
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WITH (ROWLOCK,UPDLOCK) WHERE id=1
 ```
+
+-- SQLite では、FOR UPDATE が未サポートのため、例外がスローされます。
 
 <div id="ExecuteSQL-select-innerJoin"></div>
 
@@ -985,7 +1005,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 #### 5-1-12. SELECT 内部結合
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
 Transaction.execute(connection ->
@@ -997,7 +1017,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 def phones = []
 Transaction.execute {
@@ -1009,6 +1029,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C INNER JOIN Phone P ON P.contactId=C.id WHERE C.id=1
 ```
 
@@ -1019,7 +1040,7 @@ SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C
 #### 5-1-13. SELECT 左外部結合
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
 Transaction.execute(connection ->
@@ -1031,7 +1052,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 def phones = []
 Transaction.execute {
@@ -1043,6 +1064,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C LEFT OUTER JOIN Phone P ON P.contactId=C.id WHERE C.familyName='Apple'
 ```
 
@@ -1053,7 +1075,7 @@ SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C
 #### 5-1-14. SELECT 右外部結合
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
 Transaction.execute(connection ->
@@ -1065,7 +1087,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 def phones = []
 Transaction.execute {
@@ -1077,13 +1099,14 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 -- SQLite では、RIGHT OUTER JOIN が未サポートのため、例外がスローされます。
 SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C RIGHT OUTER JOIN Phone P ON P.contactId=C.id WHERE P.label='Main'
 ```
 
 #### 5-1-15. SELECT COUNT(*)
 ```java:Java
-// Java
+// Java での例
 int[] rowCount = new int[1];
 Transaction.execute(connection ->
     rowCount[0] = new Sql<>(Contact.class)
@@ -1093,7 +1116,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def rowCount = 0
 Transaction.execute {
     rowCount = new Sql<>(Contact.class)
@@ -1103,6 +1126,8 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
+SELECT COUNT(*) FROM Contact WHERE familyName='Apple'
 ```
 
 <div id="ExecuteSQL-insert"></div>
@@ -1116,7 +1141,7 @@ Transaction.execute {
 #### 5-2-1. INSERT 1行
 
 ```java:Java
-// Java
+// Java での例
 Contact contact = new Contact();
 contact.id = 1;
 contact.familyName = "Apple";
@@ -1130,7 +1155,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contact = new Contact()
 contact.id = 1
 contact.familyName = 'Apple'
@@ -1145,17 +1170,17 @@ Transaction.execute {
 ```
 
 ```sql:SQL
--- MySQL, Oracle, PostgreSQL
+-- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', DATE'2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
--- SQLite
+-- 実行される SQL / SQLite
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', '2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
--- SQLServer
+-- 実行される SQL / SQLServer
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', CAST('2001-01-01' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
@@ -1166,7 +1191,7 @@ INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTi
 #### 5-2-2. INSERT 複数行
 
 ```java:Java
-// Java
+// Java での例
 List<Contact> contacts = new ArrayList<>();
 
 Contact contact = new Contact();
@@ -1188,7 +1213,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contacts = []
 
 def contact = new Contact()
@@ -1211,19 +1236,19 @@ Transaction.execute {
 ```
 
 ```sql:SQL
--- MySQL, Oracle, PostgreSQL
+-- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', DATE'2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', DATE'2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
--- SQLite
+-- 実行される SQL / SQLite
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', '2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', '2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
--- SQLServer
+-- 実行される SQL / SQLServer
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', CAST('2001-01-02' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', CAST('2001-01-03' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
@@ -1240,7 +1265,7 @@ INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTi
 #### 5-3-1. UPDATE 1行
 
 ```java:Java
-// Java
+// Java での例
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
         .where("{id}={}", 1)
@@ -1253,7 +1278,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 Transaction.execute {
     new Sql<>(Contact.class)
         .where('{id}={}', 1)
@@ -1266,19 +1291,19 @@ Transaction.execute {
 ```
 
 ```sql:SQL
--- MySQL, Oracle, PostgreSQL
+-- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
 ```sql:SQL
--- SQLite
+-- 実行される SQL / SQLite
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
 ```sql:SQL
--- SQLServer
+-- 実行される SQL / SQLServer
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
@@ -1290,7 +1315,7 @@ UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday=CAST('2001-01
 #### 5-3-2. UPDATE 複数行
 
 ```java:Java
-// Java
+// Java での例
 Transaction.execute(connection -> {
     List<Contact> contacts = new ArrayList<>();
     new Sql<>(Contact.class)
@@ -1304,7 +1329,7 @@ Transaction.execute(connection -> {
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 Transaction.execute {
     def contacts = []
     new Sql<>(Contact.class)
@@ -1318,7 +1343,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
--- MySQL, Oracle, PostgreSQL
+-- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
 UPDATE Contact SET familyName='Apfel', givenName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday=DATE'2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
@@ -1326,7 +1351,7 @@ UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday=DATE'2001-01-
 ```
 
 ```sql:SQL
--- SQLite
+-- 実行される SQL / SQLite
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
 UPDATE Contact SET familyName='Apfel', givenName='Akiyo', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday='2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
@@ -1334,7 +1359,7 @@ UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday='2001-01-03',
 ```
 
 ```sql:SQL
--- SQLServer
+-- 実行される SQL / SQLServer
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
 UPDATE Contact SET familyName='Apfel', givenName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday=CAST('2001-01-02' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
@@ -1348,7 +1373,7 @@ UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday=CAST('2001-01
 #### 5-3-3. UPDATE 指定条件, カラム選択
 
 ```java:Java
-// Java
+// Java での例
 Contact contact = new Contact();
 contact.familyName = "Pomme";
 Transaction.execute(connection ->
@@ -1360,7 +1385,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contact = new Contact()
 contact.familyName = 'Pomme'
 Transaction.execute {
@@ -1372,6 +1397,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 UPDATE Contact SET familyName='Pomme' WHERE familyName='Apfel'
 ```
 
@@ -1382,7 +1408,7 @@ UPDATE Contact SET familyName='Pomme' WHERE familyName='Apfel'
 #### 5-3-4. UPDATE 全行
 
 ```java:Java
-// Java
+// Java での例
 Contact contact = new Contact();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
@@ -1393,7 +1419,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 def contact = new Contact()
 Transaction.execute {
     new Sql<>(Contact.class)
@@ -1404,6 +1430,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 UPDATE Contact SET birthday=NULL
 ```
 
@@ -1418,7 +1445,7 @@ UPDATE Contact SET birthday=NULL
 #### 5-4-1. DELETE  1行
 
 ```java:Java
-// Java
+// Java での例
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
         .where("{id}={}", 1)
@@ -1429,7 +1456,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 Transaction.execute {
     new Sql<>(Contact.class)
         .where('{id}={}', 1)
@@ -1441,6 +1468,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 DELETE FROM Contact WHERE id=1
 ```
@@ -1452,7 +1480,7 @@ DELETE FROM Contact WHERE id=1
 #### 5-4-2. DELETE  複数行
 
 ```java:Java
-// Java
+// Java での例
 Transaction.execute(connection -> {
     List<Contact> contacts = new ArrayList<>();
     new Sql<>(Contact.class)
@@ -1463,7 +1491,7 @@ Transaction.execute(connection -> {
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 Transaction.execute {
     def contacts = []
     new Sql<>(Contact.class)
@@ -1474,6 +1502,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Pomme'
 DELETE FROM Contact WHERE id=2
 DELETE FROM Contact WHERE id=3
@@ -1486,7 +1515,7 @@ DELETE FROM Contact WHERE id=3
 #### 5-4-3. DELETE  指定条件
 
 ```java:Java
-// Java
+// Java での例
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
         .where("{familyName}={}", "Orange")
@@ -1495,7 +1524,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 Transaction.execute {
     new Sql<>(Contact.class)
         .where('{familyName}={}', 'Orange')
@@ -1504,6 +1533,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 DELETE FROM Contact WHERE familyName='Orange'
 ```
 
@@ -1514,7 +1544,7 @@ DELETE FROM Contact WHERE familyName='Orange'
 #### 5-4-4. DELETE 全行
 
 ```java:Java
-// Java
+// Java での例
 Transaction.execute(connection ->
     new Sql<>(Phone.class)
         .where(Condition.ALL)
@@ -1523,7 +1553,7 @@ Transaction.execute(connection ->
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy での例
 Transaction.execute {
     new Sql<>(Phone.class)
         .where(Condition.ALL)
@@ -1532,6 +1562,7 @@ Transaction.execute {
 ```
 
 ```sql:SQL
+-- 実行される SQL
 DELETE FROM Phone
 ```
 

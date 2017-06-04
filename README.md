@@ -14,6 +14,7 @@ It is not compatible with the Java Persistence API (JPA).
 
 #### Supported DBMS
 
+- DB2
 - MySQL
 - Oracle Database
 - PostgreSQL

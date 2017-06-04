@@ -7,21 +7,25 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 
+import org.lightsleep.Sql;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
 
 /**
  * A database handler for
- * <a href="https://www.sqlite.org/" target="SQLite">SQLite</a>.<br>
+ * <a href="https://www.sqlite.org/" target="SQLite">SQLite</a>.
  *
+ * <p>
  * The object of this class has a <b>TypeConverter</b> map
  * with the following additional <b>TypeConverter</b> to
  * {@linkplain Standard#typeConverterMap}.
+ * </p>
  *
  * <table class="additional">
  *   <caption><span>Registered TypeConverter objects</span></caption>
  *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Contents</th></tr>
- *   <tr><td>Boolean       </td><td rowspan="6">SqlString</td><td>false -&gt; <code>0</code><br>true -&gt; <code>1</code></td></tr>
+ *   <tr><td>Boolean       </td><td rowspan="7">SqlString</td><td>false -&gt; <code>0</code><br>true -&gt; <code>1</code></td></tr>
+ *   <tr><td>String        </td><td><code>'...'</code><br><code>?</code> <i>(SQL parameter)</i> if the string is long</td></tr>
  *   <tr><td>java.util.Date</td><td rowspan="2"><code>'yyyy-MM-dd'</code></td></tr>
  *   <tr><td>java.sql.Date </td></tr>
  *   <tr><td>Time          </td><td><code>'HH:mm:ss'</code></td></tr>
@@ -53,6 +57,27 @@ public class SQLite extends Standard {
 	protected SQLite() {
 		// boolean -> 0, 1
 		TypeConverter.put(typeConverterMap, booleanToSql01Converter);
+
+	// 1.9.0
+		// String -> SqlString
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(String.class, SqlString.class, object -> {
+				if (object.length() > maxStringLiteralLength)
+					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
+
+				StringBuilder buff = new StringBuilder(object.length() + 2);
+				buff.append('\'');
+				for (char ch : object.toCharArray()) {
+					if (ch == '\'')
+						buff.append(ch);
+					buff.append(ch);
+				}
+				buff.append('\'');
+
+				return new SqlString(buff.toString());
+			})
+		);
+	////
 
 		// java.util.Date -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
@@ -150,6 +175,18 @@ public class SQLite extends Standard {
 //		return buff.toString();
 //	}
 ////
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.0
+	 */
+	@Override
+	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
+		// FOR UPDATE
+		if (sql.isForUpdate())
+			throw new UnsupportedOperationException("forUpdate");
+	}
 
 	/**
 	 * {@inheritDoc}

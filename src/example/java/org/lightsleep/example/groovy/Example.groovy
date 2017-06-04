@@ -26,7 +26,7 @@ class Example extends Common {
 
 			init1()
 			init2()
-	        readme()
+			readme()
 			example5_1_1()
 			example5_1_2()
 			example5_1_3()

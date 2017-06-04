@@ -100,7 +100,10 @@ public class HikariCP extends AbstractConnectionSupplier {
 			return dataSource;
 		}
 		catch (Exception e) {
-			logger.error("HikariCP.getDataSource:", e);
+		// 1.9.0
+		//	logger.error("HikariCP.getDataSource:", e);
+			logger.error("HikariCP.getDataSource: " + e, e);
+		////
 		}
 		return null;
 	}
