@@ -16,7 +16,7 @@ class SQLServerSpec extends Specification {
 	@Shared map = SQLServer.instance().typeConverterMap()
 
 	// -> SqlString
-	def "-> SqlString"() {
+	def "SQLServerSpec -> SqlString"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false     , SqlString.class).toString() == '0'

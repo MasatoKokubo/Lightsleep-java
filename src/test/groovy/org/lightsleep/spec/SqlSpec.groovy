@@ -42,7 +42,7 @@ class SqlSpec extends Specification {
 
 	// Sql.getDatabase()
 	// Sql.setDatabase(Database)
-	def "01 getDatabase, setDatabase"() {
+	def "SqlSpec getDatabase setDatabase"() {
 	/**/DebugTrace.enter()
 
 		setup:
@@ -73,7 +73,7 @@ class SqlSpec extends Specification {
 
 	// Sql.getConnectionSupplier()
 	// Sql.setConnectionSupplier(ConnectionSupplier)
-	def "02 getConnectionSupplier, setConnectionSupplier"() {
+	def "SqlSpec getConnectionSupplier setConnectionSupplier"() {
 	/**/DebugTrace.enter()
 
 		setup:
@@ -99,7 +99,7 @@ class SqlSpec extends Specification {
 	}
 
 	// Sql.getEntityInfo(Class<E>)
-	def "03 getEntityInfo - exception"() {
+	def "SqlSpec getEntityInfo - exception"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -112,7 +112,7 @@ class SqlSpec extends Specification {
 	}
 
 	// Sql.Sql(Class<E>)
-	def "04 constructor - exception"() {
+	def "SqlSpec constructor - exception"() {
 	/**/DebugTrace.enter()
 		when:
 			new Sql<>(null)
@@ -130,7 +130,7 @@ class SqlSpec extends Specification {
 	}
 
 	// Sql.entityInfo()
-	def "05 entityInfo"() {
+	def "SqlSpec entityInfo"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -143,7 +143,7 @@ class SqlSpec extends Specification {
 	}
 
 	// Sql.entityClass()
-	def "06 entityClass"() {
+	def "SqlSpec entityClass"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -156,7 +156,7 @@ class SqlSpec extends Specification {
 	}
 
 	// Sql.entity()
-	def "07 entity"() {
+	def "SqlSpec entity"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -170,7 +170,7 @@ class SqlSpec extends Specification {
 
 	// Sql.distinct()
 	// Sql.isDistinct()
-	def "08 distinct, isDistinct - #databaseName"(Database database, String databaseName) {
+	def "SqlSpec distinct isDistinct - #databaseName"(Database database, String databaseName) {
 	/**/DebugTrace.enter()
 		expect:
 			new Sql<>(Contact.class).isDistinct() == false
@@ -192,7 +192,7 @@ class SqlSpec extends Specification {
 
 	// Sql.columns(String...)
 	// Sql.getColumns()
-	def "09 columns, getColumns 1"() {
+	def "SqlSpec columns getColumns 1"() {
 	/**/DebugTrace.enter()
 		expect:
 			new Sql<>(Contact.class).columns == [] as Set
@@ -212,7 +212,7 @@ class SqlSpec extends Specification {
 
 	// Sql.columns(String...)
 	// Sql.columns()
-	def "10 columns, getColumns 2 - #databaseName"(Database database, String databaseName) {
+	def "SqlSpec columns getColumns 2 - #databaseName"(Database database, String databaseName) {
 	/**/DebugTrace.enter()
 
 		setup:
@@ -272,7 +272,7 @@ class SqlSpec extends Specification {
 
 	// Sql.columns(String...)
 	// Sql.getColumns()
-	def "11 columns, getColumns 3"() {
+	def "SqlSpec columns getColumns 3"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -301,7 +301,7 @@ class SqlSpec extends Specification {
 	// Sql.expression(String, Expression)
 	// Sql.expression(String, String, Object...)
 	// Sql.getExpression(String)
-	def "12 expression, getExpression"() {
+	def "SqlSpec expression getExpression"() {
 	/**/DebugTrace.enter()
 		setup:
 			String selectSql = null
@@ -432,7 +432,7 @@ class SqlSpec extends Specification {
 
 	// Sql.doIf(boolean, Consumer)
 	// Sql.doIf(boolean, Consumer, Consumer)
-	def "13 doIf"() {
+	def "SqlSpec doIf"() {
 	/**/DebugTrace.enter()
 		expect:
 			new Sql<>(Contact.class)
@@ -477,7 +477,7 @@ class SqlSpec extends Specification {
 	// Sql.leftJoin(Class<JE>, String, Condition, Object...)
 	// Sql.rightJoin(Class<JE>, String, Condition)
 	// Sql.rightJoin(Class<JE>, String, Condition, Object...)
-	def "14 innerJoin, leftJoin, rightJoin"() {
+	def "SqlSpec innerJoin leftJoin rightJoin"() {
 	/**/DebugTrace.enter()
 		setup:
 			List<JoinInfo<?>> joinInfos = null
@@ -578,7 +578,7 @@ class SqlSpec extends Specification {
 	// Sql.where(E)
 	// Sql.where(String, Sql<SE>)
 	// Sql.where()
-	def "15 where, getWhere"() {
+	def "SqlSpec where getWhere"() {
 	/**/DebugTrace.enter()
 		expect:
 			new Sql<>(Contact.class).where == Condition.EMPTY
@@ -605,7 +605,7 @@ class SqlSpec extends Specification {
 	// Sql.or(Condition)
 	// Sql.or(String, Object...)
 	// Sql.or(String, Sql<SE>)
-	def "16 and or"() {
+	def "SqlSpec and or"() {
 	/**/DebugTrace.enter()
 		expect:
 			new Sql<>(Contact.class)
@@ -653,12 +653,23 @@ class SqlSpec extends Specification {
 
 	// Sql.groupBy(String, Object...)
 	// Sql.getGroupBy()
-	def "17 groupBy, getGroupBy"() {
+	def "SqlSpec groupBy setGroupBy getGroupBy"() {
 	/**/DebugTrace.enter()
 
 		expect:
 			new Sql<>(Contact.class).groupBy == GroupBy.EMPTY
-			new Sql<>(Contact.class).groupBy('A', 1, 2, 3).groupBy != GroupBy.EMPTY
+			new Sql<>(Contact.class).groupBy('A').groupBy != GroupBy.EMPTY
+
+		when:
+			def sql = new Sql<>(Contact.class)
+			sql.groupBy.add('A')
+
+		then:
+			sql.groupBy == GroupBy.EMPTY
+
+		expect:
+			sql.setGroupBy(GroupBy.EMPTY.add('A')).groupBy == GroupBy.EMPTY.add('A')
+			sql.setGroupBy(GroupBy.EMPTY.add('A').add('B')).groupBy == GroupBy.EMPTY.add('A').add('B')
 
 	/**/DebugTrace.leave()
 	}
@@ -667,7 +678,7 @@ class SqlSpec extends Specification {
 	// Sql.having(String, Object...)
 	// Sql.having(String, Sql<SE>)
 	// Sql.getHaving()
-	def '18 having, getHaving'() {
+	def 'SqlSpec having, getHaving'() {
 	/**/DebugTrace.enter()
 		expect:
 			new Sql<>(Contact.class).having == Condition.EMPTY
@@ -686,12 +697,25 @@ class SqlSpec extends Specification {
 
 	// Sql.orderBy(String, Object...)
 	// Sql.getOrderBy()
-	def "19 orderBy, getOrderBy"() {
+	def "SqlSpec orderBy setOrderBy getOrderBy"() {
 	/**/DebugTrace.enter()
 
 		expect:
 			new Sql<>(Contact.class).orderBy == OrderBy.EMPTY
-			new Sql<>(Contact.class).orderBy('A', 1, 2, 3).asc().desc().orderBy != OrderBy.EMPTY
+			new Sql<>(Contact.class).orderBy('A').asc().desc().orderBy != OrderBy.EMPTY
+
+		when:
+			def sql = new Sql<>(Contact.class)
+			sql.orderBy.add('A')
+
+		then:
+			sql.orderBy == OrderBy.EMPTY
+
+		expect:
+			sql.setOrderBy(OrderBy.EMPTY.add('A')).orderBy == OrderBy.EMPTY.add('A')
+			sql.setOrderBy(OrderBy.EMPTY.add('A').asc()).orderBy == OrderBy.EMPTY.add('A')
+			sql.setOrderBy(OrderBy.EMPTY.add('A').desc()).orderBy == OrderBy.EMPTY.add('A').desc()
+			sql.setOrderBy(OrderBy.EMPTY.add('A')).desc().orderBy == OrderBy.EMPTY.add('A').desc()
 
 	/**/DebugTrace.leave()
 	}
@@ -700,7 +724,7 @@ class SqlSpec extends Specification {
 	// Sql.getLimit()
 	// Sql.offset(int)
 	// Sql.getOffset()
-	def "20 limit, getLimit, offset, getOffset"() {
+	def "SqlSpec limit getLimit offset getOffset"() {
 	/**/DebugTrace.enter()
 
 		expect:
@@ -719,7 +743,7 @@ class SqlSpec extends Specification {
 	// Sql.getWaitTime()
 	// Sql.isNoWait()
 	// Sql.isWaitForever()
-	def "21 forUpdate, isForUpdate, noWait, wait, getWaitTime, isNoWait, isWaitForever"() {
+	def "SqlSpec forUpdate isForUpdate noWait wait getWaitTime isNoWait isWaitForever"() {
 	/**/DebugTrace.enter()
 
 		expect:
@@ -750,7 +774,7 @@ class SqlSpec extends Specification {
 	}
 
 	// Sql.getSqlEntityInfo(String)
-	def "22 getSqlEntityInfo"() {
+	def "SqlSpec getSqlEntityInfo"() {
 	/**/DebugTrace.enter()
 
 		expect:
@@ -770,7 +794,7 @@ class SqlSpec extends Specification {
 	}
 
 	// Sql.updateSql with JOIN
-	def "23 updateSql with JOIN - #databaseName"(Database database, String databaseName) {
+	def "SqlSpec updateSql with JOIN - #databaseName"(Database database, String databaseName) {
 	/**/DebugTrace.enter()
 
 		when:
@@ -802,7 +826,7 @@ class SqlSpec extends Specification {
 	}
 
 	// Sql.deleteSql with JOIN
-	def "24 deleteSql with JOIN - #databaseName"(Database database, String databaseName) {
+	def "SqlSpec deleteSql with JOIN - #databaseName"(Database database, String databaseName) {
 	/**/DebugTrace.enter()
 
 		setup:

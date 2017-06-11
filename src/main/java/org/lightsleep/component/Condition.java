@@ -71,7 +71,7 @@ public interface Condition extends SqlComponent {
 	/**
 	 * Returns a new entity condition.
 	 *
-	 * @param <E> the entity class
+	 * @param <E> the type of the entity
 	 * @param entity the entity of the entity condition
 	 * @return a new entity condition
 	 *
@@ -91,8 +91,8 @@ public interface Condition extends SqlComponent {
 	/**
 	 * Returns a new subquery condition.
 	 *
-	 * @param <E> the entity class related to table of the outer sql.
-	 * @param <SE> the entity class related to table of the subquery.
+	 * @param <E> the type of the entity related to table of the outer sql.
+	 * @param <SE> the type of the entity related to table of the subquery.
 	 * @param content the content of the subquery condition.
 	 * @param outerSql the <b>Sql</b> object of the outer query
 	 * @param subSql the <b>Sql</b> of the subquery condition.
@@ -163,8 +163,8 @@ public interface Condition extends SqlComponent {
 	/**
 	 * Returns an optimized (this AND the subquery condition).
 	 *
-	 * @param <E> the entity class related to table of the outer sql.
-	 * @param <SE> the entity class related to table of the subquery.
+	 * @param <E> the type of the entity related to table of the outer sql.
+	 * @param <SE> the type of the entity related to table of the subquery.
 	 * @param content the content of the subquery condition.
 	 * @param outerSql the <b>Sql</b> object of the outer query
 	 * @param subSql the <b>Sql</b> of the subquery condition.
@@ -226,8 +226,8 @@ public interface Condition extends SqlComponent {
 	/**
 	 * Returns an optimized (this OR the subquery condition).
 	 *
-	 * @param <E> the entity class related to table of the outer sql.
-	 * @param <SE> the entity class related to table of the subquery.
+	 * @param <E> the type of the entity related to table of the outer sql.
+	 * @param <SE> the type of the entity related to table of the subquery.
 	 * @param content the content of the subquery condition.
 	 * @param outerSql the <b>Sql</b> object of the outer query
 	 * @param subSql the <b>Sql</b> of the subquery condition.

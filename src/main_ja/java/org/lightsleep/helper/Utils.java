@@ -179,7 +179,7 @@ public class Utils {
 	/**
 	 * 対象クラスとそのスーパークラス (Object クラス以外) のアノテーションのリストを返します。
 	 *
-	 * @param <A> アノテーションタイプ
+	 * @param <A> アノテーションの型
 	 * @param clazz 対象クラス
 	 * @param annotationClass アノテーションクラス
 	 * @return アノテーションのリスト

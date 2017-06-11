@@ -92,4 +92,24 @@ public class Expression implements Condition {
 	public <E> String toString(Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return false;
+	}
 }

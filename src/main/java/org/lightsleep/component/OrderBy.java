@@ -17,7 +17,10 @@ import org.lightsleep.helper.Resource;
  * @since 1.0
  * @author Masato Kokubo
  */
-public class OrderBy implements SqlComponent {
+// 1.9.1
+//public class OrderBy implements SqlComponent {
+public class OrderBy implements SqlComponent, Cloneable {
+////
 	//  class resources
 	private static final Resource resource = new Resource(OrderBy.class);
 // 1.8.6
@@ -32,8 +35,16 @@ public class OrderBy implements SqlComponent {
 	 * The element of <b>OrderBy</b>.
 	 */
 	public static class Element extends Expression {
+	// 1.9.1
+		private static final String ASC  = " ASC";
+		private static final String DESC = " DESC";
+	////
+
 		// The string of ascend
-		private String order = " ASC";
+	// 1.9.1
+	//	private String order = " ASC";
+		private String order = ASC;
+	////
 
 		/**
 		 * Constructs a new <b>Element</b>.
@@ -48,22 +59,28 @@ public class OrderBy implements SqlComponent {
 		}
 
 		/**
-		 * Sets to ascend.
+		 * Sets in ascending order.
 		 *
 		 * @return this object
 		 */
 		public Element asc() {
-			order = " ASC";
+		// 1.9.1
+		//	order = " ASC";
+			order = ASC;
+		////
 			return this;
 		}
 
 		/**
-		 * Sets to descend.
+		 * Sets in descending order.
 		 *
 		 * @return this object
 		 */
 		public Element desc() {
-			order = " DESC";
+		// 1.9.1
+		//	order = " DESC";
+			order = DESC;
+		////
 			return this;
 		}
 
@@ -73,6 +90,31 @@ public class OrderBy implements SqlComponent {
 		@Override
 		public <E> String toString(Sql<E> sql, List<Object> parameters) {
 			return super.toString(sql, parameters) + order;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 *
+		 * @since 1.9.1
+		 */
+		@Override
+		public int hashCode() {
+			return 31 * super.hashCode() + order.hashCode();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 *
+		 * @since 1.9.1
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (!super.equals(obj)) return false;
+			if (getClass() != obj.getClass()) return false;
+			Element other = (Element)obj;
+			if (!order.equals(other.order)) return false;
+			return true;
 		}
 	}
 
@@ -102,9 +144,26 @@ public class OrderBy implements SqlComponent {
 	}
 
 	/**
-	 * Sets to ascend.
+	 * Adds an element of the <b>OrderBy</b>.
+	 *
+	 * @param content the content of the expression
+	 * @param arguments the arguments of the expression
+	 * @return this object
+	 *
+	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is null
+	 *
+	 * @since 1.9.1
+	 */
+	public OrderBy add(String content, Object... arguments) {
+		return add(new Element(content, arguments));
+	}
+
+	/**
+	 * Sets the element of the last added in ascending order.
 	 *
 	 * @return this object
+	 *
+	 * @throws IllegalStateException if there is no element
 	 */
 	public OrderBy asc() {
 		if (elements.size() == 0) throw new IllegalStateException(messageNoOrderByElement);
@@ -114,9 +173,11 @@ public class OrderBy implements SqlComponent {
 	}
 
 	/**
-	 * Sets to descend.
+	 * Sets the element of the last added in descending order.
 	 *
 	 * @return this object
+	 *
+	 * @throws IllegalStateException if there is no element
 	 */
 	public OrderBy desc() {
 		if (elements.size() == 0) throw new IllegalStateException(messageNoOrderByElement);
@@ -160,5 +221,42 @@ public class OrderBy implements SqlComponent {
 			});
 		}
 		return buff.toString();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public int hashCode() {
+		return elements.hashCode();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		OrderBy other = (OrderBy)obj;
+		if (!elements.equals(other.elements)) return false;
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public OrderBy clone() {
+		OrderBy orderBy = new OrderBy();
+		orderBy.elements.addAll(elements);
+		return orderBy;
 	}
 }

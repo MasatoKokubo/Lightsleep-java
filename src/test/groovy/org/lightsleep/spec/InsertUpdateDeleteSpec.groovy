@@ -51,7 +51,7 @@ class InsertUpdateDeleteSpec extends Specification {
 	 *   Sql.delete(Connection it, E entity)
 	 * Normal case
 	*/
-	def "insert update delete - 1 row - #connectionSupplierName"(
+	def "InsertUpdateDeleteSpec insert update delete - 1 row - #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -121,7 +121,7 @@ class InsertUpdateDeleteSpec extends Specification {
 	 *   Sql.delete(Connection it, Collection<? extends E> entities)
 	 * Normal case
 	 */
-	def "insert update delete - multiple rows - #connectionSupplierName"(
+	def "InsertUpdateDeleteSpec insert update delete - multiple rows - #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -234,7 +234,7 @@ class InsertUpdateDeleteSpec extends Specification {
 	 *   Sql.delete(Connection it)
 	 * Normal case
 	 */
-	def "update delete - with condition - #connectionSupplierName"(
+	def "InsertUpdateDeleteSpec update delete - with condition - #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 		if (Sql.getDatabase() instanceof DB2) return
 		if (Sql.getDatabase() instanceof Oracle) return
@@ -376,7 +376,7 @@ class InsertUpdateDeleteSpec extends Specification {
 	 *  Error case / No condition
 	 *  Error case / Illegal argument
 	 */
-	def "insert update delete - exception"() {
+	def "InsertUpdateDeleteSpec insert update delete - exception"() {
 	/**/DebugTrace.enter()
 
 		// insert
@@ -447,7 +447,7 @@ class InsertUpdateDeleteSpec extends Specification {
 	}
 
 
-	def "Optimistic lock #connectionSupplierName" (
+	def "InsertUpdateDeleteSpec optimistic lock #connectionSupplierName" (
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
@@ -506,7 +506,7 @@ class InsertUpdateDeleteSpec extends Specification {
 			}
 
 		then:
-			// Optimistic lock error
+			// optimistic lock error
 			thrown UpdateException
 
 	/**/DebugTrace.leave()

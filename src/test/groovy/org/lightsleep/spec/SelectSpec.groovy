@@ -196,7 +196,7 @@ class SelectSpec extends Specification {
 	//                               Consumer<? super JE4> consumer4)
 	//
 	// select(Connection connection)
-	def "select - exception"() {
+	def "SelectSpec select - exception"() {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('select - exception')
 
@@ -265,7 +265,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection)
-	def "select1 #connectionSupplierName"(
+	def "SelectSpec select1 #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('select1')
@@ -299,7 +299,7 @@ class SelectSpec extends Specification {
 
 	// select(Connection connection)
 	// SELECT MAX(...)
-	def "select MAX #connectionSupplierName"(
+	def "SelectSpec select MAX #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('select MAX')
@@ -368,7 +368,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / where A and B or C and D
-	def "where A and B or C and D #connectionSupplierName"(
+	def "SelectSpec where A and B or C and D #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('where A and B or C and D')
@@ -406,7 +406,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / where (A or B) and (C or D)
-	def "where (A or B) and (C or D) #connectionSupplierName"(
+	def "SelectSpec where (A or B) and (C or D) #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('where (A or B) and (C or D)')
@@ -448,7 +448,7 @@ class SelectSpec extends Specification {
 	}
 
 	// selectCount(Connection connection)
-	def "selectCount #connectionSupplierName"(
+	def "SelectSpec selectCount #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('selectCount')
@@ -478,7 +478,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / limit, offset
-	def "limit, offset #connectionSupplierName"(
+	def "SelectSpec limit, offset #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('limit, offset')
@@ -513,7 +513,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin
-	def "innerJoin #connectionSupplierName"(
+	def "SelectSpec innerJoin #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('innerJoin')
@@ -550,7 +550,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin
-	def "innerJoin2 #connectionSupplierName"(
+	def "SelectSpec innerJoin2 #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('innerJoin')
@@ -580,7 +580,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin x 2
-	def "innerJoin innerJoin #connectionSupplierName"(
+	def "SelectSpec innerJoin innerJoin #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('innerJoin innerJoin')
@@ -613,7 +613,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin x 3
-	def "innerJoin innerJoin innerJoin #connectionSupplierName"(
+	def "SelectSpec innerJoin innerJoin innerJoin #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('innerJoin innerJoin innerJoin')
@@ -649,7 +649,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin x 3 + leftJoin
-	def "innerJoin innerJoin innerJoin leftJoin #connectionSupplierName"(
+	def "SelectSpec innerJoin innerJoin innerJoin leftJoin #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('innerJoin innerJoin innerJoin leftJoin')
@@ -688,7 +688,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / innerJoin x 3 + leftJoin
-	def "select join x 4 #connectionSupplierName"(
+	def "SelectSpec select join x 4 #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('innerJoin innerJoin innerJoin leftJoin 2')
@@ -735,7 +735,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / gourpBy
-	def "gourpBy #connectionSupplierName"(
+	def "SelectSpec gourpBy #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('gourpBy')
@@ -769,7 +769,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / forUpdate
-	def "forUpdate #connectionSupplierName"(
+	def "SelectSpec forUpdate #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 		if (Sql.database instanceof SQLite) return
 	/**/DebugTrace.enter()
@@ -862,7 +862,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / forUpdate noWait
-	def "forUpdate noWait #connectionSupplierName"(
+	def "SelectSpec forUpdate noWait #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 		if (Sql.database instanceof DB2) return
 		if (Sql.database instanceof MySQL) return
@@ -962,7 +962,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / forUpdate wait N
-	def "forUpdate wait N #connectionSupplierName"(
+	def "SelectSpec forUpdate wait N #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 		if (Sql.database instanceof DB2) return
 		if (Sql.database instanceof MySQL) return
@@ -1063,7 +1063,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / forUpdate - exception
-	def "forUpdate - exception #connectionSupplierName"(
+	def "SelectSpec forUpdate - exception #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 		if (Sql.database instanceof DB2) return
 		if (Sql.database instanceof MySQL) return
@@ -1109,7 +1109,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / forUpdate noWait - exception
-	def "forUpdate noWait - exception #connectionSupplierName"(
+	def "SelectSpec forUpdate noWait - exception #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 		if (Sql.database instanceof Oracle) return
 		if (Sql.database instanceof SQLite) return
@@ -1153,7 +1153,7 @@ class SelectSpec extends Specification {
 	}
 
 	// select(Connection connection) / forUpdate wait N - exception
-	def "forUpdate wait N - exception #connectionSupplierName"(
+	def "SelectSpec forUpdate wait N - exception #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 		if (Sql.database instanceof Oracle) return
 		if (Sql.database instanceof SQLite) return
@@ -1196,7 +1196,7 @@ class SelectSpec extends Specification {
 	}
 
 	// exceptionTest
-	def "exception - ManyRowsException"() {
+	def "SelectSpec exception - ManyRowsException"() {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('exception - ManyRowsException')
 
@@ -1238,7 +1238,7 @@ class SelectSpec extends Specification {
 	static class ContactFnSQLServer extends ContactFn {}
 
 	// extendsClassTest
-	def "extends Class #connectionSupplierName"(
+	def "SelectSpec extends class #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('extends Class')

@@ -16,7 +16,7 @@ class OracleSpec extends Specification {
 	@Shared map = Oracle.instance().typeConverterMap()
 
 	// -> SqlString
-	def "-> SqlString"() {
+	def "OracleSpec -> SqlString"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false     , SqlString.class).toString() == '0'

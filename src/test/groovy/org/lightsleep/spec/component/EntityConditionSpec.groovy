@@ -14,7 +14,7 @@ import spock.lang.*
 // EntityConditionSpec
 @Unroll
 class EntityConditionSpec extends Specification {
-	def "01 normal"() {
+	def "EntityConditionSpec 01 normal"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -35,7 +35,7 @@ class EntityConditionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "02 exception - null argument"() {
+	def "EntityConditionSpec 02 exception - null argument"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -50,7 +50,7 @@ class EntityConditionSpec extends Specification {
 	static class Entity {
 	}
 
-	def "03 exception - entity without key property"() {
+	def "EntityConditionSpec 03 exception - entity without key property"() {
 	/**/DebugTrace.enter()
 
 		when:

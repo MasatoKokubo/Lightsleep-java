@@ -16,7 +16,7 @@ class DB2Spec extends Specification {
 	@Shared map = DB2.instance().typeConverterMap()
 
 	// -> SqlString
-	def "-> SqlString"() {
+	def "DB2Spec -> SqlString"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false     , SqlString.class).toString() == 'FALSE'

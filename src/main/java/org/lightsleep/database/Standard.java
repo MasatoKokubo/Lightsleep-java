@@ -332,8 +332,8 @@ public class Standard implements Database {
 			new TypeConverter<>(String.class, SqlString.class, object -> {
 				if (object.length() > maxStringLiteralLength)
 				// 1.7.0
-				//	return SqlString.PARAMETER; // SQL Paramter
-					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
+				//	return SqlString.PARAMETER; // SQL Parameter
+					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
 				////
 
 				StringBuilder buff = new StringBuilder(object.length() + 2);
@@ -491,7 +491,7 @@ public class Standard implements Database {
 		//	new TypeConverter<>(byte[].class, SqlString.class, object -> new SqlString("?"))
 			new TypeConverter<>(byte[].class, SqlString.class, object -> {
 				if (object.length > maxBinaryLiteralLength)
-					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
+					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
 
 				StringBuilder buff = new StringBuilder(object.length * 2 + 3);
 				buff.append("X'");

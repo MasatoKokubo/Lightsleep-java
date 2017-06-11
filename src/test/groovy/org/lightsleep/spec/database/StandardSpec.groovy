@@ -93,7 +93,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> byte[]
-	def "Array -> byte[]"() {
+	def "StandardSpec Array -> byte[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax = [Byte.MIN_VALUE, 0, Byte.MAX_VALUE] as byte[]
@@ -111,7 +111,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> short[]
-	def "Array -> short[]"() {
+	def "StandardSpec Array -> short[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [ Byte.MIN_VALUE, 0,  Byte.MAX_VALUE] as short[]
@@ -130,7 +130,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> int[]
-	def "Array -> int[]"() {
+	def "StandardSpec Array -> int[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [   Byte.MIN_VALUE, 0,    Byte.MAX_VALUE] as int[]
@@ -150,7 +150,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> long[]
-	def "Array -> long[]"() {
+	def "StandardSpec Array -> long[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [   Byte.MIN_VALUE, 0,    Byte.MAX_VALUE] as long[]
@@ -171,7 +171,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> float[]
-	def "Array -> float[]"() {
+	def "StandardSpec Array -> float[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as float[]
@@ -198,7 +198,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> double[]
-	def "Array -> double[]"() {
+	def "StandardSpec Array -> double[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as double[]
@@ -227,7 +227,7 @@ class StandardSpec extends Specification {
 
 
 	// Array -> BigDecimal[]
-	def "Array -> BigDecimal[]"() {
+	def "StandardSpec Array -> BigDecimal[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [BIG_BYTE_MIN    , BIG_0, BIG_BYTE_MAX  ] as BigDecimal[]
@@ -251,7 +251,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> String[]
-	def "Array -> String[]"() {
+	def "StandardSpec Array -> String[]"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new TestArray(['A'  , 'B'  , 'C'  ] as      char[]), String[].class) == ['A'  , 'B'  , 'C'  ] as String[]
@@ -262,7 +262,7 @@ class StandardSpec extends Specification {
 
 
 	// Array -> java.util.Date[]
-	def "Array -> java.util.Date[]"() {
+	def "StandardSpec Array -> java.util.Date[]"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new TestArray([UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]), java.util.Date[].class) == [UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]
@@ -273,7 +273,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> java.sql.Date[]
-	def "Array -> java.sql.Date[]"() {
+	def "StandardSpec Array -> java.sql.Date[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def date123 = [SQL_DATE1, SQL_DATE2, SQL_DATE3] as Date[]
@@ -287,7 +287,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> Time[]
-	def "Array -> Time[]"() {
+	def "StandardSpec Array -> Time[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def time123 = [TIME1, TIME2, TIME3] as Time[]
@@ -301,7 +301,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> Timestamp[]
-	def "Array -> Timestamp[]"() {
+	def "StandardSpec Array -> Timestamp[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def timestamp123 = [TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as Timestamp[]
@@ -317,7 +317,7 @@ class StandardSpec extends Specification {
 	enum Size {XS, S, M, L, XL}
 
 	// -> SqlString
-	def "-> SqlString"() {
+	def "StandardSpec -> SqlString"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, 0                       , SqlString.class).toString() == '0'
@@ -365,7 +365,7 @@ class StandardSpec extends Specification {
 	}
 
 	// long String -> SqlString
-	def "long String -> SqlString"() {
+	def "StandardSpec long String -> SqlString"() {
 	/**/DebugTrace.enter()
 		when:
 		/**/DebugTrace.print('maxStringLiteralLength', Standard.maxStringLiteralLength)
@@ -388,7 +388,7 @@ class StandardSpec extends Specification {
 	}
 
 	// long byte[] -> SqlString
-	def "long byte[] -> SqlString"() {
+	def "StandardSpec long byte[] -> SqlString"() {
 	/**/DebugTrace.enter()
 		when:
 		/**/DebugTrace.print('maxBinaryLiteralLength', Standard.maxBinaryLiteralLength)
@@ -412,7 +412,7 @@ class StandardSpec extends Specification {
 	}
 
 	// long String[] -> SqlString
-	def "long String[] -> SqlString"() {
+	def "StandardSpec long String[] -> SqlString"() {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('maxStringLiteralLength', Standard.maxStringLiteralLength)
 		when:
@@ -442,7 +442,7 @@ class StandardSpec extends Specification {
 	}
 
 	// long byte[][] -> SqlString
-	def "long byte[][] -> SqlString"() {
+	def "StandardSpec long byte[][] -> SqlString"() {
 	/**/DebugTrace.enter()
 		when:
 		/**/DebugTrace.print('maxStringLiteralLength', Standard.maxStringLiteralLength)

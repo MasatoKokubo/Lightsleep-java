@@ -69,7 +69,7 @@ class ConnectionSpec extends Specification {
 		}
 	}
 
-	def "connection #connectionSupplierName"(
+	def "ConnectionSpec #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)

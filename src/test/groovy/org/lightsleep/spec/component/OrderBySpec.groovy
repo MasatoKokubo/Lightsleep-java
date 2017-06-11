@@ -13,86 +13,100 @@ import spock.lang.*
 
 // OrderBySpec
 class OrderBySpec extends Specification {
-	def "01 empty"() {
+	def "OrderBySpec empty"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def orderBy = new OrderBy()
-		/**/DebugTrace.print('orderBy', orderBy)
-
-		then:
-			orderBy.empty
-
-		when:
-			def string = orderBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == ''
+		expect:
+			OrderBy.EMPTY.empty
+			new OrderBy().empty
+			OrderBy.EMPTY.toString(new Sql<>(Contact.class), new ArrayList<Object>()) == ''
+			new OrderBy().toString(new Sql<>(Contact.class), new ArrayList<Object>()) == ''
 
 	/**/DebugTrace.leave()
 	}
 
-	def "02 ORDER BY A ASC"() {
+	def "OrderBySpec ORDER BY A ASC"() {
 	/**/DebugTrace.enter()
 
-		when:
+		setup:
 			def orderBy = OrderBy.EMPTY.add(new OrderBy.Element('A'))
-		/**/DebugTrace.print('orderBy', orderBy)
-
-		then:
-			!orderBy.empty
-
 			def string = orderBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+		/**/DebugTrace.print('orderBy', orderBy)
 		/**/DebugTrace.print('string', string)
 
-		then:
+		expect:
+			!orderBy.empty
 			string == 'ORDER BY A ASC'
 
 	/**/DebugTrace.leave()
 	}
 
-	def "03 ORDER BY A ASC, B DESC"() {
+	def "OrderBySpec ORDER BY A ASC, B DESC"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def orderBy = OrderBy.EMPTY.add(new OrderBy.Element('A').asc()).add(new OrderBy.Element('B').desc())
-		/**/DebugTrace.print('orderBy', orderBy)
-
-		then:
-			!orderBy.empty
-
-		when:
+		setup:
+			def orderBy = OrderBy.EMPTY
+				.add(new OrderBy.Element('A').asc())
+				.add(new OrderBy.Element('B').desc())
 			def string = orderBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+		/**/DebugTrace.print('orderBy', orderBy)
 		/**/DebugTrace.print('string', string)
 
-		then:
+		expect:
+			!orderBy.empty
 			string == 'ORDER BY A ASC, B DESC'
 
 	/**/DebugTrace.leave()
 	}
 
-	def "04 ORDER BY A DESC, B ASC"() {
+	def "OrderBySpec ORDER BY A DESC, B ASC"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def orderBy = OrderBy.EMPTY.add(new OrderBy.Element('A')).desc().add(new OrderBy.Element('B')).asc()
-		/**/DebugTrace.print('orderBy', orderBy)
-
-		then:
-			!orderBy.empty
-
-		when:
+		setup:
+			def orderBy = OrderBy.EMPTY
+				.add(new OrderBy.Element('A')).desc()
+				.add(new OrderBy.Element('B')).asc()
 			def string = orderBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+		/**/DebugTrace.print('orderBy', orderBy)
 		/**/DebugTrace.print('string', string)
 
-		then:
+		expect:
+			!orderBy.empty
 			string == 'ORDER BY A DESC, B ASC'
 
 	/**/DebugTrace.leave()
 	}
 
-	def "05 exception - add null"() {
+	def "OrderBySpec equals clone"() {
+	/**/DebugTrace.enter()
+
+		setup:
+			def orderBy1 = OrderBy.EMPTY
+				.add(new OrderBy.Element('A {}', 1000)).desc()
+				.add(new OrderBy.Element('B {}', 1001).asc()).asc()
+			def orderBy2 = OrderBy.EMPTY
+				.add(new OrderBy.Element('A {}', 500 + 500).desc())
+				.add(new OrderBy.Element('B '+'{}', 1001)).asc()
+			def orderBy3 = OrderBy.EMPTY
+				.add(new OrderBy.Element('A {}', 1000)).desc()
+				.add(new OrderBy.Element('B {}', 1001).asc()).desc()
+		/**/DebugTrace.print('orderBy1', orderBy1)
+		/**/DebugTrace.print('orderBy2', orderBy2)
+		/**/DebugTrace.print('orderBy3', orderBy3)
+
+		expect:
+			OrderBy.EMPTY == OrderBy.EMPTY
+			OrderBy.EMPTY == new OrderBy()
+			orderBy1 != OrderBy.EMPTY
+			orderBy1 == orderBy2
+			orderBy1 != orderBy3
+			orderBy1.clone() == orderBy1
+			orderBy1.clone() == orderBy2.clone()
+
+	/**/DebugTrace.leave()
+	}
+
+	def "OrderBySpec exception - add null"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -104,7 +118,7 @@ class OrderBySpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "06 exception - empty ASC"() {
+	def "OrderBySpec exception - empty ASC"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -116,7 +130,7 @@ class OrderBySpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "07 exception - empty DESC"() {
+	def "OrderBySpec exception - empty DESC"() {
 	/**/DebugTrace.enter()
 
 		when:

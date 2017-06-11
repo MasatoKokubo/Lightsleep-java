@@ -38,7 +38,7 @@ class ExpressionSpec extends Specification {
 		TimeZone.default = timeZone
 	}
 
-	def "01 normal"() {
+	def "ExpressionSpec normal"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -59,7 +59,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "02 exception - more placement"() {
+	def "ExpressionSpec exception - more placement"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -74,7 +74,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "03 exception - more argument"() {
+	def "ExpressionSpec exception - more argument"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -89,7 +89,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "04 String argument"() {
+	def "ExpressionSpec String argument"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -103,7 +103,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "05 Date argument - #databaseName"(Database database, String databaseName) {
+	def "ExpressionSpec Date argument - #databaseName"(Database database, String databaseName) {
 	/**/DebugTrace.enter()
 		setup:
 			def beforeDatabase = Sql.database
@@ -133,7 +133,7 @@ class ExpressionSpec extends Specification {
 			databaseName = database.getClass().simpleName
 	}
 
-	def "06 Time argument - #databaseName"(Database database, String databaseName) {
+	def "ExpressionSpec Time argument - #databaseName"(Database database, String databaseName) {
 	/**/DebugTrace.enter()
 		setup:
 			def beforeDatabase = Sql.database
@@ -166,7 +166,7 @@ class ExpressionSpec extends Specification {
 			databaseName = database.getClass().simpleName
 	}
 
-//	def "07 Timestamp argument - #databaseName"(Database database, String databaseName) {
+//	def "ExpressionSpec Timestamp argument - #databaseName"(Database database, String databaseName) {
 //	/**/DebugTrace.enter()
 //
 //		setup:
@@ -197,7 +197,7 @@ class ExpressionSpec extends Specification {
 //			databaseName = database.getClass().simpleName
 //	}
 
-	def "08 property reference"() {
+	def "ExpressionSpec property reference 1"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -217,7 +217,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "09 property reference"() {
+	def "ExpressionSpec property reference 2"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -234,9 +234,37 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
+	def "ExpressionSpec property reference 3"() {
+	/**/DebugTrace.enter()
+
+		when:
+			def expression = new Expression('{C.name.family}')
+			def string = expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
+		/**/DebugTrace.print('string', string)
+
+		then:
+			string == 'C.familyName'
+
+	/**/DebugTrace.leave()
+	}
+
+	def "ExpressionSpec property reference 4"() {
+	/**/DebugTrace.enter()
+
+		when:
+			def expression = new Expression('{C_name.family}')
+			def string = expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
+		/**/DebugTrace.print('string', string)
+
+		then:
+			string == 'C_familyName'
+
+	/**/DebugTrace.leave()
+	}
+
 
 	@Ignore // Groovy converts byte[] to Byte[] when passing to variable length argument methods.
-	def "10 byte[] argument - #databaseName"(Database database, String databaseName) {
+	def "ExpressionSpec byte[] argument - #databaseName"(Database database, String databaseName) {
 	/**/DebugTrace.enter()
 		setup:
 			def beforeDatabase = Sql.database
@@ -274,35 +302,37 @@ class ExpressionSpec extends Specification {
 			databaseName = database.getClass().simpleName
 	}
 
-	def "11 property reference"() {
+	def "ExpressionSpec equals"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def expression = new Expression('{C.name.family}')
-			def string = expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
+		setup:
+			def expression1 = new Expression('A {}', 1000)
+			def expression2 = new Expression('A ' + '{}', 500 + 500)
+			def expression3 = new Expression('B {}', 1000)
+			def expression4 = new Expression('A {}', 1001)
+			def expression5 = new Expression('A {}')
+			def expression6 = new Expression('A {}', 1000, 1001)
+		/**/DebugTrace.print('expression1', expression1)
+		/**/DebugTrace.print('expression2', expression2)
+		/**/DebugTrace.print('expression3', expression3)
+		/**/DebugTrace.print('expression4', expression4)
+		/**/DebugTrace.print('expression5', expression5)
+		/**/DebugTrace.print('expression6', expression6)
 
-		then:
-			string == 'C.familyName'
+		expect:
+			Expression.EMPTY == Expression.EMPTY
+			Expression.EMPTY == new Expression("")
+			expression1 != Expression.EMPTY
+			expression1 == expression2
+			expression1 != expression3
+			expression1 != expression4
+			expression1 != expression5
+			expression1 != expression6
 
 	/**/DebugTrace.leave()
 	}
 
-	def "12 property reference"() {
-	/**/DebugTrace.enter()
-
-		when:
-			def expression = new Expression('{C_name.family}')
-			def string = expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == 'C_familyName'
-
-	/**/DebugTrace.leave()
-	}
-
-	def "13 exception - illegal property name"() {
+	def "ExpressionSpec exception - illegal property name 1"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -315,7 +345,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "14 exception - illegal property name"() {
+	def "ExpressionSpec exception - illegal property name 2"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -328,7 +358,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "15 exception - illegal property name"() {
+	def "ExpressionSpec exception - illegal property name 3"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -341,7 +371,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "16 exception - illegal property name"() {
+	def "ExpressionSpec exception - illegal property name 4"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -355,7 +385,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "17 exception - illegal property name"() {
+	def "ExpressionSpec exception - illegal property name 5"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -369,7 +399,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "18 exception - [content] argument is null"() {
+	def "ExpressionSpec exception - [content] argument is null 1"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -381,7 +411,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "19 exception - [arguments] argument is null"() {
+	def "ExpressionSpec exception - [arguments] argument is null 2"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -393,7 +423,7 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "20 exception - illegal value reference"() {
+	def "ExpressionSpec exception - illegal value reference"() {
 	/**/DebugTrace.enter()
 
 		when:

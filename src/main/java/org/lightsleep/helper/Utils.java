@@ -162,8 +162,8 @@ public class Utils {
 	 *
 	 * Store a new object of <b>elementType</b> for all of the elements of the array.
 	 *
-	 * @param <E> the element type of the array
-	 * @param elementType the element type of the array
+	 * @param <E> the type of the element of the array
+	 * @param elementType the type of the element of the array
 	 * @param length the length of the array
 	 * @return elementType a new array of <b>elementType</b>
 	 *

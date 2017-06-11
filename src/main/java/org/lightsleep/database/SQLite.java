@@ -63,7 +63,7 @@ public class SQLite extends Standard {
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, SqlString.class, object -> {
 				if (object.length() > maxStringLiteralLength)
-					return new SqlString(SqlString.PARAMETER, object); // SQL Paramter
+					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
 
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');

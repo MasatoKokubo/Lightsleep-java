@@ -16,7 +16,7 @@ class PostgreSQLSpec extends Specification {
 	@Shared map = PostgreSQL.instance().typeConverterMap()
 
 	// -> SqlString
-	def "-> SqlString"() {
+	def "PostgreSQLSpec -> SqlString"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false     , SqlString.class).toString() == 'FALSE'

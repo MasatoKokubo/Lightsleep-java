@@ -78,7 +78,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// key
-	def "key"() {
+	def "TypeConverterSpec key"() {
 		when:
 			TypeConverter.key(null, null)
 
@@ -94,7 +94,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// put
-	def "put"() {
+	def "TypeConverterSpec put"() {
 		when:
 			TypeConverter.put(null, null)
 		then:
@@ -112,7 +112,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// get
-	def "get"() {
+	def "TypeConverterSpec get"() {
 		when:
 			TypeConverter.get(null, null, null)
 		then:
@@ -126,7 +126,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// equals
-	def "equals"() {
+	def "TypeConverterSpec equals"() {
 		expect:
 			TypeConverter.get(map, String.class, Integer.class) != 'AAA'
 			TypeConverter.get(map, String.class, Integer.class) != TypeConverter.get(map, Long.class, Integer.class)
@@ -136,7 +136,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// convert
-	def "convert"() {
+	def "TypeConverterSpec convert"() {
 		expect:
 			TypeConverter.convert(map, null, Integer.class) == null
 			TypeConverter.convert(map, 1, Integer.class) == 1
@@ -148,7 +148,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// constructor
-	def "constructor"() {
+	def "TypeConverterSpec constructor"() {
 		when:
 			new TypeConverter<>(String.class, Integer.class, (Function<String, Integer>)null)
 
@@ -157,7 +157,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Byte -> Boolean
-	def "Byte -> Boolean"() {
+	def "TypeConverterSpec Byte -> Boolean"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, (byte)-1, Boolean.class)
@@ -176,7 +176,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Short -> Boolean
-	def "Short -> Boolean"() {
+	def "TypeConverterSpec Short -> Boolean"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, (short)-1, Boolean.class)
@@ -195,7 +195,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> Boolean
-	def "Integer -> Boolean"() {
+	def "TypeConverterSpec Integer -> Boolean"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -1, Boolean.class)
@@ -214,7 +214,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> Boolean
-	def "Long -> Boolean"() {
+	def "TypeConverterSpec Long -> Boolean"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -1L, Boolean.class)
@@ -233,7 +233,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Float -> Boolean
-	def "Float -> Boolean"() {
+	def "TypeConverterSpec Float -> Boolean"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -1.0F, Boolean.class)
@@ -252,7 +252,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Double -> Boolean
-	def "Double -> Boolean"() {
+	def "TypeConverterSpec Double -> Boolean"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -1.0D, Boolean.class)
@@ -271,7 +271,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// BigDecimal -> Boolean
-	def "BigDecimal -> Boolean"() {
+	def "TypeConverterSpec BigDecimal -> Boolean"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, BigDecimal.valueOf(-1L), Boolean.class)
@@ -289,7 +289,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Character -> Boolean
-	def "Character -> Boolean"() {
+	def "TypeConverterSpec Character -> Boolean"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (char)'0', Boolean.class) == false
@@ -303,7 +303,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> Boolean
-	def "String -> Boolean"() {
+	def "TypeConverterSpec String -> Boolean"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, '', Boolean.class)
@@ -322,7 +322,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Boolean -> Byte
-	def "Boolean -> Byte"() {
+	def "TypeConverterSpec Boolean -> Byte"() {
 	/**/DebugTrace.enter()
 			TypeConverter.convert(map, false, Byte.class) == (byte)0
 			TypeConverter.convert(map, true , Byte.class) == (byte)1
@@ -330,7 +330,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Short -> Byte
-	def "Short -> Byte"() {
+	def "TypeConverterSpec Short -> Byte"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, (short)-129, Byte.class)
@@ -349,7 +349,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> Byte
-	def "Integer -> Byte"() {
+	def "TypeConverterSpec Integer -> Byte"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -129, Byte.class)
@@ -368,7 +368,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> Byte
-	def "Long -> Byte"() {
+	def "TypeConverterSpec Long -> Byte"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -129L, Byte.class)
@@ -387,7 +387,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Float -> Byte
-	def "Float -> Byte"() {
+	def "TypeConverterSpec Float -> Byte"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -129.0F, Byte.class)
@@ -406,7 +406,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Double -> Byte
-	def "Double -> Byte"() {
+	def "TypeConverterSpec Double -> Byte"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -129.0D, Byte.class)
@@ -425,7 +425,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// BigDecimal -> Byte
-	def "BigDecimal -> Byte"() {
+	def "TypeConverterSpec BigDecimal -> Byte"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, BigDecimal.valueOf(-129L), Byte.class)
@@ -444,7 +444,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Character -> Byte
-	def "Character -> Byte"() {
+	def "TypeConverterSpec Character -> Byte"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, (char)'\uFF7F', Byte.class)
@@ -463,7 +463,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> Byte
-	def "String -> Byte"() {
+	def "TypeConverterSpec String -> Byte"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, '', Byte.class)
@@ -487,7 +487,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Boolean -> Short
-	def "Boolean -> Short"() {
+	def "TypeConverterSpec Boolean -> Short"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false, Short.class) == (short)0
@@ -496,7 +496,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Byte -> Short
-	def "Byte -> Short"() {
+	def "TypeConverterSpec Byte -> Short"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (byte)-128, Short.class) == (short)-128
@@ -505,7 +505,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> Short
-	def "Integer -> Short"() {
+	def "TypeConverterSpec Integer -> Short"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -32769, Short.class)
@@ -524,7 +524,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> Short
-	def "Long -> Short"() {
+	def "TypeConverterSpec Long -> Short"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -32769L, Short.class)
@@ -543,7 +543,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Float -> Short
-	def "Float -> Short"() {
+	def "TypeConverterSpec Float -> Short"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -32769.0F, Short.class)
@@ -562,7 +562,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Double -> Short
-	def "Double -> Short"() {
+	def "TypeConverterSpec Double -> Short"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -32769.0D, Short.class)
@@ -580,7 +580,7 @@ class TypeConverterSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "BigDecimal -> Short"() {
+	def "TypeConverterSpec BigDecimal -> Short"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, BigDecimal.valueOf(-32769L), Short.class)
@@ -599,7 +599,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Character -> Short
-	def "Character -> Short"() {
+	def "TypeConverterSpec Character -> Short"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (char)'\u8000', Short.class) == (short)-32768
@@ -608,7 +608,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> Short
-	def "String -> Short"() {
+	def "TypeConverterSpec String -> Short"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, '', Short.class)
@@ -632,7 +632,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Boolean -> Integer
-	def "Boolean -> Integer"() {
+	def "TypeConverterSpec Boolean -> Integer"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false, Integer.class) == 0
@@ -641,7 +641,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Byte -> Integer
-	def "Byte -> Integer"() {
+	def "TypeConverterSpec Byte -> Integer"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (byte)-128, Integer.class) == -128
@@ -650,7 +650,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Short -> Integer
-	def "Short -> Integer"() {
+	def "TypeConverterSpec Short -> Integer"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (short)-32768, Integer.class) == -32768
@@ -659,7 +659,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> Integer
-	def "Long -> Integer"() {
+	def "TypeConverterSpec Long -> Integer"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -2147483649L, Integer.class)
@@ -678,7 +678,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Float -> Integer
-	def "Float -> Integer"() {
+	def "TypeConverterSpec Float -> Integer"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -2147484000.0F, Integer.class)
@@ -697,7 +697,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Double -> Integer
-	def "Double -> Integer"() {
+	def "TypeConverterSpec Double -> Integer"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -2147483649.0D, Integer.class)
@@ -716,7 +716,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// BigDecimal -> Integer
-	def "BigDecimal -> Integer"() {
+	def "TypeConverterSpec BigDecimal -> Integer"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, BigDecimal.valueOf(-2147483649L), Integer.class)
@@ -735,7 +735,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Character -> Integer
-	def "Character -> Integer"() {
+	def "TypeConverterSpec Character -> Integer"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (char)'\u0000', Integer.class) ==     0
@@ -744,7 +744,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> Integer
-	def "String -> Integer"() {
+	def "TypeConverterSpec String -> Integer"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, '', Integer.class)
@@ -767,7 +767,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// java.util.Date -> Integer
-	def "utilDate -> Integer"() {
+	def "TypeConverterSpec utilDate -> Integer"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new java.util.Date((( 0*60+ 0)*60+ 0)*1000L    ), Integer.class) == (( 0*60+ 0)*60+ 0)*1000
@@ -785,7 +785,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Boolean -> Long
-	def "Boolean -> Long"() {
+	def "TypeConverterSpec Boolean -> Long"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false, Long.class) == 0L
@@ -794,7 +794,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Byte -> Long
-	def "Byte -> Long"() {
+	def "TypeConverterSpec Byte -> Long"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (byte)-128, Long.class) == -128L
@@ -803,7 +803,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Short -> Long
-	def "Short -> Long"() {
+	def "TypeConverterSpec Short -> Long"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (short)-32768, Long.class) == -32768L
@@ -812,7 +812,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> Long
-	def "Integer -> Long"() {
+	def "TypeConverterSpec Integer -> Long"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -2147483648, Long.class) == -2147483648L
@@ -821,7 +821,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Float -> Long
-	def "Float -> Long"() {
+	def "TypeConverterSpec Float -> Long"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -9223373000000000000.0F, Long.class)
@@ -840,7 +840,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Double -> Long
-	def "Double -> Long"() {
+	def "TypeConverterSpec Double -> Long"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -9223372036854780000.0D, Long.class)
@@ -859,7 +859,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// BigDecimal -> Long
-	def "BigDecimal -> Long"() {
+	def "TypeConverterSpec BigDecimal -> Long"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, new BigDecimal('-9223372036854775809'), Long.class)
@@ -878,7 +878,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Character -> Long
-	def "Character -> Long"() {
+	def "TypeConverterSpec Character -> Long"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (char)'\u0000', Long.class) ==     0L
@@ -887,7 +887,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> Long
-	def "String -> Long"() {
+	def "TypeConverterSpec String -> Long"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, '', Long.class)
@@ -911,7 +911,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// java.util.Date -> Long
-	def "utilDate -> Long"() {
+	def "TypeConverterSpec utilDate -> Long"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new java.util.Date((( 0*60+ 0)*60+ 0)*1000L    ), Long.class) == (( 0*60+ 0)*60+ 0)*1000L
@@ -929,7 +929,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Boolean -> Float
-	def "Boolean -> Float"() {
+	def "TypeConverterSpec Boolean -> Float"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false, Float.class) == 0.0F
@@ -938,7 +938,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Byte -> Float
-	def "Byte -> Float"() {
+	def "TypeConverterSpec Byte -> Float"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (byte)-128, Float.class) == -128.0F
@@ -947,7 +947,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Short -> Float
-	def "Short -> Float"() {
+	def "TypeConverterSpec Short -> Float"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (short)-32768, Float.class) == -32768.0F
@@ -956,7 +956,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> Float
-	def "Integer -> Float"() {
+	def "TypeConverterSpec Integer -> Float"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -2147483000, Float.class) == -2147483000.0F
@@ -965,7 +965,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> Float
-	def "Long -> Float"() {
+	def "TypeConverterSpec Long -> Float"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -9223372000000000000L, Float.class) == -9223372000000000000.0F
@@ -974,7 +974,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Double -> Float
-	def "Double -> Float"() {
+	def "TypeConverterSpec Double -> Float"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -1234567.0D, Float.class) == -1234567.0F
@@ -983,7 +983,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// BigDecimal -> Float
-	def "BigDecimal -> Float"() {
+	def "TypeConverterSpec BigDecimal -> Float"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new BigDecimal('-1234.125'), Float.class) == -1234.125F
@@ -992,7 +992,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Character -> Float
-	def "Character -> Float"() {
+	def "TypeConverterSpec Character -> Float"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (char)'\u0000', Float.class) ==     0.0F
@@ -1001,7 +1001,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> Float
-	def "String -> Float"() {
+	def "TypeConverterSpec String -> Float"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, '', Float.class)
@@ -1015,7 +1015,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Boolean -> Double
-	def "Boolean -> Double"() {
+	def "TypeConverterSpec Boolean -> Double"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false, Double.class) == 0.0
@@ -1024,7 +1024,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Byte -> Double
-	def "Byte -> Double"() {
+	def "TypeConverterSpec Byte -> Double"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (byte)-128, Double.class) == -128.0
@@ -1033,7 +1033,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Short -> Double
-	def "Short -> Double"() {
+	def "TypeConverterSpec Short -> Double"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (short)-32768, Double.class) == -32768.0
@@ -1042,7 +1042,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> Double
-	def "Integer -> Double"() {
+	def "TypeConverterSpec Integer -> Double"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -2147483648, Double.class) == -2147483648.0
@@ -1051,7 +1051,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> Double
-	def "Long -> Double"() {
+	def "TypeConverterSpec Long -> Double"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -9223372036854770000L, Double.class) == -9223372036854770000.0
@@ -1060,7 +1060,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Float -> Double
-	def "Float -> Double"() {
+	def "TypeConverterSpec Float -> Double"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -1234567.0F, Double.class) == -1234567.0
@@ -1069,7 +1069,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// BigDecimal -> Double
-	def "BigDecimal -> Double"() {
+	def "TypeConverterSpec BigDecimal -> Double"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new BigDecimal('-12345678901.0625'), Double.class) == -12345678901.0625
@@ -1078,7 +1078,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Character -> Double
-	def "Character -> Double"() {
+	def "TypeConverterSpec Character -> Double"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (char)'\u0000', Double.class) ==     0.0
@@ -1087,7 +1087,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> Double
-	def "String -> Double"() {
+	def "TypeConverterSpec String -> Double"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, '', Double.class)
@@ -1101,7 +1101,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Boolean -> BigDecimal
-	def "Boolean -> BigDecimal"() {
+	def "TypeConverterSpec Boolean -> BigDecimal"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false, BigDecimal.class) == BigDecimal.ZERO
@@ -1110,7 +1110,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Byte -> BigDecimal
-	def "Byte -> BigDecimal"() {
+	def "TypeConverterSpec Byte -> BigDecimal"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (byte)-128, BigDecimal.class) == BigDecimal.valueOf(-128L)
@@ -1119,7 +1119,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Short -> BigDecimal
-	def "Short -> BigDecimal"() {
+	def "TypeConverterSpec Short -> BigDecimal"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (short)-32768, BigDecimal.class) == BigDecimal.valueOf(-32768L)
@@ -1128,7 +1128,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> BigDecimal
-	def "Integer -> BigDecimal"() {
+	def "TypeConverterSpec Integer -> BigDecimal"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -2147483648, BigDecimal.class) == BigDecimal.valueOf(-2147483648L)
@@ -1137,7 +1137,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> BigDecimal
-	def "Long -> BigDecimal"() {
+	def "TypeConverterSpec Long -> BigDecimal"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -9223372036854775808L, BigDecimal.class) == BigDecimal.valueOf(-9223372036854775808L)
@@ -1146,7 +1146,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Float -> BigDecimal
-	def "Float -> BigDecimal"() {
+	def "TypeConverterSpec Float -> BigDecimal"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -1234.125F, BigDecimal.class) == new BigDecimal('-1234.125')
@@ -1155,7 +1155,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Double -> BigDecimal
-	def "Double -> BigDecimal"() {
+	def "TypeConverterSpec Double -> BigDecimal"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -12345678901.0625D, BigDecimal.class) == new BigDecimal('-12345678901.0625')
@@ -1164,7 +1164,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Character -> BigDecimal
-	def "Character -> BigDecimal"() {
+	def "TypeConverterSpec Character -> BigDecimal"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (char)'\u0000', BigDecimal.class) == BigDecimal.ZERO
@@ -1173,7 +1173,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> BigDecimal
-	def "String -> BigDecimal"() {
+	def "TypeConverterSpec String -> BigDecimal"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, '', BigDecimal.class)
@@ -1187,7 +1187,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Boolean -> Character
-	def "Boolean -> Character"() {
+	def "TypeConverterSpec Boolean -> Character"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false, Character.class) == (char)'0'
@@ -1196,7 +1196,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Byte -> Character
-	def "Byte -> Character"() {
+	def "TypeConverterSpec Byte -> Character"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (byte)-128, Character.class) == (char)'\uFF80'
@@ -1205,7 +1205,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Short -> Character
-	def "Short -> Character"() {
+	def "TypeConverterSpec Short -> Character"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (short)-32768, Character.class) == (char)'\u8000'
@@ -1214,7 +1214,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> Character
-	def "Integer -> Character"() {
+	def "TypeConverterSpec Integer -> Character"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -1, Character.class)
@@ -1233,7 +1233,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> Character
-	def "Long -> Character"() {
+	def "TypeConverterSpec Long -> Character"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -1L, Character.class)
@@ -1252,7 +1252,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Float -> Character
-	def "Float -> Character"() {
+	def "TypeConverterSpec Float -> Character"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -1.0F, Character.class)
@@ -1271,7 +1271,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Double -> Character
-	def "Double -> Character"() {
+	def "TypeConverterSpec Double -> Character"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -1.0D, Character.class)
@@ -1290,7 +1290,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// BigDecimal -> Character
-	def "BigDecimal -> Character"() {
+	def "TypeConverterSpec BigDecimal -> Character"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, BigDecimal.valueOf(-1L), Character.class)
@@ -1315,7 +1315,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> Character
-	def "String -> Character"() {
+	def "TypeConverterSpec String -> Character"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, '', Character.class)
@@ -1341,7 +1341,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Object -> String
-	def "Object -> String"() {
+	def "TypeConverterSpec Object -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new Foo(), String.class) == 'aFoo'
@@ -1349,7 +1349,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Boolean -> String
-	def "Boolean -> String"() {
+	def "TypeConverterSpec Boolean -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false, String.class) == 'false'
@@ -1358,7 +1358,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Byte -> String
-	def "Byte -> String"() {
+	def "TypeConverterSpec Byte -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (byte)-128, String.class) == '-128'
@@ -1367,7 +1367,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Short -> String
-	def "Short -> String"() {
+	def "TypeConverterSpec Short -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (short)-32768, String.class) == '-32768'
@@ -1376,7 +1376,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> String
-	def "Integer -> String"() {
+	def "TypeConverterSpec Integer -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -2147483648, String.class) == '-2147483648'
@@ -1385,7 +1385,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> String
-	def "Long -> String"() {
+	def "TypeConverterSpec Long -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -9223372036854775808L, String.class) == '-9223372036854775808'
@@ -1394,7 +1394,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Float -> String
-	def "Float -> String"() {
+	def "TypeConverterSpec Float -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -1234.125F, String.class) == '-1234.125'
@@ -1403,7 +1403,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Double -> String
-	def "Double -> String"() {
+	def "TypeConverterSpec Double -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, -12345678901.0625D, String.class) == '-1.23456789010625E10'
@@ -1412,7 +1412,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// BigDecimal -> String
-	def "BigDecimal -> String"() {
+	def "TypeConverterSpec BigDecimal -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new BigDecimal('-12345678901234567890.1234567890'), String.class) == '-12345678901234567890.1234567890'
@@ -1421,7 +1421,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Character -> String
-	def "Character -> String"() {
+	def "TypeConverterSpec Character -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, '\u0000', String.class) == '\u0000'
@@ -1432,7 +1432,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// java.util.Date -> String
-	def "utilDate -> String"() {
+	def "TypeConverterSpec utilDate -> String"() {
 	/**/DebugTrace.enter()
 		setup:
 			def timeZone = TimeZone.getDefault()
@@ -1464,7 +1464,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// java.sql.Date -> String
-	def "sqlDate -> String"() {
+	def "TypeConverterSpec sqlDate -> String"() {
 	/**/DebugTrace.enter()
 		setup:
 			def timeZone = TimeZone.getDefault()
@@ -1496,7 +1496,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Time -> String
-	def "Time -> String"() {
+	def "TypeConverterSpec Time -> String"() {
 	/**/DebugTrace.enter()
 		setup:
 			def timeZone = TimeZone.getDefault()
@@ -1528,7 +1528,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Timestamp -> String
-	def "Timestamp -> String"() {
+	def "TypeConverterSpec Timestamp -> String"() {
 	/**/DebugTrace.enter()
 		setup:
 			def timeZone = TimeZone.getDefault()
@@ -1562,7 +1562,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> java.util.Date
-	def "Long -> java.util.Date"() {
+	def "TypeConverterSpec Long -> java.util.Date"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (( 0*60+ 0)*60+ 0)*1000L    , java.util.Date.class) == new java.util.Date((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1571,7 +1571,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> java.util.Date (since 1.8.0)
-	def "Integer -> java.util.Date"() {
+	def "TypeConverterSpec Integer -> java.util.Date"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (( 0*60+ 0)*60+ 0)*1000    , java.util.Date.class) == new java.util.Date((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1580,7 +1580,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// java.sql.Date -> java.util.Date (cast) (since 1.4.0)
-	def "sqlDate -> java.util.Date"() {
+	def "TypeConverterSpec sqlDate -> java.util.Date"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new Date((( 0*60+ 0)*60+ 0)*1000L    ), java.util.Date.class) == new Date((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1589,7 +1589,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Time -> java.util.Date (cast)
-	def "Time -> java.util.Date"() {
+	def "TypeConverterSpec Time -> java.util.Date"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new Time((( 0*60+ 0)*60+ 0)*1000L    ), java.util.Date.class) == new Time((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1598,7 +1598,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Timestamp -> java.util.Date (cast)
-	def "Timestamp -> java.util.Date"() {
+	def "TypeConverterSpec Timestamp -> java.util.Date"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new Timestamp((( 0*60+ 0)*60+ 0)*1000L    ), java.util.Date.class) == new Timestamp((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1607,7 +1607,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> java.util.Date
-	def "String -> java.util.Date"() {
+	def "TypeConverterSpec String -> java.util.Date"() {
 	/**/DebugTrace.enter()
 		setup:
 			def timeZone = TimeZone.getDefault()
@@ -1631,7 +1631,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> java.sql.Date (since 1.8.0)
-	def "Long -> java.sql.Date"() {
+	def "TypeConverterSpec Long -> java.sql.Date"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (( 0*60+ 0)*60+ 0)*1000L    , Date.class) == new Date((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1640,7 +1640,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> java.sql.Date
-	def "Integer -> java.sql.Date"() {
+	def "TypeConverterSpec Integer -> java.sql.Date"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (( 0*60+ 0)*60+ 0)*1000    , Date.class) == new Date((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1649,7 +1649,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Time -> java.sql.Date
-	def "Time -> java.sql.Date"() {
+	def "TypeConverterSpec Time -> java.sql.Date"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new Time((( 0*60+ 0)*60+ 0)*1000L    ), Date.class) == new Date((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1658,7 +1658,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Timestamp -> java.sql.Date
-	def "Timestamp -> java.sql.Date"() {
+	def "TypeConverterSpec Timestamp -> java.sql.Date"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new Timestamp((( 0*60+ 0)*60+ 0)*1000L    ), Date.class) == new Date((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1667,7 +1667,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> java.sql.Date
-	def "String -> java.sql.Date"() {
+	def "TypeConverterSpec String -> java.sql.Date"() {
 	/**/DebugTrace.enter()
 		setup:
 			def timeZone = TimeZone.getDefault()
@@ -1690,7 +1690,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> Time
-	def "Long -> Time"() {
+	def "TypeConverterSpec Long -> Time"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (( 0*60+ 0)*60+ 0)*1000L    , Time.class) == new Time((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1699,7 +1699,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> Time (since 1.8.0)
-	def "Integer -> Time"() {
+	def "TypeConverterSpec Integer -> Time"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (( 0*60+ 0)*60+ 0)*1000    , Time.class) == new Time((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1708,7 +1708,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// java.util.Date -> Time
-	def "utilDate -> Time"() {
+	def "TypeConverterSpec utilDate -> Time"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new java.util.Date((( 0*60+ 0)*60+ 0)*1000L    ), Time.class) == new Time((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1717,7 +1717,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// java.sql.Date -> Time
-	def "sqlDate -> Time"() {
+	def "TypeConverterSpec sqlDate -> Time"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new Date((( 0*60+ 0)*60+ 0)*1000L    ), Time.class) == new Time((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1726,7 +1726,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Timestamp -> Time
-	def "Timestamp -> Time"() {
+	def "TypeConverterSpec Timestamp -> Time"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new Timestamp((( 0*60+ 0)*60+ 0)*1000L    ), Time.class) == new Time((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1735,7 +1735,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> Time
-	def "String -> Time"() {
+	def "TypeConverterSpec String -> Time"() {
 	/**/DebugTrace.enter()
 		setup:
 			def timeZone = TimeZone.getDefault()
@@ -1758,7 +1758,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> Timestamp
-	def "Long -> Timestamp"() {
+	def "TypeConverterSpec Long -> Timestamp"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (( 0*60+ 0)*60+ 0)*1000L    , Timestamp.class) == new Timestamp((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1767,7 +1767,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> Timestamp (since 1.8.0)
-	def "Integer -> Timestamp"() {
+	def "TypeConverterSpec Integer -> Timestamp"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, (( 0*60+ 0)*60+ 0)*1000    , Timestamp.class) == new Timestamp((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1776,7 +1776,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// java.util.Date -> Timestamp
-	def "utilDate -> Timestamp"() {
+	def "TypeConverterSpec utilDate -> Timestamp"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new java.util.Date((( 0*60+ 0)*60+ 0)*1000L    ), Timestamp.class) == new Timestamp((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1785,7 +1785,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// java.sql.Date -> Timestamp
-	def "sqlDate -> Timestamp"() {
+	def "TypeConverterSpec sqlDate -> Timestamp"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new Date((( 0*60+ 0)*60+ 0)*1000L    ), Timestamp.class) == new Timestamp((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1794,7 +1794,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Time -> Timestamp
-	def "Time -> Timestamp"() {
+	def "TypeConverterSpec Time -> Timestamp"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new Time((( 0*60+ 0)*60+ 0)*1000L    ), Timestamp.class) == new Timestamp((( 0*60+ 0)*60+ 0)*1000L    )
@@ -1803,7 +1803,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// String -> Timestamp
-	def "String -> Timestamp"() {
+	def "TypeConverterSpec String -> Timestamp"() {
 	/**/DebugTrace.enter()
 		setup:
 			def timeZone = TimeZone.getDefault()
@@ -1826,7 +1826,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Enum -> String
-	def "Enum -> String"() {
+	def "TypeConverterSpec Enum -> String"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, Character.UnicodeScript.HIRAGANA, String.class) == 'HIRAGANA'
@@ -1836,7 +1836,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Enum -> Byte (since 1.4.0)
-	def "Enum -> Byte"() {
+	def "TypeConverterSpec Enum -> Byte"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, Size.XS, Byte.class) == (byte)0
@@ -1848,7 +1848,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Enum -> Short (since 1.4.0)
-	def "Enum -> Short"() {
+	def "TypeConverterSpec Enum -> Short"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, Size.XS, Short.class) == (short)0
@@ -1860,7 +1860,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Enum -> Integer (since 1.4.0)
-	def "Enum -> Integer"() {
+	def "TypeConverterSpec Enum -> Integer"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, Size.XS, Integer.class) == 0
@@ -1872,7 +1872,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Enum -> Long (since 1.4.0)
-	def "Enum -> Long"() {
+	def "TypeConverterSpec Enum -> Long"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, Size.XS, Long.class) == 0L
@@ -1884,7 +1884,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Byte -> Size (since 1.4.0)
-	def "Byte -> Size"() {
+	def "TypeConverterSpec Byte -> Size"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, (byte)-1, Size.class)
@@ -1906,7 +1906,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Short -> Size (since 1.4.0)
-	def "Short -> Size"() {
+	def "TypeConverterSpec Short -> Size"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, (short)-1, Size.class)
@@ -1928,7 +1928,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Integer -> Size (since 1.4.0)
-	def "Integer -> Size"() {
+	def "TypeConverterSpec Integer -> Size"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -1, Size.class)
@@ -1950,7 +1950,7 @@ class TypeConverterSpec extends Specification {
 	}
 
 	// Long -> Size (since 1.4.0)
-	def "Long -> Size"() {
+	def "TypeConverterSpec Long -> Size"() {
 	/**/DebugTrace.enter()
 		when:
 			TypeConverter.convert(map, -1L, Size.class)

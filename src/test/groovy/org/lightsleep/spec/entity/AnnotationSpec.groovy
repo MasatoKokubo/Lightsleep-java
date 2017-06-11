@@ -145,7 +145,7 @@ class AnnotationSpec extends Specification {
 		public Sub sub = new Sub()
 	}
 
-	def "01 field annotations"() {
+	def "AnnotationSpec field annotations"() {
 	/**/DebugTrace.enter()
 
 		setup:
@@ -203,7 +203,7 @@ class AnnotationSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "02 type annotations"() {
+	def "AnnotationSpec type annotations"() {
 	/**/DebugTrace.enter()
 
 		setup:
@@ -241,7 +241,7 @@ class AnnotationSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "03 type annotations (multiple)"() {
+	def "AnnotationSpec type annotations (multiple)"() {
 	/**/DebugTrace.enter()
 
 		setup:
@@ -294,7 +294,7 @@ class AnnotationSpec extends Specification {
 	static class ColumnTypeEntity extends ColumnTypeEntityBase {
 	}
 
-	def "04 ColumnType annotation"() {
+	def "AnnotationSpec ColumnType annotation"() {
 	/**/DebugTrace.enter()
 		setup:
 			def entity = new ColumnTypeEntity()

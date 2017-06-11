@@ -19,8 +19,8 @@ public class SubqueryCondition<SE> implements Condition {
 	/**
 	 * <b>SubqueryCondition</b> を構築します。
 	 *
-	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティ・クラス
-	 * @param expression サブクエリの SELECT 文より左部分の式
+	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
+	 * @param expression サブクエリの SELECT 文の左部分の式
 	 * @param outerSql 外側の Sql オブジェクト
 	 * @param subSql サブクエリ用の <b>Sql</b> オブジェクト
 	 *

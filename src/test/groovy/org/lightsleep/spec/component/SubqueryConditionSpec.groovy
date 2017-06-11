@@ -15,7 +15,7 @@ import spock.lang.*
 @Unroll
 class SubqueryConditionSpec extends Specification {
 	// SubqueryCondition
-	def "01 of subquery"() {
+	def "SqlStringSpec 01 of subquery"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -35,7 +35,7 @@ class SubqueryConditionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "02 AND subquery"() {
+	def "SqlStringSpec 02 AND subquery"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -55,7 +55,7 @@ class SubqueryConditionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "03 OR subquery"() {
+	def "SqlStringSpec 03 OR subquery"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -75,7 +75,7 @@ class SubqueryConditionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "04 exception - null content"() {
+	def "SqlStringSpec 04 exception - null content"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -87,7 +87,7 @@ class SubqueryConditionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "05 exception - null argument [0]"() {
+	def "SqlStringSpec 05 exception - null argument [0]"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -99,7 +99,7 @@ class SubqueryConditionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "06 exception - null argument [1]"() {
+	def "SqlStringSpec 06 exception - null argument [1]"() {
 	/**/DebugTrace.enter()
 
 		when:

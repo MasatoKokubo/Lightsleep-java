@@ -17,12 +17,12 @@ class ConditionSpec extends Specification {
 		int id
 	}
 
-	def "Condition.isEmpty"() {
+	def "ConditionSpec isEmpty"() {
 		expect:
 			Condition.EMPTY.empty
 	}
 
-	def "Condition.of"() {
+	def "ConditionSpec of"() {
 		expect:
 			Condition.of('').empty
 			Condition.of('A') instanceof Expression
@@ -33,7 +33,7 @@ class ConditionSpec extends Specification {
 
 	}
 
-	def "Condition.not"() {
+	def "ConditionSpec not"() {
 		setup:
 			def sql = new Sql<>(Entity.class)
 
@@ -61,7 +61,7 @@ class ConditionSpec extends Specification {
 			condition2.toString(sql, []) == 'NOT(A)'
 	}
 
-	def "Condition.and"() {
+	def "ConditionSpec and"() {
 		setup:
 			def sql = new Sql<>(Entity.class)
 
@@ -101,7 +101,7 @@ class ConditionSpec extends Specification {
 			condition5.toString(sql, []) == 'A AND B OR C AND D'
 	}
 
-	def "Condition.or"() {
+	def "ConditionSpec or"() {
 		setup:
 			def sql = new Sql<>(Entity.class)
 

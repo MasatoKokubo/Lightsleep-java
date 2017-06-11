@@ -28,6 +28,7 @@ import org.lightsleep.component.EntityCondition;
 import org.lightsleep.component.Expression;
 import org.lightsleep.component.GroupBy;
 import org.lightsleep.component.OrderBy;
+import org.lightsleep.component.SubqueryCondition;
 import org.lightsleep.connection.ConnectionSupplier;
 import org.lightsleep.connection.Jdbc;
 import org.lightsleep.database.Database;
@@ -65,7 +66,7 @@ import org.lightsleep.logger.LoggerFactory;
  * SELECT id, familyName, givenName, ... FROM Contact WHERE familyName='Apple'
  * </pre></div>
  *
- * @param <E> the entity class related to the main table
+ * @param <E> the type of the entity related to the main table
  *
  * @since 1.0.0
  * @author Masato Kokubo
@@ -299,7 +300,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Returns the entity information related to the specified entity class.
 	 *
-	 * @param <E> the entity class related to the main table
+	 * @param <E> the type of the entity related to the main table
 	 * @param entityClass the entity class
 	 * @return the entity information
 	 *
@@ -600,7 +601,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
-	 * @param <JE> the entity class that related to the table to join
+	 * @param <JE> the type of the entity that related to the table to join
 	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
@@ -618,7 +619,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Add an information of the table that join with <b>INNER JOIN</b>.
 	 *
-	 * @param <JE> the entity class that related to the table to join
+	 * @param <JE> the type of the entity that related to the table to join
 	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
@@ -644,7 +645,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
-	 * @param <JE> the entity class that related to the table to join
+	 * @param <JE> the type of the entity that related to the table to join
 	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
@@ -662,7 +663,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Add an information of the table that join with <b>LEFT OUTER JOIN</b>.
 	 *
-	 * @param <JE> the entity class that related to the table to join
+	 * @param <JE> the type of the entity that related to the table to join
 	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
@@ -688,7 +689,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
-	 * @param <JE> the entity class that related to the table to join
+	 * @param <JE> the type of the entity that related to the table to join
 	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
@@ -706,7 +707,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Add an information of the table that join with <b>RIGHT OUTER JOIN</b>.
 	 *
-	 * @param <JE> the entity class that related to the table to join
+	 * @param <JE> the type of the entity that related to the table to join
 	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
 	 * @param on the join condition
@@ -726,7 +727,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Add an information of the table that join with
  	 *   <b>INNER JOIN</b>, <b>LEFT OUTER JOIN</b> or <b>RIGHT OUTER JOIN</b>.
 	 *
-	 * @param <JE> the entity class that related to the table to join
+	 * @param <JE> the type of the entity that related to the table to join
 	 * @param joinType the join type
 	 * @param entityClass the entity class that related to the table to join
 	 * @param tableAlias the alias of the table to join
@@ -760,7 +761,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the <b>WHERE</b> condition.
+	 * Specifies the condition of the <b>WHERE</b> clause.
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -784,7 +785,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the <b>WHERE</b> condition by <b>Expression</b>.
+	 * Specifies the condition of the <b>WHERE</b> clause by an <b>Expression</b>.
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -808,7 +809,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the <b>WHERE</b> condition by EntityCondition.
+	 * Specifies the condition of the <b>WHERE</b> clause by an <b>EntityCondition</b>.
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -834,7 +835,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the <b>WHERE</b> condition by SubqueryCondition.
+	 * Specifies the condition of the <b>WHERE</b> clause by a SubqueryCondition.
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -847,15 +848,16 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
-	 * @param <SE> the entity class related to the subquery
-	 * @param content the content of the SubqueryCondition
-	 * @param subSql the Sql object of the SubqueryCondition
+	 * @param <SE> the type of the entity related to the subquery
+	 * @param content the left part from the SELECT statement of the subquery
+	 * @param subSql the <b>Sql</b> object for the subquery
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
 	 *
 	 * @see #getWhere()
 	 * @see Condition#of(String, Sql, Sql)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> where(String content, Sql<SE> subSql) {
 		where = Condition.of(content, this, subSql);
@@ -863,9 +865,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Returns the <b>WHERE</b> condition that was specified.
+	 * Returns the condition of the <b>WHERE</b> clause that was specified.
 	 *
-	 * @return the <b>WHERE</b> condition
+	 * @return the condition of the <b>WHERE</b> clause
 	 *
 	 * @see #where(Condition)
 	 * @see #where(Object)
@@ -877,9 +879,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Adds the condition using <b>AND</b> to the <b>HAVING</b> condition
+	 * Adds the condition using <b>AND</b> to the condition of the <b>HAVING</b> clause
 	 * if after you call <b>having</b> method, 
-	 * to the <b>WHERE</b> condition otherwise.
+	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
 	 * @param condition the condition
 	 * @return this object
@@ -899,9 +901,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Adds a <b>Expression</b> condition using <b>AND</b> to the <b>HAVING</b> condition
+	 * Adds a <b>Expression</b> condition using <b>AND</b> to the condition of the <b>HAVING</b> clause
 	 * if after you call <b>having</b> method, 
-	 * to the <b>WHERE</b> condition otherwise.
+	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -917,34 +919,37 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 *
-	 * @see Condition#and(String, Object...)
+	 * @see Condition#and(Condition)
+	 * @see Condition#of(String, Object...)
 	 */
 	public Sql<E> and(String content, Object... arguments) {
 		return and(Condition.of(content, arguments));
 	}
 
 	/**
-	 * Adds a <b>SubqueryCondition</b> using <b>AND</b> to the <b>HAVING</b> condition
+	 * Adds a <b>SubqueryCondition</b> using <b>AND</b> to the condition of the <b>HAVING</b> clause
 	 * if after you call <b>having</b> method, 
-	 * to the <b>WHERE</b> condition otherwise.
+	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
-	 * @param <SE> the entity class related to the subquery
-	 * @param content the content of the SubqueryCondition
-	 * @param subSql the Sql object of the SubqueryCondition
+	 * @param <SE> the type of the entity related to the subquery
+	 * @param content the left part from the SELECT statement of the subquery
+	 * @param subSql the <b>Sql</b> object for the subquery
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
 	 *
-	 * @see Condition#and(String, Sql, Sql)
+	 * @see Condition#and(Condition)
+	 * @see Condition#of(String, Sql, Sql)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> and(String content, Sql<SE> subSql) {
 		return and(Condition.of(content, this, subSql));
 	}
 
 	/**
-	 * Adds the condition using <b>OR</b> to the <b>HAVING</b> condition
+	 * Adds the condition using <b>OR</b> to the condition of the <b>HAVING</b> clause
 	 * if after you call <b>having</b> method, 
-	 * to the <b>WHERE</b> condition otherwise.
+	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
 	 * @param condition the condition
 	 * @return this object
@@ -964,9 +969,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Adds a <b>Expression</b> condition using <b>OR</b> to the <b>HAVING</b> condition
+	 * Adds a <b>Expression</b> condition using <b>OR</b> to the condition of the <b>HAVING</b> clause
 	 * if after you call <b>having</b> method, 
-	 * to the <b>WHERE</b> condition otherwise.
+	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -989,25 +994,27 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Adds a <b>SubqueryCondition</b> using <b>OR</b> to the <b>HAVING</b> condition
+	 * Adds a <b>SubqueryCondition</b> using <b>OR</b> to the condition of the <b>HAVING</b> clause
 	 * if after you call <b>having</b> method, 
-	 * to the <b>WHERE</b> condition otherwise.
+	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
-	 * @param <SE> the entity class related to the subquery
-	 * @param content the content of the SubqueryCondition
-	 * @param subSql the Sql object of the SubqueryCondition
+	 * @param <SE> the type of the entity related to the subquery
+	 * @param content the left part from the SELECT statement of the subquery
+	 * @param subSql the <b>Sql</b> object for the subquery
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
 	 *
-	 * @see Condition#or(String, Sql, Sql)
+	 * @see Condition#or(Condition)
+	 * @see Condition#of(String, Sql, Sql)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> or(String content, Sql<SE> subSql) {
 		return or(Condition.of(content, this, subSql));
 	}
 
 	/**
-	 * Specifies the <b>GROUP BY</b> expression.
+	 * Specifies an element of the <b>GROUP BY</b> clause.
 	 *
 	 * @param content the content of the <b>Expression</b>
 	 * @param arguments the arguments of the <b>Expression</b>
@@ -1016,6 +1023,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 *
 	 * @see #getGroupBy()
+	 * @see #setGroupBy(GroupBy)
 	 * @see GroupBy
 	 * @see Expression#Expression(String, Object...)
 	 */
@@ -1025,18 +1033,37 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Returns the <b>GROUP BY</b> information that was specified.
+	 * Sets the contents of the <b>GROUP BY</b> clause.
 	 *
-	 * @return the <b>GROUP BY</b> information
+	 * @param groupBy the contents of the <b>GROUP BY</b> clause
+	 * @return this object
+	 *
+	 * @since 1.9.1
 	 *
 	 * @see #groupBy(String, Object...)
+	 * @see #getGroupBy()
 	 */
-	public GroupBy getGroupBy() {
-		return groupBy;
+	public Sql<E> setGroupBy(GroupBy groupBy) {
+		this.groupBy = groupBy;
+		return this;
 	}
 
 	/**
-	 * Specifies the <b>HAVING</b> condition.
+	 * Returns the contents of the <b>GROUP BY</b> clause.
+	 *
+	 * @return the contents of the <b>GROUP BY</b> clause
+	 *
+	 * @see #groupBy(String, Object...)
+	 * @see #setGroupBy(GroupBy)
+	 */
+	public GroupBy getGroupBy() {
+	// 1.9.1
+	//	return groupBy;
+		return groupBy == GroupBy.EMPTY ? groupBy : groupBy.clone();
+	}
+
+	/**
+	 * Specifies the condition of the <b>HAVING</b> clause.
 	 *
 	 * @param condition the condition
 	 * @return this object
@@ -1053,7 +1080,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the <b>HAVING</b> condition by <b>Expression</b>.
+	 * Specifies the condition of the <b>HAVING</b> clause by an <b>Expression</b>.
 	 *
 	 * @param content the content of the <b>Expression</b>
 	 * @param arguments the arguments of the <b>Expression</b>
@@ -1070,11 +1097,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the <b>HAVING</b> condition by <b>SubqueryCondition</b>.
+	 * Specifies the condition of the <b>HAVING</b> clause by a <b>SubqueryCondition</b>.
 	 *
-	 * @param <SE> the entity class related to the subquery
-	 * @param content the content of the SubqueryCondition
-	 * @param subSql the Sql object of the SubqueryCondition
+	 * @param <SE> the type of the entity related to the subquery
+	 * @param content the left part from the SELECT statement of the subquery
+	 * @param subSql the <b>Sql</b> object for the subquery
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
@@ -1088,9 +1115,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Returns the <b>HAVING</b> condition that was specified.
+	 * Returns the condition of the <b>HAVING</b> clause that was specified.
 	 *
-	 * @return the <b>HAVING</b> condition
+	 * @return the condition of the <b>HAVING</b> clause
 	 *
 	 * @see #having(Condition)
 	 * @see #having(String, Object...)
@@ -1101,23 +1128,25 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the <b>ORDER BY</b> expression.
+	 * Specifies an element of the <b>ORDER BY</b> clause.
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
 	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>orderBy("{familyName}")</b>
+	 *         .<b>orderBy("{givenName}")</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
-	 * @param content the content of the <b>Expression</b>
-	 * @param arguments the arguments of the <b>Expression</b>
+	 * @param content the content of the <b>OrderBy.Element</b>
+	 * @param arguments the arguments of the <b>OrderBy.Element</b>
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
 	 *
 	 * @see #asc()
 	 * @see #desc()
+	 * @see #setOrderBy(OrderBy)
 	 * @see #getOrderBy()
 	 * @see OrderBy#add(OrderBy.Element)
 	 * @see OrderBy.Element#Element(String, Object...)
@@ -1128,7 +1157,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the sort order to ascend.
+	 * Sets the element of the last specified <b>ORDER BY</b> clause in ascending order.
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1150,7 +1179,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the sort order to descend.
+	 * Sets the element of the last specified <b>ORDER BY</b> clause in descending order.
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>
 	 * <div class="sampleCode"><pre>
@@ -1172,16 +1201,35 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Returns the <b>ORDER BY</b> information that was specified.
+	 * Sets the contents of the <b>ORDER BY</b> clause.
 	 *
-	 * @return the <b>ORDER BY</b> information
+	 * @param orderBy the contents of the <b>ORDER BY</b> clause
+	 *
+	 * @return this object
+	 *
+	 * @since 1.9.1
 	 *
 	 * @see #orderBy(java.lang.String, java.lang.Object...)
-	 * @see #asc()
-	 * @see #desc()
+	 * @see #getOrderBy()
+	 */
+	public Sql<E> setOrderBy(OrderBy orderBy) {
+		this.orderBy = orderBy;
+		return this;
+	}
+
+	/**
+	 * Returns the contents of the <b>ORDER BY</b> clause that was specified.
+	 *
+	 * @return the contents of the <b>ORDER BY</b> clause
+	 *
+	 * @see #orderBy(java.lang.String, java.lang.Object...)
+	 * @see #setOrderBy(OrderBy)
 	 */
 	public OrderBy getOrderBy() {
-		return orderBy;
+	// 1.9.1
+	//	return orderBy;
+		return orderBy == OrderBy.EMPTY ? orderBy : orderBy.clone();
+	////
 	}
 
 	/**
@@ -1501,7 +1549,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .<b>&lt;Phone&gt;select(connection, contacts::add, phones::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> the entity class related to the joined table
+	 * @param <JE1> the type of the entity related to the joined table
 	 * @param connection the database connection
 	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
 	 * @param consumer1 the consumer of the entities related to the joined table generated from retrieved rows
@@ -1567,8 +1615,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .<b>&lt;Phone, Email&gt;select(connection, contacts::add, phones::add, emails::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> the entity class related to the 1st joined table
-	 * @param <JE2> the entity class related to the 2nd joined table
+	 * @param <JE1> the type of the entity related to the 1st joined table
+	 * @param <JE2> the type of the entity related to the 2nd joined table
 	 * @param connection the database connection
 	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
 	 * @param consumer1 the consumer of the entities related to the 1st joined table generated from retrieved rows
@@ -1643,9 +1691,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *             <b>emails::add, addresses::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> the entity class related to the 1st joined table
-	 * @param <JE2> the entity class related to the 2nd joined table
-	 * @param <JE3> the entity class related to the 3rd joined table
+	 * @param <JE1> the type of the entity related to the 1st joined table
+	 * @param <JE2> the type of the entity related to the 2nd joined table
+	 * @param <JE3> the type of the entity related to the 3rd joined table
 	 * @param connection the database connection
 	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
 	 * @param consumer1 the consumer of the entities related to the 1st joined table generated from retrieved rows
@@ -1728,10 +1776,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *             <b>emails::add, addresses::add, urls::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> the entity class related to the 1st joined table
-	 * @param <JE2> the entity class related to the 2nd joined table
-	 * @param <JE3> the entity class related to the 3rd joined table
-	 * @param <JE4> the entity class related to the 4th joined table
+	 * @param <JE1> the type of the entity related to the 1st joined table
+	 * @param <JE2> the type of the entity related to the 2nd joined table
+	 * @param <JE3> the type of the entity related to the 3rd joined table
+	 * @param <JE4> the type of the entity related to the 4th joined table
 	 * @param connection the database connection
 	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
 	 * @param consumer1 the consumer of the entities related to the 1st join table generated from retrieved rows
@@ -1927,7 +1975,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Generates and executes an UPDATE SQL.
 	 *
 	 * <p>
-	 * If the <b>WHERE</b> condition is specified, updates by the condition.<br>
+	 * If the condition of the <b>WHERE</b> clause is specified, updates by the condition.<br>
 	 * To update all rows of the target table, specify <b>Condition.ALL</b> to <b>WHERE</b> conditions.
 	 * </p>
 	 *
@@ -1973,7 +2021,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Generates and executes UPDATE SQLs for each element of <b>entities</b>.
 	 *
 	 * <p>
-	 * Even if the <b>WHERE</b> condition is specified, <b>new EntityCondition(entity)</b> will be specified for each entity.
+	 * Even if the condition of the <b>WHERE</b> clause is specified,
+	 * <b>new EntityCondition(entity)</b> will be specified for each entity.
 	 * </p>
 	 *
 	 * <div class="sampleTitle"><span>Example</span></div>

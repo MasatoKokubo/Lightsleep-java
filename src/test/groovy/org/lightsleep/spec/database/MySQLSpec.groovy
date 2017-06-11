@@ -16,7 +16,7 @@ class MySQLSpec extends Specification {
 	@Shared map = MySQL.instance().typeConverterMap()
 
 	// -> SqlString
-	def "-> SqlString"() {
+	def "MySQLSpec -> SqlString"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, false   , SqlString.class).toString() == '0'

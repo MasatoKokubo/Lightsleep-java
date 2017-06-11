@@ -31,7 +31,7 @@ class VariousTypeSpce extends Specification {
 		connectionSupplier = ConnectionSpec.getConnectionSupplier(Jdbc.class)
 	}
 
-	def "various types"() {
+	def "VariousTypeSpce various types"() {
 	/**/DebugTrace.enter()
 
 		setup:
@@ -215,7 +215,7 @@ class VariousTypeSpce extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "number types"() {
+	def "VariousTypeSpce number types"() {
 	/**/DebugTrace.enter()
 
 		setup:
@@ -277,7 +277,7 @@ class VariousTypeSpce extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "string type"() {
+	def "VariousTypeSpce string type"() {
 	/**/DebugTrace.enter()
 
 		setup:

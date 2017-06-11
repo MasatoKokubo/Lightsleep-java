@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * データ型を変換します。<br>
+ * 型を変換します。<br>
  *
  * 下記の <b>TypeConverter</b> オブジェクトを static マップに持ちます。
  * このマップは、{@linkplain #typeConverterMap()} メソッドで取得する事ができます。<br>
@@ -15,7 +15,7 @@ import java.util.function.Function;
  *
  * <table class="additional">
  *   <caption><span>登録されている TypeConverter オブジェクト</span></caption>
- *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
+ *   <tr><th>変換元の型</th><th>変換先の型</th><th>変換内容</th></tr>
  *
  *   <tr><td>Byte          </td><td rowspan="9">Boolean</td><td rowspan="7">0 ➔ false<br>1 ➔ true<br>その他の場合 ConvertException をスロー</td></tr>
  *   <tr><td>Short         </td></tr>
@@ -156,10 +156,10 @@ import java.util.function.Function;
  */
 public class TypeConverter<ST, DT> {
 	/**
-	 * 変換元のデータ型と変換先のデータ型の組み合わせで、マップのキーとして使用する文字列を作成します。
+	 * 変換元の型と変換先の型の組み合わせで、マップのキーとして使用する文字列を作成します。
 	 *
-	 * @param sourceType 変換元のデータ型クラス
-	 * @param destinType 変換先のデータ型クラス
+	 * @param sourceType 変換元の型のクラス
+	 * @param destinType 変換先の型のクラス
 	 * @return キー
 	 *
 	 * @throws NullPointerException <b>sourceType</b> または <b>destinType</b> が null の場合
@@ -191,11 +191,11 @@ public class TypeConverter<ST, DT> {
 	 *
 	 * スーパークラスまたはインターフェースで見つかった場合は、次回は直接見つかるようにマップに登録します。<br>
 	 *
-	 * @param <ST> 変換元のデータ型
-	 * @param <DT> 変換先のデータ型
+	 * @param <ST> 変換元の型
+	 * @param <DT> 変換先の型
 	 * @param typeConverterMap <b>TypeConverter</b> マップ
-	 * @param sourceType 変換元のデータ型クラス
-	 * @param destinType 変換先のデータ型クラス
+	 * @param sourceType 変換元の型のクラス
+	 * @param destinType 変換先の型のクラス
 	 * @return TypeConverter オブジェクト (見つからない場合は null)
 	 *
 	 * @throws NullPointerException typeConverterMap, <b>sourceType</b> または <b>destinType</b> が null の場合
@@ -209,12 +209,12 @@ public class TypeConverter<ST, DT> {
 	 * <b>destinType.isInstance(source)</b> の場合は、<b>source</b> を変換しないで返します。<br>
 	 * コンバータが見つかった場合は、そのコンバータで <b>source</b> を変換したオブジェクトを返します。
 	 *
-	 * @param <ST> 変換元のデータ型
-	 * @param <DT> 変換先のデータ型
+	 * @param <ST> 変換元の型
+	 * @param <DT> 変換先の型
 	 * @param typeConverterMap <b>TypeConverter</b> マップ
 	 * @param source 変換元のオブジェクト (null 可)
-	 * @param destinType 変換先のデータ型クラス (プリミティブ型以外)
-	 * @return データ型を変換されたオブジェクト (null 有)
+	 * @param destinType 変換先の型のクラス (プリミティブ型以外)
+	 * @return 型を変換されたオブジェクト (null 有)
 	 *
 	 * @throws NullPointerException <b>typeConverterMap</b> または <b>destinType</b> が null の場合	 *
 	 * @throws ConvertException コンバータが見つからない場合か変換処理で精度が落ちた場合
@@ -237,8 +237,8 @@ public class TypeConverter<ST, DT> {
 	/**
 	 * <b>TypeConverter</b> を構築します。
 	 *
-	 * @param sourceType 変換元のデータ型クラス
-	 * @param destinType 変換先のデータ型クラス
+	 * @param sourceType 変換元の型のクラス
+	 * @param destinType 変換先の型のクラス
 	 * @param function 変換を実行する関数
 	 *
 	 * @throws NullPointerException <b>sourceType</b>, <b>destinType</b> または <b>function</b> が null の場合
@@ -261,27 +261,27 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-	 * 変換元のデータ型を返します。
+	 * 変換元の型を返します。
 	 *
-	 * @return 変換元のデータ型
+	 * @return 変換元の型
 	 */
 	public Class<ST> sourceType() {
 		return null;
 	}
 
 	/**
-	 * 変換先のデータ型を返します。
+	 * 変換先の型を返します。
 	 *
-	 * @return 変換先のデータ型
+	 * @return 変換先の型
 	 */
 	public Class<DT> destinType() {
 		return null;
 	}
 
 	/**
-	 * データ型を変換する関数を返します。
+	 * 型を変換する関数を返します。
 	 *
-	 * @return データ型を変換する関数
+	 * @return 型を変換する関数
 	 */
 	public Function<? super ST, ? extends DT> function() {
 		return null;
@@ -297,7 +297,7 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-	 * <b>value</b> のデータ型を変換します。
+	 * <b>value</b> の型を変換します。
 	 *
 	 * @param value 変換元のオブジェクト
 	 *

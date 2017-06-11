@@ -15,7 +15,7 @@ import org.lightsleep.helper.Resource;
 /**
  * Configure a condition using the value of the primary key of an entity.
  *
- * @param <E> the entity class
+ * @param <E> the type of the entity
  *
  * @since 1.0.0
  * @author Masato Kokubo

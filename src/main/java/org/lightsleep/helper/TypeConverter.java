@@ -225,10 +225,10 @@ public class TypeConverter<ST, DT> {
 	private static final Map<String, TypeConverter<?, ?>> typeConverterMap = new ConcurrentHashMap<>();
 ////
 
-	// The source data type
+	// The type of the source
 	private final Class<ST> sourceType;
 
-	// The destination data type
+	// The type of the destination
 	private final Class<DT> destinType;
 
 	// The function for converting
@@ -241,10 +241,10 @@ public class TypeConverter<ST, DT> {
 	private final int hashCode;
 
 	/**
-	 * Creates and returns a key of the map from the destination and source data type.
+	 * Creates and returns a key of the map from the destination and type of the source.
 	 *
-	 * @param sourceType the source data type
-	 * @param destinType the destination data type
+	 * @param sourceType the type of the source
+	 * @param destinType the type of the destination
 	 * @return the key
 	 *
 	 * @throws NullPointerException <b>sourceType</b> or <b>destinType</b> is null
@@ -314,11 +314,11 @@ public class TypeConverter<ST, DT> {
 	 * If found with in the super class or interface,
 	 * puts them in <b>typeConverterMap</b> to be found directly next time.
 	 *
-	 * @param <ST> the source data type
-	 * @param <DT> the destination data type
+	 * @param <ST> the type of the source
+	 * @param <DT> the type of the destination
 	 * @param typeConverterMap the <b>TypeConverter</b> map
-	 * @param sourceType the source data type
-	 * @param destinType the destination data type
+	 * @param sourceType the type of the source
+	 * @param destinType the type of the destination
 	 * @return a <b>TypeConverter</b>
 	 *
 	 * @throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is null
@@ -370,11 +370,11 @@ public class TypeConverter<ST, DT> {
 	 *
 	 * If still can not find, returns null<br>.
 	 *
-	 * @param <ST> the source data type
-	 * @param <DT> the destination data type
+	 * @param <ST> the type of the source
+	 * @param <DT> the type of the destination
 	 * @param typeConverterMap the <b>TypeConverter</b> map
-	 * @param sourceType the source data type
-	 * @param destinType the destination data type
+	 * @param sourceType the type of the source
+	 * @param destinType the type of the destination
 	 * @return a <b>TypeConverter</b>
 	 *
 	 * @throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is null
@@ -421,8 +421,8 @@ public class TypeConverter<ST, DT> {
 	 * Otherwise if found a <b>TypeConverter</b>,
 	 * Returns an object converted the source by the converter.
 	 *
-	 * @param <ST> the source data type
-	 * @param <DT> the destination data type
+	 * @param <ST> the type of the source
+	 * @param <DT> the type of the destination
 	 * @param typeConverterMap the <b>TypeConverter</b> map
 	 * @param source a source object (permit null)
 	 * @param destinType a destination type (other than primitive types)
@@ -486,8 +486,8 @@ public class TypeConverter<ST, DT> {
 	/**
 	 * Constructs a new <b>TypeConverter</b>.
 	 *
-	 * @param sourceType the source data type
-	 * @param destinType the destination data type
+	 * @param sourceType the type of the source
+	 * @param destinType the type of the destination
 	 * @param function the function for converting
 	 *
 	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b> or <b>function</b> is null
@@ -525,18 +525,18 @@ public class TypeConverter<ST, DT> {
 	}
 
 	/**
-	 * Returns the source data type.
+	 * Returns the type of the source.
 	 *
-	 * @return the source data type
+	 * @return the type of the source
 	 */
 	public Class<ST> sourceType() {
 		return sourceType;
 	}
 
 	/**
-	 * Returns the destination data type.
+	 * Returns the type of the destination.
 	 *
-	 * @return the destination data type
+	 * @return the type of the destination
 	 */
 	public Class<DT> destinType() {
 		return destinType;

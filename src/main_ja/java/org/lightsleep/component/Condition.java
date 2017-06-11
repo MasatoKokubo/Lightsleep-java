@@ -68,7 +68,7 @@ public interface Condition extends SqlComponent {
 	/**
 	 * エンティティ条件を生成して返します。
 	 *
-	 * @param <E> エンティティ・クラス
+	 * @param <E> エンティティの型
 	 * @param entity エンティティ
 	 * @return エンティティ条件
 	 *
@@ -81,8 +81,8 @@ public interface Condition extends SqlComponent {
 	/**
 	 * サブクエリ条件を生成して返します。
 	 *
-	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティ・クラス
-	 * @param <SE> サブクエリの対象テーブルに対応するエンティティ・クラス
+	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
+	 * @param <SE> サブクエリの対象テーブルに対応するエンティティの型
 	 * @param content サブクエリの SELECT 文より左部分の式の文字列内容
 	 * @param outerSql 外側の Sql オブジェクト
 	 * @param subSql サブクエリ用の Sql オブジェクト
@@ -144,8 +144,8 @@ public interface Condition extends SqlComponent {
 	/**
 	 * (この条件 AND 指定の条件) を返します。
 	 *
-	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティ・クラス
-	 * @param <SE> サブクエリの対象テーブルに対応するエンティティ・クラス
+	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
+	 * @param <SE> サブクエリの対象テーブルに対応するエンティティの型
 	 * @param content サブクエリの SELECT 文より左部分の式の文字列内容
 	 * @param outerSql 外側の Sql オブジェクト
 	 * @param subSql サブクエリ用の Sql オブジェクト
@@ -197,8 +197,8 @@ public interface Condition extends SqlComponent {
 	/**
 	 * (この条件 OR 指定の条件) を返します。
 	 *
-	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティ・クラス
-	 * @param <SE> サブクエリの対象テーブルに対応するエンティティ・クラス
+	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
+	 * @param <SE> サブクエリの対象テーブルに対応するエンティティの型
 	 * @param content サブクエリの SELECT 文より左部分の式の文字列内容
 	 * @param outerSql 外側の Sql オブジェクト
 	 * @param subSql サブクエリ用の Sql オブジェクト

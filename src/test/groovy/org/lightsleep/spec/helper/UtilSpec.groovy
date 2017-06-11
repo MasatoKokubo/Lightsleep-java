@@ -34,7 +34,7 @@ public class UtilSpec extends Specification {
 	public static class Test4 extends Test3 {
 	}
 
-	def "getAnnotations"() {
+	def "UtilSpec getAnnotations"() {
 	/**/DebugTrace.enter();
 		when:
 			def nonColumnProperties = Utils.getAnnotations(Test4.class, NonColumnProperty.class);

@@ -35,7 +35,7 @@ import org.lightsleep.helper.*;
  * SELECT id, familyName, givenName, ... FROM Contact WHERE familyName='Apple'
  * </pre></div>
  *
- * @param <E> メイン・テーブルのエンティティ・クラス
+ * @param <E> メイン・テーブルのエンティティの型
  *
  * @since 1.0
  * @author Masato Kokubo
@@ -96,7 +96,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * 指定のエンティティ・クラスのエンティティ情報を返します。
 	 *
-	 * @param <E> エンティティ・クラス
+	 * @param <E> エンティティの型
 	 * @param entityClass エンティティ・クラス
 	 * @return エンティティ情報
 	 *
@@ -188,7 +188,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #entity()
 	 */
 	public Sql<E> setEntity(E entity) {
-		return this;
+		return null;
 	}
 
 	/**
@@ -308,8 +308,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * </p>
 	 *
 	 * @param propertyName プロパティ名
-	 * @param content 式の文字列内容
-	 * @param arguments 式に埋め込む引数配列
+	 * @param content 式の内容
+	 * @param arguments 式の引数
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>propertyName</b>, <b>content</b> または <b>arguments</b> が null の場合
@@ -350,7 +350,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
-	 * @param <JE> 結合するエンティティ・クラス
+	 * @param <JE> 結合するエンティティの型
 	 * @param entityClass 結合するエンティティ・クラス
 	 * @param tableAlias 結合するテーブルの別名
 	 * @param on 結合条件式
@@ -368,7 +368,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>INNER JOIN</b> で結合するテーブルの情報を追加します。
 	 *
-	 * @param <JE> 結合するエンティティ・クラス
+	 * @param <JE> 結合するエンティティの型
 	 * @param entityClass 結合するエンティティ・クラス
 	 * @param tableAlias 結合するテーブルの別名
 	 * @param on 結合条件式
@@ -394,7 +394,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
-	 * @param <JE> 結合するエンティティ・クラス
+	 * @param <JE> 結合するエンティティの型
 	 * @param entityClass 結合するエンティティ・クラス
 	 * @param tableAlias 結合するテーブルの別名
 	 * @param on 結合条件
@@ -412,7 +412,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>LEFT OUTER JOIN</b> で結合するテーブルの情報を追加します。
 	 *
-	 * @param <JE> 結合するエンティティ・クラス
+	 * @param <JE> 結合するエンティティの型
 	 *
 	 * @param entityClass 結合するエンティティ・クラス
 	 * @param tableAlias 結合するテーブルの別名
@@ -439,7 +439,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
 	 * </pre></div>
 	 *
-	 * @param <JE> 結合するエンティティ・クラス
+	 * @param <JE> 結合するエンティティの型
 	 * @param entityClass 結合するエンティティ・クラス
 	 * @param tableAlias 結合するテーブルの別名
 	 * @param on 結合条件
@@ -457,7 +457,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>RIGHT OUTER JOIN</b> で結合するテーブルの情報を追加します。
 	 *
-	 * @param <JE> 結合するエンティティ・クラス
+	 * @param <JE> 結合するエンティティの型
 	 * @param entityClass 結合するエンティティ・クラス
 	 * @param tableAlias 結合するテーブルの別名
 	 * @param on 結合条件式
@@ -490,7 +490,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * <b>WHERE</b> 条件を指定します。
+	 * <b>WHERE</b> 句の条件を指定します。
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -507,11 +507,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #getWhere()
 	 */
 	public Sql<E> where(Condition condition) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>WHERE</b> 条件を指定します。
+	 * <b>WHERE</b> 句の条件を指定します。
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -520,8 +520,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .select(connection).orElse(null);
 	 * </pre></div>
 	 *
-	 * @param content 条件式
-	 * @param arguments 条件式の引数
+	 * @param content 式の内容
+	 * @param arguments 式の引数
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
@@ -530,11 +530,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see Condition#of(String, Object...)
 	 */
 	public Sql<E> where(String content, Object... arguments) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>WHERE</b> 条件をエンティティ条件で指定します。
+	 * <b>WHERE</b> 句の条件をエンティティ条件で指定します。
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -547,17 +547,17 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * </pre></div>
 	 *
 	 * @param entity エンティティ
-	 * @return this
+	 * @return null
 	 *
 	 * @see #getWhere()
 	 * @see Condition#of(Object)
 	 */
 	public Sql<E> where(E entity) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>WHERE</b> 条件をサブクエリで指定します。
+	 * <b>WHERE</b> 句の条件をサブクエリで指定します。
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -570,24 +570,25 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
-	 * @param <SE> サブクエリの対象テーブルのエンティティ・クラス
-	 * @param content サブクエリの SELECT SQL より左側の式
-	 * @param subSql サブクエリの SELECT SQL 部分
+	 * @param <SE> サブクエリの対象テーブルのエンティティの型
+	 * @param content サブクエリの SELECT 文の左部分
+	 * @param subSql サブクエリ用の <b>Sql</b> オブジェクト
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>subSql</b> が null の場合
 	 *
 	 * @see #getWhere()
 	 * @see Condition#of(String, Sql, Sql)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> where(String content, Sql<SE> subSql) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * 指定されている <b>WHERE</b> 条件を返します。
+	 * 指定されている <b>WHERE</b> 句の条件を返します。
 	 *
-	 * @return <b>WHERE</b> 条件
+	 * @return <b>WHERE</b> 句の条件
 	 *
 	 * @see #where(Condition)
 	 * @see #where(Object)
@@ -599,8 +600,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 条件に、
-	 * そうでなければ <b>WHERE</b> 条件に <b>AND</b> で条件を追加します。
+	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 句の条件に、
+	 * そうでなければ <b>WHERE</b> 句の条件に <b>AND</b> で条件を追加します。
 	 *
 	 * @param condition 条件
 	 * @return このオブジェクト
@@ -610,12 +611,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see Condition#and(Condition)
 	 */
 	public Sql<E> and(Condition condition) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 条件に、
-	 * そうでなければ <b>WHERE</b> 条件に <b>AND</b> で式条件を追加します。
+	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 句の条件に、
+	 * そうでなければ <b>WHERE</b> 句の条件に <b>AND</b> で式条件を追加します。
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -625,8 +626,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
-	 * @param content 条件式
-	 * @param arguments 条件式の引数
+	 * @param content 式の内容
+	 * @param arguments 式の引数
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
@@ -634,27 +635,29 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see Condition#and(String, Object...)
 	 */
 	public Sql<E> and(String content, Object... arguments) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 条件に、
-	 * そうでなければ <b>WHERE</b> 条件に <b>AND</b> でサブクエリ条件を追加します。
+	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 句の条件に、
+	 * そうでなければ <b>WHERE</b> 句の条件に <b>AND</b> でサブクエリ条件を追加します。
 	 *
-	 * @param <SE> サブクエリの対象テーブルのエンティティ・クラス
-	 * @param content サブクエリの SELECT SQL より左側の式
-	 * @param subSql サブクエリの SELECT SQL 部分
+	 * @param <SE> サブクエリの対象テーブルのエンティティの型
+	 * @param content サブクエリの SELECT 文の左部分
+	 * @param subSql サブクエリ用の <b>Sql</b> オブジェクト
 	 * @return このオブジェクト
 	 *
-	 * @see Condition#and(String, Sql, Sql)
+	 * @see Condition#and(Condition)
+	 * @see Condition#of(String, Sql, Sql)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> and(String content, Sql<SE> subSql) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 条件に、
-	 * そうでなければ <b>WHERE</b> 条件に <b>OR</b> で条件を追加します。
+	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 句の条件に、
+	 * そうでなければ <b>WHERE</b> 句の条件に <b>OR</b> で条件を追加します。
 	 *
 	 * @param condition 条件
 	 * @return このオブジェクト
@@ -664,12 +667,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see Condition#or(Condition)
 	 */
 	public Sql<E> or(Condition condition) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 条件に、
-	 * そうでなければ <b>WHERE</b> 条件に <b>OR</b> で式条件を追加します。
+	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 句の条件に、
+	 * そうでなければ <b>WHERE</b> 句の条件に <b>OR</b> で式条件を追加します。
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -679,8 +682,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
-	 * @param content 条件式
-	 * @param arguments 条件式の引数
+	 * @param content 式の内容
+	 * @param arguments 式の引数
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
@@ -688,56 +691,75 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see Condition#or(String, Object...)
 	 */
 	public Sql<E> or(String content, Object... arguments) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 条件に、
-	 * そうでなければ <b>WHERE</b> 条件に <b>OR</b> でサブクエリ条件を追加します。
+	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 句の条件に、
+	 * そうでなければ <b>WHERE</b> 句の条件に <b>OR</b> でサブクエリ条件を追加します。
 	 *
-	 * @param <SE> サブクエリの対象テーブルのエンティティ・クラス
-	 * @param content サブクエリの SELECT SQL より左側の式
-	 * @param subSql サブクエリの SELECT SQL 部分
+	 * @param <SE> サブクエリの対象テーブルのエンティティの型
+	 * @param content サブクエリの SELECT 文の左部分
+	 * @param subSql サブクエリ用の <b>Sql</b> オブジェクト
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>subSql</b> が null の場合
 	 *
-	 * @see Condition#or(String, Sql, Sql)
+	 * @see Condition#or(Condition)
+	 * @see Condition#of(String, Sql, Sql)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> or(String content, Sql<SE> subSql) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>GROUP BY</b> 式を指定します。
+	 * <b>GROUP BY</b> 句の1つの要素を指定します。
 	 *
-	 * @param content 式
-	 * @param arguments 式の引数
+	 * @param content <b>Expression</b> の内容
+	 * @param arguments <b>Expression</b> の引数
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 *
 	 * @see #getGroupBy()
+	 * @see #setGroupBy(GroupBy)
 	 * @see GroupBy
 	 * @see Expression#Expression(String, Object...)
 	 */
 	public Sql<E> groupBy(String content, Object... arguments) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * 指定された <b>GROUP BY</b> 情報を返します。
+	 * <b>GROUP BY</b> 句の内容を設定します。
 	 *
-	 * @return <b>GROUP BY</b> 情報
+	 * @param groupBy <b>GROUP BY</b> 句の内容
+	 * @return このオブジェクト
+	 *
+	 * @since 1.9.1
 	 *
 	 * @see #groupBy(String, Object...)
+	 * @see #getGroupBy()
+	 */
+	public Sql<E> setGroupBy(GroupBy groupBy) {
+		return null;
+	}
+
+	/**
+	 * 指定された <b>GROUP BY</b> 句の内容を返します。
+	 *
+	 * @return <b>GROUP BY</b> 句の内容
+	 *
+	 * @see #groupBy(String, Object...)
+	 * @see #setGroupBy(GroupBy)
 	 */
 	public GroupBy getGroupBy() {
 		return null;
 	}
 
 	/**
-	 * <b>HAVING</b> 条件を指定します。
+	 * <b>HAVING</b> 句の条件を指定します。
 	 *
 	 * @param condition 条件
 	 * @return このオブジェクト
@@ -747,14 +769,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #getHaving()
 	 */
 	public Sql<E> having(Condition condition) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>Expression</b> で <b>HAVING</b> 条件を指定します。
+	 * <b>Expression</b> で <b>HAVING</b> 句の条件を指定します。
 	 *
-	 * @param content 条件式
-	 * @param arguments 条件式の引数
+	 * @param content <b>Expression</b> の内容
+	 * @param arguments <b>Expression</b> の引数
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
@@ -763,15 +785,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see Condition#of(String, Object...)
 	 */
 	public Sql<E> having(String content, Object... arguments) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * <b>SubqueryCondition</b> で <b>HAVING</b> 条件を指定します。
+	 * <b>SubqueryCondition</b> で <b>HAVING</b> 句の条件を指定します。
 	 *
-	 * @param <SE> サブクエリの対象テーブルのエンティティ・クラス
-	 * @param content サブクエリの SELECT SQL より左側の式
-	 * @param subSql サブクエリの SELECT SQL 部分
+	 * @param <SE> サブクエリに関連するテーブルのエンティティの型
+	 * @param content サブクエリの SELECT 文の左部分
+	 * @param subSql サブクエリ用の <b>Sql</b> オブジェクト
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
@@ -780,11 +802,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see Condition#of(String, Sql, Sql)
 	 */
 	public <SE> Sql<E> having(String content, Sql<SE> subSql) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * 指定されている <b>HAVING</b> 条件を返します。
+	 * 指定されている <b>HAVING</b> 句の条件を返します。
 	 *
 	 * @return HAVING 条件
 	 *
@@ -797,33 +819,35 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * <b>ORDER BY</b> を指定します。
+	 * <b>ORDER BY</b> 句の1つの要素を指定します。
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
 	 *     new Sql&lt;&gt;(Contact.class)
 	 *         .<b>orderBy("{familyName}")</b>
+	 *         .<b>orderBy("{givenName}")</b>
 	 *         .select(connection, contacts::add);
 	 * </pre></div>
 	 *
-	 * @param content 式
-	 * @param arguments 式の引数
+	 * @param content <b>OrderBy.Element</b> の内容
+	 * @param arguments <b>OrderBy.Element</b> の引数
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
 	 *
 	 * @see #asc()
 	 * @see #desc()
+	 * @see #setOrderBy(OrderBy)
 	 * @see #getOrderBy()
 	 * @see OrderBy#add(OrderBy.Element)
 	 * @see OrderBy.Element#Element(String, Object...)
 	 */
 	public Sql<E> orderBy(String content, Object... arguments) {
-		return this;
+		return null;
 	}
 
 	/**
-	 * ソート順を昇順に指定します。
+	 * 最後に指定した <b>ORDER BY</b> 句の要素を昇順に設定します。
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -840,11 +864,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see OrderBy#asc
 	 */
 	public Sql<E> asc() {
-		return this;
+		return null;
 	}
 
 	/**
-	 * ソート順を降順に指定します。
+	 * 最後に指定した <b>ORDER BY</b> 句の要素を降順に設定します。
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
 	 * <div class="sampleCode"><pre>
@@ -861,17 +885,32 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see OrderBy#desc
 	 */
 	public Sql<E> desc() {
-		return this;
+		return null;
 	}
 
 	/**
-	 * 指定されている <b>ORDER BY</b> 情報を返します。
+	 * <b>ORDER BY</b> 句の内容を設定します。
 	 *
-	 * @return ORDER BY 情報
+	 * @param orderBy <b>ORDER BY</b> 句の内容
+	 *
+	 * @return このオブジェクト
+	 *
+	 * @since 1.9.1
 	 *
 	 * @see #orderBy(java.lang.String, java.lang.Object...)
-	 * @see #asc()
-	 * @see #desc()
+	 * @see #getOrderBy()
+	 */
+	public Sql<E> setOrderBy(OrderBy orderBy) {
+		return null;
+	}
+
+	/**
+	 * 指定された <b>ORDER BY</b> 句の内容を返します。
+	 *
+	 * @return <b>ORDER BY</b> 句の内容
+	 *
+	 * @see #orderBy(java.lang.String, java.lang.Object...)
+	 * @see #setOrderBy(OrderBy)
 	 */
 	public OrderBy getOrderBy() {
 		return null;
@@ -893,7 +932,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #getLimit()
 	 */
 	public Sql<E> limit(int limit) {
-		return this;
+		return null;
 	}
 
 	/**
@@ -923,7 +962,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #getOffset()
 	 */
 	public Sql<E> offset(int offset) {
-		return this;
+		return null;
 	}
 
 	/**
@@ -945,7 +984,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #isForUpdate()
 	 */
 	public Sql<E> forUpdate() {
-		return this;
+		return null;
 	}
 
 	/**
@@ -970,7 +1009,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #isWaitForever()
 	 */
 	public Sql<E> noWait() {
-		return this;
+		return null;
 	}
 
 	/**
@@ -987,7 +1026,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #isWaitForever()
 	 */
 	public Sql<E> wait(int waitTime) {
-		return this;
+		return null;
 	}
 
 	/**
@@ -1051,7 +1090,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 */
 	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action) {
-		return this;
+		return null;
 	}
 
 	/**
@@ -1063,7 +1102,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return このオブジェクト
 	 */
 	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction) {
-		return this;
+		return null;
 	}
 
 	/**
@@ -1146,7 +1185,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .<b>&lt;Phone&gt;select(connection, contacts::add, phones::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> 結合テーブル1のエンティティ・クラス
+	 * @param <JE1> 結合テーブル1のエンティティの型
 	 * @param connection データベース・コネクション
 	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
 	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
@@ -1186,8 +1225,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *         .<b>&lt;Phone, Email&gt;select(connection, contacts::add, phones::add, emails::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> 結合テーブル1のエンティティ・クラス
-	 * @param <JE2> 結合テーブル2のエンティティ・クラス
+	 * @param <JE1> 結合テーブル1のエンティティの型
+	 * @param <JE2> 結合テーブル2のエンティティの型
 	 * @param connection データベース・コネクション
 	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
 	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
@@ -1233,9 +1272,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *             <b>emails::add, addresses::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> 結合テーブル1のエンティティ・クラス
-	 * @param <JE2> 結合テーブル2のエンティティ・クラス
-	 * @param <JE3> 結合テーブル3のエンティティ・クラス
+	 * @param <JE1> 結合テーブル1のエンティティの型
+	 * @param <JE2> 結合テーブル2のエンティティの型
+	 * @param <JE3> 結合テーブル3のエンティティの型
 	 * @param connection データベース・コネクション
 	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
 	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
@@ -1286,10 +1325,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *             <b>emails::add, addresses::add, urls::add)</b>;
 	 * </pre></div>
 	 *
-	 * @param <JE1> 結合テーブル1のエンティティ・クラス
-	 * @param <JE2> 結合テーブル2のエンティティ・クラス
-	 * @param <JE3> 結合テーブル3のエンティティ・クラス
-	 * @param <JE4> 結合テーブル4のエンティティ・クラス
+	 * @param <JE1> 結合テーブル1のエンティティの型
+	 * @param <JE2> 結合テーブル2のエンティティの型
+	 * @param <JE3> 結合テーブル3のエンティティの型
+	 * @param <JE4> 結合テーブル4のエンティティの型
 	 * @param connection データベース・コネクション
 	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
 	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
@@ -1401,8 +1440,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * UPDATE SQL を生成して実行します。
 	 *
 	 * <p>
-	 * <b>WHERE</b> 条件が指定されている場合は、その条件で更新が行われます。<br>
-	 * 対象のテーブルのすべての行を更新するには、<b>WHERE</b> 条件に <b>Condition.ALL</b> を指定してください。
+	 * <b>WHERE</b> 句の条件が指定されている場合は、その条件で更新が行われます。<br>
+	 * 対象のテーブルのすべての行を更新するには、<b>WHERE</b> 句の条件に <b>Condition.ALL</b> を指定してください。
 	 * </p>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
@@ -1430,7 +1469,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <b>entities</b> の各要素毎に UPDATE SQL を生成して実行します。
 	 *
 	 * <p>
-	 * <b>WHERE</b> 条件が指定されている場合でも、各エンティティ毎に <b>new EntityCondition(entity)</b> が指定されます。
+	 * <b>WHERE</b> 句の条件が指定されている場合でも、各エンティティ毎に <b>new EntityCondition(entity)</b> が指定されます。
 	 * </p>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>
@@ -1456,8 +1495,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * DELETE SQL を生成して実行します。
 	 *
 	 * <p>
-	 * <b>WHERE</b> 条件が指定されていない場合は実行されません。<br>
-	 * 対象のテーブルのすべての行を削除するには、<b>WHERE</b> 条件に <b>Condition.ALL</b> を指定してください。
+	 * <b>WHERE</b> 句の条件が指定されていない場合は実行されません。<br>
+	 * 対象のテーブルのすべての行を削除するには、<b>WHERE</b> 句の条件に <b>Condition.ALL</b> を指定してください。
 	 * </p>
 	 *
 	 * <div class="sampleTitle"><span>使用例</span></div>

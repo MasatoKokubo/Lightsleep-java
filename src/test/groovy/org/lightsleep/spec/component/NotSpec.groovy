@@ -14,7 +14,7 @@ import spock.lang.*
 // NotSpec
 @Unroll
 class NotSpec extends Specification {
-	def "01 NOT empty"() {
+	def "NotSpec 01 NOT empty"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -28,7 +28,7 @@ class NotSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "02 NOT A = B"() {
+	def "NotSpec 02 NOT A = B"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -48,7 +48,7 @@ class NotSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "03 NOT NOT A = B"() {
+	def "NotSpec 03 NOT NOT A = B"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -68,7 +68,7 @@ class NotSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "04 exception - null argument"() {
+	def "NotSpec 04 exception - null argument"() {
 	/**/DebugTrace.enter()
 
 		when:

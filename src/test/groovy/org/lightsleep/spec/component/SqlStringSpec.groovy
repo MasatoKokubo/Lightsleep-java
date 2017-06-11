@@ -14,7 +14,7 @@ import spock.lang.*
 // SqlStringSpec
 @Unroll
 class SqlStringSpec extends Specification {
-	def "01 A"() {
+	def "SqlStringSpec 01 A"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -27,7 +27,7 @@ class SqlStringSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "02 null"() {
+	def "SqlStringSpec 02 null"() {
 	/**/DebugTrace.enter()
 		when:
 			SqlString sqlString = new SqlString(null)

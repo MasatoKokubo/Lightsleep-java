@@ -379,4 +379,30 @@ public class Expression implements Condition {
 		////
 	}
 ////
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public int hashCode() {
+		return 31 * content.hashCode() + Arrays.hashCode(arguments);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		Expression other = (Expression)obj;
+		if (!content.equals(other.content)) return false;
+		if (!Arrays.equals(arguments, other.arguments)) return false;
+		return true;
+	}
 }

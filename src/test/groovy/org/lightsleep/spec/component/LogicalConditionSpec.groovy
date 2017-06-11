@@ -19,7 +19,7 @@ class LogicalConditionSpec extends Specification {
 		@Key id
 	}
 
-	def "#className #type #elements -> #sql"(
+	def "LogicalConditionSpec #className #type #elements -> #sql"(
 		Class<? extends LogicalCondition> clazz, String type, List<String> elements, String sql, String className) {
 	/**/DebugTrace.enter()
 		when:
@@ -182,7 +182,7 @@ class LogicalConditionSpec extends Specification {
 			className = clazz.simpleName
 	}
 
-	def "#className #type - exception - argument is null"(
+	def "LogicalConditionSpec #className #type - exception - argument is null"(
 		Class<? extends LogicalCondition> clazz, String type, String className) {
 	/**/DebugTrace.enter()
 		when:
@@ -219,7 +219,7 @@ class LogicalConditionSpec extends Specification {
 			className = clazz.simpleName
 	}
 
-	def "#className #type - exception - element of argument is null"(
+	def "LogicalConditionSpec #className #type - exception - element of argument is null"(
 		Class<? extends LogicalCondition> clazz, String type, String className) {
 	/**/DebugTrace.enter()
 		when:

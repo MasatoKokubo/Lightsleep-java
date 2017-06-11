@@ -13,7 +13,7 @@ import org.lightsleep.Sql;
  * @since 1.0
  * @author Masato Kokubo
  */
-public class OrderBy implements SqlComponent {
+public class OrderBy implements SqlComponent, Cloneable {
 	/** 空の OrderBy */
 	public static final OrderBy EMPTY = new OrderBy();
 
@@ -57,6 +57,26 @@ public class OrderBy implements SqlComponent {
 		@Override
 		public <E> String toString(Sql<E> sql, List<Object> parameters) {
 			return null;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 *
+		 * @since 1.9.1
+		 */
+		@Override
+		public int hashCode() {
+			return 0;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 *
+		 * @since 1.9.1
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			return false;
 		}
 	}
 
@@ -123,6 +143,36 @@ public class OrderBy implements SqlComponent {
 	 */
 	@Override
 	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public OrderBy clone() {
 		return null;
 	}
 }

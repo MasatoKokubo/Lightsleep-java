@@ -26,7 +26,7 @@ public interface SqlComponent {
 	 * If uses a parameter character (<b>?</b>) at generating character string,
 	 * add the parameter object to <b>parameters</b>.
 	 *
-	 * @param <E> the entity class
+	 * @param <E> the type of the entity
 	 * @param sql the <b>Sql</b> object
 	 * @param parameters a list of parameters
 	 *

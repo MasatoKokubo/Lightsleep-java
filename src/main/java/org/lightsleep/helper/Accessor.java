@@ -160,11 +160,17 @@ public class Accessor<T> {
 		if (logger.isDebugEnabled()) {
 			logger.debug("");
 			for (int index = 0; index < propertyNames.size(); ++index)
-				logger.debug("Accessor: propertyNames." + index + ": " + objectClass.getName() + " / " + propertyNames.get(index));
+			// 1.9.1
+			//	logger.debug("Accessor: propertyNames." + index + ": " + objectClass.getName() + " / " + propertyNames.get(index));
+				logger.debug("<init>: propertyNames." + index + ": " + objectClass.getName() + " / " + propertyNames.get(index));
+			////
 
 			logger.debug("");
 			for (int index = 0; index < valuePropertyNames.size(); ++index)
-				logger.debug("Accessor: valuePropertyNames." + index + ": " + objectClass.getName() + " / " + valuePropertyNames.get(index));
+			// 1.9.1
+			//	logger.debug("Accessor: valuePropertyNames." + index + ": " + objectClass.getName() + " / " + valuePropertyNames.get(index));
+				logger.debug("<init>: valuePropertyNames." + index + ": " + objectClass.getName() + " / " + valuePropertyNames.get(index));
+			////
 
 			logger.debug("");
 		}
@@ -562,7 +568,10 @@ public class Accessor<T> {
 		if (value == null) {
 			Field field = getField(propertyName);
 			if (field.getType().isPrimitive()) {
-				logger.warn("Accessor.setValue: (" + field.getType().getName() + ")" + propertyName + " <- null");
+			// 1.9.1
+			//	logger.warn("Accessor.setValue: (" + field.getType().getName() + ")" + propertyName + " <- null");
+				logger.info("setValue: (" + field.getType().getName() + ")" + propertyName + " <- null");
+			////
 				return;
 			}
 		}

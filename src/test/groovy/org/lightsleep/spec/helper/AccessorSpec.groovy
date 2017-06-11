@@ -80,7 +80,7 @@ class AccessorSpec extends Specification {
 	}
 
 	// setValue, getValue
-	def "setValue getValue"() {
+	def "AccessorSpec setValue getValue"() {
 	/**/DebugTrace.enter()
 		setup:
 			Entity3 entity3 = new Entity3()
@@ -149,7 +149,7 @@ class AccessorSpec extends Specification {
 	}
 
 	// propertyNames, valuePropertyNames, getField, getType, 
-	def "propertyNames, valuePropertyNames, getField, getType"() {
+	def "AccessorSpec propertyNames, valuePropertyNames, getField, getType"() {
 	/**/DebugTrace.enter()
 
 		expect:

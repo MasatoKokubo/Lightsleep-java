@@ -11,7 +11,7 @@ import org.lightsleep.Sql;
 /**
  * Configure a condition to use a subquery.
  *
- * @param <SE> the entity class of the subquery
+ * @param <SE> the type of the entity of the subquery
  *
  * @since 1.0.0
  * @author Masato Kokubo
@@ -26,7 +26,7 @@ public class SubqueryCondition<SE> implements Condition {
 	/**
 	 * Constructs a new <b>SubqueryCondition</b>.
 	 *
-	 * @param <E> the entity class related to table of the outer sql.
+	 * @param <E> the type of the entity related to table of the outer sql.
 	 * @param expression expression of the left part from the SELECT statement of the subquery
 	 * @param outerSql the <b>Sql</b> object of the outer query
 	 * @param subSql the <b>Sql</b> object for the subquery

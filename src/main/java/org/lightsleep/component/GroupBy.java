@@ -6,6 +6,7 @@ package org.lightsleep.component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.lightsleep.Sql;
 
@@ -15,7 +16,10 @@ import org.lightsleep.Sql;
  * @since 1.0
  * @author Masato Kokubo
  */
-public class GroupBy implements SqlComponent {
+// 1.9.1
+//public class GroupBy implements SqlComponent {
+public class GroupBy implements SqlComponent, Cloneable {
+////
 	/** The empty <b>GroupBy</b> */
 	public static final GroupBy EMPTY = new GroupBy();
 
@@ -37,9 +41,28 @@ public class GroupBy implements SqlComponent {
 	 * @throws NullPointerException if <b>expression</b> is null
 	 */
 	public GroupBy add(Expression expression) {
+	// 1.9.1
+		Objects.requireNonNull(expression, "expression");
+	////
+
 		GroupBy groupBy = this == EMPTY ? new GroupBy() : this;
 		groupBy.elements.add(expression);
 		return groupBy;
+	}
+
+	/**
+	 * Adds an element of the <b>GroupBy</b>.
+	 *
+	 * @param content the content of the expression
+	 * @param arguments the arguments of the expression
+	 * @return this object
+	 *
+	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is null
+	 *
+	 * @since 1.9.1
+	 */
+	public GroupBy add(String content, Object... arguments) {
+		return add(new Expression(content, arguments));
 	}
 
 	/**
@@ -77,5 +100,42 @@ public class GroupBy implements SqlComponent {
 			});
 		}
 		return buff.toString();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public int hashCode() {
+		return elements.hashCode();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		GroupBy other = (GroupBy)obj;
+		if (!elements.equals(other.elements)) return false;
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.9.1
+	 */
+	@Override
+	public GroupBy clone() {
+		GroupBy groupBy = new GroupBy();
+		groupBy.elements.addAll(elements);
+		return groupBy;
 	}
 }

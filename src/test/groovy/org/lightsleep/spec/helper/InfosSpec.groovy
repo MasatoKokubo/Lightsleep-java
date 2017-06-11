@@ -79,7 +79,7 @@ class InfosSpec extends Specification {
 		public int value8
 	}
 
-	def "1 EntityInfo 1 exception"() {
+	def "InfosSpec 1 EntityInfo 1 exception"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -91,7 +91,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "1 EntityInfo 2 normal"() {
+	def "InfosSpec 1 EntityInfo 2 normal"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -109,7 +109,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "1 EntityInfo 3 normal"() {
+	def "InfosSpec 1 EntityInfo 3 normal"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -161,7 +161,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "2 ColumnInfo 1 exception"() {
+	def "InfosSpec 2 ColumnInfo 1 exception"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -174,7 +174,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "2 ColumnInfo 2 exception"() {
+	def "InfosSpec 2 ColumnInfo 2 exception"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -186,7 +186,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "2 ColumnInfo 3 exception"() {
+	def "InfosSpec 2 ColumnInfo 3 exception"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -199,7 +199,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "2 ColumnInfo 4 columnName"() {
+	def "InfosSpec 2 ColumnInfo 4 columnName"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -226,7 +226,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "2 ColumnInfo 5 columnName"() {
+	def "InfosSpec 2 ColumnInfo 5 columnName"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -253,7 +253,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "2 ColumnInfo 6 columnName"() {
+	def "InfosSpec 2 ColumnInfo 6 columnName"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -274,7 +274,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "2 ColumnInfo 7 columnName"() {
+	def "InfosSpec 2 ColumnInfo 7 columnName"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -302,7 +302,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "2 ColumnInfo 8 columnName"() {
+	def "InfosSpec 2 ColumnInfo 8 columnName"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -361,7 +361,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "3 JoinInfo 1 exception"() {
+	def "InfosSpec 3 JoinInfo 1 exception"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -374,7 +374,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "3 JoinInfo 2 exception"() {
+	def "InfosSpec 3 JoinInfo 2 exception"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -386,7 +386,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "3 JoinInfo 3 exception"() {
+	def "InfosSpec 3 JoinInfo 3 exception"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -399,7 +399,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "3 JoinInfo 4 exception"() {
+	def "InfosSpec 3 JoinInfo 4 exception"() {
 	/**/DebugTrace.enter()
 
 		when:
@@ -412,7 +412,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "3 JoinInfo 5 normal"() {
+	def "InfosSpec 3 JoinInfo 5 normal"() {
 	/**/DebugTrace.enter()
 
 		when:

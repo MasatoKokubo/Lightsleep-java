@@ -33,7 +33,7 @@ class InterfaceSpec extends Specification {
 	}
 
 	// PreStore PostLoad
-	def "PreStore PostLoad #connectionSupplierName"(
+	def "InterfaceSpec PreStore PostLoad #connectionSupplierName"(
 		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
