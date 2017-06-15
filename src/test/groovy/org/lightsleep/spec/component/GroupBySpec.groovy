@@ -17,9 +17,7 @@ class GroupBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		expect:
-			GroupBy.EMPTY.empty
 			new GroupBy().empty
-			GroupBy.EMPTY.toString(new Sql<>(Contact.class), new ArrayList<Object>()) == ''
 			new GroupBy().toString(new Sql<>(Contact.class), new ArrayList<Object>()) == ''
 
 	/**/DebugTrace.leave()
@@ -29,7 +27,7 @@ class GroupBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		setup:
-			def groupBy = GroupBy.EMPTY.add(new Expression('A'))
+			def groupBy = new GroupBy().add(new Expression('A'))
 			def string = groupBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
 		/**/DebugTrace.print('groupBy', groupBy)
 		/**/DebugTrace.print('string', string)
@@ -45,7 +43,7 @@ class GroupBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		setup:
-			def groupBy = GroupBy.EMPTY.add(new Expression('A')).add(new Expression('B'))
+			def groupBy = new GroupBy().add(new Expression('A')).add(new Expression('B'))
 			def string = groupBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
 		/**/DebugTrace.print('groupBy', groupBy)
 		/**/DebugTrace.print('string', string)
@@ -61,17 +59,17 @@ class GroupBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		setup:
-			def groupBy1 = GroupBy.EMPTY.add('A {}', 1000).add('B {}', 1001)
-			def groupBy2 = GroupBy.EMPTY.add('A {}', 500 + 500).add('B '+'{}', 1001)
-			def groupBy3 = GroupBy.EMPTY.add('A {}', 1000).add('B {}', 1002)
+			def groupBy1 = new GroupBy().add('A {}', 1000).add('B {}', 1001)
+			def groupBy2 = new GroupBy().add('A {}', 500 + 500).add('B '+'{}', 1001)
+			def groupBy3 = new GroupBy().add('A {}', 1000).add('B {}', 1002)
 		/**/DebugTrace.print('groupBy1', groupBy1)
 		/**/DebugTrace.print('groupBy2', groupBy2)
 		/**/DebugTrace.print('groupBy3', groupBy3)
 
 		expect:
-			GroupBy.EMPTY == GroupBy.EMPTY
-			GroupBy.EMPTY == new GroupBy()
-			groupBy1 != GroupBy.EMPTY
+			new GroupBy() == new GroupBy()
+			new GroupBy() == new GroupBy()
+			groupBy1 != new GroupBy()
 			groupBy1 == groupBy2
 			groupBy1 != groupBy3
 			groupBy1.clone() == groupBy1
@@ -84,7 +82,7 @@ class GroupBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			GroupBy.EMPTY.add((Expression)null)
+			new GroupBy().add((Expression)null)
 
 		then:
 			thrown NullPointerException

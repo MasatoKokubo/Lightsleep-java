@@ -14,9 +14,6 @@ import org.lightsleep.Sql;
  * @author Masato Kokubo
  */
 public class OrderBy implements SqlComponent, Cloneable {
-	/** 空の OrderBy */
-	public static final OrderBy EMPTY = new OrderBy();
-
 	/**
 	 * OrderBy の構成要素です。
 	 */

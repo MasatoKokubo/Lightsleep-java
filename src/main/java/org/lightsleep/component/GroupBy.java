@@ -20,8 +20,10 @@ import org.lightsleep.Sql;
 //public class GroupBy implements SqlComponent {
 public class GroupBy implements SqlComponent, Cloneable {
 ////
-	/** The empty <b>GroupBy</b> */
-	public static final GroupBy EMPTY = new GroupBy();
+// 1.9.2
+//	/** The empty <b>GroupBy</b> */
+//	public static final GroupBy EMPTY = new GroupBy();
+////
 
 	// The list of the <b>GroupBy</b> elements
 	private List<Expression> elements = new ArrayList<>();
@@ -45,9 +47,13 @@ public class GroupBy implements SqlComponent, Cloneable {
 		Objects.requireNonNull(expression, "expression");
 	////
 
-		GroupBy groupBy = this == EMPTY ? new GroupBy() : this;
-		groupBy.elements.add(expression);
-		return groupBy;
+	// 1.9.2
+	//	GroupBy groupBy = this == EMPTY ? new GroupBy() : this;
+	//	groupBy.elements.add(expression);
+	//	return groupBy;
+		elements.add(expression);
+		return this;
+	////
 	}
 
 	/**

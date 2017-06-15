@@ -139,13 +139,19 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	private Condition where = Condition.EMPTY;
 
 	// The GROUP BY info.
-	private GroupBy groupBy = GroupBy.EMPTY;
+// 1.9.2
+//	private GroupBy groupBy = GroupBy.EMPTY;
+	private GroupBy groupBy = new GroupBy();
+////
 
 	// The HAVING condition
 	private Condition having = Condition.EMPTY;
 
 	// The ORDER BY information
-	private OrderBy orderBy = OrderBy.EMPTY;
+// 1.9.2
+//	private OrderBy orderBy = OrderBy.EMPTY;
+	private OrderBy orderBy = new OrderBy();
+////
 
 	// The LIMIT value
 	private int limit = Integer.MAX_VALUE;
@@ -1059,7 +1065,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public GroupBy getGroupBy() {
 	// 1.9.1
 	//	return groupBy;
-		return groupBy == GroupBy.EMPTY ? groupBy : groupBy.clone();
+	// 1.9.2
+	//	return groupBy == GroupBy.EMPTY ? groupBy : groupBy.clone();
+		return groupBy.clone();
+	////
 	}
 
 	/**
@@ -1228,7 +1237,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public OrderBy getOrderBy() {
 	// 1.9.1
 	//	return orderBy;
-		return orderBy == OrderBy.EMPTY ? orderBy : orderBy.clone();
+	// 1.9.2
+	//	return orderBy == OrderBy.EMPTY ? orderBy : orderBy.clone();
+		return orderBy.clone();
 	////
 	}
 

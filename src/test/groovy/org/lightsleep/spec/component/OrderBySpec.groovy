@@ -17,9 +17,7 @@ class OrderBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		expect:
-			OrderBy.EMPTY.empty
 			new OrderBy().empty
-			OrderBy.EMPTY.toString(new Sql<>(Contact.class), new ArrayList<Object>()) == ''
 			new OrderBy().toString(new Sql<>(Contact.class), new ArrayList<Object>()) == ''
 
 	/**/DebugTrace.leave()
@@ -29,7 +27,7 @@ class OrderBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		setup:
-			def orderBy = OrderBy.EMPTY.add(new OrderBy.Element('A'))
+			def orderBy = new OrderBy().add(new OrderBy.Element('A'))
 			def string = orderBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
 		/**/DebugTrace.print('orderBy', orderBy)
 		/**/DebugTrace.print('string', string)
@@ -45,7 +43,7 @@ class OrderBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		setup:
-			def orderBy = OrderBy.EMPTY
+			def orderBy = new OrderBy()
 				.add(new OrderBy.Element('A').asc())
 				.add(new OrderBy.Element('B').desc())
 			def string = orderBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
@@ -63,7 +61,7 @@ class OrderBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		setup:
-			def orderBy = OrderBy.EMPTY
+			def orderBy = new OrderBy()
 				.add(new OrderBy.Element('A')).desc()
 				.add(new OrderBy.Element('B')).asc()
 			def string = orderBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
@@ -81,13 +79,13 @@ class OrderBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		setup:
-			def orderBy1 = OrderBy.EMPTY
+			def orderBy1 = new OrderBy()
 				.add(new OrderBy.Element('A {}', 1000)).desc()
 				.add(new OrderBy.Element('B {}', 1001).asc()).asc()
-			def orderBy2 = OrderBy.EMPTY
+			def orderBy2 = new OrderBy()
 				.add(new OrderBy.Element('A {}', 500 + 500).desc())
 				.add(new OrderBy.Element('B '+'{}', 1001)).asc()
-			def orderBy3 = OrderBy.EMPTY
+			def orderBy3 = new OrderBy()
 				.add(new OrderBy.Element('A {}', 1000)).desc()
 				.add(new OrderBy.Element('B {}', 1001).asc()).desc()
 		/**/DebugTrace.print('orderBy1', orderBy1)
@@ -95,9 +93,7 @@ class OrderBySpec extends Specification {
 		/**/DebugTrace.print('orderBy3', orderBy3)
 
 		expect:
-			OrderBy.EMPTY == OrderBy.EMPTY
-			OrderBy.EMPTY == new OrderBy()
-			orderBy1 != OrderBy.EMPTY
+			orderBy1 != new OrderBy()
 			orderBy1 == orderBy2
 			orderBy1 != orderBy3
 			orderBy1.clone() == orderBy1
@@ -110,7 +106,7 @@ class OrderBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			OrderBy.EMPTY.add((OrderBy.Element)null)
+			new OrderBy().add((OrderBy.Element)null)
 
 		then:
 			thrown NullPointerException
@@ -122,7 +118,7 @@ class OrderBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			OrderBy.EMPTY.asc()
+			new OrderBy().asc()
 
 		then:
 			thrown IllegalStateException
@@ -134,7 +130,7 @@ class OrderBySpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			OrderBy.EMPTY.desc()
+			new OrderBy().desc()
 
 		then:
 			thrown IllegalStateException

@@ -14,9 +14,6 @@ import org.lightsleep.Sql;
  * @author Masato Kokubo
  */
 public class GroupBy implements SqlComponent, Cloneable {
-	/** 空の GroupBy */
-	public static final GroupBy EMPTY = new GroupBy();
-
 	/**
 	 * 空の GroupBy を構築します。
 	 */

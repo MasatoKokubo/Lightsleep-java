@@ -28,8 +28,10 @@ public class OrderBy implements SqlComponent, Cloneable {
 	private static final String messageNoOrderByElement = resource.getString("messageNoOrderByElement");
 ////
 
-	/** The empty <b>OrderBy</b> */
-	public static final OrderBy EMPTY = new OrderBy();
+// 1.9.2
+//	/** The empty <b>OrderBy</b> */
+//	public static final OrderBy EMPTY = new OrderBy();
+////
 
 	/**
 	 * The element of <b>OrderBy</b>.
@@ -138,9 +140,13 @@ public class OrderBy implements SqlComponent, Cloneable {
 	public OrderBy add(Element element) {
 		Objects.requireNonNull(element, "element");
 
-		OrderBy orderBy = this == EMPTY ? new OrderBy() : this;
-		orderBy.elements.add(element);
-		return orderBy;
+	// 1.9.2
+	//	OrderBy orderBy = this == EMPTY ? new OrderBy() : this;
+	//	orderBy.elements.add(element);
+	//	return orderBy;
+		elements.add(element);
+		return this;
+	////
 	}
 
 	/**

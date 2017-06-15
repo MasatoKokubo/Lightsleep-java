@@ -657,19 +657,19 @@ class SqlSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		expect:
-			new Sql<>(Contact.class).groupBy == GroupBy.EMPTY
-			new Sql<>(Contact.class).groupBy('A').groupBy != GroupBy.EMPTY
+			new Sql<>(Contact.class).groupBy == new GroupBy()
+			new Sql<>(Contact.class).groupBy('A').groupBy != new GroupBy()
 
 		when:
 			def sql = new Sql<>(Contact.class)
 			sql.groupBy.add('A')
 
 		then:
-			sql.groupBy == GroupBy.EMPTY
+			sql.groupBy == new GroupBy()
 
 		expect:
-			sql.setGroupBy(GroupBy.EMPTY.add('A')).groupBy == GroupBy.EMPTY.add('A')
-			sql.setGroupBy(GroupBy.EMPTY.add('A').add('B')).groupBy == GroupBy.EMPTY.add('A').add('B')
+			sql.setGroupBy(new GroupBy().add('A')).groupBy == new GroupBy().add('A')
+			sql.setGroupBy(new GroupBy().add('A').add('B')).groupBy == new GroupBy().add('A').add('B')
 
 	/**/DebugTrace.leave()
 	}
@@ -701,21 +701,21 @@ class SqlSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		expect:
-			new Sql<>(Contact.class).orderBy == OrderBy.EMPTY
-			new Sql<>(Contact.class).orderBy('A').asc().desc().orderBy != OrderBy.EMPTY
+			new Sql<>(Contact.class).orderBy == new OrderBy()
+			new Sql<>(Contact.class).orderBy('A').asc().desc().orderBy != new OrderBy()
 
 		when:
 			def sql = new Sql<>(Contact.class)
 			sql.orderBy.add('A')
 
 		then:
-			sql.orderBy == OrderBy.EMPTY
+			sql.orderBy == new OrderBy()
 
 		expect:
-			sql.setOrderBy(OrderBy.EMPTY.add('A')).orderBy == OrderBy.EMPTY.add('A')
-			sql.setOrderBy(OrderBy.EMPTY.add('A').asc()).orderBy == OrderBy.EMPTY.add('A')
-			sql.setOrderBy(OrderBy.EMPTY.add('A').desc()).orderBy == OrderBy.EMPTY.add('A').desc()
-			sql.setOrderBy(OrderBy.EMPTY.add('A')).desc().orderBy == OrderBy.EMPTY.add('A').desc()
+			sql.setOrderBy(new OrderBy().add('A')).orderBy == new OrderBy().add('A')
+			sql.setOrderBy(new OrderBy().add('A').asc()).orderBy == new OrderBy().add('A')
+			sql.setOrderBy(new OrderBy().add('A').desc()).orderBy == new OrderBy().add('A').desc()
+			sql.setOrderBy(new OrderBy().add('A')).desc().orderBy == new OrderBy().add('A').desc()
 
 	/**/DebugTrace.leave()
 	}
