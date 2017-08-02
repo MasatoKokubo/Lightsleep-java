@@ -81,18 +81,15 @@ class Example extends Common {
 	static void example4() {
 		logger.info("example4")
 
-		def contact = new Contact()
-		contact.id = 1
-		contact.familyName = 'Apple'
-		contact.givenName  = 'Akane'
+	    def contact = new Contact(1, "Akane", "Apple")
 
-		// トランザクション定義例
-		Transaction.execute {
-		    // トランザクション内容開始
-		    new Sql<>(Contact.class).insert(it, contact)
+	    // トランザクション定義例
+	    Transaction.execute {
+	        // トランザクション内容開始
+	        new Sql<>(Contact.class).insert(it, contact)
 
-		    // トランザクション内容終了
-		}
+	        // トランザクション内容終了
+	    }
 	}
 
 	// #### 5-1-1. SELECT 1 row with an Expression condition
@@ -110,13 +107,12 @@ class Example extends Common {
 	static void example5_1_2() {
 		logger.info("example5_1_2")
 
-		def contact = new Contact()
-		contact.id = 1
-		Transaction.execute {
-		    def contactOpt = new Sql<>(Contact.class)
-		        .where(contact)
-		        .select(it)
-		}
+	    def contact = new Contact(1)
+	    Transaction.execute {
+	        def contactOpt = new Sql<>(Contact.class)
+	            .where(contact)
+	            .select(it)
+	    }
 	}
 
 	// #### 5-1-3. SELECT multiple rows with an Expression condition
@@ -315,7 +311,8 @@ class Example extends Common {
 		contact.birthday = new Date(calendar.timeInMillis)
 
 		Transaction.execute {
-		    new Sql<>(Contact.class).insert(it, contact)
+		    new Sql<>(Contact.class)
+		        .insert(it, new Contact(1, "Akane", "Apple", 2001, 1, 1))
 		}
 	}
 
@@ -323,25 +320,12 @@ class Example extends Common {
 	static void example5_2_2() {
 		logger.info("example5_2_2")
 
-		def contacts = []
-
-		def contact = new Contact()
-		contact.id = 2; contact.familyName = 'Apple'; contact.givenName = 'Yukari'
-		def calendar = Calendar.instance
-		calendar.set(2001, 1-1, 2, 0, 0, 0)
-		contact.birthday = new Date(calendar.timeInMillis)
-		contacts << contact
-
-		contact = new Contact()
-		contact.id = 3; contact.familyName = 'Apple'; contact.givenName = 'Azusa'
-		calendar = Calendar.instance
-		calendar.set(2001, 1-1, 3, 0, 0, 0)
-		contact.birthday = new Date(calendar.timeInMillis)
-		contacts << contact
-
-		Transaction.execute {
-		    new Sql<>(Contact.class).insert(it, contacts)
-		}
+	    Transaction.execute {
+	        new Sql<>(Contact.class).insert(it, [
+	            new Contact(2, "Yukari", "Apple", 2001, 1, 2),
+	            new Contact(3, "Azusa", "Apple", 2001, 1, 3)
+	        ])
+	    }
 	}
 
 	// #### 5-3-1. UPDATE 1 row

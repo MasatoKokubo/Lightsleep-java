@@ -38,18 +38,6 @@ public class Jdbc extends AbstractConnectionSupplier {
 	public Jdbc() {
 	}
 
-// 1.2.0
-//	/**
-//	 * <b>Jdbc</b> を構築します。<br>
-//	 * lightsleep.properties および <i>&lt;<b>resourceName</b>&gt;</i>.properties
-//	 * ファイルで指定された値を設定情報として使用します。
-//	 *
-//	 * @param resourceName 追加のリソース名
-//	 */
-//	public Jdbc(String resourceName) {
-//	}
-////
-
 	/**
 	 * {@inheritDoc}
 	 */

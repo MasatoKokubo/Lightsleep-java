@@ -22,7 +22,6 @@ import java.lang.annotation.*;
  * @see NonUpdateProperties
  */
 @Documented
-// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonUpdate {

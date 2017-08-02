@@ -29,7 +29,6 @@ import java.lang.annotation.*;
  * @see NonSelectProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(NonSelectProperties.class)
 @Target({ElementType.TYPE})

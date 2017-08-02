@@ -31,7 +31,6 @@ import java.lang.annotation.*;
  * @see ColumnProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Column {

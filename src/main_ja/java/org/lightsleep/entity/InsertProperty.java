@@ -30,7 +30,6 @@ import java.lang.annotation.*;
  * @see InsertProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(InsertProperties.class)
 @Target({ElementType.TYPE})

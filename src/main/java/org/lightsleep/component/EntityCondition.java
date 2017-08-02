@@ -23,10 +23,7 @@ import org.lightsleep.helper.Resource;
 public class EntityCondition<E> implements Condition {
 	// Class resources
 	private static final Resource resource = new Resource(EntityCondition.class);
-// 1.8.6
-//	private static final String messageEntityNotHaveKeyColumns = resource.get("messageEntityNotHaveKeyColumns");
 	private static final String messageEntityNotHaveKeyColumns = resource.getString("messageEntityNotHaveKeyColumns");
-////
 
 	// The entity
 	private E entity;
@@ -70,17 +67,11 @@ public class EntityCondition<E> implements Condition {
 
 		Condition[] condition = new Condition[] {Condition.EMPTY};
 
-	// 1.5.1
-	//	entityInfo.keyColumnInfos().stream()
 		entityInfo.keyColumnInfos()
-	////
 			.forEach(columnInfo -> {
 				String propertyName = columnInfo.propertyName();
 				String columnName = columnInfo.getColumnName(tableAlias);
-			// 1.2.0
-			//	condition[0] = condition[0].and(columnName + " = {}", accessor.getValue(entity, propertyName));
 				condition[0] = condition[0].and(columnName + "={}", accessor.getValue(entity, propertyName));
-			////
 			});
 
 		return condition[0].toString(sql, parameters);

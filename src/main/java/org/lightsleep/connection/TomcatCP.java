@@ -45,20 +45,6 @@ public class TomcatCP extends AbstractConnectionSupplier {
 	public TomcatCP() {
 	}
 
-// 1.2.0
-//	/**
-//	 * Constructs a new <b>TomcatCP</b>.<br>
-//	 * Use values specified in the lightsleep.properties and
-//	 * <i>&lt;<b>resourceName</b>&gt;</i>.properties
-//	 * file as the connection information.
-//	 *
-//	 * @param resourceName the resource name
-//	 */
-//	public TomcatCP(String resourceName) {
-//		super(resourceName);
-//	}
-////
-
 	/**
 	 * Constructs a new <b>TomcatCP</b>.
 	 * Use values specified in the lightsleep.properties
@@ -77,20 +63,13 @@ public class TomcatCP extends AbstractConnectionSupplier {
 	 */
 	@Override
 	protected DataSource getDataSource() {
-	// 1.5.0
-	//	logger.debug(() -> "TomcatCP.getDataSource: properties: " + properties);
-	////
-
 		try {
 			DataSource dataSource = new DataSourceFactory().createDataSource(properties);
 			logger.debug(() -> "TomcatCP.getDataSource: dataSource = " + dataSource);
 			return dataSource;
 		}
 		catch (Exception e) {
-		// 1.9.0
-		//	logger.error("TomcatCP.getDataSource:", e);
 			logger.error("TomcatCP.getDataSource: " + e, e);
-		////
 		}
 		return null;
 	}

@@ -48,20 +48,6 @@ public abstract class LogicalCondition implements Condition {
 	// The list of the conditions
 	private final List<Condition> conditions;
 
-// 1.8.6
-//	/**
-//	 * Constructs an empty <b>LogicalCondition</b>.
-//	 *
-//	 * @param operator the operator
-//	 *
-//	 * @throws NullPointerException if <b>operator</b> is null
-//	 */
-//	public LogicalCondition(Operator operator) {
-//		this.operator = Objects.requireNonNull(operator, "operator");
-//		conditions = new ArrayList<>();
-//	}
-////
-
 	/**
 	 * Constructs an <b>And</b> consisting of the conditions.
 	 *
@@ -73,9 +59,7 @@ public abstract class LogicalCondition implements Condition {
 	public LogicalCondition(Operator operator, Stream<Condition> conditionStream) {
 		this.operator = Objects.requireNonNull(operator, "operator");
 		conditions = Objects.requireNonNull(conditionStream, "conditionStream")
-		// 1.8.7
 			.map(condition -> Objects.requireNonNull(condition, "an element of conditions"))
-		////
 			.flatMap(condition -> condition instanceof LogicalCondition && ((LogicalCondition)condition).operator == operator
 				? ((LogicalCondition)condition).conditions().stream()
 				: Stream.of(condition))
@@ -89,10 +73,7 @@ public abstract class LogicalCondition implements Condition {
 	 * @return an unmodifiable list of the conditions
 	 */
 	public List<Condition> conditions() {
-	// 1.8.6
-	//	return conditions;
 		return Collections.unmodifiableList(conditions);
-	////
 	}
 
 	/**
@@ -125,27 +106,6 @@ public abstract class LogicalCondition implements Condition {
 	 */
 	@Override
 	public <E> String toString(Sql<E> sql, List<Object> parameters) {
-	// 1.8.7
-	//	StringBuilder buff = new StringBuilder();
-	//	if (!conditions.isEmpty()) {
-	//		if (conditions.size() >= 2)
-	//			buff.append('(');
-	//
-	//		String[] delimiter = new String[] {""};
-	//	// 1.5.1
-	//	//	conditions.stream()
-	//		conditions
-	//	////
-	//			.forEach(condition -> {
-	//				buff.append(delimiter[0])
-	//					.append(condition.toString(sql, parameters));
-	//				delimiter[0] = operator.sql();
-	//			});
-	//
-	//		if (conditions.size() >= 2)
-	//			buff.append(')');
-	//	}
-	//	return buff.toString();
 		return String.join(operator.sql(),
 			conditions.stream()
 				.map(condition ->
@@ -155,6 +115,5 @@ public abstract class LogicalCondition implements Condition {
 				)
 				.toArray(String[]::new)
 		);
-	////
 	}
 }

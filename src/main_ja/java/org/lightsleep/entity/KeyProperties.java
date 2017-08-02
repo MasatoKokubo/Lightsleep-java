@@ -14,7 +14,6 @@ import java.lang.annotation.*;
  * @see KeyProperty
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface KeyProperties {

@@ -15,43 +15,10 @@ import org.lightsleep.Sql;
  */
 public interface Condition extends SqlComponent {
 	/** The empty condition */
-// 1.8.2
-//	static final Condition EMPTY = new And();
-// 1.8.8
-//	static final Condition EMPTY = of("/* EMPTY CONDITION */");
 	static final Condition EMPTY = of("");
-////
 
 	/** The condition for all rows */
 	static final Condition ALL = of("0 = 0");
-
-// 1.8.8
-//	/**
-//	 * {@inheritDoc}
-//	 *
-//	 * @since 1.8.2
-//	 */
-//	@Override
-//	default boolean isEmpty() {
-//		return this == EMPTY;
-//	}
-////
-
-// 1.8.3
-//	/**
-//	 * Returns a new expression condition.
-//	 *
-//	 * @param content the content of the expression condition
-//	 * @return a new expression condition
-//	 *
-//	 * @throws NullPointerException if <b>content</b> is null
-//	 *
-//	 * @see Expression
-//	 */
-//	static Condition of(String content) {
-//		return new Expression(content);
-//	}
-////
 
 	/**
 	 * Returns a new expression condition.
@@ -80,11 +47,9 @@ public interface Condition extends SqlComponent {
 	 * @see EntityCondition#EntityCondition(Object)
 	 */
 	static <E> Condition of(E entity) {
-	// 1.8.3
-		// for Groovy
 		if (entity instanceof String)
 			return new Expression((String)entity);
-	////
+
 		return new EntityCondition<E>(entity);
 	}
 
@@ -115,10 +80,7 @@ public interface Condition extends SqlComponent {
 	 * @see LogicalCondition#optimized()
 	 */
 	default Condition not() {
-	// 1.8.0
-	//	return isEmpty() ? this : this instanceof Not ? ((Not)this).condition() : new Not(this);
 		return isEmpty() ? this : new Not(this).optimized();
-	////
 	}
 
 	/**
@@ -133,11 +95,7 @@ public interface Condition extends SqlComponent {
 	 * @see LogicalCondition#optimized()
 	 */
 	default Condition and(Condition condition) {
-	// 1.8.8
-	//	Objects.requireNonNull(condition, "condition");
-	//	return condition.isEmpty() ? this : isEmpty() ? condition : new And(this, condition);
 		return new And(this, condition).optimized();
-	////
 	}
 
 	/**
@@ -154,10 +112,7 @@ public interface Condition extends SqlComponent {
 	 * @see LogicalCondition#optimized()
 	 */
 	default Condition and(String content, Object... arguments) {
-	// 1.8.8
-	//	return and(of(content, arguments));
 		return new And(this, new Expression(content, arguments)).optimized();
-	////
 	}
 
 	/**
@@ -178,10 +133,7 @@ public interface Condition extends SqlComponent {
 	 * @see LogicalCondition#optimized()
 	 */
 	default <E, SE> Condition and(String content, Sql<E> outerSql, Sql<SE> subSql) {
-	// 1.8.8
-	//	return and(of(content, outerSql, subSql));
 		return new And(this, new SubqueryCondition<>(new Expression(content), outerSql, subSql)).optimized();
-	////
 	}
 
 	/**
@@ -196,11 +148,7 @@ public interface Condition extends SqlComponent {
 	 * @see LogicalCondition#optimized()
 	 */
 	default Condition or(Condition condition) {
-	// 1.8.8
-	//	Objects.requireNonNull(condition, "condition");
-	//	return condition.isEmpty() ? this : isEmpty() ? condition : new Or(this, condition);
 		return new Or(this, condition).optimized();
-	////
 	}
 
 	/**
@@ -217,10 +165,7 @@ public interface Condition extends SqlComponent {
 	 * @see LogicalCondition#optimized()
 	 */
 	default Condition or(String content, Object... arguments) {
-	// 1.8.8
-	//	return or(of(content, arguments));
 		return new Or(this, new Expression(content, arguments)).optimized();
-	////
 	}
 
 	/**
@@ -241,10 +186,7 @@ public interface Condition extends SqlComponent {
 	 * @see LogicalCondition#optimized()
 	 */
 	default <E, SE> Condition or(String content, Sql<E> outerSql, Sql<SE> subSql) {
-	// 1.8.8
-	//	return or(of(content, outerSql, subSql));
 		return new Or(this, new SubqueryCondition<>(new Expression(content), outerSql, subSql)).optimized();
-	////
 	}
 
 	/**
@@ -277,10 +219,7 @@ public interface Condition extends SqlComponent {
 	 * @see And#And(Collection)
 	 * @see LogicalCondition#optimized()
 	 */
-// 1.9.0
-//	static Condition and(List<Condition> conditions) {
 	static Condition and(Collection<Condition> conditions) {
-////
 		return new And(conditions).optimized();
 	}
 
@@ -331,10 +270,7 @@ public interface Condition extends SqlComponent {
 	 * @see Or#Or(Collection)
 	 * @see LogicalCondition#optimized()
 	 */
-// 1.9.0
-//	static Condition or(List<Condition> conditions) {
 	static Condition or(Collection<Condition> conditions) {
-////
 		return new Or(conditions).optimized();
 	}
 

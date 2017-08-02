@@ -23,36 +23,15 @@ import org.lightsleep.helper.SqlEntityInfo;
  * @author Masato Kokubo
  */
 public class Expression implements Condition {
-// 1.8.2
-//	// The logger
-//	private static final Logger logger = LoggerFactory.getLogger(Expression.class);
-////
-
 	// Class resources
 	private static final Resource resource = new Resource(Expression.class);
-// 1.9.0
-//// 1.8.2
-////	private static final String messageParametersIsLess   = resource.get("messageParametersIsLess");
-//	private static final String messageLessArguments      = resource.get("messageLessArguments");
-//	private static final String messageMoreArguments      = resource.get("messageMoreArguments");
-//////
-//	private static final String messagePropertyIsNotFound = resource.get("messagePropertyIsNotFound");
-//// 1.8.5
-//	private static final String messagePropertiesAreNotFound = resource.get("messagePropertiesAreNotFound");
-//////
 	private static final String messageLessArguments         = resource.getString("messageLessArguments");
 	private static final String messageMoreArguments         = resource.getString("messageMoreArguments");
 	private static final String messagePropertyIsNotFound    = resource.getString("messagePropertyIsNotFound");
 	private static final String messagePropertiesAreNotFound = resource.getString("messagePropertiesAreNotFound");
-////
 
 	/** The empty expression */
 	public static final Expression EMPTY = new Expression("");
-
-// 1.8.2 (Not used)
-//	/** The default value expression */
-//	public static final Expression DEFAULT = new Expression("DEFAULT");
-////
 
 	// The content
 	private final String content;
@@ -96,12 +75,7 @@ public class Expression implements Condition {
 	 */
 	@Override
 	public boolean isEmpty() {
-	// 1.8.2
-	//	return content.isEmpty();
-	// 1.8.8
-	//	return this == Condition.EMPTY || content.isEmpty();
 		return content.isEmpty();
-	////
 	}
 
 	/**
@@ -164,14 +138,9 @@ public class Expression implements Condition {
 
 				if (inBrace) {
 					// in {}
-				// 1.8.0
 					if (Character.isWhitespace(ch)) continue;
-				////
 					if (ch != '}') {
 						if (tempBuff.length() == 0) {
-						// 1.8.0
-						//	if (Character.isSpaceChar(ch)) continue;
-						////
 							if (ch == '#' && !referEntity) {
 								referEntity = true;
 								continue;
@@ -183,10 +152,7 @@ public class Expression implements Condition {
 					}
 
 					inBrace = false;
-				// 1.8.0
-				//	String propertyName = tempBuff.toString().trim();
 					String propertyName = tempBuff.toString();
-				////
 
 					if (propertyName.length() == 0 || referEntity) {
 						// Replaces an argument or refer the entity value
@@ -195,117 +161,40 @@ public class Expression implements Condition {
 							// Replaces an argument
 							if (argIndex >= arguments.length) {
 								// Argument shortage
-							// 1.8.2
-							//	logger.warn(MessageFormat.format(messageParametersIsLess, content, arguments.length));
-							//	buff.append("{***}");
-							//	continue;
 								throw new IllegalArgumentException(MessageFormat.format(
 									messageLessArguments, content, arguments.length));
-							////
 							}
 							value = arguments[argIndex++];
 
 						} else {
 							// Refers the entity value
-						//	if (entity == null)
-						//		throw new NullPointerException("Expression.toString: sql.entity == null, content = " + content);
 							Objects.requireNonNull(entity, "sql.entity");
 
 							value = entityInfo.accessor().getValue(entity, propertyName);
-						// 1.8.0
-							// converts value to the column type
 							ColumnInfo columnInfo = entityInfo.getColumnInfo(propertyName);
 							Class<?> columnType = columnInfo.columnType();
 							if (columnType != null)
 								value = Sql.getDatabase().convert(value, columnType);
-						////
 						}
 
 						if (value == null)
 							buff.append("NULL");
 						else {
-						// 1.7.0
-						//	String string = Sql.getDatabase().convert(value, SqlString.class).toString();
-						//	buff.append(string);
-						//	if (string.equals("?"))
-						//		parameters.add(value);
 							SqlString sqlString = Sql.getDatabase().convert(value, SqlString.class);
 							buff.append(sqlString.toString());
 							parameters.addAll(Arrays.asList(sqlString.parameters()));
-						////
 						}
-					// 1.8.2
-					//	continue;
-					////
-
 					} else {
-					// 1.8.2
-					//	ColumnInfo columnInfo = null;
-					//
-					//	try {
-					//		// Converts to a column name
-					//		columnInfo = entityInfo.getColumnInfo(propertyName);
-					//		buff.append(columnInfo.getColumnName(sql.tableAlias()));
-					//		continue;
-					//	}
-					//	catch (IllegalArgumentException e) {
-					//	}
-					//
-					//	// Try with the table alias
-					//	int chIndex = propertyName.indexOf('.');
-					//	if (chIndex >= 1) {
-					//		String tableAlias = propertyName.substring(0, chIndex);
-					//		SqlEntityInfo<?> sqlEntityInfo = sql.getSqlEntityInfo(tableAlias);
-					//		if (sqlEntityInfo != null) {
-					//			// Found an entity information of the table alias
-					//			String propertyName2 = propertyName.substring(chIndex + 1);
-					//
-					//			try {
-					//				columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
-					//				buff.append(columnInfo.getColumnName(sqlEntityInfo.tableAlias()));
-					//				continue;
-					//			}
-					//			catch (IllegalArgumentException e) {
-					//			}
-					//		}
-					//	}
-					//
-					//	//  Try by column alias
-					//	chIndex = propertyName.indexOf('_');
-					//	if (chIndex >= 1) {
-					//		String tableAlias = propertyName.substring(0, chIndex);
-					//		SqlEntityInfo<?> sqlEntityInfo = sql.getSqlEntityInfo(tableAlias);
-					//		if (sqlEntityInfo != null) {
-					//			// Found an entity information of the table alias
-					//			String propertyName2 = propertyName.substring(chIndex + 1);
-					//			try {
-					//				columnInfo = sqlEntityInfo.entityInfo().getColumnInfo(propertyName2);
-					//				buff.append(columnInfo.getColumnAlias(sqlEntityInfo.tableAlias()));
-					//				continue;
-					//			}
-					//			catch (IllegalArgumentException e) {
-					//			}
-					//		}
-					//	}
-					//	// Not found any column information
-					// 1.5.1
-					////logger.warn(MessageFormat.format(messagePropertyIsNotFound, propertyName, entityInfo.entityClass().getName()));
-					//	logger.warn(MessageFormat.format(messagePropertyIsNotFound, entityInfo.entityClass().getName(), propertyName));
 						appendsColumnName(buff, sql, entityInfo, propertyName);
-					////
 					}
 
-				// 1.8.2
 					continue;
-				////
 				}
 
 				if (ch == '{') {
 					// { start
 					inBrace = true;
-				// 1.8.0 #0022
 					referEntity = false;
-				////
 					tempBuff.setLength(0);
 					continue;
 				}
@@ -314,23 +203,18 @@ public class Expression implements Condition {
 			buff.append(ch);
 		}
 
-	// 1.8.2
 		if (argIndex < arguments.length)
 			throw new IllegalArgumentException(MessageFormat.format(
 				messageMoreArguments, content, arguments.length));
-	////
 
 		return buff.toString();
 	}
 
-// 1.8.2
 	private static char[] delimiterChars = {'.', '_'};
 
 	// Appends a column name
 	private <E> void appendsColumnName(StringBuilder buff, Sql<E> sql, EntityInfo<E> entityInfo, String propertyName) {
-	// 1.8.5
 		List<String> propertyNames = new ArrayList<>();
-	////
 		try {
 			// Converts to a column name
 			ColumnInfo columnInfo = entityInfo.getColumnInfo(propertyName);
@@ -338,9 +222,7 @@ public class Expression implements Condition {
 			return;
 		}
 		catch (IllegalArgumentException e) {
-		// 1.8.5
 			propertyNames.add(propertyName);
-		////
 		}
 
 		// Try with the table alias and column alias
@@ -362,9 +244,7 @@ public class Expression implements Condition {
 						return;
 					}
 					catch (IllegalArgumentException e) {
-					// 1.8.5
 						propertyNames.add(propertyName2);
-					////
 					}
 				}
 			}
@@ -372,13 +252,9 @@ public class Expression implements Condition {
 
 		propertyNames = propertyNames.stream().map(name -> '"' + name + '"').collect(Collectors.toList());
 		throw new IllegalArgumentException(MessageFormat.format(
-		// 1.8.5
-		//	messagePropertyIsNotFound, entityInfo.entityClass().getName(), propertyName));
 			propertyNames.size() == 1 ? messagePropertyIsNotFound : messagePropertiesAreNotFound,
 			entityInfo.entityClass().getName(), String.join(", ", propertyNames)));
-		////
 	}
-////
 
 	/**
 	 * {@inheritDoc}

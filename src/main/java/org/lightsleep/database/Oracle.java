@@ -62,49 +62,6 @@ public class Oracle extends Standard {
 		// boolean -> 0, 1
 		TypeConverter.put(typeConverterMap, booleanToSql01Converter);
 
-	// 1.9.0
-	//	// String.class -> SqlString.class
-	//	TypeConverter.put(typeConverterMap,
-	//		new TypeConverter<>(String.class, SqlString.class, object -> {
-	//			if (object.length() > maxStringLiteralLength)
-	//			// 1.7.0
-	//			//	return SqlString.PARAMETER; // SQL Parameter
-	//				return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
-	//			////
-	//
-	//			StringBuilder buff = new StringBuilder(object.length() + 2);
-	//			buff.append('\'');
-	//
-	//			boolean inLiteral = true;
-	//			for (char ch : object.toCharArray()) {
-	//				if (ch >= ' ' && ch != '\u007F') {
-	//					// Literal representation
-	//					if (!inLiteral) {
-	//						// Outside of the literal
-	//						buff.append("||'");
-	//						inLiteral = true;
-	//					}
-	//					if (ch == '\'') buff.append("''");
-	//					else buff.append(ch);
-	//				} else {
-	//					// Functional representation
-	//					if (inLiteral) {
-	//						// Inside of the literal
-	//						buff.append('\'');
-	//						inLiteral = false;
-	//					}
-	//					buff.append("||CHR(").append((int)ch).append(')');
-	//				}
-	//			}
-	//
-	//			if (inLiteral)
-	//				buff.append('\'');
-	//
-	//			return new SqlString(buff.toString());
-	//		})
-	//	);
-	////
-
 		// Time.class -> SqlString.class
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Time.class, SqlString.class, object ->
@@ -181,16 +138,11 @@ public class Oracle extends Standard {
 
 			// NO WAIT
 			if (sql.isNoWait())
-			// 1.9.0 bug
-			//	buff.append(" NO WAIT");
 				buff.append(" NOWAIT");
-			////
 
-		// 1.9.0
 			// WAIT n
 			else if (!sql.isWaitForever())
 				buff.append(" WAIT ").append(sql.getWaitTime());
-		////
 		}
 	}
 

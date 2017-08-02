@@ -14,7 +14,6 @@ import java.lang.annotation.*;
  * @see ColumnProperty
  */
 @Documented
-// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface ColumnProperties {

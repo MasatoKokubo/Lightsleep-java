@@ -22,7 +22,6 @@ import java.lang.annotation.*;
  * @see NonColumnProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonColumn {

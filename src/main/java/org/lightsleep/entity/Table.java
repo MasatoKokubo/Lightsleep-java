@@ -29,8 +29,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Table {
-// 1.2.0
-//	String value() default "";
 	String value();
-////
 }

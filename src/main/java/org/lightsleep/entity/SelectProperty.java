@@ -29,7 +29,6 @@ import java.lang.annotation.*;
  * @see SelectProperties
  */
 @Documented
-// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(SelectProperties.class)
 @Target({ElementType.TYPE})

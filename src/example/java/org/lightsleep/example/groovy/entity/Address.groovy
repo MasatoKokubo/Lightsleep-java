@@ -7,7 +7,7 @@ import org.lightsleep.entity.Key
 
 class Address {
 	@Key
-	int	  contactId
+	int    contactId
 	short  childIndex
 	String label
 	String postCode

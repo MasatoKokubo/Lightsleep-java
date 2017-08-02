@@ -64,10 +64,7 @@ public class SQLServer extends Standard {
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, SqlString.class, object -> {
 				if (object.length() > maxStringLiteralLength)
-				// 1.7.0
-				//	return SqlString.PARAMETER; // SQL Parameter
 					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
-				////
 
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');
@@ -137,10 +134,7 @@ public class SQLServer extends Standard {
 		buff.append(subSelectSql(sql, parameters));
 
 		// ORDER BY ...
-	// 1.8.2
-	//	buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
 		appendOrderBy(buff, sql, parameters);
-	////
 
 		return buff.toString();
 	}
@@ -152,73 +146,15 @@ public class SQLServer extends Standard {
 	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
-	// 1.8.2
-	//	// SELECT
-	//	buff.append("SELECT ");
-	//
-	//	// DISTINCT
-	//	if (sql.isDistinct())
-	//		buff.append("DISTINCT ");
-	//
-	//	// the column names, ...
-	//	buff.append(columnsSupplier.get());
-	//
-	//	// FROM table name
-	//	buff.append(" FROM ").append(sql.entityInfo().tableName());
-	//
-	//	// table alias
-	//	if (!sql.tableAlias().isEmpty())
-	//		buff.append(" ").append(sql.tableAlias());
-	//
-	//	// FOR UPDATE
-	//	if (sql.isForUpdate()) {
-	//		// NO WAIT
-	//		if (sql.isNoWait())
-	//			buff.append(" WITH (ROWLOCK,UPDLOCK,NOWAIT)");
-	//		else
-	//			buff.append(" WITH (ROWLOCK,UPDLOCK)");
-	//	}
-	//
-	//	// INNER / OUTER JOIN ...
-	//	if (!sql.getJoinInfos().isEmpty()) {
-	//	// 1.5.1
-	//	//	sql.getJoinInfos().stream()
-	//		sql.getJoinInfos()
-	//	////
-	//			.forEach(joinInfo -> {
-	//				// INNER/OUTER JOIN table name
-	//				buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());
-	//
-	//				// table alias
-	//				if (!joinInfo.tableAlias().isEmpty())
-	//					buff.append(" ").append(joinInfo.tableAlias());
-	//
-	//				// ON ...
-	//				if (!joinInfo.on().isEmpty())
-	//					buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
-	//			});
-	//	}
-	//
-	//	// WHERE ...
-	//	if (!sql.getWhere().isEmpty() && sql.getWhere() != Condition.ALL)
-	//		buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
-	//
-	//	// GROUP BY ...
-	//	if (!sql.getGroupBy().isEmpty())
-	//		buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
-	//
-	//	// HAVING ...
-	//	if (!sql.getHaving().isEmpty())
-	//		buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
 		// SELECT
 		buff.append("SELECT");
-	
+
 		// DISTINCT
 		appendDistinct(buff, sql);
-	
+
 		// the column names, ...
 		buff.append(' ').append(columnsSupplier.get());
-	
+
 		// FROM
 		buff.append(" FROM");
 
@@ -227,19 +163,18 @@ public class SQLServer extends Standard {
 
 		// FOR UPDATE
 		appendForUpdate(buff, sql);
-	
+
 		// INNER / OUTER JOIN ...
 		appendJoinTables(buff, sql, parameters);
-	
+
 		// WHERE ...
 		appendWhere(buff, sql, parameters);
-	
+
 		// GROUP BY ...
 		appendGroupBy(buff, sql, parameters);
-	
+
 		// HAVING ...
 		appendHaving(buff, sql, parameters);
-	////
 
 		return buff.toString();
 	}
@@ -307,17 +242,12 @@ public class SQLServer extends Standard {
 			// NO WAIT
 			if (sql.isNoWait())
 				buff.append(" WITH (ROWLOCK,UPDLOCK,NOWAIT)");
-		// 1.9.0
-		//	else
 			// WAIT
 			else if (sql.isWaitForever())
-		////
 				buff.append(" WITH (ROWLOCK,UPDLOCK)");
-		// 1.9.0
 			// WAIT n
 			else
 				throw new UnsupportedOperationException("wait N");
-		////
 		}
 	}
 }

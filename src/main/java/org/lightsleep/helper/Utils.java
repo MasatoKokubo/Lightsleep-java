@@ -25,16 +25,10 @@ import java.util.Objects;
  */
 public class Utils {
 	// Class resources
-// 1.8.6
-//	private static final int maxLogStringLength    = Resource.globalResource.get(Integer.class, "maxLogStringLength"   , 200);
-//	private static final int maxLogByteArrayLength = Resource.globalResource.get(Integer.class, "maxLogByteArrayLength", 200);
-//	private static final int maxLogArrayLength     = Resource.globalResource.get(Integer.class, "maxLogArrayLength"    , 100);
-//	private static final int maxLogMapSize         = Resource.globalResource.get(Integer.class, "maxLogMapSize"        , 100);
 	private static final int maxLogStringLength    = Resource.globalResource.getInt("maxLogStringLength"   , 200);
 	private static final int maxLogByteArrayLength = Resource.globalResource.getInt("maxLogByteArrayLength", 200);
 	private static final int maxLogArrayLength     = Resource.globalResource.getInt("maxLogArrayLength"    , 100);
 	private static final int maxLogMapSize         = Resource.globalResource.getInt("maxLogMapSize"        , 100);
-////
 
 	// A map to convert the primitive type to class type
 	private static final Map<Class<?>, Class<?>> toClassMap = new LinkedHashMap<>();
@@ -62,36 +56,6 @@ public class Utils {
 		toPrimitiveMap.put(Double   .class, double .class);
 	}
 
-// 1.8.0 (not used)
-//	// the set of the value classes
-//	private static final Set<Class<?>> valueClasses = new HashSet<>();
-//	static {
-//		valueClasses.add(boolean          .class);
-//		valueClasses.add(char             .class);
-//		valueClasses.add(byte             .class);
-//		valueClasses.add(short            .class);
-//		valueClasses.add(int              .class);
-//		valueClasses.add(long             .class);
-//		valueClasses.add(float            .class);
-//		valueClasses.add(double           .class);
-//		valueClasses.add(Boolean          .class);
-//		valueClasses.add(Character        .class);
-//		valueClasses.add(Byte             .class);
-//		valueClasses.add(Short            .class);
-//		valueClasses.add(Integer          .class);
-//		valueClasses.add(Long             .class);
-//		valueClasses.add(Float            .class);
-//		valueClasses.add(Double           .class);
-//		valueClasses.add(BigInteger       .class);
-//		valueClasses.add(BigDecimal       .class);
-//		valueClasses.add(String           .class);
-//		valueClasses.add(java.util.Date   .class);
-//		valueClasses.add(Date             .class);
-//		valueClasses.add(Time             .class);
-//		valueClasses.add(Timestamp        .class);
-//	}
-////
-
 	/**
 	 * Converts the primitive type to the related class type.
 	 *
@@ -111,29 +75,6 @@ public class Utils {
 	public static Class<?> toPrimitiveType(Class<?> type) {
 		return toPrimitiveMap.getOrDefault(type, type);
 	}
-
-// 1.8.0 (not used)
-	/**
-	 * Returns whether <b>type</b> is value type.<br>
-	 * Value type is one of the following.<br>
-	 *
-	 * <div class="blankline">&nbsp;</div>
-	 *
-	 * <div class="code indent">
-	 *   boolean, char, byte, short, int, long, float, double,<br>
-	 *   Boolean, Character, Byte, Short, Integer, Long, Float, Double, BigDecimal,<br>
-	 *   String, java.util.Date, java.sql.Date, Time, Timestamp
-	 * </div>
-	 *
-	 * @param type the type (permit null)
-	 * @return <b>type</b> if <b>type</b> is value type, <b>false</b> otherwise
-	 *
-	 * @throws NullPointerException if <b>type</b> is null
-	 */
-//	public static boolean isValueType(Class<?> type) {
-//		return valueClasses.contains(type);
-//	}
-////
 
 	/**
 	 * Returns a class name without the package name.
@@ -176,18 +117,10 @@ public class Utils {
 		E[] array = (E[])Array.newInstance(elementType, length);
 		try {
 			for (int index = 0; index < length; ++index)
-			// 1.3.0 for Java 9
-			//	array[index] = elementType.newInstance();
 				array[index] = elementType.getConstructor().newInstance();
-			////
 		}
-	// 1.3.0 for Java 9
-	//	catch (InstantiationException | IllegalAccessException e) {
-	//		throw new RuntimeException(e);
-	//	}
 		catch (RuntimeException e) {throw e;}
 		catch (Exception e) {throw new RuntimeException(e);}
-	////
 
 		return array;
 	}
@@ -385,8 +318,6 @@ public class Utils {
 	 */
 	@SuppressWarnings("rawtypes")
 	private static StringBuilder append(StringBuilder buff, Class<?> type, Object value) {
-	//	if (type == null)
-	//		throw new NullPointerException("Utils.append(StringBuilder, Class, Object): type == null");
 		Objects.requireNonNull(type, "type");
 
 		long length = -1L;

@@ -208,10 +208,7 @@ public class Log4j implements Logger {
 	 */
 	@Override
 	public boolean isWarnEnabled() {
-	// 1.1.0
-	//	return logger.isWarnEnabled();
 		return logger.isEnabledFor(Level.WARN);
-	////
 	}
 
 	/**
@@ -219,10 +216,7 @@ public class Log4j implements Logger {
 	 */
 	@Override
 	public boolean isErrorEnabled() {
-	// 1.1.0
-	//	return logger.isErrorEnabled();
 		return logger.isEnabledFor(Level.ERROR);
-	////
 	}
 
 	/**
@@ -230,9 +224,6 @@ public class Log4j implements Logger {
 	 */
 	@Override
 	public boolean isFatalEnabled() {
-	// 1.1.0
-	//	return logger.isFatalEnabled();
 		return logger.isEnabledFor(Level.FATAL);
-	////
 	}
 }

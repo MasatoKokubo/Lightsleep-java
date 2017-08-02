@@ -56,9 +56,6 @@ public interface SqlEntityInfo<E> {
 		return names.isEmpty()
 			? sqlColumnInfoStream()
 			: sqlColumnInfoStream()
-			// 1.8.2
-			//	.filter(sqlColumnInfo -> names.stream().anyMatch(name -> sqlColumnInfo.matches(name)));
 				.filter(sqlColumnInfo -> names.stream().anyMatch(sqlColumnInfo::matches));
-			////
 	}
 }

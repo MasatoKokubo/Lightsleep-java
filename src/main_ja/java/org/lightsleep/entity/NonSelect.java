@@ -25,7 +25,6 @@ import java.lang.annotation.*;
  * @see NonSelectProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonSelect {

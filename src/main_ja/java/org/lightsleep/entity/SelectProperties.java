@@ -14,7 +14,6 @@ import java.lang.annotation.*;
  * @see SelectProperty
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface SelectProperties {

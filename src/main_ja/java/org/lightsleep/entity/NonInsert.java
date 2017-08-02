@@ -20,7 +20,6 @@ import java.lang.annotation.*;
  * @see NonInsertProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonInsert {

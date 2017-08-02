@@ -47,18 +47,6 @@ public class HikariCP extends AbstractConnectionSupplier {
 	public HikariCP() {
 	}
 
-// 1.2.0
-//	/**
-//	 * Constructs a new <b>HikariCP</b>.<br>
-//	 * Use values specified in the <i>&lt;<b>resourceName</b>&gt;</i>.properties file as the connection information.
-//	 *
-//	 * @param resourceName the resource name
-//	 */
-//	public HikariCP(String resourceName) {
-//		super(resourceName);
-//	}
-////
-
 	/**
 	 * Constructs a new <b>HikariCP</b>.
 	 * Use values specified in the lightsleep.properties file as the connection information.
@@ -76,18 +64,11 @@ public class HikariCP extends AbstractConnectionSupplier {
 	 */
 	@Override
 	protected DataSource getDataSource() {
-	// 1.5.0
-	//	logger.debug(() -> "HikariCP.getDataSource: properties: " + properties);
-	////
-
 		try {
 			// Gets HikariCP properties to the properties2.
 			Set<String> propertyNames = PropertyElf.getPropertyNames(HikariConfig.class);
 			Properties properties2 = new Properties();
-		// 1.5.1
-		//	propertyNames.stream()
 			propertyNames
-		////
 				.forEach(propertyName -> {
 					if (properties.containsKey(propertyName))
 						properties2.put(propertyName, properties.get(propertyName));
@@ -100,10 +81,7 @@ public class HikariCP extends AbstractConnectionSupplier {
 			return dataSource;
 		}
 		catch (Exception e) {
-		// 1.9.0
-		//	logger.error("HikariCP.getDataSource:", e);
 			logger.error("HikariCP.getDataSource: " + e, e);
-		////
 		}
 		return null;
 	}

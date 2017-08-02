@@ -31,13 +31,9 @@ import java.lang.annotation.*;
  * @see ColumnProperties
  */
 @Documented
-// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Column {
 	/** @return the column name */
-// 1.2.0
-//	String value() default "";
 	String value();
-////
 }

@@ -3,9 +3,8 @@
 
 package org.lightsleep.example.java;
 
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,10 +81,7 @@ public class Example extends Common {
 	private static void example4() {
 		logger.info("example4");
 
-	    Contact contact = new Contact();
-	    contact.id = 1;
-	    contact.familyName = "Apple";
-	    contact.givenName  = "Akane";
+	    Contact contact = new Contact(1, "Akane", "Apple");
 
 	    // トランザクション定義例
 	    Transaction.execute(connection -> {
@@ -111,8 +107,7 @@ public class Example extends Common {
 	private static void example5_1_2() {
 		logger.info("example5_1_2");
 
-	    Contact contact = new Contact();
-	    contact.id = 1;
+	    Contact contact = new Contact(1);
 	    Transaction.execute(connection -> {
 	        Optional<Contact> contactOpt = new Sql<>(Contact.class)
 	            .where(contact)
@@ -306,40 +301,22 @@ public class Example extends Common {
 	private static void example5_2_1() {
 		logger.info("example5_2_1");
 
-	    Contact contact = new Contact();
-	    contact.id = 1;
-	    contact.familyName = "Apple";
-	    contact.givenName = "Akane";
-	    Calendar calendar = Calendar.getInstance();
-	    calendar.set(2001, 1-1, 1, 0, 0, 0);
-	    contact.birthday = new Date(calendar.getTimeInMillis());
-
 	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class).insert(connection, contact));
+	        new Sql<>(Contact.class)
+	            .insert(connection, new Contact(1, "Akane", "Apple", 2001, 1, 1))
+	    );
 	}
 
 	// #### 5-2-2. INSERT multiple rows
 	private static void example5_2_2() {
 		logger.info("example5_2_2");
 
-	    List<Contact> contacts = new ArrayList<>();
-
-	    Contact contact = new Contact();
-	    contact.id = 2; contact.familyName = "Apple"; contact.givenName = "Yukari";
-	    Calendar calendar = Calendar.getInstance();
-	    calendar.set(2001, 1-1, 2, 0, 0, 0);
-	    contact.birthday = new Date(calendar.getTimeInMillis());
-	    contacts.add(contact);
-
-	    contact = new Contact();
-	    contact.id = 3; contact.familyName = "Apple"; contact.givenName = "Azusa";
-	    calendar = Calendar.getInstance();
-	    calendar.set(2001, 1-1, 3, 0, 0, 0);
-	    contact.birthday = new Date(calendar.getTimeInMillis());
-	    contacts.add(contact);
-
 	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class).insert(connection, contacts));
+	        new Sql<>(Contact.class).insert(connection, Arrays.asList(
+	            new Contact(2, "Yukari", "Apple", 2001, 1, 2),
+	            new Contact(3, "Azusa", "Apple", 2001, 1, 3)
+	        ))
+	    );
 	}
 
 	// #### 5-3-1. UPDATE 1 row

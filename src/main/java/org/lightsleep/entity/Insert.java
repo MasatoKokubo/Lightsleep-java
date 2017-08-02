@@ -35,8 +35,5 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 public @interface Insert {
 	/** @return the expression */
-// 1.2.0
-//	String value() default "";
 	String value();
-////
 }

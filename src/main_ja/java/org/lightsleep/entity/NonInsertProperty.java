@@ -22,7 +22,6 @@ import java.lang.annotation.*;
  * @see NonInsertProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(NonInsertProperties.class)
 @Target({ElementType.TYPE})

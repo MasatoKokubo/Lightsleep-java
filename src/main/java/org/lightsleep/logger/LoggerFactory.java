@@ -53,14 +53,7 @@ public class LoggerFactory {
 		String loggerName = null;
 		Logger logger = null;
 
-		// 1.8.6
-//		Resource globalResource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
-//	// 1.2.0
-//	//	loggerName = globalResource.get("Logger", null);
-//		loggerName = globalResource.get(Logger.class.getSimpleName(), null);
-//	////
 		loggerName = Resource.globalResource.getString(Logger.class.getSimpleName(), null);
-////
 		if (loggerName != null) {
 			if (loggerName.indexOf('.') < 0)
 				loggerName = Logger.class.getPackage().getName() + '.' + loggerName;

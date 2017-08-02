@@ -15,15 +15,6 @@ import java.util.stream.Stream;
  * @author Masato Kokubo
  */
 public class Or extends LogicalCondition {
-// 1.8.6
-//	/**
-//	 * 空の <b>Or</b> を構築します。
-//	 */
-//	public Or() {
-//		super(Operator.OR);
-//	}
-////
-
 	/**
 	 * 条件ストリームから <b>Or</b> を構築します。
 	 *
@@ -56,5 +47,4 @@ public class Or extends LogicalCondition {
 	public Or(Condition... conditions) {
 		super(Operator.OR, Arrays.stream(Objects.requireNonNull(conditions, "Condition[] conditions")));
 	}
-
 }

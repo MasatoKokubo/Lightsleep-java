@@ -50,13 +50,7 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 * Use values specified in the lightsleep.properties file as the connection information.
 	 */
 	public AbstractConnectionSupplier() {
-	// 1.2.0
-	// 1.5.0
-	//	properties.remove(Logger.class.getSimpleName());
-	//	properties.remove(Database.class.getSimpleName());
-	//	properties.remove(ConnectionSupplier.class.getSimpleName());
 		this(modifier -> {});
-	////
 	}
 
 	/**
@@ -68,8 +62,6 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 * @since 1.5.0
 	 */
 	public AbstractConnectionSupplier(Consumer<Properties> modifier) {
-	//	if (modifier == null)
-	//		throw new NullPointerException(getClass().getSimpleName() + ".<init>: modifier == null");
 		Objects.requireNonNull(modifier, "modifier");
 
 		properties.remove(Logger.class.getSimpleName());
@@ -79,19 +71,6 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 
 		logger.debug(() -> getClass().getSimpleName() + ".<init>: properties: " + this.properties);
 	}
-
-// 1.2.0
-//	/**
-//	 * Constructs a new <b>AbstractConnectionSupplier</b>.
-//	 * Use values specified in the lightsleep.properties and
-//   * <i>&lt;<b>resourceName</b>&gt;</i>.properties file as the connection information.
-//	 *
-//	 * @param resourceName the resource name
-//	 */
-//	public AbstractConnectionSupplier(String resourceName) {
-//		properties.putAll(new Resource(resourceName).getProperties());
-//	}
-////
 
 	/**
 	 * Returns a data source.

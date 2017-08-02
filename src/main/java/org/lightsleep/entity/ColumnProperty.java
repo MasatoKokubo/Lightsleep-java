@@ -30,7 +30,6 @@ import java.lang.annotation.*;
  * @see ColumnProperties
  */
 @Documented
-// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(ColumnProperties.class)
 @Target({ElementType.TYPE})

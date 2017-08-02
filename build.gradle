@@ -36,7 +36,7 @@ dependencies {
 	compile     'org.apache.tomcat:tomcat-jdbc:8.+'
 
 	testCompile 'org.codehaus.groovy:groovy-all:2.4.+'
-	testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+	testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
 
 	testRuntime 'com.ibm.db2.jcc:db2jcc4:10.+'
 	testRuntime 'mysql:mysql-connector-java:5.+'
@@ -50,10 +50,10 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '1.9.2'
+version             = '2.0.0'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+	gradleVersion = '4.0.2'
 }
 
 compileJava {

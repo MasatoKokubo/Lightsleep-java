@@ -6,9 +6,10 @@
 DROP TABLE Contact;
 CREATE TABLE Contact (
 	id          INT          NOT NULL,
-	familyName  VARCHAR( 20)     NULL,
-	givenName   VARCHAR( 20)     NULL,
+	firstName   VARCHAR( 20)     NULL,
+	lastName    VARCHAR( 20)     NULL,
 	birthday    DATE             NULL,
+	birthday2   BIGINT           NULL,
 
 	updateCount INT          NOT NULL,
 	createdTime DATETIME2(3) NOT NULL,

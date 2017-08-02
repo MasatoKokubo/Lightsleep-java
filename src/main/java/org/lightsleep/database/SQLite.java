@@ -58,7 +58,6 @@ public class SQLite extends Standard {
 		// boolean -> 0, 1
 		TypeConverter.put(typeConverterMap, booleanToSql01Converter);
 
-	// 1.9.0
 		// String -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, SqlString.class, object -> {
@@ -77,15 +76,9 @@ public class SQLite extends Standard {
 				return new SqlString(buff.toString());
 			})
 		);
-	////
 
 		// java.util.Date -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-		// 1.8.0
-		//	new TypeConverter<>(java.util.Date.class, SqlString.class,
-		//		TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function()
-		//		.andThen(object -> new SqlString('\'' + object + '\''))
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class),
 				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
@@ -94,11 +87,6 @@ public class SQLite extends Standard {
 
 		// java.sql.Date -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-		// 1.8.0
-		//	new TypeConverter<>(Date.class, SqlString.class,
-		//		TypeConverter.get(typeConverterMap, Date.class, String.class).function()
-		//		.andThen(object -> new SqlString('\''+ object + '\''))
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Date.class, String.class),
 				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
@@ -107,11 +95,6 @@ public class SQLite extends Standard {
 
 		// Time -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-		// 1.8.0
-		//	new TypeConverter<>(Time.class, SqlString.class,
-		//		TypeConverter.get(typeConverterMap, Time.class, String.class).function()
-		//		.andThen(object -> new SqlString('\'' + object + '\''))
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Time.class, String.class),
 				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
@@ -120,11 +103,6 @@ public class SQLite extends Standard {
 
 		// Timestamp -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-		// 1.8.0
-		//	new TypeConverter<>(Timestamp.class, SqlString.class,
-		//		TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function()
-		//		.andThen(object -> new SqlString('\'' + object + '\''))
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Timestamp.class, String.class),
 				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
@@ -137,44 +115,6 @@ public class SQLite extends Standard {
 				new SqlString(SqlString.PARAMETER, object))
 		);
 	}
-
-// 1.8.2
-//	/**
-//	 * {@inheritDoc}
-//	 */
-//	@Override
-//	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
-//		StringBuilder buff = new StringBuilder();
-//
-//		// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-//		buff.append(subSelectSql(sql, parameters));
-//
-//		// ORDER BY ...
-//		if (!sql.getOrderBy().isEmpty())
-//			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
-//
-//		if (supportsOffsetLimit()) {
-//			// LIMIT ...
-//			if (sql.getLimit() != Integer.MAX_VALUE)
-//				buff.append(" LIMIT ").append(sql.getLimit());
-//
-//			// OFFSET ...
-//			if (sql.getOffset() != 0)
-//				buff.append(" OFFSET ").append(sql.getOffset());
-//		}
-//
-//		// FOR UPDATE
-//		if (sql.isForUpdate()) {
-//			buff.append(" /* dose not support FOR UPDATE */");
-//
-//			// NO WAIT
-//			if (sql.isNoWait())
-//				buff.append(" /* dose not support NO WAIT */");
-//		}
-//
-//		return buff.toString();
-//	}
-////
 
 	/**
 	 * {@inheritDoc}

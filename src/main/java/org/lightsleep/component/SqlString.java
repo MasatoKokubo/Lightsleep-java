@@ -11,23 +11,15 @@ package org.lightsleep.component;
  */
 public class SqlString {
 	/** The paramter string of SQL */
-// 1.7.0
-//	public static final SqlString PARAMETER = new SqlString("?");
 	public static final String PARAMETER = "?";
-////
 
-// 1.7.0
-	// Zero parameters
 	private static final Object[] ZERO_PARAMETERS = new Object[0];
-////
 
 	// The string content
 	private final String content;
 
-// 1.7.0
 	// The parameters
 	private final Object[] parameters;
-////
 
 	/**
 	 * Constructs a new <b>SqlString</b>.
@@ -36,9 +28,7 @@ public class SqlString {
 	 */
 	public SqlString(String content) {
 		this.content = content;
-	// 1.7.0
 		this.parameters = ZERO_PARAMETERS;
-	////
 	}
 
 	/**

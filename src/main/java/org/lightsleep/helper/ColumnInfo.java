@@ -23,10 +23,8 @@ public class ColumnInfo {
 	// The column name
 	private final String columnName;
 
-// 1.8.0
 	// The column type
 	private final Class<?> columnType;
-////
 
 	// Is key?
 	private final boolean isKey;
@@ -55,18 +53,13 @@ public class ColumnInfo {
 	 * @throws NullPointerException <code>entityInfo</code>, <code>propertyName</code> または <code>columnName</code> が null の場合
 	 */
 	public ColumnInfo(
-	// 1.8.0
-	//	EntityInfo<?> entityInfo, String propertyName, String columnName, boolean isKey,
 		EntityInfo<?> entityInfo, String propertyName, String columnName, Class<?> columnType, boolean isKey,
-	////
 		Expression selectExpression, Expression insertExpression, Expression updateExpression) {
 
 		this.entityInfo       = Objects.requireNonNull(entityInfo, "entityInfo");
 		this.propertyName     = Objects.requireNonNull(propertyName, "propertyName");
 		this.columnName       = Objects.requireNonNull(columnName, "columnName");
-	// 1.8.0
 		this.columnType       = columnType;
-	////
 		this.isKey            = isKey;
 		this.selectExpression = selectExpression;
 		this.insertExpression = insertExpression;

@@ -221,9 +221,7 @@ public class TypeConverter<ST, DT> {
 	private static final String timestampMillisFormatString = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	// The TypeConverter map
-// 1.8.1
 	private static final Map<String, TypeConverter<?, ?>> typeConverterMap = new ConcurrentHashMap<>();
-////
 
 	// The type of the source
 	private final Class<ST> sourceType;
@@ -273,21 +271,6 @@ public class TypeConverter<ST, DT> {
 	 *
 	 * @throws NullPointerException <b>typeConverterMap</b> or <b>typeConverter</b> is null
 	 */
-// 1.8.1
-//	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?>... typeConverters) {
-//		if (typeConverterMap == null) throw new NullPointerException("TypeConverter.put: typeConverterMap == null");
-//		if (typeConverters == null) throw new NullPointerException("TypeConverter.put: typeConverters == null");
-//
-//		Arrays.stream(typeConverters).forEach(typeConverter -> {
-//			if (typeConverter == null) throw new NullPointerException("TypeConverter.put: typeConverters[...] == null");
-//
-//			boolean overwrite = typeConverterMap.containsKey(typeConverter.key);
-//
-//			typeConverterMap.put(typeConverter.key, typeConverter);
-//
-//			logger.debug(() -> "TypeConverter.put: " + typeConverter + (overwrite ? " (overwrite)" : ""));
-//		});
-//	}
 	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?> typeConverter) {
 		Objects.requireNonNull(typeConverterMap, "typeConverterMap");
 		Objects.requireNonNull(typeConverter, "typeConverter");
@@ -295,7 +278,6 @@ public class TypeConverter<ST, DT> {
 		TypeConverter<?, ?> beforeTypeConverter = typeConverterMap.put(typeConverter.key, typeConverter);
 		logger.debug(() -> "put: " + typeConverter + (beforeTypeConverter != null ? " (overwrite)" : ""));
 	}
-////
 
 	/**
 	 * Finds and returns a <b>TypeConverter</b>
@@ -444,13 +426,9 @@ public class TypeConverter<ST, DT> {
 				Class<ST> sourceType = (Class<ST>)source.getClass();
 				TypeConverter<ST, DT> typeConverter = get(typeConverterMap, sourceType, destinType);
 				if (typeConverter == null) {
-				// 1.9.0
-				//	logger.error("convert: " + Utils.toLogString(source) + " -> (" + Utils.toLogString(destinType) + ")");
-				//	throw new ConvertException(sourceType, source, destinType);
 					ConvertException e = new ConvertException(sourceType, source, destinType);
 					logger.error("convert: " + Utils.toLogString(source) + " -> " + Utils.toLogString(destinType), e);
 					throw e;
-				////
 				}
 
 				try {
@@ -596,13 +574,6 @@ public class TypeConverter<ST, DT> {
 		return key;
 	}
 
-// 1.8.1
-//	/**
-//	 * A <b>TypeConverter</b> map
-//	 * that is used in the conversion of when storing values retrieved from the database in the field.<br>
-//	 */
-//	public static final Map<String, TypeConverter<?, ?>> typeConverterMap = new LinkedHashMap<>();
-////
 	static {
 	// * -> Boolean
 		// Byte -> Boolean
@@ -1290,10 +1261,7 @@ public class TypeConverter<ST, DT> {
 		// Timestamp -> String
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Timestamp.class, String.class, object ->
-			// 1.7.0
-			//	new SimpleDateFormat(timestampFormatString).format(object))
 				new SimpleDateFormat(timestampMillisFormatString).format(object))
-			////
 		);
 
 	// * -> java.util.Date (since 1.4.0)
@@ -1430,11 +1398,8 @@ public class TypeConverter<ST, DT> {
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, Timestamp.class, object -> {
 				try {
-				// 1.7.0
-				//	return new Timestamp(new SimpleDateFormat(timestampFormatString).parse(object).getTime());
 					String formatStr = object.lastIndexOf('.') >= 0 ? timestampMillisFormatString : timestampFormatString;
 					return new Timestamp(new SimpleDateFormat(formatStr).parse(object).getTime());
-				////
 				}
 				catch (ParseException e) {
 					throw new ConvertException(String.class, object, Timestamp.class, e);
@@ -1451,45 +1416,26 @@ public class TypeConverter<ST, DT> {
 
 		// Enum -> Byte (since 1.4.0)
 		TypeConverter.put(typeConverterMap,
-		// 1.8.0
-		//	new TypeConverter<>(Enum.class, Byte.class,
-		//		TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
-		//		.andThen(TypeConverter.get(typeConverterMap, Integer.class, Byte.class).function())
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Enum.class, Integer.class),
 				TypeConverter.get(typeConverterMap, Integer.class, Byte.class)
 			)
-		////
 		);
 
 		// Enum -> Short (since 1.4.0)
 		TypeConverter.put(typeConverterMap,
-		// 1.8.0
-		//	new TypeConverter<>(Enum.class, Short.class,
-		//		TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
-		//		.andThen(TypeConverter.get(typeConverterMap, Integer.class, Short.class).function())
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Enum.class, Integer.class),
 				TypeConverter.get(typeConverterMap, Integer.class, Short.class)
 			)
-		////
 		);
 
 		// Enum -> Long (since 1.4.0)
 		TypeConverter.put(typeConverterMap,
-		// 1.8.0
-		//	new TypeConverter<>(Enum.class, Long.class,
-		//		TypeConverter.get(typeConverterMap, Enum.class, Integer.class).function()
-		//		.andThen(TypeConverter.get(typeConverterMap, Integer.class, Long.class).function())
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Enum.class, Integer.class),
 				TypeConverter.get(typeConverterMap, Integer.class, Long.class)
 			)
-		////
 		);
-
 	}
 }

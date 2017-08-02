@@ -30,7 +30,6 @@ import java.lang.annotation.*;
  * @see UpdateProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Update {

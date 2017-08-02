@@ -6,9 +6,10 @@
 DROP TABLE IF EXISTS Contact;
 CREATE TABLE Contact (
 	id          INTEGER         NOT NULL,
-	familyName  VARGRAPHIC( 20)     NULL,
-	givenName   VARGRAPHIC( 20)     NULL,
+	firstName   VARGRAPHIC( 20)     NULL,
+	lastName    VARGRAPHIC( 20)     NULL,
 	birthday    DATE                NULL,
+	birthday2   BIGINT              NULL,
 
 	updateCount INTEGER         NOT NULL,
 	createdTime TIMESTAMP       NOT NULL,

@@ -38,18 +38,6 @@ public abstract class LogicalCondition implements Condition {
 		}
 	}
 
-// 1.8.6
-//	/**
-//	 * 空の <b>LogicalCondition</b> を構築します。
-//	 *
-//	 * @param operator 論理演算子
-//	 *
-//	 * @throws NullPointerException <b>operator</b> が null の場合
-//	 */
-//	public LogicalCondition(Operator operator) {
-//	}
-////
-
 	/**
 	 * 条件ストリームの各条件からなる <b>LogicalCondition</b> を構築します。
 	 *

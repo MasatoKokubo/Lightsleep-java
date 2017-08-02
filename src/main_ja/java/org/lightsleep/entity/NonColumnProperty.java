@@ -25,7 +25,6 @@ import java.lang.annotation.*;
  * @see NonColumnProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(NonColumnProperties.class)
 @Target({ElementType.TYPE})

@@ -16,15 +16,7 @@ import org.lightsleep.Sql;
  * @since 1.0
  * @author Masato Kokubo
  */
-// 1.9.1
-//public class GroupBy implements SqlComponent {
 public class GroupBy implements SqlComponent, Cloneable {
-////
-// 1.9.2
-//	/** The empty <b>GroupBy</b> */
-//	public static final GroupBy EMPTY = new GroupBy();
-////
-
 	// The list of the <b>GroupBy</b> elements
 	private List<Expression> elements = new ArrayList<>();
 
@@ -43,17 +35,9 @@ public class GroupBy implements SqlComponent, Cloneable {
 	 * @throws NullPointerException if <b>expression</b> is null
 	 */
 	public GroupBy add(Expression expression) {
-	// 1.9.1
 		Objects.requireNonNull(expression, "expression");
-	////
-
-	// 1.9.2
-	//	GroupBy groupBy = this == EMPTY ? new GroupBy() : this;
-	//	groupBy.elements.add(expression);
-	//	return groupBy;
 		elements.add(expression);
 		return this;
-	////
 	}
 
 	/**
@@ -97,10 +81,7 @@ public class GroupBy implements SqlComponent, Cloneable {
 		if (elements.size() > 0) {
 			buff.append("GROUP BY ");
 			String[] delimiter = new String[] {""};
-		// 1.5.1
-		//	elements.stream().forEach(element -> {
 			elements.forEach(element -> {
-		////
 				buff.append(delimiter[0]).append(element.toString(sql, parameters));
 				delimiter[0] = ", ";
 			});

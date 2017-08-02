@@ -29,7 +29,6 @@ import java.lang.annotation.*;
  * @see KeyProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(KeyProperties.class)
 @Target({ElementType.TYPE})

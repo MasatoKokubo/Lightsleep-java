@@ -36,62 +36,13 @@ import javax.sql.DataSource;
  * @author Masato Kokubo
  */
 public class Jdbc extends AbstractConnectionSupplier {
-// 1.5.0
-//	// The URL
-//	private String url;
-////
-
 	/**
 	 * Constructs a new <b>Jdbc</b>.
 	 * Use values specified in the lightsleep.properties
 	 * file as the connection information.
 	 */
 	public Jdbc() {
-	// 1.2.0
-	//	init();
-	// 1.5.0
-	//	logger.debug(() -> "Jdbc.<init>: properties: " + properties);
-	//
-	//	// url
-	//	url = properties.getProperty("url");
-	////
 	}
-
-// 1.2.0
-//	/**
-//	 * Constructs a new <b>Jdbc</b>.
-//	 * Use values specified in the lightsleep.properties and
-//	 * <i>&lt;<b>resourceName</b>&gt;</i>.properties
-//	 * file as the connection information.
-//	 *
-//	 * @param resourceName the resource name
-//	 */
-//	public Jdbc(String resourceName) {
-//		super(resourceName);
-//		init();
-//	}
-//
-//	private void init() {
-//		logger.debug(() -> "Jdbc.<init>: properties: " + properties);
-//
-//		// driver
-//		String driver = properties.getProperty("driver");
-//
-//		if (driver == null) {
-//			logger.error("Jdbc.<init>: property driver = null");
-//		} else {
-//			try {
-//				Class.forName(driver);
-//			}
-//			catch (Exception e) {
-//				logger.error("Jdbc.<init>:", e);
-//			}
-//		}
-//
-//		// url
-//		url = properties.getProperty("url");
-//	}
-////
 
 	/**
 	 * Constructs a new <b>Jdbc</b>.
@@ -111,10 +62,6 @@ public class Jdbc extends AbstractConnectionSupplier {
 	 */
 	@Override
 	protected DataSource getDataSource() {
-	// 1.5.0
-	//	logger.debug(() -> "Jdbc.getDataSource: properties: " + properties);
-	////
-
 		return new DataSource() {
 			@Override
 			public PrintWriter getLogWriter() throws SQLException {
@@ -151,11 +98,10 @@ public class Jdbc extends AbstractConnectionSupplier {
 
 			@Override
 			public Connection getConnection() throws SQLException {
-			// 1.5.0
 				String url = properties.getProperty("url");
 				if (url == null)
 					logger.error("Jdbc.<init>: property url == null");
-			////
+
 				Connection connection = DriverManager.getConnection(url, properties);
 				connection.setAutoCommit(false);
 				return connection;

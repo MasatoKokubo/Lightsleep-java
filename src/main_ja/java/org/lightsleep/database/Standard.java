@@ -95,42 +95,11 @@ public class Standard implements Database {
 	 */
 	protected static final int maxBinaryLiteralLength = 0;
 
-// 1.8.0
-//	/**
-//	 * <b>boolean</b> から <b>SqlString</b> (FALSE か TRUE) へ変換する
-//	 * <b>TypeConverter</b> オブジェクト
-//	 */
-//	public static final TypeConverter<Boolean, SqlString> booleanToSqlFalseTrueConverter = null;
-////
-
 	/**
 	 * <b>boolean</b> から <b>SqlString</b> (0 か 1) へ変換する
 	 * <b>TypeConverter</b> オブジェクト
 	 */
-// 1.8.0
-//	public static final TypeConverter<Boolean, SqlString> booleanToSql01Converter = null;
 	protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter = null;
-////
-
-// 1.8.0
-//	/**
-//	 * <b>boolean</b> から <b>SqlString</b> ('0' か '1') へ変換する
-//	 * <b>TypeConverter</b> オブジェクト
-//	 */
-//	public static final TypeConverter<Boolean, SqlString> booleanToSqlChar01Converter = null;
-//
-//	/**
-//	 * <b>boolean</b> から <b>SqlString</b> ('N' か 'Y') へ変換する
-//	 * <b>TypeConverter</b> オブジェクト
-//	 */
-//	public static final TypeConverter<Boolean, SqlString> booleanToSqlNYConverter = null;
-//
-//	/**
-//	 * <b>String</b> ("N" か "Y") から <b>boolean</b> へ変換する
-//	 * <b>TypeConverter</b> オブジェクト
-//	 */
-//	public static final TypeConverter<String, Boolean> stringNYToBooleanConverter = null;
-////
 
 	/**
 	 * <b>Standard</b> オブジェクトを返します。

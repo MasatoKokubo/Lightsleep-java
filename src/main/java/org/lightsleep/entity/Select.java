@@ -28,13 +28,9 @@ import java.lang.annotation.*;
  * @see SelectProperties
  */
 @Documented
-// @Inherited // 1.5.1
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Select {
 	/** @return the expression */
-// 1.2.0
-//	String value() default "";
 	String value();
-////
 }

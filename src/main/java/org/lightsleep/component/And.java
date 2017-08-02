@@ -15,15 +15,6 @@ import java.util.stream.Stream;
  * @author Masato Kokubo
  */
 public class And extends LogicalCondition {
-// 1.8.6
-//	/**
-//	 * Constructs an empty <b>And</b>.
-//	 */
-//	public And() {
-//		super(Operator.AND);
-//	}
-////
-
 	/**
 	 * Constructs an <b>And</b> consisting of the conditions.
 	 *
@@ -43,10 +34,7 @@ public class And extends LogicalCondition {
 	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is null
 	 */
 	public And(Collection<Condition> conditions) {
-	// 1.8.7
-	//	super(Operator.AND, conditions.stream());
 		super(Operator.AND, Objects.requireNonNull(conditions, "Collection<Condition> conditions").stream());
-	////
 	}
 
 	/**
@@ -57,9 +45,6 @@ public class And extends LogicalCondition {
 	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is null
 	 */
 	public And(Condition... conditions) {
-	// 1.8.7
-	//	super(Operator.AND, Arrays.stream(conditions));
 		super(Operator.AND, Arrays.stream(Objects.requireNonNull(conditions, "Condition[] conditions")));
-	////
 	}
 }

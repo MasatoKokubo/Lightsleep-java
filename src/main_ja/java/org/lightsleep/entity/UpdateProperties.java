@@ -14,7 +14,6 @@ import java.lang.annotation.*;
  * @author Masato Kokubo
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface UpdateProperties {

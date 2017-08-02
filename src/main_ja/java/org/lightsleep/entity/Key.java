@@ -26,7 +26,6 @@ import java.lang.annotation.*;
  * @see KeyProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Key {

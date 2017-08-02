@@ -100,12 +100,7 @@ public class Standard implements Database {
 	 * The value of <b>maxStringLiteralLength</b> of lightsleep.properties has been set.
 	 * (if undefined, 128)
 	 */
-// 1.7.0
-//	protected static final int maxStringLiteralLength = Resource.globalResource.get(Integer.class, "maxStringLiteralLength", 128);
-// 1.8.6
-//	public static final int maxStringLiteralLength = Resource.globalResource.get(Integer.class, "maxStringLiteralLength", 128);
 	public static final int maxStringLiteralLength = Resource.globalResource.getInt("maxStringLiteralLength", 128);
-////
 
 	/**
 	 * The maximum length of binary literal when creates SQL.<br>
@@ -113,58 +108,14 @@ public class Standard implements Database {
 	 * The value of <b>maxBinaryLiteralLength</b> of lightsleep.properties has been set.
 	 * (if undefined, 128)
 	 */
-// 1.7.0
-//	protected static final int maxBinaryLiteralLength = Resource.globalResource.get(Integer.class, "maxBinaryLiteralLength", 128);
-// 1.8.6
-//	public static final int maxBinaryLiteralLength = Resource.globalResource.get(Integer.class, "maxBinaryLiteralLength", 128);
 	public static final int maxBinaryLiteralLength = Resource.globalResource.getInt("maxBinaryLiteralLength", 128);
-////
-
-// 1.8.0
-//	/**
-//	 * <b>TypeConverter</b> object to convert
-//	 * from <b>boolean</b> to <b>SqlString</b> (FALSE or TRUE)
-//	 */
-//	public static final TypeConverter<Boolean, SqlString> booleanToSqlFalseTrueConverter =
-//		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "TRUE" : "FALSE"));
-////
 
 	/**
 	 * <b>TypeConverter</b> object to convert
 	 * from <b>Boolean</b> to <b>SqlString</b> (0 or 1)
 	 */
-// 1.8.0
-//	public static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
 	protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
-////
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"));
-
-// 1.8.0 (not used)
-//	/**
-//	 * <b>TypeConverter</b> object to convert
-//	 * from <b>Boolean</b> to <b>SqlString</b> ('0' or '1')
-//	 */
-//	public static final TypeConverter<Boolean, SqlString> booleanToSqlChar01Converter =
-//		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "'1'" : "'0'"));
-//
-//	/**
-//	 * <b>TypeConverter</b> object to convert
-//	 * from <b>Boolean</b> to <b>SqlString</b> ('N' or 'Y')
-//	 */
-//	public static final TypeConverter<Boolean, SqlString> booleanToSqlNYConverter =
-//		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "'Y'" : "'N'"));
-//
-//	/**
-//	 * <b>TypeConverter</b> object to convert
-//	 * from <b>String</b> ("N" or "Y") to <b>Boolean</b>
-//	 */
-//	public static final TypeConverter<String, Boolean> stringNYToBooleanConverter =
-//		new TypeConverter<>(String.class, Boolean.class, object -> {
-//			if      ("N".equals(object)) return false;
-//			else if ("Y".equals(object)) return true;
-//			else throw new ConvertException(String.class, object, Boolean.class, null);
-//		});
-////
 
 	// The Standard instance
 	private static final Database instance = new Standard();
@@ -185,10 +136,7 @@ public class Standard implements Database {
 	 *   <li>When storing the value obtained by SELECT SQL in the entity</li>
 	 * </ul>
 	 */
-// 1.8.1
-//	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = new LinkedHashMap<>(TypeConverter.typeConverterMap);
 	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = new ConcurrentHashMap<>(TypeConverter.typeConverterMap());
-////
 
 	/**
 	 * Constructs a new <b>Standard</b>.
@@ -291,23 +239,6 @@ public class Standard implements Database {
 			new TypeConverter<>(java.sql.Array.class, Timestamp[].class, object -> toArray(object, Timestamp[].class, Timestamp.class))
 		);
 
-	//	// java.sql.Array -> ArrayList (since 1.4.0)
-	//	TypeConverter.put(typeConverterMap,
-	//		new TypeConverter<>(java.sql.Array.class, ArrayList.class, object -> {
-	//			ArrayList<Object> list = new ArrayList<>();
-	//			try {
-	//				Object array = object.getArray();
-	//				int length = Array.getLength(array);
-	//				for (int index = 0; index < length; ++index)
-	//					list.add(Array.get(array, index));
-	//			}
-	//			catch (Exception e) {
-	//				throw new ConvertException(object.getClass(), object, ArrayList.class, e);
-	//			}
-	//			return list;
-	//		})
-	//	);
-
 	// * -> SqlString
 		// Object -> SqlString
 		TypeConverter.put(typeConverterMap,
@@ -315,12 +246,9 @@ public class Standard implements Database {
 		);
 
 		// Boolean -> SqlString(FALSE, TRUE)
-	// 1.8.0
-	//	TypeConverter.put(typeConverterMap, booleanToSqlFalseTrueConverter);
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "TRUE" : "FALSE"))
 		);
-	////
 
 		// BigDecimal -> SqlString
 		TypeConverter.put(typeConverterMap,
@@ -331,21 +259,13 @@ public class Standard implements Database {
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, SqlString.class, object -> {
 				if (object.length() > maxStringLiteralLength)
-				// 1.7.0
-				//	return SqlString.PARAMETER; // SQL Parameter
 					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
-				////
 
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');
-			// 1.9.0
 				boolean inLiteral = true;
-			//
+
 				for (char ch : object.toCharArray()) {
-				// 1.9.0
-				//	if (ch == '\'')
-				//		buff.append(ch);
-				//	buff.append(ch);
 					if (ch >= ' ' && ch != '\u007F') {
 						// Literal representation
 						if (!inLiteral) {
@@ -364,12 +284,9 @@ public class Standard implements Database {
 						}
 						buff.append("||CHR(").append((int)ch).append(')');
 					}
-				//
 				}
 
-			// 1.9.0
 				if (inLiteral)
-			////
 					buff.append('\'');
 
 				return new SqlString(buff.toString());
@@ -378,11 +295,6 @@ public class Standard implements Database {
 
 		// Character -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-		// 1.8.0
-		//	new TypeConverter<>(Character.class, SqlString.class,
-		//		TypeConverter.get(typeConverterMap, Character.class, String.class).function()
-		//		.andThen(TypeConverter.get(typeConverterMap, String.class, SqlString.class).function())
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Character.class, String.class),
 				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
@@ -391,76 +303,38 @@ public class Standard implements Database {
 
 		// java.util.Date -> String -> SqlString (since 1.4.0)
 		TypeConverter.put(typeConverterMap,
-		// 1.4.0
-		//	new TypeConverter<>(java.util.Date.class, SqlString.class, object ->
-		//		new SqlString("DATE'" + new Date(object.getTime()) + '\''))
-		// 1.8.0
-		//	new TypeConverter<>(java.util.Date.class, SqlString.class,
-		//		TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function()
-		//		.andThen(object -> new SqlString("DATE'" + object + '\''))
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class),
 				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("DATE'" + object + '\''))
 			)
-		////
 		);
 
 		// java.sql.Date -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-		// 1.4.0
-		//	new TypeConverter<>(Date.class, SqlString.class, object -> new SqlString("DATE'" + object + '\''))
-		// 1.8.0
-		//	new TypeConverter<>(Date.class, SqlString.class,
-		//		TypeConverter.get(typeConverterMap, Date.class, String.class).function()
-		//		.andThen(object -> new SqlString("DATE'" + object + '\''))
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Date.class, String.class),
 				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("DATE'" + object + '\''))
 			)
-		////
 		);
 
 		// Time -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-		// 1.4.0
-		//	new TypeConverter<>(Time.class, SqlString.class, object -> new SqlString("TIME'" + object + '\''))
-		// 1.8.0
-		//	new TypeConverter<>(Time.class, SqlString.class,
-		//		TypeConverter.get(typeConverterMap, Time.class, String.class).function()
-		//		.andThen(object -> new SqlString("TIME'" + object + '\''))
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Time.class, String.class),
 				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("TIME'" + object + '\''))
 			)
-		////
 		);
 
 		// Timestamp -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-		// 1.4.0
-		//	new TypeConverter<>(Timestamp.class, SqlString.class, object -> new SqlString("TIMESTAMP'" + object + '\''))
-		// 1.8.0
-		//	new TypeConverter<>(Timestamp.class, SqlString.class,
-		//		TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function()
-		//		.andThen(object -> new SqlString("TIMESTAMP'" + object + '\''))
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Timestamp.class, String.class),
 				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("TIMESTAMP'" + object + '\''))
 			)
-		////
 		);
 
 		// Enum -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-		// 1.8.0
-		//	new TypeConverter<>(Enum.class, SqlString.class,
-		//		TypeConverter.get(typeConverterMap, Enum.class, String.class).function()
-		//		.andThen(TypeConverter.get(typeConverterMap, String.class, SqlString.class).function())
-		//	)
 			new TypeConverter<>(
 				TypeConverter.get(typeConverterMap, Enum.class, String.class),
 				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
@@ -470,25 +344,17 @@ public class Standard implements Database {
 		// boolean[] -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(boolean[].class, SqlString.class, object ->
-			// 1.4.0
-			//	toSqlString(object, boolean.class))
 				toSqlString(object, Boolean.class))
-			////
 		);
 
 		// char[] -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(char[].class, SqlString.class, object ->
-			// 1.4.0
-			//	toSqlString(object, char.class))
 				toSqlString(object, Character.class))
-			////
 		);
 
 		// byte[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-		// 1.7.0
-		//	new TypeConverter<>(byte[].class, SqlString.class, object -> new SqlString("?"))
 			new TypeConverter<>(byte[].class, SqlString.class, object -> {
 				if (object.length > maxBinaryLiteralLength)
 					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
@@ -508,60 +374,42 @@ public class Standard implements Database {
 
 				return new SqlString(buff.toString());
 			})
-		////
 		);
 
-	// 1.7.0
 		// byte[][] -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(byte[][].class, SqlString.class, object ->
 				toSqlString(object, byte[].class))
 		);
-	////
 
 		// short[] -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(short[].class, SqlString.class, object ->
-			// 1.4.0
-			//	toSqlString(object, short.class))
 				toSqlString(object, Short.class))
-			////
 		);
 
 		// int[] -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(int[].class, SqlString.class, object ->
-			// 1.4.0
-			//	toSqlString(object, int.class))
 				toSqlString(object, Integer.class))
-			////
 		);
 
 		// long[] -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(long[].class, SqlString.class, object ->
-			// 1.4.0
-			//	toSqlString(object, long.class))
 				toSqlString(object, Long.class))
-			////
 		);
 
 		// float[] -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(float[].class, SqlString.class, object ->
-			// 1.4.0
-			//	toSqlString(object, float.class))
 				toSqlString(object, Float.class))
-			////
 		);
 
 		// double[] -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(double[].class, SqlString.class, object ->
-			// 1.4.0
-			//	toSqlString(object, double.class))
 				toSqlString(object, Double.class))
-			////
 		);
 
 		// BigDecimal[] -> SqlString
@@ -617,15 +465,11 @@ public class Standard implements Database {
 					else {
 						Class<?> elementType = element.getClass();
 						if (elementType != beforeElementType) {
-						// 1.4.0
-						//	function = (Function<Object, SqlString>)
-						//		TypeConverter.get(typeConverterMap, elementType, SqlString.class).function();
 							TypeConverter<?, SqlString> typeConverter = TypeConverter.get(typeConverterMap, elementType, SqlString.class);
 							if (typeConverter == null)
 								throw new ConvertException(elementType, element, SqlString.class);
 
 							function = (Function<Object, SqlString>)typeConverter.function();
-						////
 							beforeElementType = elementType;
 						}
 						buff.append(function.apply(element).content());
@@ -667,10 +511,10 @@ public class Standard implements Database {
 					else {
 						if (typeConverter == null)
 							typeConverter = (TypeConverter<Object, CT>)TypeConverter.get(typeConverterMap, value.getClass(), componentType);
-					// 1.4.0
+
 						if (typeConverter == null)
 							throw new ConvertException(value.getClass(), value, componentType);
-					////
+
 						convertedValue = typeConverter.function().apply(value);
 					}
 				}
@@ -693,27 +537,18 @@ public class Standard implements Database {
 	 */
 	@SuppressWarnings("unchecked")
 	protected <CT> SqlString toSqlString(Object array, Class<CT> componentType) {
-	// 1.4.0
-	//	Function<CT, SqlString> function =
-	//		TypeConverter.get(typeConverterMap, componentType, SqlString.class).function();
 		TypeConverter<CT, SqlString> typeConverter = TypeConverter.get(typeConverterMap, componentType, SqlString.class);
 		if (typeConverter == null)
 			throw new ConvertException(componentType, array, SqlString.class);
 
 		Function<CT, SqlString> function = typeConverter.function();
-	////
 		StringBuilder buff = new StringBuilder("ARRAY[");
-	// 1.7.0
 		List<Object> parameters = new ArrayList<>();
-	////
 		for (int index = 0; index < Array.getLength(array); ++ index) {
 			if (index > 0) buff.append(",");
-		// 1.7.0
-		//	buff.append(function.apply((CT)Array.get(array, index)).content());
 			SqlString sqlString = function.apply((CT)Array.get(array, index));
 			buff.append(sqlString.content());
 			parameters.addAll(Arrays.asList(sqlString.parameters()));
-		////
 		}
 		buff.append(']');
 		return new SqlString(buff.toString(), parameters.toArray());
@@ -729,29 +564,6 @@ public class Standard implements Database {
 		// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
 		buff.append(subSelectSql(sql, parameters));
 
-	// 1.8.2
-	//	// ORDER BY ...
-	//	if (!sql.getOrderBy().isEmpty())
-	//		buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
-	//
-	//	if (supportsOffsetLimit()) {
-	//		// LIMIT ...
-	//		if (sql.getLimit() != Integer.MAX_VALUE)
-	//			buff.append(" LIMIT ").append(sql.getLimit());
-	//
-	//		// OFFSET ...
-	//		if (sql.getOffset() != 0)
-	//			buff.append(" OFFSET ").append(sql.getOffset());
-	//	}
-	//
-	//	// FOR UPDATE
-	//	if (sql.isForUpdate()) {
-	//		buff.append(" FOR UPDATE");
-	//
-	//		// NO WAIT
-	//		if (sql.isNoWait())
-	//			buff.append(" NO WAIT");
-	//	}
 		// ORDER BY ...
 		appendOrderBy(buff, sql, parameters);
 
@@ -765,7 +577,6 @@ public class Standard implements Database {
 
 		// FOR UPDATE
 		appendForUpdate(buff, sql);
-	////
 
 		return buff.toString();
 	}
@@ -781,12 +592,7 @@ public class Standard implements Database {
 			String[] delimiter = new String[] {""};
 
 			sql.selectedJoinSqlColumnInfoStream()
-			// 1.8.2
-			//	.filter(sqlColumnInfo -> {
-			//		return sqlColumnInfo.columnInfo().selectable();
-			//	})
 				.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
-			////
 				.forEach(sqlColumnInfo -> {
 					buff.append(delimiter[0]);
 					delimiter[0] = ", ";
@@ -798,10 +604,9 @@ public class Standard implements Database {
 
 					// gets expression
 					Expression expression = sql.getExpression(columnInfo.propertyName());
-				// 1.8.2
 					if (expression.isEmpty())
 						expression = sql.getExpression(columnInfo.getPropertyName(tableAlias));
-				////
+
 					if (expression.isEmpty())
 						expression = columnInfo.selectExpression();
 
@@ -836,54 +641,6 @@ public class Standard implements Database {
 	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
-	// 1.8.2
-	//	// SELECT
-	//	buff.append("SELECT ");
-	//
-	//	// DISTINCT
-	//	if (sql.isDistinct())
-	//		buff.append("DISTINCT ");
-	//
-	//	//  column name, ...
-	//	buff.append(columnsSupplier.get());
-	//
-	//	// FROM table name
-	//	buff.append(" FROM ").append(sql.entityInfo().tableName());
-	//
-	//	// table alias
-	//	if (!sql.tableAlias().isEmpty())
-	//		buff.append(" ").append(sql.tableAlias());
-	//
-	//	// INNER / OUTER JOIN ...
-	//	if (!sql.getJoinInfos().isEmpty()) {
-	//	// 1.5.1
-	//	//	sql.getJoinInfos().stream()
-	//		sql.getJoinInfos()
-	//	////
-	//			.forEach(joinInfo -> {
-	//				// INNER/OUTER JOIN table name
-	//				buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());
-	//
-	//				// table alias
-	//				if (!joinInfo.tableAlias().isEmpty())
-	//					buff.append(" ").append(joinInfo.tableAlias());
-	//
-	//				// ON ...
-	//				if (!joinInfo.on().isEmpty())
-	//					buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
-	//			});
-	//	}
-	//	// WHERE ...
-	//	if (!sql.getWhere().isEmpty() && sql.getWhere() != Condition.ALL)
-	//		buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
-	//
-	//	// GROUP BY ...
-	//	if (!sql.getGroupBy().isEmpty())
-	//		buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
-	//
-	//	// HAVING ...
-	//	if (!sql.getHaving().isEmpty())
-	//		buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
 		// SELECT
 		buff.append("SELECT");
 
@@ -922,85 +679,14 @@ public class Standard implements Database {
 	public <E> String insertSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
-	// 1.8.2
-	//	// INSERT INTO table name
-	//	buff.append("INSERT INTO ").append(sql.entityInfo().tableName());
-	//
-	//	// table alias
-	//	if (!sql.tableAlias().isEmpty())
-	//		buff.append(" ").append(sql.tableAlias());
-	//
-	//	// ( column name, ...
-	//	buff.append(" (");
-	//	String[] delimiter = new String[] {""};
-	//	sql.entityInfo().columnInfos().stream()
-	//	// 1.2.0
-	//		.filter(columnInfo -> columnInfo.insertable())
-	//		.forEach(columnInfo -> {
-	//			buff.append(delimiter[0])
-	//				.append(columnInfo.columnName());
-	//			delimiter[0] = ", ";
-	//		});
-	//
-	//	// ) VALUES (value, ...)
-	//	buff.append(") VALUES (");
-	//	delimiter[0] = "";
-	//	sql.columnInfoStream()
-	//		.filter(columnInfo -> columnInfo.insertable())
-	//		.forEach(columnInfo -> {
-	//			// gets expression
-	//			Expression expression = sql.getExpression(columnInfo.propertyName());
-	//			if (expression.isEmpty())
-	//				expression = columnInfo.insertExpression();
-	//
-	//			buff.append(delimiter[0])
-	//				.append(expression.toString(sql, parameters));
-	//			delimiter[0] = ", ";
-	//		});
-	//	buff.append(")");
 		// INSERT INTO
 		buff.append("INSERT INTO");
 
 		// table name and alias
 		appendMainTable(buff, sql);
 
-		// ( column name, ...
-	// 1.8.4
-	//	buff.append(" (");
-	//	String[] delimiter = new String[] {""};
-	//
-	//	sql.columnInfoStream()
-	//		.filter(ColumnInfo::insertable)
-	//		.forEach(columnInfo -> {
-	//			buff.append(delimiter[0]).append(columnInfo.columnName());
-	//			delimiter[0] = ", ";
-	//		});
-	////
-		// ) VALUES (value, ...)
-	// 1.8.4
-	//	buff.append(") VALUES (");
-	//	delimiter[0] = "";
-	//
-	//	sql.columnInfoStream()
-	//		.filter(ColumnInfo::insertable)
-	//		.forEach(columnInfo -> {
-	//			String propertyName = columnInfo.propertyName();
-	//
-	//			// gets expression
-	//			Expression expression = sql.getExpression(propertyName);
-	//			if (expression.isEmpty())
-	//				expression = columnInfo.insertExpression();
-	//
-	//			if (expression.isEmpty())
-	//				expression = new Expression("{#" + propertyName + "}");
-	//
-	//			buff.append(delimiter[0])
-	//				.append(expression.toString(sql, parameters));
-	//			delimiter[0] = ", ";
-	//		});
-	//	buff.append(")");
+		// (column name, ...) VALUES (value, ...)
 		appendInsertColumnsAndValues(buff, sql, parameters);
-	////
 
 		return buff.toString();
 	}
@@ -1012,43 +698,6 @@ public class Standard implements Database {
 	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
-	// 1.8.2
-	//	// UPDATE table name
-	//	buff.append("UPDATE ").append(sql.entityInfo().tableName());
-	//
-	//	// table alias
-	//	if (!sql.tableAlias().isEmpty())
-	//		buff.append(" ").append(sql.tableAlias());
-	//
-	//	// SET column name =  value, ...
-	//	buff.append(" SET ");
-	//	String[] delimiter = new String[] {""};
-	//	sql.selectedColumnInfoStream()
-	//		.filter(columnInfo -> !columnInfo.isKey() && columnInfo.updatable())
-	//		.forEach(columnInfo -> {
-	//			// gets expression
-	//			Expression expression = sql.getExpression(columnInfo.propertyName());
-	//			if (expression.isEmpty())
-	//				expression = columnInfo.updateExpression();
-	//
-	//			buff.append(delimiter[0])
-	//				.append(columnInfo.columnName())
-	//				.append("=")
-	//				.append(expression.toString(sql, parameters));
-	//			delimiter[0] = ", ";
-	//		});
-	//
-	//	// WHERE ...
-	//	if (sql.getWhere() != Condition.ALL)
-	//		buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
-	//
-	//	// ORDER BY ...
-	//	if (!sql.getOrderBy().isEmpty())
-	//		buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
-	//
-	//	// LIMIT ...
-	//	if (sql.getLimit() != Integer.MAX_VALUE)
-	//		buff.append(" LIMIT ").append(sql.getLimit());
 		// UPDATE table name
 		buff.append("UPDATE");
 
@@ -1059,34 +708,7 @@ public class Standard implements Database {
 		appendJoinTables(buff, sql, parameters);
 
 		// SET column name =  value, ...
-	// 1.8.4
-	//	buff.append(" SET ");
-	//	String[] delimiter = new String[] {""};
-	//
-	//	sql.selectedSqlColumnInfoStream()
-	//		.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().updatable())
-	//		.forEach(sqlColumnInfo -> {
-	//			ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
-	//			String tableAlias   = sqlColumnInfo.tableAlias();
-	//			String propertyName = columnInfo.propertyName();
-	//			String columnName   = columnInfo.getColumnName(tableAlias);
-	//
-	//			// gets expression
-	//			Expression expression = sql.getExpression(propertyName);
-	//			if (expression.isEmpty())
-	//				expression = columnInfo.updateExpression();
-	//
-	//			if (expression.isEmpty())
-	//				expression = new Expression("{#" + propertyName + "}");
-	//
-	//			buff.append(delimiter[0])
-	//				.append(columnName)
-	//				.append("=")
-	//				.append(expression.toString(sql, parameters));
-	//			delimiter[0] = ", ";
-	//		});
 		appendUpdateColumnsAndValues(buff, sql, parameters);
-	////
 
 		// WHERE ...
 		appendWhere(buff, sql, parameters);
@@ -1096,7 +718,6 @@ public class Standard implements Database {
 
 		// LIMIT ...
 		appendLimit(buff, sql);
-	////
 
 		return buff.toString();
 	}
@@ -1108,34 +729,12 @@ public class Standard implements Database {
 	public <E> String deleteSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
-	// 1.8.2
-	//	// DELETE FROM table name
-	//	buff.append("DELETE FROM ").append(sql.entityInfo().tableName());
-	//
-	//	// table alias
-	//	if (!sql.tableAlias().isEmpty())
-	//		buff.append(" ").append(sql.tableAlias());
-	//
-	//	// WHERE ...
-	//	if (sql.getWhere() != Condition.ALL)
-	//		buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
-	//
-	//	// ORDER BY ...
-	//	if (!sql.getOrderBy().isEmpty())
-	//		buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
-	//
-	//	// LIMIT ...
-	//	if (sql.getLimit() != Integer.MAX_VALUE)
-	//		buff.append(" LIMIT ").append(sql.getLimit());
 		// DELETE FROM
-	// 1.8.4
-	//	buff.append("DELETE FROM");
 		buff.append("DELETE");
 		if (sql.getJoinInfos().size() > 0)
 			buff.append(' ')
 				.append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
 		buff.append(" FROM");
-	////
 
 		// main table name and alias
 		appendMainTable(buff, sql);
@@ -1151,7 +750,6 @@ public class Standard implements Database {
 
 		// LIMIT ...
 		appendLimit(buff, sql);
-	////
 
 		return buff.toString();
 	}
@@ -1403,15 +1001,11 @@ public class Standard implements Database {
 
 			// NO WAIT
 			if (sql.isNoWait())
-			// 1.9.0
-			//	buff.append(" NO WAIT");
 				throw new UnsupportedOperationException("noWait");
-			////
-		// 1.9.0
+
 			// WAIT n
 			else if (!sql.isWaitForever())
 				throw new UnsupportedOperationException("wait N");
-		////
 		}
 	}
 

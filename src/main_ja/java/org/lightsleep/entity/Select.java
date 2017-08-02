@@ -28,7 +28,6 @@ import java.lang.annotation.*;
  * @see InsertProperties
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Select {

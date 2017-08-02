@@ -17,36 +17,20 @@ import org.lightsleep.helper.Resource;
  * @since 1.0
  * @author Masato Kokubo
  */
-// 1.9.1
-//public class OrderBy implements SqlComponent {
 public class OrderBy implements SqlComponent, Cloneable {
-////
 	//  class resources
 	private static final Resource resource = new Resource(OrderBy.class);
-// 1.8.6
-//	private static final String messageNoOrderByElement = resource.get("messageNoOrderByElement");
 	private static final String messageNoOrderByElement = resource.getString("messageNoOrderByElement");
-////
-
-// 1.9.2
-//	/** The empty <b>OrderBy</b> */
-//	public static final OrderBy EMPTY = new OrderBy();
-////
 
 	/**
 	 * The element of <b>OrderBy</b>.
 	 */
 	public static class Element extends Expression {
-	// 1.9.1
 		private static final String ASC  = " ASC";
 		private static final String DESC = " DESC";
-	////
 
 		// The string of ascend
-	// 1.9.1
-	//	private String order = " ASC";
 		private String order = ASC;
-	////
 
 		/**
 		 * Constructs a new <b>Element</b>.
@@ -66,10 +50,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 		 * @return this object
 		 */
 		public Element asc() {
-		// 1.9.1
-		//	order = " ASC";
 			order = ASC;
-		////
 			return this;
 		}
 
@@ -79,10 +60,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 		 * @return this object
 		 */
 		public Element desc() {
-		// 1.9.1
-		//	order = " DESC";
 			order = DESC;
-		////
 			return this;
 		}
 
@@ -120,7 +98,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 		}
 	}
 
-	// 
+	// Elements
 	private List<Element> elements = new ArrayList<>();
 
 	/**
@@ -140,13 +118,8 @@ public class OrderBy implements SqlComponent, Cloneable {
 	public OrderBy add(Element element) {
 		Objects.requireNonNull(element, "element");
 
-	// 1.9.2
-	//	OrderBy orderBy = this == EMPTY ? new OrderBy() : this;
-	//	orderBy.elements.add(element);
-	//	return orderBy;
 		elements.add(element);
 		return this;
-	////
 	}
 
 	/**
@@ -218,10 +191,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 		if (elements.size() > 0) {
 			buff.append("ORDER BY ");
 			String[] delimiter = new String[] {""};
-		// 1.5.1
-		//	elements.stream().forEach(element -> {
 			elements.forEach(element -> {
-		////
 				buff.append(delimiter[0]).append(element.toString(sql, parameters));
 				delimiter[0] = ", ";
 			});

@@ -15,14 +15,6 @@ import java.util.stream.Stream;
  * @author Masato Kokubo
  */
 public class And extends LogicalCondition {
-// 1.8.6
-//	/**
-//	 * 空の <b>And</b> を構築します。
-//	 */
-//	public And() {
-//	}
-////
-
 	/**
 	 * 条件ストリームから <b>And</b> を構築します。
 	 *

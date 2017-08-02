@@ -21,35 +21,6 @@ public interface Condition extends SqlComponent {
 	/** 全行を対象する条件 */
 	static final Condition ALL = null;
 
-// 1.8.8
-//	/**
-//	 * {@inheritDoc}
-//	 *
-//	 * @since 1.8.2
-//	 */
-//	@Override
-//	default boolean isEmpty() {
-//		return false;
-//	}
-////
-
-// 1.8.3
-//	/**
-//	 *	条件式を生成して返します。
-//	 *
-//	 * @see Expression
-//	 *
-//	 * @param content 条件式の文字列内容
-//	 *
-//	 *	@return 条件式
-//	 *
-//	 * @throws NullPointerException <b>content</b> が null の場合
-//	 */
-//	static Condition of(String content) {
-//		return null;
-//	}
-////
-
 	/**
 	 * 条件式を生成して返します。
 	 *

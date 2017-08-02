@@ -14,7 +14,6 @@ import java.lang.annotation.*;
  * @see InsertProperty
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface InsertProperties {

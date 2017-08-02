@@ -7,7 +7,7 @@ import org.lightsleep.entity.Key
 
 class Url {
 	@Key
-	int	  contactId
+	int    contactId
 	short  childIndex
 	String label
 	String content

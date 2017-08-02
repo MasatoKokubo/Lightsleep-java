@@ -6,9 +6,10 @@
 DROP TABLE Contact;
 CREATE TABLE Contact (
 	id          NUMBER  (  9)      NOT NULL,
-	familyName  VARCHAR2( 20 CHAR)     NULL,
-	givenName   VARCHAR2( 20 CHAR)     NULL,
+	firstName   VARCHAR2( 20 CHAR)     NULL,
+	lastName    VARCHAR2( 20 CHAR)     NULL,
 	birthday    DATE                   NULL,
+	birthday2   NUMBER  ( 18)          NULL,
 
 	updateCount NUMBER  (  9)      NOT NULL,
 	createdTime TIMESTAMP          NOT NULL,

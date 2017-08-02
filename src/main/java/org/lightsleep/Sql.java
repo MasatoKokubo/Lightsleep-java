@@ -83,22 +83,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	private static final Logger logger = LoggerFactory.getLogger(Sql.class);
 
 	// The version resource
-// 1.8.6
-//	private static final String version = new Resource("lightsleep-version").get("version");
 	private static final String version =
 		new Resource(Sql.class.getPackage().getName() + ".lightsleep-version").getString("version");
-////
 
 	// Class resources
 	private static final Resource resource = new Resource(Sql.class);
-// 1.8.6
-//	private static final String messageDatabaseHandler            = resource.get("messageDatabaseHandler");
-//	private static final String messageDatabaseHandlerNotFound    = resource.get("messageDatabaseHandlerNotFound");
-//	private static final String messageConnectionSupplier         = resource.get("messageConnectionSupplier");
-//	private static final String messageConnectionSupplierNotFound = resource.get("messageConnectionSupplierNotFound");
-//	private static final String messageNoWhereCondition           = resource.get("messageNoWhereCondition");
-//	private static final String messageRows                       = resource.get("messageRows");
-//	private static final String messageRowsSelect                 = resource.get("messageRowsSelect");
 	private static final String messageDatabaseHandler            = resource.getString("messageDatabaseHandler");
 	private static final String messageDatabaseHandlerNotFound    = resource.getString("messageDatabaseHandlerNotFound");
 	private static final String messageConnectionSupplier         = resource.getString("messageConnectionSupplier");
@@ -106,7 +95,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	private static final String messageNoWhereCondition           = resource.getString("messageNoWhereCondition");
 	private static final String messageRows                       = resource.getString("messageRows");
 	private static final String messageRowsSelect                 = resource.getString("messageRowsSelect");
-////
 
 	// The entity information map
 	private static final Map<Class<?>, EntityInfo<?>> entityInfoMap = new LinkedHashMap<>();
@@ -139,19 +127,13 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	private Condition where = Condition.EMPTY;
 
 	// The GROUP BY info.
-// 1.9.2
-//	private GroupBy groupBy = GroupBy.EMPTY;
 	private GroupBy groupBy = new GroupBy();
-////
 
 	// The HAVING condition
 	private Condition having = Condition.EMPTY;
 
 	// The ORDER BY information
-// 1.9.2
-//	private OrderBy orderBy = OrderBy.EMPTY;
 	private OrderBy orderBy = new OrderBy();
-////
 
 	// The LIMIT value
 	private int limit = Integer.MAX_VALUE;
@@ -162,12 +144,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	// Whether with FOR UPDATE
 	private boolean forUpdate = false;
 
-// 1.9.0
-//	// Whether with NO WAIT
-//	private boolean noWait = false;
 	// The WAIT time (sec)
 	private int waitTime = FOREVER;
-////
 
 	// The database handler
 	private static Database database;
@@ -209,14 +187,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		logger.info(() -> MessageFormat.format(messageDatabaseHandler, Sql.database.getClass().getName()));
 	}
 
-	//  Initialize the database handler
+	// Initialize the database handler
 	static {
-	// 1.2.0
-	//	String databaseName = Resource.globalResource.get("Database", "Standard");
-	// 1.8.6
-	//	String databaseName = Resource.globalResource.get(Database.class.getSimpleName(), Standard.class.getSimpleName());
 		String databaseName = Resource.globalResource.getString(Database.class.getSimpleName(), Standard.class.getSimpleName());
-	////
 		if (databaseName.indexOf('.') < 0)
 			databaseName = Database.class.getPackage().getName() + '.' + databaseName;
 
@@ -233,10 +206,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			setDatabase((Database)databaseClass.getMethod("instance").invoke(null));
 		}
 		catch (Exception e) {
-		// 1.9.0
-		//	logger.error("", e);
 			logger.error(e.toString(), e);
-		////
 		}
 	}
 
@@ -269,12 +239,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 
 	// Initialize the connection supplier
 	static {
-	// 1.2.0
-	//	String supplierName = Resource.globalResource.get("ConnectionSupplier", "Jdbc");
-	// 1.8.6
-	//	String supplierName = Resource.globalResource.get(ConnectionSupplier.class.getSimpleName(), Jdbc.class.getSimpleName());
 		String supplierName = Resource.globalResource.getString(ConnectionSupplier.class.getSimpleName(), Jdbc.class.getSimpleName());
-	////
 		if (supplierName.indexOf('.') < 0)
 			supplierName = ConnectionSupplier.class.getPackage().getName() + '.' + supplierName;
 
@@ -288,18 +253,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		}
 
 		try {
-		// 1.3.0 for Java 9
 			setConnectionSupplier(supplierClass.getConstructor().newInstance());
-		////
 		}
-	// 1.3.0 for Java 9
-	//	catch (InstantiationException | IllegalAccessException e) {
 		catch (Exception e) {
-	////
-		// 1.9.0
-		//	logger.error("", e);
 			logger.error(e.toString(), e);
-		////
 		}
 	}
 
@@ -477,11 +434,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public Sql<E> columns(String... columns) {
 		Objects.requireNonNull(columns, "columns");
 
-	// 1.8.2
-	//	for (String column : columns)
-	//		this.columns.add(column);
 		Arrays.stream(columns).forEach(this.columns::add);
-	////
 		return this;
 	}
 
@@ -494,16 +447,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #setColumns(Set)
 	 */
 	public Set<String> getColumns() {
-	// 1.8.4
-	//	return columns;
-	//	return new HashSet<String>(columns);
 		try {
 			return (Set<String>)columns.getClass().getMethod("clone").invoke(columns);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	////
 	}
 
 	/**
@@ -1063,12 +1012,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #setGroupBy(GroupBy)
 	 */
 	public GroupBy getGroupBy() {
-	// 1.9.1
-	//	return groupBy;
-	// 1.9.2
-	//	return groupBy == GroupBy.EMPTY ? groupBy : groupBy.clone();
 		return groupBy.clone();
-	////
 	}
 
 	/**
@@ -1235,12 +1179,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #setOrderBy(OrderBy)
 	 */
 	public OrderBy getOrderBy() {
-	// 1.9.1
-	//	return orderBy;
-	// 1.9.2
-	//	return orderBy == OrderBy.EMPTY ? orderBy : orderBy.clone();
 		return orderBy.clone();
-	////
 	}
 
 	/**
@@ -1339,10 +1278,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #isWaitForever()
 	 */
 	public Sql<E> noWait() {
-	// 1.9.0
-	//	noWait = true;
 		waitTime = 0;
-	////
 		return this;
 	}
 
@@ -1391,10 +1327,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #isWaitForever()
 	 */
 	public boolean isNoWait() {
-	// 1.9.0
-	//	return noWait;
 		return waitTime == 0;
-	////
 	}
 
 	/**
@@ -1489,10 +1422,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (sqlEntityInfo instanceof Sql) {
 			((Sql<?>)sqlEntityInfo).sqlEntityInfoMap.values().stream()
 				.filter(sqlEntityInfo2 -> sqlEntityInfo2 != sqlEntityInfo)
-			// 1.8.2
-			//	.forEach(sqlEntityInfo2 -> addSqlEntityInfo(sqlEntityInfo2));
 				.forEach(this::addSqlEntityInfo);
-			////
 		}
 	}
 
@@ -1523,14 +1453,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public void select(Connection connection, Consumer<? super E> consumer) {
-	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
-	////
-	// 1.8.4
+
 		if (columns.size() == 0 && joinInfos.size() > 0)
 			columns.add(tableAlias + ".*");
-	////
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
@@ -1572,32 +1499,23 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public <JE1> void select(Connection connection,
 		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1) {
-	//	if (joinInfos.size() < 1) throw new IllegalStateException("Sql.select: joinInfos.size < 1");
 		if (joinInfos.size() < 1) throw new IllegalStateException("joinInfos.size < 1");
 
-	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
-	////
-	// 1.8.4
+
 		if (columns.size() == 0 && joinInfos.size() > 1) {
 			columns.add(tableAlias + ".*");
 			columns.add(joinInfos.get(0).tableAlias() + ".*");
 		}
-	////
+
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
-	// 1.8.3
-	//	executeQuery(connection, sql, parameters, resultSet -> {
-	//		getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
-	//		getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
-	//	});
 		executeQuery(connection, sql, parameters,
 			getRowConsumer(connection, this, consumer)
 			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
 		);
-	////
 	}
 
 	/**
@@ -1641,35 +1559,25 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Consumer<? super  E > consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2) {
-	//	if (joinInfos.size() < 2) throw new IllegalStateException("Sql.select: joinInfos.size < 2");
 		if (joinInfos.size() < 2) throw new IllegalStateException("joinInfos.size < 2");
 
-	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
-	////
-	// 1.8.4
+
 		if (columns.size() == 0 && joinInfos.size() > 2) {
 			columns.add(tableAlias + ".*");
 			columns.add(joinInfos.get(0).tableAlias() + ".*");
 			columns.add(joinInfos.get(1).tableAlias() + ".*");
 		}
-	////
+
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
-	// 1.8.3
-	//	executeQuery(connection, sql, parameters, resultSet -> {
-	//		getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
-	//		getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
-	//		getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2).accept(resultSet);
-	//	});
 		executeQuery(connection, sql, parameters,
 			getRowConsumer(connection, this, consumer)
 			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
 			.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
 		);
-	////
 	}
 
 	/**
@@ -1720,38 +1628,27 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2,
 		Consumer<? super JE3> consumer3) {
-	//	if (joinInfos.size() < 3) throw new IllegalStateException("Sql.select: joinInfos.size < 3");
 		if (joinInfos.size() < 3) throw new IllegalStateException("joinInfos.size < 3");
 
-	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
-	////
-	// 1.8.4
+
 		if (columns.size() == 0 && joinInfos.size() > 3) {
 			columns.add(tableAlias + ".*");
 			columns.add(joinInfos.get(0).tableAlias() + ".*");
 			columns.add(joinInfos.get(1).tableAlias() + ".*");
 			columns.add(joinInfos.get(2).tableAlias() + ".*");
 		}
-	////
+
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
-	// 1.8.3
-	//	executeQuery(connection, sql, parameters, resultSet -> {
-	//		getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
-	//		getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
-	//		getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2).accept(resultSet);
-	//		getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3).accept(resultSet);
-	//	});
 		executeQuery(connection, sql, parameters,
 			getRowConsumer(connection, this, consumer)
 			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
 			.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
 			.andThen(getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3))
 		);
-	////
 	}
 
 	/**
@@ -1808,14 +1705,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Consumer<? super JE2> consumer2,
 		Consumer<? super JE3> consumer3,
 		Consumer<? super JE4> consumer4) {
-	//	if (joinInfos.size() < 4) throw new IllegalStateException("Sql.select: joinInfos.size < 4");
 		if (joinInfos.size() < 4) throw new IllegalStateException("joinInfos.size < 4");
 
-	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
-	////
-	// 1.8.4
+
 		if (columns.size() == 0 && joinInfos.size() > 4) {
 			columns.add(tableAlias + ".*");
 			columns.add(joinInfos.get(0).tableAlias() + ".*");
@@ -1823,18 +1717,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			columns.add(joinInfos.get(2).tableAlias() + ".*");
 			columns.add(joinInfos.get(3).tableAlias() + ".*");
 		}
-	////
+
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().selectSql(this, parameters);
 
-	// 1.8.3
-	//	executeQuery(connection, sql, parameters, resultSet -> {
-	//		getRowConsumer(connection,  this                          , consumer ).accept(resultSet);
-	//		getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1).accept(resultSet);
-	//		getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2).accept(resultSet);
-	//		getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3).accept(resultSet);
-	//		getRowConsumer(connection, (JoinInfo<JE4>)joinInfos.get(3), consumer4).accept(resultSet);
-	//	});
 		executeQuery(connection, sql, parameters,
 			getRowConsumer(connection, this, consumer)
 			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
@@ -1842,7 +1728,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			.andThen(getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3))
 			.andThen(getRowConsumer(connection, (JoinInfo<JE4>)joinInfos.get(3), consumer4))
 		);
-	////
 	}
 
 	/**
@@ -1867,10 +1752,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		List<E> entities = new ArrayList<>();
 		select(connection, entity -> {
 			if (entities.size() > 0)
-			// 1.5.0
-			//	throw new ManyRowsException();
 				throw new ManyRowsException(generatedSql);
-			////
 			entities.add(entity);
 		});
 		return entities.size() == 0 ? Optional.empty() : Optional.of(entities.get(0));
@@ -1892,10 +1774,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	public int selectCount(Connection connection) {
-	// 1.8.2
 		if (where.isEmpty())
 			where = Condition.ALL;
-	////
+
 		List<Object> parameters = new ArrayList<>();
 		String sql = getDatabase().subSelectSql(this, () -> "COUNT(*)", parameters);
 
@@ -1904,10 +1785,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			try {
 				count[0] = resultSet.getInt(1);
 			}
-		// 1.3.0
-		//	catch (Exception e) {throw new RuntimeSQLException(e);}
 			catch (SQLException e) {throw new RuntimeSQLException(e);}
-		////
 		});
 		return count[0];
 	}
@@ -1933,10 +1811,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public int insert(Connection connection, E entity) {
 		Objects.requireNonNull(entity, "entity");
 
-	// 1.6.0
 		if (entity instanceof PreStore)
 			((PreStore)entity).preStore();
-	////
 
 		int count = 0;
 
@@ -2008,10 +1884,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public int update(Connection connection, E entity) {
 		Objects.requireNonNull(entity, "entity");
 
-	// 1.6.0
 		if (entity instanceof PreStore)
 			((PreStore)entity).preStore();
-	////
 
 		this.entity = entity;
 		if (where.isEmpty())
@@ -2179,10 +2053,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			String tableAlias = sqlEntityInfo.tableAlias();
 			try {
 				// Create an entity object
-			// 1.3.0 for Java 9
-			//	T entity = entityInfo.entityClass().newInstance();
 				T entity = entityInfo.entityClass().getConstructor().newInstance();
-			////
 
 				//  Column loop
 				sqlEntityInfo.selectedSqlColumnInfoStream(columns)
@@ -2199,27 +2070,19 @@ public class Sql<E> implements SqlEntityInfo<E> {
 							Object convertedValue = getDatabase().convert(value, Utils.toClassType(type));
 							entityInfo.accessor().setValue(entity, columnInfo.propertyName(), convertedValue);
 						}
-					// 1.3.0
-					//	catch (Exception e) {throw new RuntimeSQLException(e);}
 						catch (SQLException e) {throw new RuntimeSQLException(e);}
-					////
 					});
 
 				// After get
-			// 1.6.0
 				if (entity instanceof PostLoad)
 					((PostLoad)entity).postLoad();
-			////
+
 				if (entity instanceof Composite)
 					((Composite)entity).postSelect(connection);
 
 				// Consumes the entity
 				consumer.accept(entity);
 			}
-		// 1.3.0 for Java 9
-		//	catch (InstantiationException | IllegalAccessException e) {
-		//		throw new RuntimeException(e);
-		//	}
 			catch (RuntimeException e) {throw e;}
 			catch (Exception e) {throw new RuntimeException(e);}
 		};
@@ -2242,9 +2105,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Objects.requireNonNull(parameters, "parameters");
 		Objects.requireNonNull(consumer, "consumer");
 
-	// 1.5.0
 		generatedSql = sql;
-	////
 		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
 
 		// Prepares SQL
@@ -2252,12 +2113,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			//  Sets the parameter values
 			for (int index = 0; index < parameters.size(); ++index) {
 				Object parameter = parameters.get(index);
-			// 1.7.0
-			//	if  (logger.isInfoEnabled())
-			//		logger.info("  parameters[" + index + "]: " + Utils.toLogString(parameter));
 				if  (logger.isDebugEnabled())
 					logger.debug("  parameters[" + index + "]: " + Utils.toLogString(parameter));
-			////
 
 				if (parameter instanceof Reader)
 					statement.setCharacterStream(index + 1, (Reader)parameter);
@@ -2331,9 +2188,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Objects.requireNonNull(sql, "sql");
 		Objects.requireNonNull(parameters, "parameters");
 
-	// 1.5.0
 		generatedSql = sql;
-	////
 		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
 
 		// Prepares SQL
@@ -2341,12 +2196,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			//  Sets the parameter values
 			for (int index = 0; index < parameters.size(); ++index) {
 				Object parameter = parameters.get(index);
-			// 1.7.0
-			//	if  (logger.isInfoEnabled())
-			//		logger.info("  parameters[" + index + "]: " + Utils.toLogString(parameter));
 				if  (logger.isDebugEnabled())
 					logger.debug("  parameters[" + index + "]: " + Utils.toLogString(parameter));
-			////
 
 				if (parameter instanceof Reader)
 					statement.setCharacterStream(index + 1, (Reader)parameter);
@@ -2392,62 +2243,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return a <b>ColumnInfo</b> stream
 	 */
 	public Stream<ColumnInfo> columnInfoStream() {
-	// 1.8.2
-	//	return entityInfo().columnInfos().stream();
 		return entityInfo.columnInfos().stream();
-	////
 	}
 
-// 1.8.2
-//	/**
-//	 * Returns a <b>ColumnInfo</b> stream with selected columns of the main table.<br>
-//	 * <i> this method is used internally.</i>
-//	 *
-//	 * @return a <b>ColumnInfo</b> stream
-//	 */
-//	public Stream<ColumnInfo> selectedColumnInfoStream() {
-//		return columns.isEmpty()
-//			? columnInfoStream()
-//			: columnInfoStream()
-//				.filter(columnInfo ->
-//					columns.stream().anyMatch(name ->
-//						name.endsWith("*")
-//							? columnInfo.propertyName().startsWith(name.substring(0, name.length() - 1))
-//							: columnInfo.propertyName().equals(name)
-//					)
-//				);
-//	}
-////
-
-// 1.8.2
-//	/**
-//	 * Returns a <b>SqlEntityInfo</b> stream of the main table and the joined tables.<br>
-//	 * <i> this method is used internally.</i>
-//	 *
-//	 * @return a <b>SqlEntityInfo</b> stream
-//	 */
-//	public Stream<SqlEntityInfo<?>> sqlEntityInfoStream() {
-//		return  Stream.concat(Stream.of(this), joinInfos.stream());
-//	}
-////
-
-// 1.8.2
-//	/**
-//	 * Returns a <b>SqlColumnInfo</b> stream of the main table and the joined tables.<br>
-//	 * <i> this method is used internally.</i>
-//	 *
-//	 * @return a <b>SqlColumnInfo</b> stream
-//	 */
-//	public Stream<SqlColumnInfo> joinSqlColumnInfoStream() {
-//		return sqlEntityInfoStream()
-//			.flatMap(sqlEntityInfo ->
-//				sqlEntityInfo.entityInfo().columnInfos().stream()
-//					.map(columnInfo -> new SqlColumnInfo(sqlEntityInfo.tableAlias(), columnInfo))
-//			);
-//	}
-////
-
-// 1.8.2
 	/**
 	 * Returns a <b>SqlColumnInfo</b> stream with selected columns of the main table.
 	 *
@@ -2460,7 +2258,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public Stream<SqlColumnInfo> selectedSqlColumnInfoStream() {
 		return selectedSqlColumnInfoStream(columns);
 	}
-////
 
 	/**
 	 * Returns a <b>SqlColumnInfo</b> stream with selected columns
@@ -2473,13 +2270,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @return a <b>SqlColumnInfo</b> stream
 	 */
 	public Stream<SqlColumnInfo> selectedJoinSqlColumnInfoStream() {
-	// 1.8.2
-	//	return columns.isEmpty()
-	//		? joinSqlColumnInfoStream()
-	//		: joinSqlColumnInfoStream()
-	//			.filter(sqlColumnInfo -> columns.stream().anyMatch(name -> sqlColumnInfo.matches(name)));
 		return Stream.concat(Stream.of(this), joinInfos.stream())
 			.flatMap(sqlEntityInfo -> sqlEntityInfo.selectedSqlColumnInfoStream(columns));
-	////
 	}
 }

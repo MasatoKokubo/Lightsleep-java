@@ -29,7 +29,6 @@ import java.lang.annotation.*;
  * @author Masato Kokubo
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(SelectProperties.class)
 @Target({ElementType.TYPE})

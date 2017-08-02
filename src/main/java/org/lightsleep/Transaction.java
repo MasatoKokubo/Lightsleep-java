@@ -34,20 +34,12 @@ public interface Transaction {
 
 	// Class resources
 	static final Resource resource = new Resource(Transaction.class);
-// 1.8.6
-//	static final String messageGet      = resource.get("messageGet");
-//	static final String messageClose    = resource.get("messageClose");
-//	static final String messageStart    = resource.get("messageStart");
-//	static final String messageEnd      = resource.get("messageEnd");
-//	static final String messageCommit   = resource.get("messageCommit");
-//	static final String messageRollback = resource.get("messageRollback");
 	static final String messageGet      = resource.getString("messageGet");
 	static final String messageClose    = resource.getString("messageClose");
 	static final String messageStart    = resource.getString("messageStart");
 	static final String messageEnd      = resource.getString("messageEnd");
 	static final String messageCommit   = resource.getString("messageCommit");
 	static final String messageRollback = resource.getString("messageRollback");
-////
 
 	/**
 	 * Describe the body of the transaction in this method.
@@ -111,14 +103,7 @@ public interface Transaction {
 	 *
 	 * @since 1.5.0
 	 */
-// 1.5.0
-//	static void execute(Transaction transaction) {
 	static void execute(ConnectionSupplier connectionSupplier, Transaction transaction) {
-////
-	//	if (connectionSupplier == null)
-	//		throw new NullPointerException("Transaction.execute: connectionSupplier == null");
-	//	if (transaction == null)
-	//		throw new NullPointerException("Transaction.execute: transaction == null");
 		Objects.requireNonNull(connectionSupplier, "connectionSupplier");
 		Objects.requireNonNull(transaction, "transaction");
 
@@ -127,10 +112,7 @@ public interface Transaction {
 		try {
 			// Gets a connection
 			long beforeGetTime = System.nanoTime(); // The time before connectionSupplier.get
-		// 1.5.0
-		//	connection = Sql.getConnectionSupplier().get();
 			connection = connectionSupplier.get();
-		////
 			long afterGetTime = System.nanoTime(); // The time after connectionSupplier.get
 
 			if (logger.isDebugEnabled()) {
@@ -140,10 +122,7 @@ public interface Transaction {
 				timeFormat.setMaximumFractionDigits(3);
 				logger.debug(
 					Sql.getDatabase().getClass().getSimpleName()
-				// 1.5.0
-				//	+ "/" + Sql.getConnectionSupplier().getClass().getSimpleName()
 					+ "/" + connectionSupplier.getClass().getSimpleName()
-				////
 					+ ": " + MessageFormat.format(messageGet, timeFormat.format(time))
 				);
 			}
@@ -159,10 +138,7 @@ public interface Transaction {
 			committed = true;
 
 			//  Logging of the transaction end
-		// 1.8.0
-		//	logger.info(messageEnd);
 			logger.debug(messageEnd);
-		////
 
 			// Closes the connection
 			long beforeCloseTime = System.nanoTime(); // The time before connectionSupplier.get
@@ -185,10 +161,7 @@ public interface Transaction {
 			}
 		}
 		catch (Throwable e) {
-		// 1.9.0
-		//	logger.error("", e);
 			logger.error(e.toString(), e);
-		////
 			if (connection != null) {
 				if (!committed) {
 					try {
@@ -199,10 +172,7 @@ public interface Transaction {
 						logger.debug(() -> Sql.getDatabase().getClass().getSimpleName() + ": " + messageEnd);
 					}
 					catch (Throwable e2) {
-					// 1.9.0
-					//	logger.error("", e2);
 						logger.error(e2.toString(), e2);
-					////
 					}
 				}
 
@@ -211,10 +181,7 @@ public interface Transaction {
 					connection.close();
 				}
 				catch (Throwable e2) {
-				// 1.9.0
-				//	logger.error("", e2);
 					logger.error(e2.toString(), e2);
-				////
 				}
 			}
 

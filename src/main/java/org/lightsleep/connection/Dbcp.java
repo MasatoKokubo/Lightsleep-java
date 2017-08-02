@@ -45,20 +45,6 @@ public class Dbcp extends AbstractConnectionSupplier {
 	public Dbcp() {
 	}
 
-// 1.2.0
-//	/**
-//	 * Constructs a new <b>Dbcp</b>.<br>
-//	 * Use values specified in the lightsleep.properties and
-//	 * <i>&lt;<b>resourceName</b>&gt;</i>.properties
-//	 * file as the connection information.
-//	 *
-//	 * @param resourceName the resource name
-//	 */
-//	public Dbcp(String resourceName) {
-//		super(resourceName);
-//	}
-////
-
 	/**
 	 * Constructs a new <b>Dbcp</b>.
 	 * Use values specified in the lightsleep.properties
@@ -77,10 +63,6 @@ public class Dbcp extends AbstractConnectionSupplier {
 	 */
 	@Override
 	protected DataSource getDataSource() {
-	// 1.5.0
-	//	logger.debug(() -> "Dbcp.getDataSource: properties: " + properties);
-	////
-
 		try {
 			DataSource dataSource = BasicDataSourceFactory.createDataSource(properties);
 			logger.debug(() -> "Dbcp.getDataSource: dataSource = " + dataSource);

@@ -7,7 +7,7 @@ import org.lightsleep.entity.Key;
 
 public class Email {
 	@Key
-	public int	  contactId;
+	public int    contactId;
 	public short  childIndex;
 	public String label;
 	public String content;
