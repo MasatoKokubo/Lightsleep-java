@@ -6,22 +6,31 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * Indicates the column name associated with the field.<br>
+ * Indicates the column name related to the field defined in superclass.
+ *
+ * <p>
  * Specifies the field by <b>property</b>.
+ * </p>
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
- * <div class="sampleCode"><pre>
- * <b>{@literal @}ColumnProperty(property="familyName" column="family_name")</b>
- * <b>{@literal @}ColumnProperty(property="givenName" column="given_name")</b>
- * public class Contact {
- *
- *   public String familyName;
- *   public String givenName;
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}ColumnProperty(property="name.first" column="firstName")</b>
+ * <b>{@literal @}ColumnProperty(property="name.last" column="lastName")</b>
+ *   public class Person extends PersonBase {
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * SELECT ..., <b>family_name</b>, <b>given_name</b>, ... FROM Contact
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}ColumnProperties([</b>
+ *   <b>{@literal @}ColumnProperty(property='name.first' column='firstName'),</b>
+ *   <b>{@literal @}ColumnProperty(property='name.last' column='lastName')</b>
+ *  <b>])</b>
+ *  public class Person extends PersonBase {
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Generated SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * SELECT ..., <b>firstName</b>, <b>lastName</b>, ...
  * </pre></div>
  * 
  * @since 1.3.0
@@ -34,7 +43,7 @@ import java.lang.annotation.*;
 @Repeatable(ColumnProperties.class)
 @Target({ElementType.TYPE})
 public @interface ColumnProperty {
-	/** @return the property name of the specified field */
+	/** @return the property name that specifies the field */
 	String property();
 
 	/** @return the column name */

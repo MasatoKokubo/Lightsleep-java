@@ -18,7 +18,7 @@ class GroupBySpec extends Specification {
 
 		expect:
 			new GroupBy().empty
-			new GroupBy().toString(new Sql<>(Contact.class), new ArrayList<Object>()) == ''
+			new GroupBy().toString(new Sql<>(Contact), new ArrayList<Object>()) == ''
 
 	/**/DebugTrace.leave()
 	}
@@ -28,7 +28,7 @@ class GroupBySpec extends Specification {
 
 		setup:
 			def groupBy = new GroupBy().add(new Expression('A'))
-			def string = groupBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+			def string = groupBy.toString(new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('groupBy', groupBy)
 		/**/DebugTrace.print('string', string)
 
@@ -44,7 +44,7 @@ class GroupBySpec extends Specification {
 
 		setup:
 			def groupBy = new GroupBy().add(new Expression('A')).add(new Expression('B'))
-			def string = groupBy.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+			def string = groupBy.toString(new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('groupBy', groupBy)
 		/**/DebugTrace.print('string', string)
 
@@ -81,11 +81,8 @@ class GroupBySpec extends Specification {
 	def "GroupBySpec exception - add null"() {
 	/**/DebugTrace.enter()
 
-		when:
-			new GroupBy().add((Expression)null)
-
-		then:
-			thrown NullPointerException
+		when: new GroupBy().add((Expression)null)
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}

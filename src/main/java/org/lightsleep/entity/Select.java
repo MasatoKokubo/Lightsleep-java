@@ -8,18 +8,23 @@ import java.lang.annotation.*;
 /**
  * Indicates ta column expression instead of the column name in SELECT SQL.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
- *
- *  <b>{@literal @}Select("(SELECT COUNT(*) FROM Phone WHERE contactId=Contact.id)")</b>
- *  {@literal @}NonInsert {@literal @}NonUpdate
- *   public short phoneCount;
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Select("{firstName}||' '||{lastName}")</b>
+ *  {@literal @}NonInsert{@literal @}NonUpdate
+ *   public String fullName;
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * SELECT ..., <b>(SELECT COUNT(*) FROM Phone WHERE contactId=Contact.id)</b>, ... FROM Contact WHERE ...
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Select("{firstName}||' '||{lastName}")</b>
+ *  {@literal @}NonInsert{@literal @}NonUpdate
+ *   String fullName
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Generated SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * SELECT ..., <b>firstName||' '||lastName AS fullName</b>, ...
  * </pre></div>
  * 
  * @since 1.0.0

@@ -20,19 +20,32 @@ import org.lightsleep.helper.*;
 /**
  * SQL を構築および実行するためのクラスです。<br>
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
  * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
- * Transaction.execute(connection -&gt; {
+ * Transaction.execute(conn -&gt; {
  *     new <b>Sql</b>&lt;&gt;(Contact.class)
- *         .<b>where</b>("{familyName} = {}", "Apple")
- *         .<b>select</b>(connection, contacts::add);
+ *         <b>.where</b>("{lastName}={}", "Apple")
+ *         <b>.connection</b>(conn)
+ *         <b>.select</b>(contacts::add);
  * });
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * SELECT id, familyName, givenName, ... FROM Contact WHERE familyName='Apple'
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+ * List&lt;Contact&gt; contacts = []
+ * Transaction.execute {
+ *     new <b>Sql</b>&lt;&gt;(Contact)
+ *         <b>.where</b>('{lastName}={}', 'Apple')
+ *         <b>.connection</b>(it)
+ *         <b>.select</b>({contacts &lt;&lt; it})
+ * }
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * SELECT id, lastName, firstName, ... FROM Contact WHERE lastName='Apple'
  * </pre></div>
  *
  * @param <E> メイン・テーブルのエンティティの型
@@ -40,7 +53,7 @@ import org.lightsleep.helper.*;
  * @since 1.0
  * @author Masato Kokubo
  */
-public class Sql<E> implements SqlEntityInfo<E> {
+public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * 永遠に待つ wait 値
 	 * @since 1.9.0
@@ -48,7 +61,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	public static final int FOREVER = Integer.MAX_VALUE;
 
 	/**
-	 * データベース・ハンドラを返します。
+	 * 現在のデータベース・ハンドラを返します。
 	 *
 	 * @return データベース・ハンドラ
 	 *
@@ -59,7 +72,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * データベース・ハンドラを設定します。
+	 * 現在のデータベース・ハンドラを設定します。
 	 *
 	 * @param database データベース・ハンドラ
 	 *
@@ -71,7 +84,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * コネクション・サプライヤーを返します。
+	 * 現在のコネクション・サプライヤーを返します。
 	 *
 	 * @return コネクション・サプライヤー
 	 *
@@ -82,7 +95,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * コネクション・サプライヤーを設定します。
+	 * 現在のコネクション・サプライヤーを設定します。
 	 *
 	 * @param supplier コネクション・サプライヤー
 	 *
@@ -111,9 +124,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>Sql</b> を構築します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
 	 *     new Sql&lt;&gt;(Contact.class)
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact)
 	 * </pre></div>
 	 *
 	 * @param entityClass エンティティ・クラス
@@ -126,9 +144,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>Sql</b> を構築します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
 	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact, 'C')
 	 * </pre></div>
 	 *
 	 * @param entityClass エンティティ・クラス
@@ -137,6 +160,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException <b>entityClass</b> または <b>tableAlias</b> が null の場合
 	 */
 	public Sql(Class<E> entityClass, String tableAlias) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Sql<E> clone() {
+		return null;
 	}
 
 	/**
@@ -179,7 +210,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * <b>Expression</b> クラスで参照されるエンティティを設定します。
+	 * 式から参照されるエンティティを設定します。
 	 *
 	 * @param entity エンティティ
 	 *
@@ -214,28 +245,64 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * SELECT SQL のカラムを指定します。
+	 * 生成される SELECT SQL および UPDATE SQL のカラムに関連するプロパティ名を指定します。
 	 *
 	 * <p>
-	 * カラムに対応するプロパティ名を指定してください。
 	 * <b>"*"</b> または <b>"<i>テーブル別名</i>.*"</b> で指定する事もできます。
 	 * このメソッドがコールされない場合は、<b>"*"</b> が指定されたのと同様になります。
 	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例1 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>columns("familyName", "givenName")</b>
+	 *         <b>.columns("lastName", "firstName")</b>
+	 *         .where("{lastName}={}", "Apple")
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
 	 * </pre></div>
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例1 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         <b>.columns('lastName', 'firstName')</b>
+	 *         .where('{lastName}={}', 'Apple')
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例2 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .<b>columns("C.id", "P.*")</b>
+	 *         .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
+	 *         <b>.columns("C.id", "P.*")</b>
+	 *         .connection(conn)
+	 *         .&lt;Phone&gt;select(contacts::add, phones::add);
+	 * });
 	 * </pre></div>
 	 *
-	 * @param columns カラムに関連するプロパティ名の配列
+	 * <div class="exampleTitle"><span>使用例2 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt; phones = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .innerJoin(Phone, 'P', '{P.contactId}={C.id}')
+	 *         <b>.columns('C.id', 'P.*')</b>
+	 *         .connection(it)
+	 *         .&lt;Phone&gt;select({contacts &lt;&lt; it}, {phones &lt;&lt; it})
+	 * }
+	 * </pre></div>
+	 *
+	 * @param propertyNames カラムに関連するプロパティ名の配列
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>columns</b> または <b>columns</b> の要素が null の場合
@@ -243,14 +310,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #getColumns()
 	 * @see #setColumns(Set)
 	 */
-	public Sql<E> columns(String... columns) {
+	public Sql<E> columns(String... propertyNames) {
 		return null;
 	}
 
 	/**
-	 * SELECT SQL および UPDATE SQL で使用されるカラムに対応するプロパティ名のセットを返します。
+	 * 生成される SELECT SQL および UPDATE SQL のカラムに関連するプロパティ名のセットを返します。
 	 *
-	 * @return columns メソッドで指定されたプロパティ名のセット
+	 * @return メソッドで指定されたプロパティ名のセット
 	 *
 	 * @see #columns(String...)
 	 * @see #setColumns(Set)
@@ -260,9 +327,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * SELECT SQL および UPDATE SQL で使用されるカラムに対応するプロパティ名のセットを設定します。
+	 * 生成される SELECT SQL および UPDATE SQL のカラムに関連するプロパティ名のセットを設定します。
 	 *
-	 * @param columns プロパティ名のセット
+	 * @param propertyNames プロパティ名のセット
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>columns</b> が null の場合
@@ -272,20 +339,59 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #columns(String...)
 	 * @see #getColumns()
 	 */
-	public Sql<E> setColumns(Set<String> columns) {
+	public Sql<E> setColumns(Set<String> propertyNames) {
 		return null;
 	}
+
 	/**
-	 * プロパティ名に関連するカラムに式を関連付けします。
+	 * 指定のクラスに含まれるプロパティ名のセットを設定します。
+	 * このプロパティ名のセットは、SELECT SQL および UPDATE SQL のカラムの生成時に使用されます。
+	 *
+	 * <p>
+	 * <i>このメソッドは {@link #selectAs(Class, Consumer)} および {@link #selectAs(Class)}</i> からコールされます。
+	 * </p>
+	 *
+	 * @param <R> <b>resultClass</b> の型
+	 * @param resultClass プロパティ名のセットを含むクラス
+	 * @return このオブジェクト
+	 *
+	 * @since 2.0.0
+	 * @see #columns(String...)
+	 * @see #getColumns()
+	 */
+	public <R> Sql<E> setColumns(Class<R> resultClass) {
+		return null;
+	}
+
+	/**
+	 * 指定のプロパティ名に関連するカラムに式を関係付けします。
 	 *
 	 * <p>
 	 * 式が空の場合、以前のこのプロパティ名の関連付けを解除します。
 	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>expression("birthday", "'['||{birthday}||']'")</b>
+	 *         <b>.expression("firstName", "'['||{firstName}||']'")</b>
+	 *         .where("{lastName}={}", "Orange")
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         <b>.expression('firstName', "'['||{firstName}||']'")</b>
+	 *         .where('{lastName}={}', 'Orange')
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param propertyName プロパティ名
@@ -343,11 +449,28 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>INNER JOIN</b> で結合するテーブルの情報を追加します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .<b>innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
+	 *         <b>.innerJoin(Phone.class, "P", "{P.contactId}={C.id}")</b>
+	 *         .connection(conn)
+	 *         .&lt;Phone&gt;select(contacts::add, phones::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt; phones = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         <b>.innerJoin(Phone, 'P', '{P.contactId}={C.id}')</b>
+	 *         .connection(it)
+	 *         .&lt;Phone&gt;select({contacts &lt;&lt; it}, {phones &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param <JE> 結合するエンティティの型
@@ -387,11 +510,28 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>LEFT OUTER JOIN</b> で結合するテーブルの情報を追加します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .<b>leftJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
+	 *         <b>.leftJoin(Phone.class, "P", "{P.contactId}={C.id}")</b>
+	 *         .connection(conn)
+	 *         .&lt;Phone&gt;select(contacts::add, phones::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt; phones = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         <b>.leftJoin(Phone, 'P', '{P.contactId}={C.id}')</b>
+	 *         .connection(it)
+	 *         .&lt;Phone&gt;select({contacts &lt;&lt; it}, {phones &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param <JE> 結合するエンティティの型
@@ -432,11 +572,28 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>RIGHT OUTER JOIN</b> で結合するテーブルの情報を追加します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .<b>rightJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
+	 *         <b>.rightJoin(Phone.class, "P", "{P.contactId}={C.id}")</b>
+	 *         .connection(conn)
+	 *         .&lt;Phone&gt;select(contacts::add, phones::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt; phones = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         <b>.rightJoin(Phone, 'P', '{P.contactId}={C.id}')</b>
+	 *         .connection(it)
+	 *         .&lt;Phone&gt;select({contacts &lt;&lt; it}, {phones &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param <JE> 結合するエンティティの型
@@ -492,11 +649,26 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>WHERE</b> 句の条件を指定します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>where("{birthday} IS NULL")</b>
-	 *         .select(connection, contacts::add);
+	 *         <b>.where("{birthday} IS NULL")</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         <b>.where('{birthday} IS NULL')</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param condition 条件
@@ -513,11 +685,27 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>WHERE</b> 句の条件を指定します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>where("{id} = {}", contactId)</b>
-	 *         .select(connection).orElse(null);
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int id = 1;
+	 * Contact[] contact = new Contact[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     contact[0] = new Sql&lt;&gt;(Contact.class)
+	 *         <b>.where("{id}={}", id)</b>
+	 *         .connection(conn).select().orElse(null);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int id = 1
+	 * Contact contact
+	 * Transaction.execute {
+	 *     contact = new Sql&lt;&gt;(Contact)
+	 *         <b>.where('{id}={}', id)</b>
+	 *         .connection(it)
+	 *         .select().orElse(null)
+	 * }
 	 * </pre></div>
 	 *
 	 * @param content 式の内容
@@ -536,38 +724,71 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>WHERE</b> 句の条件をエンティティ条件で指定します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     Contact contact = new Contact();
-	 *     contact.familyName = "Apple";
-	 *     contact.givenName = "Yukari";
-	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>where(contact)</b>
-	 *         .select(connection, contacts::add);
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * Contact[] contact = new Contact[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     contact[0] = new Sql&lt;&gt;(Contact.class)
+	 *         <b>.where(new ContactKey(2))</b>
+	 *         .connection(conn)
+	 *         .select().orElse(null);
+	 * });
 	 * </pre></div>
 	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * Contact contact
+	 * Transaction.execute {
+	 *     Contact key = new Contact()
+	 *     contact = new Sql&lt;&gt;(Contact)
+	 *         <b>.where(new ContactKey(2))</b>
+	 *         .connection(it)
+	 *         .select().orElse(null)
+	 * }
+	 * </pre></div>
+	 *
+	 * @param <K> エンティティの型
 	 * @param entity エンティティ
-	 * @return null
+	 * @return このオブジェクト
 	 *
 	 * @see #getWhere()
 	 * @see Condition#of(Object)
 	 */
-	public Sql<E> where(E entity) {
+	public <K> Sql<E> where(K entity) {
 		return null;
 	}
 
 	/**
 	 * <b>WHERE</b> 句の条件をサブクエリで指定します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .<b>where("EXISTS",</b>
+	 *         <b>.where("EXISTS",</b>
 	 *              <b>new Sql&lt;&gt;(Phone.class, "P")</b>
-	 *                  <b>.where("{P.contactId} = {C.id}")</b>
-	 *                  <b>.and("{P.content} LIKE {}", "080%")</b>
+	 *                  <b>.where("{P.contactId}={C.id}")</b>
+	 *                  <b>.and("{P.content} LIKE {}", "0800001%")</b>
 	 *         <b>)</b>
-	 *         .select(connection, contacts::add);
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         <b>.where('EXISTS',</b>
+	 *              <b>new Sql&lt;&gt;(Phone, 'P')</b>
+	 *                  <b>.where('{P.contactId}={C.id}')</b>
+	 *                  <b>.and('{P.content} LIKE {}', '0800001%')</b>
+	 *         <b>)</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param <SE> サブクエリの対象テーブルのエンティティの型
@@ -618,12 +839,28 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 句の条件に、
 	 * そうでなければ <b>WHERE</b> 句の条件に <b>AND</b> で式条件を追加します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .where("{familyName} = {}", "Apple")
-	 *         .<b>and("{givenName} = {}", "Akiyo")</b>
-	 *         .select(connection, contacts::add);
+	 *         .where("{lastName}={}", "Apple")
+	 *         <b>.and("{firstName}={}", "Akiyo")</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .where('{lastName}={}', 'Apple')
+	 *         <b>.and('{firstName}={}', 'Akiyo')</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param content 式の内容
@@ -674,12 +911,28 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <b>having</b> メソッドのコール後であれば、<b>HAVING</b> 句の条件に、
 	 * そうでなければ <b>WHERE</b> 句の条件に <b>OR</b> で式条件を追加します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .where("{familyName} = {}", "Apple")
-	 *         .<b>or("{familyName} = {}", "Orange")</b>
-	 *         .select(connection, contacts::add);
+	 *         .where("{lastName}={}", "Apple")
+	 *         <b>.or("{lastName}={}", "Orange")</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .where('{lastName}={}', 'Apple')
+	 *         <b>.or('{lastName}={}', 'Orange')</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param content 式の内容
@@ -821,12 +1074,28 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * <b>ORDER BY</b> 句の1つの要素を指定します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>orderBy("{familyName}")</b>
-	 *         .<b>orderBy("{givenName}")</b>
-	 *         .select(connection, contacts::add);
+	 *         <b>.orderBy("{lastName}")</b>
+	 *         <b>.orderBy("{firstName}")</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         <b>.orderBy('{lastName}')</b>
+	 *         <b>.orderBy('{firstName}')</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param content <b>OrderBy.Element</b> の内容
@@ -849,11 +1118,26 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * 最後に指定した <b>ORDER BY</b> 句の要素を昇順に設定します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .orderBy("{id}").<b>asc()</b>
-	 *         .select(connection, contacts::add);
+	 *         .orderBy("{id}")<b>.asc()</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .orderBy('{id}')<b>.asc()</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @return このオブジェクト
@@ -870,11 +1154,26 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * 最後に指定した <b>ORDER BY</b> 句の要素を降順に設定します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .orderBy("{id}").<b>desc()</b>
-	 *         .select(connection, contacts::add);
+	 *         .orderBy("{id}")<b>.desc()</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .orderBy('{id}')<b>.desc()</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @return このオブジェクト
@@ -919,11 +1218,26 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * SELECT SQL の <b>LIMIT</b> 値を指定します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>limit(10)</b>
-	 *         .select(connection, contacts::add);
+	 *         <b>.limit(5)</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         <b>.limit(5)</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param limit <b>LIMIT</b> 値
@@ -949,11 +1263,26 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * SELECT SQL の <b>OFFSET</b> 値を指定します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .limit(10).<b>offset(100)</b>
-	 *         .select(connection, contacts::add);
+	 *         .limit(5)<b>.offset(5)</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .limit(5)<b>.offset(5)</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param offset <b>OFFSET</b> 値
@@ -1076,17 +1405,74 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * <b>condition</b> が true なら <b>action</b> を実行します。
+	 * select, insert, update and delete で使用するデータベース・コネクションを指定します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * 2.0.0 版で追加されたデータベース・アクセスを行うメソッド
+	 * (select, insert, update および delete) を使用する前にこのメソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param connection the database connection
+	 * @return this object
+	 *
+	 * @since 2.0.0
+	 */
+	public Sql<E> connection(Connection connection) {
+		return null;
+	}
+
+	/**
+	 * 生成された SQL を返します。
+	 *
+	 * @return 生成された SQL
+	 *
+	 * @since 1.8.4
+	 */
+	public String generatedSql() {
+		return null;
+	}
+
+	/**
+	 * アクションを実行します。
+	 *
+	 * @param action 実行されるアクション
+	 * @return このオブジェクト
+	 *
+	 * @since 2.0.0
+	 * @see #doIf
+	 */
+	public Sql<E> doAlways(Consumer<Sql<E>> action) {
+		return null;
+	}
+
+	/**
+	 * 実行条件が true ならアクションを実行します。
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .<b>doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)</b>
-	 *         .select(connection, contacts::add);
+	 *         <b>.doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
 	 * </pre></div>
 	 *
-	 * @param condition 条件
-	 * @param action <b>condition</b> が true の場合に実行するアクション
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         <b>.doIf(!(Sql.database instanceof SQLite)) {it.forUpdate}</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
+	 * </pre></div>
+	 *
+	 * @param condition 実行条件
+	 * @param action 実行条件が true の場合に実行されるアクション
 	 * @return このオブジェクト
 	 */
 	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action) {
@@ -1094,11 +1480,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * <b>condition</b> が true なら <b>action</b> を実行し、そうでなければ <b>elseAction</b> を実行します。
+	 * 実行条件が true なら <b>action</b> を実行し、そうでなければ <b>elseAction</b> を実行します。
 	 *
-	 * @param condition 条件
-	 * @param action <b>condition</b> が true の場合に実行するアクション
-	 * @param elseAction <b>condition</b> が false の場合に実行するアクション
+	 * @param condition 実行条件
+	 * @param action 実行条件が true の場合に実行されるアクション
+	 * @param elseAction 実行条件が false の場合に実行されるアクション
 	 * @return このオブジェクト
 	 */
 	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction) {
@@ -1136,54 +1522,131 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * テーブルを結合しない SELECT SQL を生成して実行します。<br>
 	 *
-	 * <p>
-	 * <b>columns</b> がコールされてなく、
-	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれかコールされている場合は、
-	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
-	 * </p>
-	 *
-	 * <ul class="code" style="list-style-type:none">
-	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
-	 * </ul>
-	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>select(connection, contacts::add)</b>;
-	 * </pre></div>
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と
+	 * {@link #select(Consumer)} を使用してください。
 	 *
 	 * @param connection データベース・コネクション
 	 * @param consumer 取得した行から生成されたエンティティのコンシューマ
 	 *
 	 * @throws NullPointerException <b>connection</b> または <b>consumer</b> が null の場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
+	@Deprecated
 	public void select(Connection connection, Consumer<? super E> consumer) {
+	}
+
+	/**
+	 * テーブルを結合しない SELECT SQL を生成して実行します。<br>
+	 *
+	 * <p>
+	 * <b>columns</b> がコールされてなく、
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれかコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。<br>
+	 * </p>
+	 *
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
+	 * </ul>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
+	 *     new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.select(contacts::add)</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.select({contacts &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param consumer 取得した行から生成されたエンティティのコンシューマ
+	 *
+	 * @throws NullPointerException <b>consumer</b> が null の場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 *
+	 * @since 2.0.0
+	 * @see #selectAs(Class, Consumer)
+	 */
+	public void select(Consumer<? super E> consumer) {
+	}
+
+	/**
+	 * テーブルを結合しない SELECT SQL を生成して実行します。<br>
+	 *
+	 * <p>
+	 * <b>columns</b> がコールされてなく、
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれかコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。<br>
+	 * </p>
+	 *
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
+	 * </ul>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;ContactName&gt; contactNames = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
+	 *     new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.selectAs(ContactName.class, contactNames::add)</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;ContactName&gt; contactNames = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.selectAs(ContactName, {contactNames &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param <R> コンシューマの引数の型
+	 * @param resultClass コンシューマの引数のクラス
+	 * @param consumer 取得した行から生成されたエンティティのコンシューマ
+	 *
+	 * @throws NullPointerException <b>consumer</b> が null の場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 *
+	 * @since 2.0.0
+	 * @see #select(Consumer)
+	 */
+	public <R> void selectAs(Class<R> resultClass, Consumer<? super R> consumer) {
 	}
 
 	/**
 	 * 1つのテーブルを結合する SELECT SQL を生成して実行します。
 	 *
-	 * <p>
-	 * <b>columns</b> がコールされてなく、
-	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか1回より多くコールされている場合は、
-	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i><br>
-	 * </p>
-	 *
-	 * <ul class="code" style="list-style-type:none">
-	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
-	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
-	 * </ul>
-	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
-	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .<b>&lt;Phone&gt;select(connection, contacts::add, phones::add)</b>;
-	 * </pre></div>
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と
+	 * {@link #select(Consumer, Consumer)} を使用してください。
 	 *
 	 * @param <JE1> 結合テーブル1のエンティティの型
 	 * @param connection データベース・コネクション
@@ -1192,9 +1655,71 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>connection</b>, <b>consumer</b> または <b>consumer1</b> が null の場合
 	 * @throws IllegalStateException 結合テーブル情報がない場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
+	@Deprecated
 	public <JE1> void select(Connection connection,
+		Consumer<? super E> consumer,
+		Consumer<? super JE1> consumer1) {
+	}
+
+	/**
+	 * 1つのテーブルを結合する SELECT SQL を生成して実行します。
+	 *
+	 * <p>
+	 * <b>columns</b> がコールされてなく、
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか1回より多くコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。<br>
+	 * </p>
+	 *
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
+	 * </ul>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt;   phones = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
+	 *         .connection(conn)
+	 *         <b>.&lt;Phone&gt;select(contacts::add, phones::add)</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt;   phones = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .innerJoin(Phone, 'P', '{P.contactId}={C.id}')
+	 *         .connection(it)
+	 *         <b>.select({contacts &lt;&lt; it}, {phones &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param <JE1> 結合テーブル1のエンティティの型
+	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
+	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
+	 *
+	 * @throws NullPointerException <b>consumer</b> または <b>consumer1</b> が null の場合
+	 * @throws IllegalStateException 結合テーブル情報がない場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 *
+	 * @since 2.0.0
+	 */
+	public <JE1> void select(
 		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1) {
 	}
@@ -1202,28 +1727,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * 2つのテーブルを結合する SELECT SQL を生成して実行します。
 	 *
-	 * <p>
-	 * <b>columns</b> がコールされてなく、
-	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか2回より多くコールされている場合は、
-	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i>
-	 * </p>
-	 *
-	 * <ul class="code" style="list-style-type:none">
-	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
-	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
-	 *   <li>"&lt;結合テーブル2の別名&gt;.*"</li>
-	 * </ul>
-	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
-	 *     List&lt;Email&gt; emails = new ArrayList&lt;&gt;();
-	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
-	 *         .<b>&lt;Phone, Email&gt;select(connection, contacts::add, phones::add, emails::add)</b>;
-	 * </pre></div>
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と
+	 * {@link #select(Consumer, Consumer, Consumer)} を使用してください。
 	 *
 	 * @param <JE1> 結合テーブル1のエンティティの型
 	 * @param <JE2> 結合テーブル2のエンティティの型
@@ -1234,43 +1740,90 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b> または <b>consumer2</b> が null の場合
 	 * @throws IllegalStateException 結合テーブル情報が2より少ない場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
+	@Deprecated
 	public <JE1, JE2> void select(Connection connection,
-			Consumer<? super  E > consumer,
-			Consumer<? super JE1> consumer1,
-			Consumer<? super JE2> consumer2) {
+		Consumer<? super  E > consumer,
+		Consumer<? super JE1> consumer1,
+		Consumer<? super JE2> consumer2) {
 	}
 
 	/**
-	 * 3つのテーブルを結合する SELECT SQL を生成して実行します。
+	 * 2つのテーブルを結合する SELECT SQL を生成して実行します。
 	 *
 	 * <p>
 	 * <b>columns</b> がコールされてなく、
-	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか3回より多くコールされている場合は、
-	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i>
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか2回より多くコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。
 	 * </p>
 	 *
 	 * <ul class="code" style="list-style-type:none">
 	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
 	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
 	 *   <li>"&lt;結合テーブル2の別名&gt;.*"</li>
-	 *   <li>"&lt;結合テーブル3の別名&gt;.*"</li>
 	 * </ul>
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
-	 *     List&lt;Email&gt; emails = new ArrayList&lt;&gt;();
-	 *     List&lt;Address&gt; addresses = new ArrayList&lt;&gt;();
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt;   phones = new ArrayList&lt;&gt;();
+	 * List&lt;Email&gt;   emails = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
-	 *         .innerJoin(Address.class, "A", "{A.contactId} = {C.id}")
-	 *         .<b>&lt;Phone, Email, Address&gt;select(connection, contacts::add, phones::add,</b>
-	 *             <b>emails::add, addresses::add)</b>;
+	 *         .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
+	 *         .innerJoin(Email.class, "E", "{E.contactId}={C.id}")
+	 *         .connection(conn)
+	 *         <b>.&lt;Phone, Email&gt;select(contacts::add, phones::add, emails::add)</b>;
+	 * });
 	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt;   phones = []
+	 * List&lt;Email&gt;   emails = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .innerJoin(Phone, 'P', '{P.contactId}={C.id}')
+	 *         .innerJoin(Email, 'E', '{E.contactId}={C.id}')
+	 *         .connection(it)
+	 *         <b>.select({contacts &lt;&lt; it}, {phones &lt;&lt; it}, {emails &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param <JE1> 結合テーブル1のエンティティの型
+	 * @param <JE2> 結合テーブル2のエンティティの型
+	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
+	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
+	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
+	 *
+	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b> または <b>consumer2</b> が null の場合
+	 * @throws IllegalStateException 結合テーブル情報が2より少ない場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 *
+	 * @since 2.0.0
+	 */
+	public <JE1, JE2> void select(
+		Consumer<? super  E > consumer,
+		Consumer<? super JE1> consumer1,
+		Consumer<? super JE2> consumer2) {
+	}
+
+	/**
+	 * 3つのテーブルを結合する SELECT SQL を生成して実行します。
+	 *
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と
+	 * {@link #select(Consumer, Consumer, Consumer, Consumer)} を使用してください。
 	 *
 	 * @param <JE1> 結合テーブル1のエンティティの型
 	 * @param <JE2> 結合テーブル2のエンティティの型
@@ -1283,9 +1836,87 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> または <b>consumer3</b> が null の場合
 	 * @throws IllegalStateException 結合テーブル情報が3より少ない場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
+	@Deprecated
 	public <JE1, JE2, JE3> void select(Connection connection,
+			Consumer<? super  E > consumer,
+			Consumer<? super JE1> consumer1,
+			Consumer<? super JE2> consumer2,
+			Consumer<? super JE3> consumer3) {
+	}
+
+	/**
+	 * 3つのテーブルを結合する SELECT SQL を生成して実行します。
+	 *
+	 * <p>
+	 * <b>columns</b> がコールされてなく、
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか3回より多くコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。
+	 * </p>
+	 *
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル2の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル3の別名&gt;.*"</li>
+	 * </ul>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt;   phones = new ArrayList&lt;&gt;();
+	 * List&lt;Email&gt;   emails = new ArrayList&lt;&gt;();
+	 * List&lt;Address&gt; addresses = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .innerJoin(  Phone.class, "P", "{P.contactId}={C.id}")
+	 *         .innerJoin(  Email.class, "E", "{E.contactId}={C.id}")
+	 *         .innerJoin(Address.class, "A", "{A.contactId}={C.id}")
+	 *         .connection(conn)
+	 *         <b>.&lt;Phone, Email, Address&gt;select(</b>
+	 *             <b>contacts::add, phones::add, emails::add, addresses::add)</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt;   phones = []
+	 * List&lt;Email&gt;   emails = []
+	 * List&lt;Address&gt; addresses = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .innerJoin(Phone  , 'P', '{P.contactId}={C.id}')
+	 *         .innerJoin(Email  , 'E', '{E.contactId}={C.id}')
+	 *         .innerJoin(Address, 'A', '{A.contactId}={C.id}')
+	 *         .connection(it)
+	 *         <b>.select(</b>
+	 *             <b>{contacts &lt;&lt; it}, {phones &lt;&lt; it}, {emails &lt;&lt; it}, {addresses &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param <JE1> 結合テーブル1のエンティティの型
+	 * @param <JE2> 結合テーブル2のエンティティの型
+	 * @param <JE3> 結合テーブル3のエンティティの型
+	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
+	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
+	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
+	 * @param consumer3 取得した行から生成された結合テーブル3のエンティティのコンシューマ
+	 *
+	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> または <b>consumer3</b> が null の場合
+	 * @throws IllegalStateException 結合テーブル情報が3より少ない場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 */
+	public <JE1, JE2, JE3> void select(
 			Consumer<? super  E > consumer,
 			Consumer<? super JE1> consumer1,
 			Consumer<? super JE2> consumer2,
@@ -1295,35 +1926,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * 4つのテーブルを結合する SELECT SQL を生成して実行します。
 	 *
-	 * <p>
-	 * <b>columns</b> がコールされてなく、
-	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか4回より多くコールされている場合は、
-	 * 以下の文字列を columns セットに設定します。<i>(since 1.8.4)</i>
-	 * </p>
-	 *
-	 * <ul class="code" style="list-style-type:none">
-	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
-	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
-	 *   <li>"&lt;結合テーブル2の別名&gt;.*"</li>
-	 *   <li>"&lt;結合テーブル3の別名&gt;.*"</li>
-	 *   <li>"&lt;結合テーブル4の別名&gt;.*"</li>
-	 * </ul>
-	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
-	 *     List&lt;Email&gt; emails = new ArrayList&lt;&gt;();
-	 *     List&lt;Address&gt; addresses = new ArrayList&lt;&gt;();
-	 *     List&lt;Url&gt; urls = new ArrayList&lt;&gt;();
-	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
-	 *         .innerJoin(Address.class, "A", "{A.contactId} = {C.id}")
-	 *         .innerJoin(Url.class, "U", "{U.contactId} = {C.id}")
-	 *         .<b>&lt;Phone, Email, Address, Url&gt;select(connection, contacts::add, phones::add,</b>
-	 *             <b>emails::add, addresses::add, urls::add)</b>;
-	 * </pre></div>
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と
+	 * {@link #select(Consumer, Consumer, Consumer, Consumer, Consumer)} を使用してください。
 	 *
 	 * @param <JE1> 結合テーブル1のエンティティの型
 	 * @param <JE2> 結合テーブル2のエンティティの型
@@ -1338,49 +1943,221 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> または <b>consumer4</b> が null の場合
 	 * @throws IllegalStateException 結合テーブル情報が4より少ない場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
+	@Deprecated
 	public <JE1, JE2, JE3, JE4> void select(Connection connection,
-			Consumer<? super  E > consumer,
-			Consumer<? super JE1> consumer1,
-			Consumer<? super JE2> consumer2,
-			Consumer<? super JE3> consumer3,
-			Consumer<? super JE4> consumer4) {
+		Consumer<? super  E > consumer,
+		Consumer<? super JE1> consumer1,
+		Consumer<? super JE2> consumer2,
+		Consumer<? super JE3> consumer3,
+		Consumer<? super JE4> consumer4) {
+	}
+
+	/**
+	 * 4つのテーブルを結合する SELECT SQL を生成して実行します。
+	 *
+	 * <p>
+	 * <b>columns</b> がコールされてなく、
+	 * <b>innerJoin</b>, <b>leftJoin</b>, <b>rightJoin</b> メソッドのいずれか4回より多くコールされている場合は、
+	 * 以下の文字列を columns セットに設定します。
+	 * </p>
+	 *
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;メイン・テーブルの別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル1の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル2の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル3の別名&gt;.*"</li>
+	 *   <li>"&lt;結合テーブル4の別名&gt;.*"</li>
+	 * </ul>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt;   phones = new ArrayList&lt;&gt;();
+	 * List&lt;Email&gt;   emails = new ArrayList&lt;&gt;();
+	 * List&lt;Address&gt; addresses = new ArrayList&lt;&gt;();
+	 * List&lt;Url&gt;     urls = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .innerJoin(  Phone.class, "P", "{P.contactId}={C.id}")
+	 *         .innerJoin(  Email.class, "E", "{E.contactId}={C.id}")
+	 *         .innerJoin(Address.class, "A", "{A.contactId}={C.id}")
+	 *         .innerJoin(    Url.class, "U", "{U.contactId}={C.id}")
+	 *         .connection(conn)
+	 *         <b>.&lt;Phone, Email, Address, Url&gt;select(</b>
+	 *             <b>contacts::add, phones::add, emails::add,</b>
+	 *             <b>addresses::add, urls::add)</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt;   phones = []
+	 * List&lt;Email&gt;   emails = []
+	 * List&lt;Address&gt; addresses = []
+	 * List&lt;Url&gt;     urls = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .innerJoin(Phone  , 'P', '{P.contactId}={C.id}')
+	 *         .innerJoin(Email  , 'E', '{E.contactId}={C.id}')
+	 *         .innerJoin(Address, 'A', '{A.contactId}={C.id}')
+	 *         .innerJoin(Url    , 'U', '{U.contactId}={C.id}')
+	 *         .connection(it)
+	 *         <b>.select(</b>
+	 *             <b>{contacts &lt;&lt; it}, {phones &lt;&lt; it}, {emails &lt;&lt; it},</b>
+	 *             <b>{addresses &lt;&lt; it}, {urls &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param <JE1> 結合テーブル1のエンティティの型
+	 * @param <JE2> 結合テーブル2のエンティティの型
+	 * @param <JE3> 結合テーブル3のエンティティの型
+	 * @param <JE4> 結合テーブル4のエンティティの型
+	 * @param consumer 取得した行から生成されたメイン・テーブルのエンティティのコンシューマ
+	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
+	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
+	 * @param consumer3 取得した行から生成された結合テーブル3のエンティティのコンシューマ
+	 * @param consumer4 取得した行から生成された結合テーブル4のエンティティのコンシューマ
+	 *
+	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> または <b>consumer4</b> が null の場合
+	 * @throws IllegalStateException 結合テーブル情報が4より少ない場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 */
+	public <JE1, JE2, JE3, JE4> void select(
+		Consumer<? super  E > consumer,
+		Consumer<? super JE1> consumer1,
+		Consumer<? super JE2> consumer2,
+		Consumer<? super JE3> consumer3,
+		Consumer<? super JE4> consumer4) {
 	}
 
 	/**
 	 * SELECT SQL を生成して実行します。
-	 *
-	 * <p>
 	 * 取得されない場合は、<b>Optional.empty()</b> を返します。
-	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     Contact contact = new Sql&lt;&gt;(Contact.class)
-	 *         .where("{id} = ", contactId)
-	 *         .<b>select(connection)</b>.orElse(null);
-	 * </pre></div>
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と
+	 * {@link #select()} を使用してください。
 	 *
 	 * @param connection データベース・コネクション
-	 * @return 取得した行から生成されたエンティティ (取得されない場合は <b>Optional.empty()</b>)
+	 * @return 取得した行から生成されたエンティティ、取得されない場合は <b>Optional.empty()</b>
 	 *
 	 * @throws NullPointerException <b>connection</b> が null の場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 * @throws ManyRowsException 複数行が検索された場合
 	 */
+	@Deprecated
 	public Optional<E> select(Connection connection) {
-		return Optional.empty();
+		return null;
+	}
+
+	/**
+	 * SELECT SQL を生成して実行します。
+	 * 取得されない場合は、<b>Optional.empty()</b> を返します。
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * Contact[] contact = new Contact[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     contact[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .where("{id}={}", 1)
+	 *         .connection(conn)
+	 *         <b>.select()</b>.orElse(null);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * Contact contact
+	 * Transaction.execute {
+	 *     contact = new Sql&lt;&gt;(Contact)
+	 *         .where('{id}={}', 1)
+	 *         .connection(it)
+	 *         <b>.select()</b>.orElse(null)
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @return 取得した行から生成されたエンティティ、取得されない場合は <b>Optional.empty()</b>
+	 *
+	 * @throws NullPointerException <b>connection</b> が null の場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 * @throws ManyRowsException 複数行が検索された場合
+	 */
+	public Optional<E> select() {
+		return null;
+	}
+
+	/**
+	 * SELECT SQL を生成して実行します。
+	 * 取得されない場合は、<b>Optional.empty()</b> を返します。
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * ContactName[] contactName = new ContactName[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     contactName[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .where("{id}={}", 1)
+	 *         .connection(conn)
+	 *         <b>.selectAs(ContactName.class)</b>.orElse(null);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * ContactName contactName
+	 * Transaction.execute {
+	 *     contactName = new Sql&lt;&gt;(Contact)
+	 *         .where('{id}={}', 1)
+	 *         .connection(it)
+	 *         <b>.selectAs(ContactName)</b>.orElse(null)
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param <R> 戻りのエンティティの型
+	 * @param resultClass 戻り値のエンティティの型のクラス
+	 * @return 取得した行から生成されたエンティティ、取得されない場合は <b>Optional.empty()</b>
+	 *
+	 * @throws NullPointerException <b>connection</b> が null の場合
+	 * @throws IllegalStateException カラムのない SELECT SQL が生成された場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 * @throws ManyRowsException 複数行が検索された場合
+	 *
+	 * @since 2.0.0
+	 * @see #select()
+	 */
+	public <R> Optional<R> selectAs(Class<R> resultClass) {
+		return null;
 	}
 
 	/**
 	 * SELECT COUNT(*) SQL を生成して実行します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>selectCount(connection)</b>;
-	 * </pre></div>
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と {@link #select()} を使用してください。
 	 *
 	 * @param connection データベース・コネクション
 	 * @return 実行結果行数
@@ -1388,51 +2165,190 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws NullPointerException connection が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
+	@Deprecated
 	public int selectCount(Connection connection) {
+		return 0;
+	}
+
+	/**
+	 * SELECT COUNT(*) SQL を生成して実行します。
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.selectCount()</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.selectCount()</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @return 実行結果行数
+	 *
+	 * @throws NullPointerException connection が null の場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 */
+	public int selectCount() {
 		return 0;
 	}
 
 	/**
 	 * INSERT SQL を生成して実行します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     Contact contact = new Contact();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>insert(connection, contact)</b>;
-	 * </pre></div>
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と {@link #insert(Object)} を使用してください。
 	 *
 	 * @param connection データベース・コネクション
 	 * @param entity 挿入対象のエンティティ
-	 * @return 実行結果行数
+	 * @return 挿入した行数
 	 *
 	 * @throws NullPointerException <b>connection</b> または <b>entity</b> が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
+	@Deprecated
 	public int insert(Connection connection, E entity) {
+		return 0;
+	}
+
+	/**
+	 * INSERT SQL を生成して実行します。
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.insert(new Contact(6, "Setoka", "Orange", 2001, 2, 1))</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.insert(new Contact(6, 'Setoka', 'Orange', 2001, 2, 1))</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param entity 挿入対象のエンティティ
+	 * @return 挿入した行数
+	 *
+	 * @throws NullPointerException <b>entity</b> が null の場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 *
+	 * @since 2.0.0
+	 */
+	public int insert(E entity) {
 		return 0;
 	}
 
 	/**
 	 * <b>entities</b> の各要素毎に INSERT SQL を生成して実行します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>insert(connection, contacts)</b>;
-	 * </pre></div>
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と {@link #insert(Iterable)} を使用してください。
 	 *
 	 * @param connection データベース・コネクション
  	 * @param entities 挿入対象のエンティティの <b>Iterable</b>
-	 * @return 実行結果行数
+	 * @return 挿入した行数
 	 *
 	 * @throws NullPointerException <b>connection</b>, <b>entities</b> または <b>entities</b> の要素のいずれか null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
+	@Deprecated
 	public int insert(Connection connection, Iterable<? extends E> entities) {
+		return 0;
+	}
+
+	/**
+	 * <b>entities</b> の各要素毎に INSERT SQL を生成して実行します。
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.insert(Arrays.asList(</b>
+	 *             <b>new Contact(7, "Harumi", "Orange", 2001, 2, 2),</b>
+	 *             <b>new Contact(8, "Mihaya", "Orange", 2001, 2, 3),</b>
+	 *             <b>new Contact(9, "Asumi" , "Orange", 2001, 2, 4)</b>
+	 *         <b>))</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.insert([</b>
+	 *             <b>new Contact(7, 'Harumi', 'Orange', 2001, 2, 2),</b>
+	 *             <b>new Contact(8, 'Mihaya', 'Orange', 2001, 2, 3),</b>
+	 *             <b>new Contact(9, 'Asumi' , 'Orange', 2001, 2, 4)</b>
+	 *         <b>])</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+ 	 * @param entities 挿入対象のエンティティの <b>Iterable</b>
+	 * @return 挿入した行数
+	 *
+	 * @throws NullPointerException <b>entities</b> または <b>entities</b> の要素のいずれか null の場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 */
+	public int insert(Iterable<? extends E> entities) {
+		return 0;
+	}
+
+	/**
+	 * UPDATE SQL を生成して実行します。
+	 *
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と {@link #update(Object)} を使用してください。
+	 *
+	 * @param connection データベース・コネクション
+	 * @param entity 更新対象のエンティティ
+	 * @return 更新した行数
+	 *
+	 * @throws NullPointerException <b>connection</b> または <b>entity</b> が null の場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 *
+	 * @see org.lightsleep.component.Condition#ALL
+	 */
+	@Deprecated
+	public int update(Connection connection, E entity) {
 		return 0;
 	}
 
@@ -1444,24 +2360,59 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 対象のテーブルのすべての行を更新するには、<b>WHERE</b> 句の条件に <b>Condition.ALL</b> を指定してください。
 	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     Contact contact = new Contact();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>update(connection, contact)</b>;
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.update(new Contact(6, "Setoka", "Orange", 2017, 2, 1))</b>;
+	 * });
 	 * </pre></div>
 	 *
-	 * @param connection データベース・コネクション
-	 * @param entity 更新対象のエンティティ
-	 * @return 実行結果行数
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.update(new Contact(6, 'Setoka', 'Orange', 2017, 2, 1))</b>
+	 * }
+	 * </pre></div>
 	 *
-	 * @throws NullPointerException <b>connection</b> または <b>entity</b> が null の場合
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param entity 更新対象のエンティティ
+	 * @return 更新した行数
+	 *
+	 * @throws NullPointerException <b>entity</b> が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 *
 	 * @see org.lightsleep.component.Condition#ALL
 	 */
-	public int update(Connection connection, E entity) {
+	public int update(E entity) {
+		return 0;
+	}
+
+	/**
+	 * <b>entities</b> の各要素毎に UPDATE SQL を生成して実行します。
+	 *
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と {@link #update(Iterable)} を使用してください。
+	 *
+	 * @param connection データベース・コネクション
+	 * @param entities 更新対象のエンティティの <b>Iterable</b>
+	 * @return 更新した行数
+	 *
+	 * @throws NullPointerException <b>connection</b>, <b>entityStream</b> または <b>entityStream</b> の要素のいずれかが null の場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 */
+	@Deprecated
+	public int update(Connection connection, Iterable<? extends E> entities) {
 		return 0;
 	}
 
@@ -1472,22 +2423,66 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <b>WHERE</b> 句の条件が指定されている場合でも、各エンティティ毎に <b>new EntityCondition(entity)</b> が指定されます。
 	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>update(connection, contacts)</b>;
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.update(Arrays.asList(</b>
+	 *             <b>new Contact(7, "Harumi", "Orange", 2017, 2, 2),</b>
+	 *             <b>new Contact(8, "Mihaya", "Orange", 2017, 2, 3),</b>
+	 *             <b>new Contact(9, "Asumi" , "Orange", 2017, 2, 4)</b>
+	 *         <b>))</b>;
+	 * });
 	 * </pre></div>
 	 *
-	 * @param connection データベース・コネクション
-	 * @param entities 更新対象のエンティティの <b>Iterable</b>
-	 * @return 実行結果行数
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.update([</b>
+	 *             <b>new Contact(7, 'Harumi', 'Orange', 2017, 2, 2),</b>
+	 *             <b>new Contact(8, 'Mihaya', 'Orange', 2017, 2, 3),</b>
+	 *             <b>new Contact(9, 'Asumi' , 'Orange', 2017, 2, 4)</b>
+	 *         <b>])</b>
+	 * }
+	 * </pre></div>
 	 *
-	 * @throws NullPointerException <b>connection</b>, <b>entityStream</b> または <b>entityStream</b> の要素のいずれかが null の場合
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param entities 更新対象のエンティティの <b>Iterable</b>
+	 * @return 更新した行数
+	 *
+	 * @throws NullPointerException <b>entityStream</b> または <b>entityStream</b> の要素のいずれかが null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
-	public int update(Connection connection, Iterable<? extends E> entities) {
+	public int update(Iterable<? extends E> entities) {
+		return 0;
+	}
+
+	/**
+	 * DELETE SQL を生成して実行します。
+	 *
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と {@link #delete()} を使用してください。
+	 *
+	 * @param connection データベース・コネクション
+	 * @return 削除した行数
+	 *
+	 * @throws NullPointerException <b>connection</b> が null の場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 *
+	 * @see org.lightsleep.component.Condition#ALL
+	 */
+	@Deprecated
+	public int delete(Connection connection) {
 		return 0;
 	}
 
@@ -1499,78 +2494,150 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * 対象のテーブルのすべての行を削除するには、<b>WHERE</b> 句の条件に <b>Condition.ALL</b> を指定してください。
 	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     int count = new Sql&lt;&gt;(Contact.class)
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
 	 *         .where(Condition.ALL)
-	 *         .<b>delete(connection)</b>;
+	 *         .connection(conn)
+	 *         <b>.delete()</b>;
+	 * });
 	 * </pre></div>
 	 *
-	 * @param connection データベース・コネクション
-	 * @return 実行結果行数
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .where(Condition.ALL)
+	 *         .connection(it)
+	 *         <b>.delete()</b>
+	 * }
+	 * </pre></div>
 	 *
-	 * @throws NullPointerException <b>connection</b> が null の場合
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @return 削除した行数
+	 *
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 *
 	 * @see org.lightsleep.component.Condition#ALL
 	 */
-	public int delete(Connection connection) {
+	public int delete() {
 		return 0;
 	}
 
 	/**
 	 * DELETE SQL を生成して実行します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     Contact contact = new Contact();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>delete(connection, contact)</b>;
-	 * </pre></div>
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と {@link #delete(Object)} を使用してください。
 	 *
 	 * @param connection データベース・コネクション
 	 * @param entity 削除対象のエンティティ
-	 * @return 実行結果行数
+	 * @return 削除した行数
 	 *
 	 * @throws NullPointerException <b>connection</b> または <b>entity</b> が null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
+	@Deprecated
 	public int delete(Connection connection, E entity) {
+		return 0;
+	}
+
+	/**
+	 * DELETE SQL を生成して実行します。
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.delete(new Contact(6))</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.delete(new Contact(6))</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">注意:</span>
+	 * このメソッドを使用する前にデータベース・コネクションを指定する
+	 * {@link #connection(Connection)} メソッドをコールしてください。
+	 * </p>
+	 *
+	 * @param entity 削除対象のエンティティ
+	 * @return 削除した行数
+	 *
+	 * @throws NullPointerException <b>entity</b> が null の場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 */
+	public int delete(E entity) {
 		return 0;
 	}
 
 	/**
 	 * <b>entities</b> の各要素毎に DELETE SQL を生成して実行します。
 	 *
-	 * <div class="sampleTitle"><span>使用例</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>delete(connection, contacts)</b>;
-	 * </pre></div>
+	 * @deprecated リリース 2.0.0 より。
+	 * 代わりに {@link #connection(Connection)} と {@link #delete(Iterable)} を使用してください。
 	 *
 	 * @param connection データベース・コネクション
 	 * @param entities 削除対象のエンティティの <b>Iterable</b>
-	 * @return 実行結果行数
+	 * @return 削除した行数
 	 *
 	 * @throws NullPointerException <b>connection</b>, <b>entityStream</b> または <b>entityStream</b> の要素のいずれか null の場合
 	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
+	@Deprecated
 	public int delete(Connection connection, Iterable<? extends E> entities) {
 		return 0;
 	}
 
 	/**
-	 * 生成された SQL を返します。
+	 * <b>entities</b> の各要素毎に DELETE SQL を生成して実行します。
 	 *
-	 * @return 生成された SQL
+	 * <div class="exampleTitle"><span>使用例 / Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.delete(Arrays.asList(new Contact(7), new Contact(8), new Contact(9)))</b>;
+	 * });
+	 * </pre></div>
 	 *
-	 * @since 1.8.4
+	 * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.delete([new Contact(7), new Contact(8), new Contact(9)])</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * @param entities 削除対象のエンティティの <b>Iterable</b>
+	 * @return 削除した行数
+	 *
+	 * @throws NullPointerException <b>entityStream</b> または <b>entityStream</b> の要素のいずれか null の場合
+	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
 	 */
-	public String generatedSql() {
-		return null;
+	public int delete(Iterable<? extends E> entities) {
+		return 0;
 	}
 
 	/**

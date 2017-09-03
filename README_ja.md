@@ -1,7 +1,7 @@
 Lightsleep
 ===========
 
-Lightsleep は、軽量の O/R マッピング・ライブラリで、Java 8 で利用できます。Java 7 以前には対応していません。
+Lightsleep は、軽量の O/R マッピング・ライブラリで、Java 8 以降で利用できます。Java 7 以前には対応していません。
 また Java Persistence API (JPA) との互換性はありません。
 
 #### 特徴
@@ -31,7 +31,9 @@ repositories {
 }
 
 dependencies {
-    compile 'org.lightsleep:lightsleep:1.+'
+    compile 'org.lightsleep:lightsleep:2.+' // 最新バージョンを使用する場合
+
+    compile 'org.lightsleep:lightsleep:1.+' // 以前のバージョンを使用する場合
 }
 ```
 
@@ -47,8 +49,8 @@ import org.lightsleep.entity.*;
 public class Contact {
 	@Key
 	public int    id;
-	public String familyName;
-	public String givenName;
+	public String lastName;
+	public String firstName;
 	public Date   birthday;
 
 	@Insert("0") @Update("{updateCount}+1")
@@ -72,8 +74,8 @@ import org.lightsleep.entity.*
 class Contact {
 	@Key
 	int    id
-	String familyName
-	String givenName
+	String firstName
+	String lastName
 	Date   birthday
 
 	@Insert('0') @Update('{updateCount}+1')
@@ -90,34 +92,60 @@ class Contact {
 #### Lightsleep の使用例
 
 ```java:Java
-// Java
+// Java (Lightsleep 2.x.x 使用)
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
-        .where("{familyName}={}", "Apple")
-        .or   ("{familyName}={}", "Orange")
-        .orderBy("{familyName}")
-        .orderBy("{givenName}")
-        .select(connection, contacts::add)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
+        .where("{lastName}={}", "Apple")
+        .or   ("{lastName}={}", "Orange")
+        .orderBy("{lastName}")
+        .orderBy("{firstName}")
+        .select(contacts::add)
 );
 ```
 
 ```groovy:Groovy
-// Groovy
+// Groovy (Lightsleep 2.x.x 使用)
 def contacts = []
 Transaction.execute {
+    new Sql<>(Contact).connection(it)
+        .where('{lastName}={}', 'Apple')
+        .or   ('{lastName}={}', 'Orange')
+        .orderBy('{lastName}')
+        .orderBy('{firstName}')
+        .select({contacts << it})
+}
+```
+
+```java:Java
+// Java (Lightsleep 1.x.x 使用)
+List<Contact> contacts = new ArrayList<Contact>();
+Transaction.execute(conn ->
     new Sql<>(Contact.class)
-        .where('{familyName}={}', 'Apple')
-        .or   ('{familyName}={}', 'Orange')
-        .orderBy('{familyName}')
-        .orderBy('{givenName}')
+        .where("{lastName}={}", "Apple")
+        .or   ("{lastName}={}", "Orange")
+        .orderBy("{lastName}")
+        .orderBy("{firstName}")
+        .select(conn, contacts::add)
+);
+```
+
+```groovy:Groovy
+// Groovy (Lightsleep 1.x.x 使用)
+def contacts = []
+Transaction.execute {
+    new Sql<>(Contact)
+        .where('{lastName}={}', 'Apple')
+        .or   ('{lastName}={}', 'Orange')
+        .orderBy('{lastName}')
+        .orderBy('{firstName}')
         .select(it, {contacts << it})
 }
 ```
 
 ```sql
--- 実行される SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' OR familyName='Orange' ORDER BY familyName ASC, givenName ASC
+-- 生成される SQL
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange' ORDER BY lastName ASC, firstName ASC
 ```
 
 #### ライセンス

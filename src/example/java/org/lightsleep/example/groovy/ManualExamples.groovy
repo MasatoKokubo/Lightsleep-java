@@ -1,4 +1,4 @@
-// Example.groovy
+// ManualExamples.groovy
 // (C) 2016 Masato Kokubo
 
 package org.lightsleep.example.groovy
@@ -16,8 +16,8 @@ import org.lightsleep.example.Common
 import org.lightsleep.example.groovy.entity.*
 import org.lightsleep.logger.*
 
-class Example extends Common {
-	static final Logger logger = LoggerFactory.getLogger(Example.class)
+class ManualExamples extends Common {
+	static final Logger logger = LoggerFactory.getLogger(ManualExamples)
 
 	static void main (String[] args) {
 			try {
@@ -64,16 +64,16 @@ class Example extends Common {
 
 	// README
 	private static void readme() {
-		logger.info("readme")
+		logger.info("README")
 
 		def contacts = []
 		Transaction.execute {
-		    new Sql<>(Contact.class)
-		        .where('{familyName}={}', 'Apple')
-		        .or   ('{familyName}={}', 'Orange')
-		        .orderBy('{familyName}')
-		        .orderBy('{givenName}')
-		        .select(it, {contacts << it})
+		    new Sql<>(Contact).connection(it)
+		        .where('{lastName}={}', 'Apple')
+		        .or   ('{lastName}={}', 'Orange')
+		        .orderBy('{lastName}')
+		        .orderBy('{firstName}')
+		        .select({contacts << it})
 		}
 	}
 
@@ -83,12 +83,13 @@ class Example extends Common {
 
 	    def contact = new Contact(1, "Akane", "Apple")
 
-	    // トランザクション定義例
+	    // An example of transaction
 	    Transaction.execute {
-	        // トランザクション内容開始
-	        new Sql<>(Contact.class).insert(it, contact)
+	        // Start of transaction body
+	        new Sql<>(Contact).connection(it)
+	            .insert(contact)
 
-	        // トランザクション内容終了
+	        // End of transaction body
 	    }
 	}
 
@@ -97,9 +98,9 @@ class Example extends Common {
 		logger.info("example5_1_1")
 
 		Transaction.execute {
-		    def contactOpt = new Sql<>(Contact.class)
+		    def contactOpt = new Sql<>(Contact).connection(it)
 		        .where('{id}={}', 1)
-		        .select(it)
+		        .select()
 		}
 	}
 
@@ -109,9 +110,9 @@ class Example extends Common {
 
 	    def contact = new Contact(1)
 	    Transaction.execute {
-	        def contactOpt = new Sql<>(Contact.class)
+	        def contactOpt = new Sql<>(Contact).connection(it)
 	            .where(contact)
-	            .select(it)
+	            .select()
 	    }
 	}
 
@@ -121,9 +122,9 @@ class Example extends Common {
 
 		def contacts = []
 		Transaction.execute {
-		    new Sql<>(Contact.class)
-		        .where('{familyName}={}', 'Apple')
-		        .select(it, {contacts << it})
+		    new Sql<>(Contact).connection(it)
+		        .where('{lastName}={}', 'Apple')
+		        .select({contacts << it})
 		}
 	}
 
@@ -133,12 +134,12 @@ class Example extends Common {
 
 		def contacts = []
 		Transaction.execute {
-		    new Sql<>(Contact.class, 'C')
+		    new Sql<>(Contact, 'C').connection(it)
 		        .where('EXISTS',
-		            new Sql<>(Phone.class, 'P')
+		            new Sql<>(Phone, 'P')
 		                .where('{P.contactId}={C.id}')
 		        )
-		        .select(it, {contacts << it})
+		        .select({contacts << it})
 		}
 	}
 
@@ -148,10 +149,10 @@ class Example extends Common {
 
 		def contacts = []
 		Transaction.execute {
-		    new Sql<>(Contact.class)
-		        .where('{familyName}={}', 'Apple')
-		        .and  ('{givenName}={}', 'Akane')
-		        .select(it, {contacts << it})
+		    new Sql<>(Contact).connection(it)
+		        .where('{lastName}={}', 'Apple')
+		        .and  ('{firstName}={}', 'Akane')
+		        .select({contacts << it})
 		}
 	}
 
@@ -161,10 +162,10 @@ class Example extends Common {
 
 		def contacts = []
 		Transaction.execute {
-		    new Sql<>(Contact.class)
-		        .where('{familyName}={}', 'Apple')
-		        .or   ('{familyName}={}', 'Orange')
-		        .select(it, {contacts << it})
+		    new Sql<>(Contact).connection(it)
+		        .where('{lastName}={}', 'Apple')
+		        .or   ('{lastName}={}', 'Orange')
+		        .select({contacts << it})
 		}
 	}
 
@@ -174,16 +175,16 @@ class Example extends Common {
 
 		def contacts = []
 		Transaction.execute {
-		    new Sql<>(Contact.class)
+		    new Sql<>(Contact).connection(it)
 		        .where(Condition
-		            .of ('{familyName}={}', 'Apple')
-		            .and('{givenName}={}', 'Akane')
+		            .of ('{lastName}={}', 'Apple')
+		            .and('{firstName}={}', 'Akane')
 		        )
 		        .or(Condition
-		            .of ('{familyName}={}', 'Orange')
-		            .and('{givenName}={}', 'Setoka')
+		            .of ('{lastName}={}', 'Orange')
+		            .and('{firstName}={}', 'Setoka')
 		        )
-		        .select(it, {contacts << it})
+		        .select({contacts << it})
 		}
 
 	}
@@ -194,10 +195,10 @@ class Example extends Common {
 
 		def contacts = []
 		Transaction.execute {
-		    new Sql<>(Contact.class)
-		        .where('{familyName}={}', 'Apple')
-		        .columns('familyName', 'givenName')
-		        .select(it, {contacts << it})
+		    new Sql<>(Contact).connection(it)
+		        .where('{lastName}={}', 'Apple')
+		        .columns('lastName', 'firstName')
+		        .select({contacts << it})
 		}
 	}
 
@@ -207,11 +208,11 @@ class Example extends Common {
 
 		def contacts = []
 		Transaction.execute {
-		    new Sql<>(Contact.class, 'C')
-		        .columns('familyName')
-		        .groupBy('{familyName}')
-		        .having('COUNT({familyName})>=2')
-		        .select(it, {contacts << it})
+		    new Sql<>(Contact, 'C').connection(it)
+		        .columns('lastName')
+		        .groupBy('{lastName}')
+		        .having('COUNT({lastName})>=2')
+		        .select({contacts << it})
 		}
 	}
 
@@ -221,12 +222,12 @@ class Example extends Common {
 
 		def contacts = []
 		Transaction.execute {
-		    new Sql<>(Contact.class)
-		        .orderBy('{familyName}')
-		        .orderBy('{givenName}')
+		    new Sql<>(Contact).connection(it)
+		        .orderBy('{lastName}')
+		        .orderBy('{firstName}')
 		        .orderBy('{id}')
 		        .offset(10).limit(5)
-		        .select(it, {contacts << it})
+		        .select({contacts << it})
 		}
 	}
 
@@ -236,10 +237,10 @@ class Example extends Common {
 		logger.info("example5_1_11")
 
 		Transaction.execute {
-		    def contactOpt = new Sql<>(Contact.class)
+		    def contactOpt = new Sql<>(Contact).connection(it)
 		        .where('{id}={}', 1)
 		        .forUpdate()
-		        .select(it)
+		        .select()
 		}
 	}
 
@@ -250,10 +251,10 @@ class Example extends Common {
 		def contacts = []
 		def phones = []
 		Transaction.execute {
-		    new Sql<>(Contact.class, 'C')
-		        .innerJoin(Phone.class, 'P', '{P.contactId}={C.id}')
+		    new Sql<>(Contact, 'C').connection(it)
+		        .innerJoin(Phone, 'P', '{P.contactId}={C.id}')
 		        .where('{C.id}={}', 1)
-		        .select(it, {contacts << it}, {phones << it})
+		        .select({contacts << it}, {phones << it})
 		}
 	}
 
@@ -264,10 +265,10 @@ class Example extends Common {
 		def contacts = []
 		def phones = []
 		Transaction.execute {
-		    new Sql<>(Contact.class, 'C')
-		        .leftJoin(Phone.class, 'P', '{P.contactId}={C.id}')
-		        .where('{C.familyName}={}', 'Apple')
-		        .select(it, {contacts << it}, {phones << it})
+		    new Sql<>(Contact, 'C').connection(it)
+		        .leftJoin(Phone, 'P', '{P.contactId}={C.id}')
+		        .where('{C.lastName}={}', 'Apple')
+		        .select({contacts << it}, {phones << it})
 		}
 	}
 
@@ -279,10 +280,10 @@ class Example extends Common {
 		def contacts = []
 		def phones = []
 		Transaction.execute {
-		    new Sql<>(Contact.class, 'C')
-		        .rightJoin(Phone.class, 'P', '{P.contactId}={C.id}')
+		    new Sql<>(Contact, 'C').connection(it)
+		        .rightJoin(Phone, 'P', '{P.contactId}={C.id}')
 		        .where('{P.label}={}', 'Main')
-		        .select(it, {contacts << it}, {phones << it})
+		        .select({contacts << it}, {phones << it})
 		}
 	}
 
@@ -290,11 +291,11 @@ class Example extends Common {
 	static void example5_1_15() {
 		logger.info("example5_1_15")
 
-		def rowCount = 0
+		def count = 0
 		Transaction.execute {
-		    rowCount = new Sql<>(Contact.class)
-		        .where('familyName={}', 'Apple')
-		        .selectCount(it)
+		    count = new Sql<>(Contact).connection(it)
+		        .where('{lastName}={}', 'Apple')
+		        .selectCount()
 		}
 	}
 
@@ -302,17 +303,9 @@ class Example extends Common {
 	static void example5_2_1() {
 		logger.info("example5_2_1")
 
-		def contact = new Contact()
-		contact.id = 1
-		contact.familyName = 'Apple'
-		contact.givenName = 'Akane'
-		Calendar calendar = Calendar.instance
-		calendar.set(2001, 1-1, 1, 0, 0, 0)
-		contact.birthday = new Date(calendar.timeInMillis)
-
 		Transaction.execute {
-		    new Sql<>(Contact.class)
-		        .insert(it, new Contact(1, "Akane", "Apple", 2001, 1, 1))
+		    new Sql<>(Contact).connection(it)
+		        .insert(new Contact(1, "Akane", "Apple", 2001, 1, 1))
 		}
 	}
 
@@ -321,10 +314,11 @@ class Example extends Common {
 		logger.info("example5_2_2")
 
 	    Transaction.execute {
-	        new Sql<>(Contact.class).insert(it, [
-	            new Contact(2, "Yukari", "Apple", 2001, 1, 2),
-	            new Contact(3, "Azusa", "Apple", 2001, 1, 3)
-	        ])
+	        new Sql<>(Contact).connection(it)
+		        .insert([
+		            new Contact(2, "Yukari", "Apple", 2001, 1, 2),
+		            new Contact(3, "Azusa", "Apple", 2001, 1, 3)
+		        ])
 	    }
 	}
 
@@ -332,13 +326,14 @@ class Example extends Common {
 	static void example5_3_1() {
 		logger.info("example5_3_1")
 
-		Transaction.execute {
-		    new Sql<>(Contact.class)
+		Transaction.execute {conn ->
+		    new Sql<>(Contact).connection(conn)
 		        .where('{id}={}', 1)
-		        .select(it)
+		        .select()
 		        .ifPresent {Contact contact ->
-		            contact.givenName = 'Akiyo'
-		            new Sql<>(Contact.class).update(it, contact)
+		            contact.firstName = 'Akiyo'
+		            new Sql<>(Contact).connection(conn)
+		                .update(contact)
 		        }
 		}
 	}
@@ -349,13 +344,14 @@ class Example extends Common {
 
 		Transaction.execute {
 		    def contacts = []
-		    new Sql<>(Contact.class)
-		        .where('{familyName}={}', 'Apple')
-		        .select(it, {Contact contact ->
-		            contact.familyName = 'Apfel'
+		    new Sql<>(Contact).connection(it)
+		        .where('{lastName}={}', 'Apple')
+		        .select({Contact contact ->
+		            contact.lastName = 'Apfel'
 		            contacts << contact
 		        })
-		    new Sql<>(Contact.class).update(it, contacts)
+		    new Sql<>(Contact).connection(it)
+	            .update(contacts)
 		}
 	}
 
@@ -364,12 +360,12 @@ class Example extends Common {
 		logger.info("example5_3_3")
 
 		def contact = new Contact()
-		contact.familyName = 'Pomme'
+		contact.lastName = 'Pomme'
 		Transaction.execute {
-		    new Sql<>(Contact.class)
-		        .where('{familyName}={}', 'Apfel')
-		        .columns('familyName')
-		        .update(it, contact)
+		    new Sql<>(Contact).connection(it)
+		        .where('{lastName}={}', 'Apfel')
+		        .columns('lastName')
+		        .update(contact)
 		}
 	}
 
@@ -379,10 +375,10 @@ class Example extends Common {
 
 		def contact = new Contact()
 		Transaction.execute {
-		    new Sql<>(Contact.class)
+		    new Sql<>(Contact).connection(it)
 		        .where(Condition.ALL)
 		        .columns('birthday')
-		        .update(it, contact)
+		        .update(contact)
 		}
 	}
 
@@ -390,12 +386,13 @@ class Example extends Common {
 	static void example5_4_1() {
 		logger.info("example5_4_1")
 
-		Transaction.execute {
-		    new Sql<>(Contact.class)
+		Transaction.execute {conn ->
+		    new Sql<>(Contact).connection(conn)
 		        .where('{id}={}', 1)
-		        .select(it)
+		        .select()
 		        .ifPresent {contact ->
-		            new Sql<>(Contact.class).delete(it, contact)
+		            new Sql<>(Contact).connection(conn)
+	                    .delete(contact)
 		        }
 		}
 	}
@@ -406,10 +403,11 @@ class Example extends Common {
 
 		Transaction.execute {
 		    def contacts = []
-		    new Sql<>(Contact.class)
-		        .where('{familyName}={}', 'Pomme')
-		        .select(it, {contacts << it})
-		    new Sql<>(Contact.class).delete(it, contacts)
+		    new Sql<>(Contact).connection(it)
+		        .where('{lastName}={}', 'Pomme')
+		        .select({contacts << it})
+		    new Sql<>(Contact).connection(it)
+	            .delete(contacts)
 		}
 	}
 
@@ -418,9 +416,9 @@ class Example extends Common {
 		logger.info("example5_4_3")
 
 		Transaction.execute {
-		    new Sql<>(Contact.class)
-		        .where('{familyName}={}', 'Orange')
-		        .delete(it)
+		    new Sql<>(Contact).connection(it)
+		        .where('{lastName}={}', 'Orange')
+		        .delete()
 		}
 	}
 
@@ -429,9 +427,9 @@ class Example extends Common {
 		logger.info("example5_4_4")
 
 		Transaction.execute {
-		    new Sql<>(Phone.class)
+		    new Sql<>(Phone).connection(it)
 		        .where(Condition.ALL)
-		        .delete(it)
+		        .delete()
 		}
 	}
 }

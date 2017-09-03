@@ -47,15 +47,15 @@ class StandardSpec extends Specification {
 	@Shared TIMESTAMP2 = new      Timestamp(CURRENT_MS         )
 	@Shared TIMESTAMP3 = new      Timestamp(CURRENT_MS + DAY_MS)
 
-	@Shared      DATE1_STRING = TypeConverter.convert(map,  SQL_DATE1, String.class)
-	@Shared      DATE2_STRING = TypeConverter.convert(map,  SQL_DATE2, String.class)
-	@Shared      DATE3_STRING = TypeConverter.convert(map,  SQL_DATE3, String.class)
-	@Shared      TIME1_STRING = TypeConverter.convert(map,      TIME1, String.class)
-	@Shared      TIME2_STRING = TypeConverter.convert(map,      TIME2, String.class)
-	@Shared      TIME3_STRING = TypeConverter.convert(map,      TIME3, String.class)
-	@Shared TIMESTAMP1_STRING = TypeConverter.convert(map, TIMESTAMP1, String.class)
-	@Shared TIMESTAMP2_STRING = TypeConverter.convert(map, TIMESTAMP2, String.class)
-	@Shared TIMESTAMP3_STRING = TypeConverter.convert(map, TIMESTAMP3, String.class)
+	@Shared      DATE1_STRING = TypeConverter.convert(map,  SQL_DATE1, String)
+	@Shared      DATE2_STRING = TypeConverter.convert(map,  SQL_DATE2, String)
+	@Shared      DATE3_STRING = TypeConverter.convert(map,  SQL_DATE3, String)
+	@Shared      TIME1_STRING = TypeConverter.convert(map,      TIME1, String)
+	@Shared      TIME2_STRING = TypeConverter.convert(map,      TIME2, String)
+	@Shared      TIME3_STRING = TypeConverter.convert(map,      TIME3, String)
+	@Shared TIMESTAMP1_STRING = TypeConverter.convert(map, TIMESTAMP1, String)
+	@Shared TIMESTAMP2_STRING = TypeConverter.convert(map, TIMESTAMP2, String)
+	@Shared TIMESTAMP3_STRING = TypeConverter.convert(map, TIMESTAMP3, String)
 
 	def setupSpec() {
 	/**/DebugTrace.print('   BIG_BYTE_MIN ',    BIG_BYTE_MIN )
@@ -99,14 +99,14 @@ class StandardSpec extends Specification {
 			def byteMinZeroMax = [Byte.MIN_VALUE, 0, Byte.MAX_VALUE] as byte[]
 
 		expect:
-			TypeConverter.convert(map, new TestArray([      Byte.MIN_VALUE, 0 ,       Byte.MAX_VALUE] as byte   []), byte[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([      Byte.MIN_VALUE, 0 ,       Byte.MAX_VALUE] as short  []), byte[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([      Byte.MIN_VALUE, 0 ,       Byte.MAX_VALUE] as int    []), byte[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([(long)Byte.MIN_VALUE, 0L, (long)Byte.MAX_VALUE] as long   []), byte[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([      Byte.MIN_VALUE, 0 ,       Byte.MAX_VALUE] as Byte   []), byte[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([      Byte.MIN_VALUE, 0 ,       Byte.MAX_VALUE] as Short  []), byte[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([(int )Byte.MIN_VALUE, 0 , (int )Byte.MAX_VALUE] as Integer[]), byte[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([(long)Byte.MIN_VALUE, 0L, (long)Byte.MAX_VALUE] as Long   []), byte[].class) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([      Byte.MIN_VALUE, 0 ,       Byte.MAX_VALUE] as byte   []), byte[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([      Byte.MIN_VALUE, 0 ,       Byte.MAX_VALUE] as short  []), byte[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([      Byte.MIN_VALUE, 0 ,       Byte.MAX_VALUE] as int    []), byte[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([(long)Byte.MIN_VALUE, 0L, (long)Byte.MAX_VALUE] as long   []), byte[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([      Byte.MIN_VALUE, 0 ,       Byte.MAX_VALUE] as Byte   []), byte[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([      Byte.MIN_VALUE, 0 ,       Byte.MAX_VALUE] as Short  []), byte[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([(int )Byte.MIN_VALUE, 0 , (int )Byte.MAX_VALUE] as Integer[]), byte[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([(long)Byte.MIN_VALUE, 0L, (long)Byte.MAX_VALUE] as Long   []), byte[]) == byteMinZeroMax
 	/**/DebugTrace.leave()
 	}
 
@@ -118,14 +118,14 @@ class StandardSpec extends Specification {
 			def shortMinZeroMax = [Short.MIN_VALUE, 0, Short.MAX_VALUE] as short[]
 
 		expect:
-			TypeConverter.convert(map, new TestArray([       Byte.MIN_VALUE, 0 ,        Byte.MAX_VALUE] as byte   []), short[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([      Short.MIN_VALUE, 0 ,       Short.MAX_VALUE] as short  []), short[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([      Short.MIN_VALUE, 0 ,       Short.MAX_VALUE] as int    []), short[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([(long)Short.MIN_VALUE, 0L, (long)Short.MAX_VALUE] as long   []), short[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([       Byte.MIN_VALUE, 0 ,        Byte.MAX_VALUE] as Byte   []), short[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([      Short.MIN_VALUE, 0 ,       Short.MAX_VALUE] as Short  []), short[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([(int )Short.MIN_VALUE, 0 , (int )Short.MAX_VALUE] as Integer[]), short[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([(long)Short.MIN_VALUE, 0L, (long)Short.MAX_VALUE] as Long   []), short[].class) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([       Byte.MIN_VALUE, 0 ,        Byte.MAX_VALUE] as byte   []), short[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([      Short.MIN_VALUE, 0 ,       Short.MAX_VALUE] as short  []), short[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([      Short.MIN_VALUE, 0 ,       Short.MAX_VALUE] as int    []), short[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([(long)Short.MIN_VALUE, 0L, (long)Short.MAX_VALUE] as long   []), short[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([       Byte.MIN_VALUE, 0 ,        Byte.MAX_VALUE] as Byte   []), short[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([      Short.MIN_VALUE, 0 ,       Short.MAX_VALUE] as Short  []), short[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([(int )Short.MIN_VALUE, 0 , (int )Short.MAX_VALUE] as Integer[]), short[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([(long)Short.MIN_VALUE, 0L, (long)Short.MAX_VALUE] as Long   []), short[]) == shortMinZeroMax
 	/**/DebugTrace.leave()
 	}
 
@@ -138,14 +138,14 @@ class StandardSpec extends Specification {
 			def intMinZeroMax   = [Integer.MIN_VALUE, 0, Integer.MAX_VALUE] as int[]
 
 		expect:
-			TypeConverter.convert(map, new TestArray([         Byte.MIN_VALUE, 0 ,          Byte.MAX_VALUE] as    byte[]), int[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([        Short.MIN_VALUE, 0 ,         Short.MAX_VALUE] as   short[]), int[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([      Integer.MIN_VALUE, 0 ,       Integer.MAX_VALUE] as     int[]), int[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([(long)Integer.MIN_VALUE, 0L, (long)Integer.MAX_VALUE] as    long[]), int[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([         Byte.MIN_VALUE, 0 ,          Byte.MAX_VALUE] as    Byte[]), int[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([        Short.MIN_VALUE, 0 ,         Short.MAX_VALUE] as   Short[]), int[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([      Integer.MIN_VALUE, 0 ,       Integer.MAX_VALUE] as Integer[]), int[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([(long)Integer.MIN_VALUE, 0L, (long)Integer.MAX_VALUE] as    Long[]), int[].class) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([         Byte.MIN_VALUE, 0 ,          Byte.MAX_VALUE] as    byte[]), int[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([        Short.MIN_VALUE, 0 ,         Short.MAX_VALUE] as   short[]), int[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([      Integer.MIN_VALUE, 0 ,       Integer.MAX_VALUE] as     int[]), int[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([(long)Integer.MIN_VALUE, 0L, (long)Integer.MAX_VALUE] as    long[]), int[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([         Byte.MIN_VALUE, 0 ,          Byte.MAX_VALUE] as    Byte[]), int[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([        Short.MIN_VALUE, 0 ,         Short.MAX_VALUE] as   Short[]), int[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([      Integer.MIN_VALUE, 0 ,       Integer.MAX_VALUE] as Integer[]), int[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([(long)Integer.MIN_VALUE, 0L, (long)Integer.MAX_VALUE] as    Long[]), int[]) == intMinZeroMax
 	/**/DebugTrace.leave()
 	}
 
@@ -159,14 +159,14 @@ class StandardSpec extends Specification {
 			def longMinZeroMax  = [   Long.MIN_VALUE, 0,    Long.MAX_VALUE] as long[]
 
 		expect:
-			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0 ,    Byte.MAX_VALUE] as    byte[]), long[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0 ,   Short.MAX_VALUE] as   short[]), long[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0 , Integer.MAX_VALUE] as     int[]), long[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L,    Long.MAX_VALUE] as    long[]), long[].class) == longMinZeroMax
-			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0 ,    Byte.MAX_VALUE] as    Byte[]), long[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0 ,   Short.MAX_VALUE] as   Short[]), long[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0 , Integer.MAX_VALUE] as Integer[]), long[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L,    Long.MAX_VALUE] as    Long[]), long[].class) == longMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0 ,    Byte.MAX_VALUE] as    byte[]), long[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0 ,   Short.MAX_VALUE] as   short[]), long[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0 , Integer.MAX_VALUE] as     int[]), long[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L,    Long.MAX_VALUE] as    long[]), long[]) == longMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0 ,    Byte.MAX_VALUE] as    Byte[]), long[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0 ,   Short.MAX_VALUE] as   Short[]), long[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0 , Integer.MAX_VALUE] as Integer[]), long[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L,    Long.MAX_VALUE] as    Long[]), long[]) == longMinZeroMax
 	/**/DebugTrace.leave()
 	}
 
@@ -181,18 +181,18 @@ class StandardSpec extends Specification {
 			def float123456     = [        -123.456F, 0.0F,          123.456F] as float[]
 
 		expect:
-			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as    byte[]), float[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0   ,   Short.MAX_VALUE] as   short[]), float[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0   , Integer.MAX_VALUE] as     int[]), float[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L  ,    Long.MAX_VALUE] as    long[]), float[].class) == longMinZeroMax
-			TypeConverter.convert(map, new TestArray([        -123.456F, 0.0F,          123.456F] as   float[]), float[].class) == float123456
-			TypeConverter.convert(map, new TestArray([        -123.456D, 0.0D,          123.456D] as  double[]), float[].class) == float123456
-			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as    Byte[]), float[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0   ,   Short.MAX_VALUE] as   Short[]), float[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0   , Integer.MAX_VALUE] as Integer[]), float[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L  ,    Long.MAX_VALUE] as    Long[]), float[].class) == longMinZeroMax
-			TypeConverter.convert(map, new TestArray([        -123.456F, 0.0F,          123.456F] as   Float[]), float[].class) == float123456
-			TypeConverter.convert(map, new TestArray([        -123.456D, 0.0D,          123.456D] as  Double[]), float[].class) == float123456
+			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as    byte[]), float[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0   ,   Short.MAX_VALUE] as   short[]), float[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0   , Integer.MAX_VALUE] as     int[]), float[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L  ,    Long.MAX_VALUE] as    long[]), float[]) == longMinZeroMax
+			TypeConverter.convert(map, new TestArray([        -123.456F, 0.0F,          123.456F] as   float[]), float[]) == float123456
+			TypeConverter.convert(map, new TestArray([        -123.456D, 0.0D,          123.456D] as  double[]), float[]) == float123456
+			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as    Byte[]), float[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0   ,   Short.MAX_VALUE] as   Short[]), float[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0   , Integer.MAX_VALUE] as Integer[]), float[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L  ,    Long.MAX_VALUE] as    Long[]), float[]) == longMinZeroMax
+			TypeConverter.convert(map, new TestArray([        -123.456F, 0.0F,          123.456F] as   Float[]), float[]) == float123456
+			TypeConverter.convert(map, new TestArray([        -123.456D, 0.0D,          123.456D] as  Double[]), float[]) == float123456
 
 	/**/DebugTrace.leave()
 	}
@@ -209,18 +209,18 @@ class StandardSpec extends Specification {
 			def double123456789 = [     -123.456789D, 0.0D,       123.456789D] as double[]
 
 		expect:
-			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as    byte[]), double[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0   ,   Short.MAX_VALUE] as   short[]), double[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0   , Integer.MAX_VALUE] as     int[]), double[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L  ,    Long.MAX_VALUE] as    long[]), double[].class) == longMinZeroMax
-			TypeConverter.convert(map, new TestArray([     -123.456F   , 0.0F,       123.456F   ] as   float[]), double[].class) == flost123456
-			TypeConverter.convert(map, new TestArray([     -123.456789D, 0.0D,       123.456789D] as  double[]), double[].class) == double123456789
-			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as    Byte[]), double[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0   ,   Short.MAX_VALUE] as   Short[]), double[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0   , Integer.MAX_VALUE] as Integer[]), double[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L  ,    Long.MAX_VALUE] as    Long[]), double[].class) == longMinZeroMax
-			TypeConverter.convert(map, new TestArray([     -123.456F   , 0.0F,       123.456F   ] as   Float[]), double[].class) == flost123456
-			TypeConverter.convert(map, new TestArray([     -123.456789D, 0.0D,       123.456789D] as  Double[]), double[].class) == double123456789
+			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as    byte[]), double[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0   ,   Short.MAX_VALUE] as   short[]), double[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0   , Integer.MAX_VALUE] as     int[]), double[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L  ,    Long.MAX_VALUE] as    long[]), double[]) == longMinZeroMax
+			TypeConverter.convert(map, new TestArray([     -123.456F   , 0.0F,       123.456F   ] as   float[]), double[]) == flost123456
+			TypeConverter.convert(map, new TestArray([     -123.456789D, 0.0D,       123.456789D] as  double[]), double[]) == double123456789
+			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as    Byte[]), double[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0   ,   Short.MAX_VALUE] as   Short[]), double[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0   , Integer.MAX_VALUE] as Integer[]), double[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L  ,    Long.MAX_VALUE] as    Long[]), double[]) == longMinZeroMax
+			TypeConverter.convert(map, new TestArray([     -123.456F   , 0.0F,       123.456F   ] as   Float[]), double[]) == flost123456
+			TypeConverter.convert(map, new TestArray([     -123.456789D, 0.0D,       123.456789D] as  Double[]), double[]) == double123456789
 
 	/**/DebugTrace.leave()
 	}
@@ -237,15 +237,15 @@ class StandardSpec extends Specification {
 			def big123456789    = [BIG_M_123_456789, BIG_0, BIG_123_456789] as BigDecimal[]
 
 		expect:
-			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0    ,    Byte.MAX_VALUE] as       byte[]), BigDecimal[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0    ,   Short.MAX_VALUE] as      short[]), BigDecimal[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0    , Integer.MAX_VALUE] as        int[]), BigDecimal[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L   ,    Long.MAX_VALUE] as       long[]), BigDecimal[].class) == longMinZeroMax
-			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0    ,    Byte.MAX_VALUE] as       Byte[]), BigDecimal[].class) == byteMinZeroMax
-			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0    ,   Short.MAX_VALUE] as      Short[]), BigDecimal[].class) == shortMinZeroMax
-			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0    , Integer.MAX_VALUE] as    Integer[]), BigDecimal[].class) == intMinZeroMax
-			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L   ,    Long.MAX_VALUE] as       Long[]), BigDecimal[].class) == longMinZeroMax
-			TypeConverter.convert(map, new TestArray([ BIG_M_123_456789, BIG_0,    BIG_123_456789] as BigDecimal[]), BigDecimal[].class) == big123456789
+			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0    ,    Byte.MAX_VALUE] as       byte[]), BigDecimal[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0    ,   Short.MAX_VALUE] as      short[]), BigDecimal[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0    , Integer.MAX_VALUE] as        int[]), BigDecimal[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L   ,    Long.MAX_VALUE] as       long[]), BigDecimal[]) == longMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Byte.MIN_VALUE, 0    ,    Byte.MAX_VALUE] as       Byte[]), BigDecimal[]) == byteMinZeroMax
+			TypeConverter.convert(map, new TestArray([  Short.MIN_VALUE, 0    ,   Short.MAX_VALUE] as      Short[]), BigDecimal[]) == shortMinZeroMax
+			TypeConverter.convert(map, new TestArray([Integer.MIN_VALUE, 0    , Integer.MAX_VALUE] as    Integer[]), BigDecimal[]) == intMinZeroMax
+			TypeConverter.convert(map, new TestArray([   Long.MIN_VALUE, 0L   ,    Long.MAX_VALUE] as       Long[]), BigDecimal[]) == longMinZeroMax
+			TypeConverter.convert(map, new TestArray([ BIG_M_123_456789, BIG_0,    BIG_123_456789] as BigDecimal[]), BigDecimal[]) == big123456789
 
 	/**/DebugTrace.leave()
 	}
@@ -254,9 +254,9 @@ class StandardSpec extends Specification {
 	def "StandardSpec Array -> String[]"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, new TestArray(['A'  , 'B'  , 'C'  ] as      char[]), String[].class) == ['A'  , 'B'  , 'C'  ] as String[]
-			TypeConverter.convert(map, new TestArray(['A'  , 'B'  , 'C'  ] as Character[]), String[].class) == ['A'  , 'B'  , 'C'  ] as String[]
-			TypeConverter.convert(map, new TestArray(['ABC', 'abc', '123'] as    String[]), String[].class) == ['ABC', 'abc', '123'] as String[]
+			TypeConverter.convert(map, new TestArray(['A'  , 'B'  , 'C'  ] as      char[]), String[]) == ['A'  , 'B'  , 'C'  ] as String[]
+			TypeConverter.convert(map, new TestArray(['A'  , 'B'  , 'C'  ] as Character[]), String[]) == ['A'  , 'B'  , 'C'  ] as String[]
+			TypeConverter.convert(map, new TestArray(['ABC', 'abc', '123'] as    String[]), String[]) == ['ABC', 'abc', '123'] as String[]
 	/**/DebugTrace.leave()
 	}
 
@@ -265,10 +265,10 @@ class StandardSpec extends Specification {
 	def "StandardSpec Array -> java.util.Date[]"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, new TestArray([UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]), java.util.Date[].class) == [UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]
-			TypeConverter.convert(map, new TestArray([ SQL_DATE1,  SQL_DATE2,  SQL_DATE3] as           Date[]), java.util.Date[].class) == [ SQL_DATE1,  SQL_DATE2,  SQL_DATE3] as java.util.Date[]
-			TypeConverter.convert(map, new TestArray([     TIME1,      TIME2,      TIME3] as           Time[]), java.util.Date[].class) == [     TIME1,      TIME2,      TIME3] as java.util.Date[]
-			TypeConverter.convert(map, new TestArray([TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as      Timestamp[]), java.util.Date[].class) == [TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as java.util.Date[]
+			TypeConverter.convert(map, new TestArray([UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]), java.util.Date[]) == [UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]
+			TypeConverter.convert(map, new TestArray([ SQL_DATE1,  SQL_DATE2,  SQL_DATE3] as           Date[]), java.util.Date[]) == [ SQL_DATE1,  SQL_DATE2,  SQL_DATE3] as java.util.Date[]
+			TypeConverter.convert(map, new TestArray([     TIME1,      TIME2,      TIME3] as           Time[]), java.util.Date[]) == [     TIME1,      TIME2,      TIME3] as java.util.Date[]
+			TypeConverter.convert(map, new TestArray([TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as      Timestamp[]), java.util.Date[]) == [TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as java.util.Date[]
 	/**/DebugTrace.leave()
 	}
 
@@ -279,10 +279,10 @@ class StandardSpec extends Specification {
 			def date123 = [SQL_DATE1, SQL_DATE2, SQL_DATE3] as Date[]
 
 		expect:
-			TypeConverter.convert(map, new TestArray([UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]), Date[].class) == date123
-			TypeConverter.convert(map, new TestArray([ SQL_DATE1,  SQL_DATE2,  SQL_DATE3] as           Date[]), Date[].class) == date123
-			TypeConverter.convert(map, new TestArray([     TIME1,      TIME2,      TIME3] as           Time[]), Date[].class) == date123
-			TypeConverter.convert(map, new TestArray([TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as      Timestamp[]), Date[].class) == date123
+			TypeConverter.convert(map, new TestArray([UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]), Date[]) == date123
+			TypeConverter.convert(map, new TestArray([ SQL_DATE1,  SQL_DATE2,  SQL_DATE3] as           Date[]), Date[]) == date123
+			TypeConverter.convert(map, new TestArray([     TIME1,      TIME2,      TIME3] as           Time[]), Date[]) == date123
+			TypeConverter.convert(map, new TestArray([TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as      Timestamp[]), Date[]) == date123
 	/**/DebugTrace.leave()
 	}
 
@@ -293,10 +293,10 @@ class StandardSpec extends Specification {
 			def time123 = [TIME1, TIME2, TIME3] as Time[]
 
 		expect:
-			TypeConverter.convert(map, new TestArray([UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]), Time[].class) == time123
-			TypeConverter.convert(map, new TestArray([ SQL_DATE1,  SQL_DATE2,  SQL_DATE3] as           Date[]), Time[].class) == time123
-			TypeConverter.convert(map, new TestArray([     TIME1,      TIME2,      TIME3] as           Time[]), Time[].class) == time123
-			TypeConverter.convert(map, new TestArray([TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as      Timestamp[]), Time[].class) == time123
+			TypeConverter.convert(map, new TestArray([UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]), Time[]) == time123
+			TypeConverter.convert(map, new TestArray([ SQL_DATE1,  SQL_DATE2,  SQL_DATE3] as           Date[]), Time[]) == time123
+			TypeConverter.convert(map, new TestArray([     TIME1,      TIME2,      TIME3] as           Time[]), Time[]) == time123
+			TypeConverter.convert(map, new TestArray([TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as      Timestamp[]), Time[]) == time123
 	/**/DebugTrace.leave()
 	}
 
@@ -307,10 +307,10 @@ class StandardSpec extends Specification {
 			def timestamp123 = [TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as Timestamp[]
 
 		expect:
-			TypeConverter.convert(map, new TestArray([UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]), Timestamp[].class) == timestamp123
-			TypeConverter.convert(map, new TestArray([ SQL_DATE1,  SQL_DATE2,  SQL_DATE3] as           Date[]), Timestamp[].class) == timestamp123
-			TypeConverter.convert(map, new TestArray([     TIME1,      TIME2,      TIME3] as           Time[]), Timestamp[].class) == timestamp123
-			TypeConverter.convert(map, new TestArray([TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as      Timestamp[]), Timestamp[].class) == timestamp123
+			TypeConverter.convert(map, new TestArray([UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]), Timestamp[]) == timestamp123
+			TypeConverter.convert(map, new TestArray([ SQL_DATE1,  SQL_DATE2,  SQL_DATE3] as           Date[]), Timestamp[]) == timestamp123
+			TypeConverter.convert(map, new TestArray([     TIME1,      TIME2,      TIME3] as           Time[]), Timestamp[]) == timestamp123
+			TypeConverter.convert(map, new TestArray([TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as      Timestamp[]), Timestamp[]) == timestamp123
 	/**/DebugTrace.leave()
 	}
 
@@ -320,47 +320,47 @@ class StandardSpec extends Specification {
 	def "StandardSpec -> SqlString"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, 0                       , SqlString.class).toString() == '0'
-			TypeConverter.convert(map, false                   , SqlString.class).toString() == 'FALSE'
-			TypeConverter.convert(map, true                    , SqlString.class).toString() == 'TRUE'
-			TypeConverter.convert(map, 'A' as char             , SqlString.class).toString() == "'A'"
-			TypeConverter.convert(map, 'ABC'                   , SqlString.class).toString() == "'ABC'"
-			TypeConverter.convert(map, new BigDecimal('123.45'), SqlString.class).toString() == '123.45'
-			TypeConverter.convert(map, 'ABC'                   , SqlString.class).toString() == "'ABC'"
-			TypeConverter.convert(map, UTIL_DATE1              , SqlString.class).toString() == "DATE'"      + DATE1_STRING      + "'"
-			TypeConverter.convert(map, SQL_DATE1               , SqlString.class).toString() == "DATE'"      + DATE1_STRING      + "'"
-			TypeConverter.convert(map, TIME1                   , SqlString.class).toString() == "TIME'"      + TIME1_STRING      + "'"
-			TypeConverter.convert(map, TIMESTAMP1              , SqlString.class).toString() == "TIMESTAMP'" + TIMESTAMP1_STRING + "'"
-			TypeConverter.convert(map, Size.XS                 , SqlString.class).toString() == "'XS'"
-			TypeConverter.convert(map, Size.M                  , SqlString.class).toString() == "'M'"
-			TypeConverter.convert(map, Size.XL                 , SqlString.class).toString() == "'XL'"
+			TypeConverter.convert(map, 0                       , SqlString).toString() == '0'
+			TypeConverter.convert(map, false                   , SqlString).toString() == 'FALSE'
+			TypeConverter.convert(map, true                    , SqlString).toString() == 'TRUE'
+			TypeConverter.convert(map, 'A' as char             , SqlString).toString() == "'A'"
+			TypeConverter.convert(map, 'ABC'                   , SqlString).toString() == "'ABC'"
+			TypeConverter.convert(map, new BigDecimal('123.45'), SqlString).toString() == '123.45'
+			TypeConverter.convert(map, 'ABC'                   , SqlString).toString() == "'ABC'"
+			TypeConverter.convert(map, UTIL_DATE1              , SqlString).toString() == "DATE'"      + DATE1_STRING      + "'"
+			TypeConverter.convert(map, SQL_DATE1               , SqlString).toString() == "DATE'"      + DATE1_STRING      + "'"
+			TypeConverter.convert(map, TIME1                   , SqlString).toString() == "TIME'"      + TIME1_STRING      + "'"
+			TypeConverter.convert(map, TIMESTAMP1              , SqlString).toString() == "TIMESTAMP'" + TIMESTAMP1_STRING + "'"
+			TypeConverter.convert(map, Size.XS                 , SqlString).toString() == "'XS'"
+			TypeConverter.convert(map, Size.M                  , SqlString).toString() == "'M'"
+			TypeConverter.convert(map, Size.XL                 , SqlString).toString() == "'XL'"
 
-			TypeConverter.convert(map, [true , false, true ] as boolean[], SqlString.class).toString() == 'ARRAY[TRUE,FALSE,TRUE]'
-			TypeConverter.convert(map, ['A'  , 'B'  , 'C'  ] as    char[], SqlString.class).toString() == "ARRAY['A','B','C']"
-			TypeConverter.convert(map, [0x7F , 0x80 ,  0xFF] as    byte[], SqlString.class).toString() == "X'7F80FF'"
-			TypeConverter.convert(map, [-1   ,  0   ,  1   ] as   short[], SqlString.class).toString() == 'ARRAY[-1,0,1]'
-			TypeConverter.convert(map, [-1   ,  0   ,  1   ] as     int[], SqlString.class).toString() == 'ARRAY[-1,0,1]'
-			TypeConverter.convert(map, [-1L  ,  0L  ,  1L  ] as    long[], SqlString.class).toString() == 'ARRAY[-1,0,1]'
-			TypeConverter.convert(map, [-1.5F,  0.0F,  1.5F] as   float[], SqlString.class).toString() == 'ARRAY[-1.5,0.0,1.5]'
-			TypeConverter.convert(map, [-1.5D,  0.0D,  1.5D] as  double[], SqlString.class).toString() == 'ARRAY[-1.5,0.0,1.5]'
-			TypeConverter.convert(map, ['ABC', 'abc', '123'] as  String[], SqlString.class).toString() == "ARRAY['ABC','abc','123']"
+			TypeConverter.convert(map, [true , false, true ] as boolean[], SqlString).toString() == 'ARRAY[TRUE,FALSE,TRUE]'
+			TypeConverter.convert(map, ['A'  , 'B'  , 'C'  ] as    char[], SqlString).toString() == "ARRAY['A','B','C']"
+			TypeConverter.convert(map, [0x7F , 0x80 ,  0xFF] as    byte[], SqlString).toString() == "X'7F80FF'"
+			TypeConverter.convert(map, [-1   ,  0   ,  1   ] as   short[], SqlString).toString() == 'ARRAY[-1,0,1]'
+			TypeConverter.convert(map, [-1   ,  0   ,  1   ] as     int[], SqlString).toString() == 'ARRAY[-1,0,1]'
+			TypeConverter.convert(map, [-1L  ,  0L  ,  1L  ] as    long[], SqlString).toString() == 'ARRAY[-1,0,1]'
+			TypeConverter.convert(map, [-1.5F,  0.0F,  1.5F] as   float[], SqlString).toString() == 'ARRAY[-1.5,0.0,1.5]'
+			TypeConverter.convert(map, [-1.5D,  0.0D,  1.5D] as  double[], SqlString).toString() == 'ARRAY[-1.5,0.0,1.5]'
+			TypeConverter.convert(map, ['ABC', 'abc', '123'] as  String[], SqlString).toString() == "ARRAY['ABC','abc','123']"
 
-			TypeConverter.convert(map, [new BigDecimal('-123.456'), BigDecimal.ZERO, new BigDecimal('123.456')] as BigDecimal[], SqlString.class).toString() ==
+			TypeConverter.convert(map, [new BigDecimal('-123.456'), BigDecimal.ZERO, new BigDecimal('123.456')] as BigDecimal[], SqlString).toString() ==
 				'ARRAY[-123.456,0,123.456]'
 
-			TypeConverter.convert(map, [UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[], SqlString.class).toString() ==
+			TypeConverter.convert(map, [UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[], SqlString).toString() ==
 				"ARRAY[DATE'" + DATE1_STRING + "',DATE'" + DATE2_STRING + "',DATE'" + DATE3_STRING + "']"
 
-			TypeConverter.convert(map, [SQL_DATE1, SQL_DATE2, SQL_DATE3] as Date[], SqlString.class).toString() ==
+			TypeConverter.convert(map, [SQL_DATE1, SQL_DATE2, SQL_DATE3] as Date[], SqlString).toString() ==
 				"ARRAY[DATE'" + DATE1_STRING + "',DATE'" + DATE2_STRING + "',DATE'" + DATE3_STRING + "']"
 
-			TypeConverter.convert(map, [TIME1, TIME2, TIME3] as Time[], SqlString.class).toString() ==
+			TypeConverter.convert(map, [TIME1, TIME2, TIME3] as Time[], SqlString).toString() ==
 				"ARRAY[TIME'" + TIME1_STRING + "',TIME'" + TIME2_STRING + "',TIME'" + TIME3_STRING + "']"
 
-			TypeConverter.convert(map, [TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as Timestamp[], SqlString.class).toString() ==
+			TypeConverter.convert(map, [TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as Timestamp[], SqlString).toString() ==
 				"ARRAY[TIMESTAMP'" + TIMESTAMP1_STRING + "',TIMESTAMP'" + TIMESTAMP2_STRING + "',TIMESTAMP'" + TIMESTAMP3_STRING + "']"
 
-			TypeConverter.convert(map, ['ABC', 123, false, 1.2D], SqlString.class).toString() == "('ABC',123,FALSE,1.2)"
+			TypeConverter.convert(map, ['ABC', 123, false, 1.2D], SqlString).toString() == "('ABC',123,FALSE,1.2)"
 	/**/DebugTrace.leave()
 	}
 
@@ -375,14 +375,10 @@ class StandardSpec extends Specification {
 		/**/DebugTrace.print('buff', buff)
 
 		then:
-			TypeConverter.convert(map, buff.toString(), SqlString.class).toString().startsWith("'ABCDEFGH")
+			TypeConverter.convert(map, buff.toString(), SqlString).toString().startsWith("'ABCDEFGH")
 
-		when:
-			buff.append('+')
-		/**/DebugTrace.print('buff', buff)
-
-		then:
-			TypeConverter.convert(map, buff.toString(), SqlString.class).toString() == '?'
+		when: buff.append('+')
+		then: TypeConverter.convert(map, buff.toString(), SqlString).toString() == '?'
 
 	/**/DebugTrace.leave()
 	}
@@ -397,8 +393,7 @@ class StandardSpec extends Specification {
 				bytes[index] = (byte)(index - 128)
 		/**/DebugTrace.print('bytes', bytes)
 
-		then:
-			TypeConverter.convert(map, bytes, SqlString.class).toString().startsWith("X'8081828384858687")
+		then: TypeConverter.convert(map, bytes, SqlString).toString().startsWith("X'8081828384858687")
 
 		when:
 			bytes = new byte[Standard.maxBinaryLiteralLength + 1]
@@ -406,8 +401,7 @@ class StandardSpec extends Specification {
 				bytes[index] = (byte)(index - 128)
 		/**/DebugTrace.print('bytes', bytes)
 
-		then:
-			TypeConverter.convert(map, bytes, SqlString.class).toString() == '?'
+		then: TypeConverter.convert(map, bytes, SqlString).toString() == '?'
 	/**/DebugTrace.leave()
 	}
 
@@ -420,7 +414,7 @@ class StandardSpec extends Specification {
 			for (def index = 0; index < Standard.maxStringLiteralLength; ++index)
 				buff.append((char)(('A' as char) + (index % 26)))
 			def strings = ['A', buff.toString(), 'B', buff.toString()] as String[]
-			def string = TypeConverter.convert(map, strings, SqlString.class).toString()
+			def string = TypeConverter.convert(map, strings, SqlString).toString()
 		/**/DebugTrace.print('strings', strings)
 		/**/DebugTrace.print('string', string)
 
@@ -431,12 +425,11 @@ class StandardSpec extends Specification {
 		when:
 			buff.append('+')
 			strings = ['A', buff.toString(), 'B', buff.toString()] as String[]
-			string = TypeConverter.convert(map, strings, SqlString.class).toString()
+			string = TypeConverter.convert(map, strings, SqlString).toString()
 		/**/DebugTrace.print('strings', strings)
 		/**/DebugTrace.print('string', string)
 
-		then:
-			string == "ARRAY['A',?,'B',?]"
+		then: string == "ARRAY['A',?,'B',?]"
 
 	/**/DebugTrace.leave()
 	}
@@ -450,7 +443,7 @@ class StandardSpec extends Specification {
 			for (def index = 0; index < bytes.length; ++index)
 				bytes[index] = (byte)(index - 128)
 			def bytesArray = [[(byte)0x80, (byte)0x7F] as byte[], bytes, [(byte)0x81, (byte)0x7E] as byte[], bytes] as byte[][]
-			def string = TypeConverter.convert(map, bytesArray, SqlString.class).toString()
+			def string = TypeConverter.convert(map, bytesArray, SqlString).toString()
 		/**/DebugTrace.print('bytesArray', bytesArray)
 		/**/DebugTrace.print('string', string)
 
@@ -463,12 +456,11 @@ class StandardSpec extends Specification {
 			for (def index = 0; index < bytes.length; ++index)
 				bytes[index] = (byte)(index - 128)
 			bytesArray = [[(byte)0x80, (byte)0x7F] as byte[], bytes, [(byte)0x81, (byte)0x7E] as byte[], bytes] as byte[][]
-			string = TypeConverter.convert(map, bytesArray, SqlString.class).toString()
+			string = TypeConverter.convert(map, bytesArray, SqlString).toString()
 		/**/DebugTrace.print('bytesArray', bytesArray)
 		/**/DebugTrace.print('string', string)
 
-		then:
-			string == "ARRAY[X'807F',?,X'817E',?]"
+		then: string == "ARRAY[X'807F',?,X'817E',?]"
 
 	/**/DebugTrace.leave()
 	}

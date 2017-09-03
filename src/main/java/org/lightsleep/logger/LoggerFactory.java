@@ -15,8 +15,8 @@ import org.lightsleep.helper.Resource;
  * Specify either of <b>Jdk</b>, <b>Log4j</b>, <b>Log4j2</b>, <b>SLF4J</b> or <b>StdOut</b>
  * as the logger class.<br>
  * 
- * <div class="sampleTitle"><span>Example of lightsleep.properties</span></div>
- * <div class="sampleCode"><pre>
+ * <div class="exampleTitle"><span>Example of lightsleep.properties</span></div>
+ * <div class="exampleCode"><pre>
  * logger = Log4j
  * </pre></div>
  * 

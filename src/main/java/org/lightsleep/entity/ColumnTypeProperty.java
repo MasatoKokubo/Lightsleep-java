@@ -6,20 +6,27 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * Indicates the column type associated with the field.<br>
+ * Indicates the column type related to the field defined in superclass.<br>
+ *
+ * <p>
  * Specifies the field by <b>property</b>.
+ * </p>
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
- * <div class="sampleCode"><pre>
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
  * <b>{@literal @}ColumnTypeProperty(property="birthday" type=Long.class)</b>
- * public class Contact {
- *
- *   public Date birthday;
+ *  public class Person extends PersonBase {
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * INSERT INTO Contact (..., <b>birthday</b>, ...) VALUES (..., <b>1486210201099</b>, ...)
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}ColumnTypeProperty(property='birthday' type=Long)</b>
+ *  class Person extends PersonBase {
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Generated SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * INSERT INTO ... (..., <b>birthday</b>, ...) VALUES (..., <b>1486210201099</b>, ...)
  * </pre></div>
  * 
  * @since 1.8.0
@@ -32,7 +39,7 @@ import java.lang.annotation.*;
 @Repeatable(ColumnTypeProperties.class)
 @Target({ElementType.TYPE})
 public @interface ColumnTypeProperty {
-	/** @return the property name of the specified field */
+	/** @return the property name that specifies the field */
 	String property();
 
 	/** @return the column java type */

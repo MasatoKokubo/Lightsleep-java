@@ -62,12 +62,10 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 * @since 1.5.0
 	 */
 	public AbstractConnectionSupplier(Consumer<Properties> modifier) {
-		Objects.requireNonNull(modifier, "modifier");
-
 		properties.remove(Logger.class.getSimpleName());
 		properties.remove(Database.class.getSimpleName());
 		properties.remove(ConnectionSupplier.class.getSimpleName());
-		modifier.accept(properties);
+		Objects.requireNonNull(modifier, "modifier").accept(properties);
 
 		logger.debug(() -> getClass().getSimpleName() + ".<init>: properties: " + this.properties);
 	}

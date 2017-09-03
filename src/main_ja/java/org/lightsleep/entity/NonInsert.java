@@ -8,10 +8,20 @@ import java.lang.annotation.*;
 /**
  * フィールドに関連するカラムが INSERT SQL で使用されない事を示します。
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
- *  {@literal @}Key<b>{@literal @}NonInsert</b>public int id;
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonInsert</b>
+ *   public Timestamp createdTime;
+ *  <b>{@literal @}NonInsert</b>
+ *   public Timestamp updatedTime;
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonInsert</b>
+ *   Timestamp createdTime
+ *  <b>{@literal @}NonInsert</b>
+ *   Timestamp updatedTime
  * </pre></div>
  *
  * @since 1.0.0

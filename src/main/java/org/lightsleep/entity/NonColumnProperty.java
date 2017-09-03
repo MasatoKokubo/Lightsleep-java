@@ -6,17 +6,26 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * Indicates that the field not related to any column.<br>
- * Specifies the field by <b>value</b>.
+ * Indicates that the field defined in superclass is not related to any column.<br>
  *
- * <div class="sampleTitle"><span>Example</span></div>
- * <div class="sampleCode"><pre>
- * <b>{@literal @}NonColumnProperty("phones")</b>
- * <b>{@literal @}NonColumnProperty("addresses")</b>
- * public class Contact {
+ * <p>
+ * Specifies the field by <b>property</b>.
+ * </p>
  *
- *   public List&lt;Phone&gt; phones;
- *   public List&lt;Address&gt; addresses;
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}NonColumnProperty(property="phones")</b>
+ * <b>{@literal @}NonColumnProperty(property="addresses")</b>
+ *  public class PersonComposite {
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}NonColumnProperties([</b>
+ *   <b>{@literal @}NonColumnProperty(property='phones'),</b>
+ *   <b>{@literal @}NonColumnProperty(property='addresses')</b>
+ *  <b>])</b>
+ *  class PersonComposite extends PersonCompositeBase {
  * </pre></div>
  *
  * @since 1.3.0
@@ -29,6 +38,15 @@ import java.lang.annotation.*;
 @Repeatable(NonColumnProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonColumnProperty {
-	/** @return the property name of the specified field */
-	String value();
+	/**
+	 * @return the property name that specifies the field
+	 * @since 2.0.0
+	 */
+// 2.0.0
+//	String value();
+	String property();
+
+	/** @return true if the field not related to any column, false otherwise */
+	boolean value() default true;
+////
 }

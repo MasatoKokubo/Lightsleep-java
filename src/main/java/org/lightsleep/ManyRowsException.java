@@ -4,10 +4,9 @@
 package org.lightsleep;
 
 /**
- * Throws this exception when more than one row is retrieved in methods to get a single row.
+ * This exception is thrown if more than one row is retrieved in methods to get a single row.
  *
  * @since 1.0
- *
  * @author Masato Kokubo
  */
 @SuppressWarnings("serial")

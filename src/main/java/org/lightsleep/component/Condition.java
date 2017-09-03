@@ -38,7 +38,7 @@ public interface Condition extends SqlComponent {
 	/**
 	 * Returns a new entity condition.
 	 *
-	 * @param <E> the type of the entity
+	 * @param <K> the type of the entity
 	 * @param entity the entity of the entity condition
 	 * @return a new entity condition
 	 *
@@ -46,11 +46,11 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @see EntityCondition#EntityCondition(Object)
 	 */
-	static <E> Condition of(E entity) {
+	static <K> Condition of(K entity) {
 		if (entity instanceof String)
 			return new Expression((String)entity);
 
-		return new EntityCondition<E>(entity);
+		return new EntityCondition<K>(entity);
 	}
 
 	/**

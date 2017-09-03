@@ -3,7 +3,7 @@
 -- for DB2
 
 -- Contact
-DROP TABLE IF EXISTS Contact;
+DROP TABLE Contact;
 CREATE TABLE Contact (
 	id          INTEGER         NOT NULL,
 	firstName   VARGRAPHIC( 20)     NULL,
@@ -11,15 +11,15 @@ CREATE TABLE Contact (
 	birthday    DATE                NULL,
 	birthday2   BIGINT              NULL,
 
-	updateCount INTEGER         NOT NULL,
-	createdTime TIMESTAMP       NOT NULL,
-	updatedTime TIMESTAMP       NOT NULL,
+	updateCount INTEGER         NOT NULL DEFAULT 0,
+	createdTime TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updatedTime TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(id)
 );
 
 -- Phone
-DROP TABLE IF EXISTS Phone;
+DROP TABLE Phone;
 CREATE TABLE Phone (
 	contactId   INTEGER         NOT NULL,
 	childIndex  SMALLINT        NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE Phone (
 );
 
 -- E-Mail
-DROP TABLE IF EXISTS Email;
+DROP TABLE Email;
 CREATE TABLE Email (
 	contactId   INTEGER         NOT NULL,
 	childIndex  SMALLINT        NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE Email (
 );
 
 -- URL
-DROP TABLE IF EXISTS Url;
+DROP TABLE Url;
 CREATE TABLE Url (
 	contactId   INTEGER         NOT NULL,
 	childIndex  SMALLINT        NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE Url (
 );
 
 -- Address
-DROP TABLE IF EXISTS Address;
+DROP TABLE Address;
 CREATE TABLE Address (
 	contactId   INTEGER         NOT NULL,
 	childIndex  SMALLINT        NOT NULL,

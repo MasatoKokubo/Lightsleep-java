@@ -21,7 +21,6 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 
-import org.lightsleep.Sql;
 import org.lightsleep.logger.LoggerFactory;
 
 /**
@@ -75,13 +74,16 @@ public class Resource {
 	};
 
 	/** The global <b>Resource</b> */
-	public static final Resource globalResource;
-	static {
-		Resource resource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
-		if (resource == null)
-			resource = new Resource(Sql.class.getPackage().getName() + ".lightsleep");
-		globalResource = resource;
-	}
+// 2.0.0
+//	public static final Resource globalResource;
+//	static {
+//		Resource resource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
+//		if (resource == null)
+//			resource = new Resource(Sql.class.getPackage().getName() + ".lightsleep");
+//		globalResource = resource;
+//	}
+	public static final Resource globalResource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
+////
 
 	// The base name
 	private final String baseName;
@@ -115,7 +117,7 @@ public class Resource {
 	}
 
 	/**
-	 * Returns a string associated with <b>keypropertyKeyb>.
+	 * Returns a string related to <b>propertyKey<b>.
 	 *
 	 * @param propertyKey the key of resource property
 	 * @return the string value of resource property

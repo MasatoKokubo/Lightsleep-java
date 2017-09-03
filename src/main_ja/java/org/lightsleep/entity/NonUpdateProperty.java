@@ -6,16 +6,22 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * フィールドに関連するカラムが UPDATE SQL で使用されない事を示します。<br>
- * 対象のフィールドは、<b>value</b> で指定します。
+ * スーパークラスで定義されたフィールドに関連するカラムが UPDATE SQL で使用されない事を示します。
+ * 
+ * <p>
+ * 対象のフィールドは、<b>property</b> で指定します。
+ * </p>
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * {@literal @}InsertProperty(property="created", expression="CURRENT_TIMESTAMP")
- * <b>{@literal @}NonUpdateProperty("created")</b>
- * public class Contact {
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}NonUpdateProperty(property="createdTime")</b>
+ *  public class Person extends PaersonBase {
+ * </pre></div>
  *
- *   public Timestamp created;
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}NonUpdateProperty(property='createdTime')</b>
+ *  class Person extends PaersonBase {
  * </pre></div>
  *
  * @since 1.3.0
@@ -28,6 +34,12 @@ import java.lang.annotation.*;
 @Repeatable(NonUpdateProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonUpdateProperty {
-	/** @return 指定対象のフィールドのプロパティ名 */
+	/**
+	 * @return フィールドを指定するプロパティ名
+	 * @since 2.0.0
+	 */
+	String property();
+
+	/** @return フィールドに関連するカラムが UPDATE SQL で使用されない true、そうでなければ false */
 	String value();
 }

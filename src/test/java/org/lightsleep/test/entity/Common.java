@@ -35,8 +35,8 @@ public abstract class Common implements PreInsert {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int preInsert(Connection connection) {
-		id = Numbering.getNewId(connection, getClass());
+	public int preInsert(Connection conn) {
+		id = Numbering.getNewId(conn, getClass());
 		return 0;
 	}
 }

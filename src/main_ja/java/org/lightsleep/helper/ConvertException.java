@@ -12,13 +12,13 @@ package org.lightsleep.helper;
 @SuppressWarnings("serial")
 public class ConvertException extends RuntimeException {
 	/**
-	 * <b>ConvertException</b> を構築します。
+	 * 新規 <b>ConvertException</b> を構築します。
 	 */
 	public ConvertException() {
 	}
 
 	/**
-	 * <b>ConvertException</b> を構築します。
+	 * 指定の詳細メッセージで新規 <b>ConvertException</b> を構築します。
 	 *
 	 * @param message 詳細メッセージ
 	 */
@@ -26,7 +26,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * <b>ConvertException</b> を構築します。
+	 * 指定の詳細メッセージと原因で新規 <b>ConvertException</b> を構築します。
 	 *
 	 * @param message 詳細メッセージ
 	 * @param cause 原因 (null 可)
@@ -35,7 +35,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * <b>ConvertException</b> を構築します。
+	 * 指定の原因で新規 <b>ConvertException</b> を構築します。
 	 *
 	 * @param cause 原因 (null 可)
 	 */
@@ -43,7 +43,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * <b>ConvertException</b> を構築します。
+	 * 新規 <b>ConvertException</b> を構築します。
 	 *
 	 * @param sourceType 変換元型
 	 * @param source 変換元オブジェクト (null 可)
@@ -53,7 +53,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * <b>ConvertException</b> を構築します。
+	 * 新規 <b>ConvertException</b> を構築します。
 	 *
 	 * @param sourceType 変換元型
 	 * @param source 変換元オブジェクト (null 可)
@@ -64,7 +64,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * ConvertException を構築します。
+	 * 新規 <b>ConvertException</b> を構築します。
 	 *
 	 * @param sourceType 変換元型
 	 * @param source 変換元オブジェクト (null 可)

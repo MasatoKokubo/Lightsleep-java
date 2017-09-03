@@ -28,7 +28,7 @@ class VariousTypeSpce extends Specification {
 	@Shared connectionSupplier
 
 	def setupSpec() {
-		connectionSupplier = ConnectionSpec.getConnectionSupplier(Jdbc.class)
+		connectionSupplier = ConnectionSpec.getConnectionSupplier(Jdbc)
 	}
 
 	def "VariousTypeSpce various types"() {
@@ -130,14 +130,13 @@ class VariousTypeSpce extends Specification {
 			}
 
 		when:
-		/**/DebugTrace.print('various types: insertion value', various1)
 			Transaction.execute(connectionSupplier) {
 				if (various1 instanceof Various.PostgreSQL) {
-					new Sql<>(Various.PostgreSQL.class).delete(it, various1 as Various.PostgreSQL)
-					new Sql<>(Various.PostgreSQL.class).insert(it, various1 as Various.PostgreSQL)
+					new Sql<>(Various.PostgreSQL).delete(it, various1 as Various.PostgreSQL)
+					new Sql<>(Various.PostgreSQL).insert(it, various1 as Various.PostgreSQL)
 				} else {
-					new Sql<>(Various.class).delete(it, various1)
-					new Sql<>(Various.class).insert(it, various1)
+					new Sql<>(Various).delete(it, various1)
+					new Sql<>(Various).insert(it, various1)
 				}
 			}
 
@@ -147,7 +146,6 @@ class VariousTypeSpce extends Specification {
 					.where('{id}={}', various1.id)
 					.select(it).orElseThrow({new NotFoundException()})
 			}
-		/**/DebugTrace.print('various types: obtained value', various2)
 
 		then:
 			various2.id                == various1.id
@@ -243,17 +241,14 @@ class VariousTypeSpce extends Specification {
 			various1.decimalValue     = 1_234_567_890
 
 		when:
-		/**/DebugTrace.print('number types: insertion value', various1)
 			VariousInteger various2
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(VariousInteger.class).delete(it, various1)
-				new Sql<>(VariousInteger.class).insert(it, various1)
-				various2 = new Sql<>(VariousInteger.class)
+				new Sql<>(VariousInteger).delete(it, various1)
+				new Sql<>(VariousInteger).insert(it, various1)
+				various2 = new Sql<>(VariousInteger)
 					.where(various1)
 					.select(it).orElseThrow({new NotFoundException()})
 			}
-
-		/**/DebugTrace.print('number types: obtained value', various2)
 
 		then:
 			various2.id               == various1.id
@@ -309,16 +304,14 @@ class VariousTypeSpce extends Specification {
 			various1.textValue        = "0123456789_\b\t\n\f\r'\\"
 
 		when:
-		/**/DebugTrace.print('string type: insertion value', various1)
 			VariousString various2
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(VariousString.class).delete(it, various1)
-				new Sql<>(VariousString.class).insert(it, various1)
-				various2 = new Sql<>(VariousString.class)
+				new Sql<>(VariousString).delete(it, various1)
+				new Sql<>(VariousString).insert(it, various1)
+				various2 = new Sql<>(VariousString)
 					.where(various1)
 					.select(it).orElseThrow({throw new NotFoundException()})
 			}
-		/**/DebugTrace.print('string type: obtained value', various2)
 
 		then:
 			various2.id               == various1.id

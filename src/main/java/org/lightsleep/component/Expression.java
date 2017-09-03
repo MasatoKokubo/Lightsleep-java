@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.lightsleep.Sql;
 import org.lightsleep.helper.ColumnInfo;
 import org.lightsleep.helper.EntityInfo;
+import org.lightsleep.helper.MissingPropertyException;
 import org.lightsleep.helper.Resource;
 import org.lightsleep.helper.SqlEntityInfo;
 
@@ -25,10 +26,10 @@ import org.lightsleep.helper.SqlEntityInfo;
 public class Expression implements Condition {
 	// Class resources
 	private static final Resource resource = new Resource(Expression.class);
-	private static final String messageLessArguments         = resource.getString("messageLessArguments");
-	private static final String messageMoreArguments         = resource.getString("messageMoreArguments");
-	private static final String messagePropertyIsNotFound    = resource.getString("messagePropertyIsNotFound");
-	private static final String messagePropertiesAreNotFound = resource.getString("messagePropertiesAreNotFound");
+	private static final String messageLessArguments     = resource.getString("messageLessArguments");
+	private static final String messageMoreArguments     = resource.getString("messageMoreArguments");
+	private static final String messageMissingProperty   = resource.getString("messageMissingProperty");
+	private static final String messageMissingProperties = resource.getString("messageMissingProperties");
 
 	/** The empty expression */
 	public static final Expression EMPTY = new Expression("");
@@ -109,7 +110,8 @@ public class Expression implements Condition {
 	 *   </tr>
 	 * </table>
 	 *
-	 * @throws IllegalArgumentException if the expression arguments are less or more than the placements
+	 * @throws MissingArgumentsException if the number of arguments does not match the number of placements in the expression
+	 * @throws MissingPropertyException if a property that does not exist in the expression is referenced
 	 */
 	@Override
 	public <E> String toString(Sql<E> sql, List<Object> parameters) {
@@ -161,7 +163,10 @@ public class Expression implements Condition {
 							// Replaces an argument
 							if (argIndex >= arguments.length) {
 								// Argument shortage
-								throw new IllegalArgumentException(MessageFormat.format(
+							// 2.0.0
+							//	throw new IllegalArgumentException(MessageFormat.format(
+								throw new MissingArgumentsException(MessageFormat.format(
+							////
 									messageLessArguments, content, arguments.length));
 							}
 							value = arguments[argIndex++];
@@ -204,7 +209,10 @@ public class Expression implements Condition {
 		}
 
 		if (argIndex < arguments.length)
-			throw new IllegalArgumentException(MessageFormat.format(
+		// 2.0.0
+		//	throw new IllegalArgumentException(MessageFormat.format(
+			throw new MissingArgumentsException(MessageFormat.format(
+		////
 				messageMoreArguments, content, arguments.length));
 
 		return buff.toString();
@@ -251,9 +259,17 @@ public class Expression implements Condition {
 		}
 
 		propertyNames = propertyNames.stream().map(name -> '"' + name + '"').collect(Collectors.toList());
-		throw new IllegalArgumentException(MessageFormat.format(
-			propertyNames.size() == 1 ? messagePropertyIsNotFound : messagePropertiesAreNotFound,
-			entityInfo.entityClass().getName(), String.join(", ", propertyNames)));
+	// 2.0.0
+	//	throw new IllegalArgumentException(MessageFormat.format(
+	//		propertyNames.size() == 1 ? messagePropertyIsNotFound : messagePropertiesAreNotFound,
+	//		entityInfo.entityClass().getName(), String.join(", ", propertyNames)));
+		throw new MissingPropertyException(propertyNames.size() == 1
+			? MessageFormat.format(messageMissingProperty,
+				entityInfo.entityClass().getName(), propertyNames.get(0))
+			: MessageFormat.format(messageMissingProperties,
+				entityInfo.entityClass().getName(), '[' + String.join(", ", propertyNames) + ']')
+		);
+	////
 	}
 
 	/**

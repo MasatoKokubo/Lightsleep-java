@@ -82,11 +82,8 @@ class InfosSpec extends Specification {
 	def "InfosSpec 1 EntityInfo 1 exception"() {
 	/**/DebugTrace.enter()
 
-		when:
-			new EntityInfo<>(null)
-
-		then:
-			thrown NullPointerException
+		when: new EntityInfo<>(null)
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -95,11 +92,11 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def entity1Info = new EntityInfo<>(Entity1.class)
-			def entity2Info = new EntityInfo<>(Entity2.class)
+			def entity1Info = new EntityInfo<>(Entity1)
+			def entity2Info = new EntityInfo<>(Entity2)
 
 		then:
-			entity1Info.entityClass   () == Entity1.class
+			entity1Info.entityClass   () == Entity1
 			entity1Info.accessor      () != null
 			entity1Info.tableName     () == 'Entity1a'
 			entity2Info.tableName     () == 'Entity2'
@@ -113,9 +110,9 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			EntityInfo<Entity1> entity1Info  = new EntityInfo<>(Entity1.class)
-			EntityInfo<Entity1> entity1Info2 = new EntityInfo<>(Entity1.class)
-			EntityInfo<Entity2> entity2Info  = new EntityInfo<>(Entity2.class)
+			EntityInfo<Entity1> entity1Info  = new EntityInfo<>(Entity1)
+			EntityInfo<Entity1> entity1Info2 = new EntityInfo<>(Entity1)
+			EntityInfo<Entity2> entity2Info  = new EntityInfo<>(Entity2)
 
 		then:
 			entity1Info.getColumnInfo('value1').entityInfo  () == entity1Info
@@ -165,11 +162,10 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def entity1Info = new EntityInfo<>(Entity1.class)
+			def entity1Info = new EntityInfo<>(Entity1)
 			new ColumnInfo(null, null, null, null, false, null, null, null)
 
-		then:
-			thrown NullPointerException
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -178,11 +174,10 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def entity1Info = new EntityInfo<>(Entity1.class)
+			def entity1Info = new EntityInfo<>(Entity1)
 			new ColumnInfo(entity1Info, null, null, null, false, null, null, null)
 
-		then:
-			thrown NullPointerException
+		then: thrown NullPointerException
 	/**/DebugTrace.leave()
 	}
 
@@ -190,11 +185,10 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def entity1Info = new EntityInfo<>(Entity1.class)
+			def entity1Info = new EntityInfo<>(Entity1)
 			new ColumnInfo(entity1Info, 'value1', null, null, false, null, null, null)
 
-		then:
-			thrown NullPointerException
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -204,7 +198,7 @@ class InfosSpec extends Specification {
 
 		when:
 			List<String> columnNames = []
-			new Sql<>(Entity1.class, 'E')
+			new Sql<>(Entity1, 'E')
 				.sqlColumnInfoStream()
 				.each {SqlColumnInfo sqlColumnInfo ->
 					assert sqlColumnInfo.tableAlias() == 'E'
@@ -231,7 +225,7 @@ class InfosSpec extends Specification {
 
 		when:
 			List<String> columnNames = []
-			new Sql<>(Entity1.class, 'E')
+			new Sql<>(Entity1, 'E')
 				.selectedJoinSqlColumnInfoStream()
 				.each {SqlColumnInfo sqlColumnInfo ->
 					assert sqlColumnInfo.tableAlias() == 'E'
@@ -258,7 +252,7 @@ class InfosSpec extends Specification {
 
 		when:
 			List<String> columnNames = []
-			new Sql<>(Entity1.class, 'E')
+			new Sql<>(Entity1, 'E')
 				.columns('E.value6', 'E.value7', 'value7', 'E.value8')
 				.selectedJoinSqlColumnInfoStream()
 				.each {SqlColumnInfo sqlColumnInfo ->
@@ -267,8 +261,7 @@ class InfosSpec extends Specification {
 				}
 		/**/DebugTrace.print('columnNames', columnNames)
 
-		then:
-			columnNames == ['value6', 'value7']
+		then: columnNames == ['value6', 'value7']
 
 
 	/**/DebugTrace.leave()
@@ -279,7 +272,7 @@ class InfosSpec extends Specification {
 
 		when:
 			List<String> columnNames = []
-			new Sql<>(Entity1.class)
+			new Sql<>(Entity1)
 				.columns('*')
 				.selectedJoinSqlColumnInfoStream()
 				.each {SqlColumnInfo sqlColumnInfo ->
@@ -307,15 +300,15 @@ class InfosSpec extends Specification {
 
 		when:
 			List<String> columnNames = []
-			new Sql<>(Entity1.class, 'E1')
+			new Sql<>(Entity1, 'E1')
 
-				.innerJoin(Entity2.class, 'E2',
+				.innerJoin(Entity2, 'E2',
 					Condition.of('{E2.value1} = {E1.value1}').and('{E2.value2} = {E1.value2}'))
 
-				.leftJoin(Entity1.class, 'E1_2',
+				.leftJoin(Entity1, 'E1_2',
 					Condition.of('{E1_2.value1} = {E1.value1}').and('{E1_2.value2} = {E1.value2}'))
 
-				.rightJoin(Entity2.class, 'E2_2',
+				.rightJoin(Entity2, 'E2_2',
 					Condition.of('{E2_2.value1} = {E1.value1}').and('{E2_2.value2} = {E1.value2}'))
 
 				.columns('value1', 'value2', 'value3', 'E2_2.value7')
@@ -365,11 +358,10 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def entity1Info = new EntityInfo<>(Entity1.class)
+			def entity1Info = new EntityInfo<>(Entity1)
 			new JoinInfo<>(null, null, null, null)
 
-		then:
-			thrown NullPointerException
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -377,11 +369,8 @@ class InfosSpec extends Specification {
 	def "InfosSpec 3 JoinInfo 2 exception"() {
 	/**/DebugTrace.enter()
 
-		when:
-			new JoinInfo<>(JoinInfo.JoinType.INNER, null, null, null)
-
-		then:
-			thrown NullPointerException
+		when: new JoinInfo<>(JoinInfo.JoinType.INNER, null, null, null)
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -390,11 +379,10 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def entity1Info = new EntityInfo<>(Entity1.class)
+			def entity1Info = new EntityInfo<>(Entity1)
 			new JoinInfo<>(JoinInfo.JoinType.LEFT, entity1Info, null, null)
 
-		then:
-			thrown NullPointerException
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -403,7 +391,7 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def entity1Info = new EntityInfo<>(Entity1.class)
+			def entity1Info = new EntityInfo<>(Entity1)
 			new JoinInfo<>(JoinInfo.JoinType.RIGHT, entity1Info, '', null)
 
 		then:
@@ -416,13 +404,13 @@ class InfosSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def entity1Info = new EntityInfo<>(Entity1.class)
+			def entity1Info = new EntityInfo<>(Entity1)
 			def joinInfo = new JoinInfo<>(JoinInfo.JoinType.LEFT, entity1Info, 'E', new Expression('a'))
 
 		then:
 			joinInfo.joinType() == JoinInfo.JoinType.LEFT
 			joinInfo.joinType().sql() == ' LEFT OUTER JOIN '
-			joinInfo.entityInfo().entityClass() == Entity1.class
+			joinInfo.entityInfo().entityClass() == Entity1
 			joinInfo.tableAlias() == 'E'
 			joinInfo.entity() == null
 			((Expression)joinInfo.on()).content() == 'a'

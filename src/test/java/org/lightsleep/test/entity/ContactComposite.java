@@ -31,33 +31,33 @@ public class ContactComposite extends Contact implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void postSelect(Connection connection) {
-		// Selects and gets the address
+	public void postSelect(Connection conn) {
+		// Select and get the address
 		if (addressId != 0)
-			address = new Sql<>(Address.class)
-				.where("{id} = {}", addressId)
-				.select(connection).orElse(null);
+			address = new Sql<>(Address.class).connection(conn)
+				.where("{id}={}", addressId)
+				.select().orElse(null);
 
-		// Selects and gets phones
+		// Select and get phones
 		if (id != 0)
-			new Sql<>(Phone.class)
-				.where("{contactId} = {}", id)
+			new Sql<>(Phone.class).connection(conn)
+				.where("{contactId}={}", id)
 				.orderBy("{phoneNumber}")
-				.select(connection, phones::add);
+				.select(phones::add);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int preInsert(Connection connection) {
-		super.preInsert(connection);
+	public int preInsert(Connection conn) {
+		super.preInsert(conn);
 
 		int count = 0;
 
-		// Inserts the address
-		count += new Sql<>(Address.class)
-			.insert(connection, address);
+		// Insert the address
+		count += new Sql<>(Address.class).connection(conn)
+			.insert(address);
 		addressId = address.id;
 
 		return count;
@@ -67,13 +67,13 @@ public class ContactComposite extends Contact implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postInsert(Connection connection) {
+	public int postInsert(Connection conn) {
 		int count = 0;
 
-		// Inserts phones
+		// Insert phones
 		phones.forEach(phone -> phone.contactId = id);
-		count += new Sql<>(Phone.class)
-			.insert(connection, phones);
+		count += new Sql<>(Phone.class).connection(conn)
+			.insert(phones);
 
 		return count;
 	}
@@ -82,49 +82,49 @@ public class ContactComposite extends Contact implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postUpdate(Connection connection) {
+	public int postUpdate(Connection conn) {
 		int count = 0;
 
 		if (addressId != 0) {
-			// Updates the address
-			int updateCount = new Sql<>(Address.class)
-				.update(connection, address);
+			// Update the address
+			int updateCount = new Sql<>(Address.class).connection(conn)
+				.update(address);
 			if (updateCount != 0)
 				// Updated
 				count += updateCount;
 			else
 				// Not Updated
 				// Inserts  the address
-				count += new Sql<>(Address.class)
-					.insert(connection, address);
+				count += new Sql<>(Address.class).connection(conn)
+					.insert(address);
 		} else
-			// Deletes the address
-			count += new Sql<>(Address.class)
-				.where("{id} = {}", addressId)
-				.delete(connection);
+			// Delete the address
+			count += new Sql<>(Address.class).connection(conn)
+				.where("{id}={}", addressId)
+				.delete();
 
 		List<Integer> phoneIds = phones.stream()
 			.map(phone -> phone.id)
-			.filter(id -> id != null)
+			.filter(id -> id != 0)
 			.collect(Collectors.toList());
 
-		// Deletes phones
-		count += new Sql<>(Phone.class)
-			.where("{contactId} = {}", id)
+		// Delete phones
+		count += new Sql<>(Phone.class).connection(conn)
+			.where("{contactId}={}", id)
 			.doIf(phoneIds.size() > 0,
 				sql -> sql.and("{id} NOT IN {}", phoneIds)
 			)
-			.delete(connection);
+			.delete();
 
 		// Uptete phones
-		count += new Sql<>(Phone.class)
-			.update(connection, phones.stream()
+		count += new Sql<>(Phone.class).connection(conn)
+			.update(phones.stream()
 				.filter(phone -> phone.id != 0)
 				.collect(Collectors.toList()));
 
-		// Inserts phones
-		count += new Sql<>(Phone.class)
-			.insert(connection, phones.stream()
+		// Insert phones
+		count += new Sql<>(Phone.class).connection(conn)
+			.insert(phones.stream()
 				.filter(phone -> phone.id == 0)
 				.collect(Collectors.toList()));
 
@@ -135,18 +135,18 @@ public class ContactComposite extends Contact implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postDelete(Connection connection) {
+	public int postDelete(Connection conn) {
 		int count = 0;
 
-		// Deletes the address
-		count += new Sql<>(Address.class)
-			.where("{id} = {}", addressId)
-			.delete(connection);
+		// Delete the address
+		count += new Sql<>(Address.class).connection(conn)
+			.where("{id}={}", addressId)
+			.delete();
 
-		// Deletes phones
-		count += new Sql<>(Phone.class)
-			.where("{contactId} = {}", id)
-			.delete(connection);
+		// Delete phones
+		count += new Sql<>(Phone.class).connection(conn)
+			.where("{contactId}={}", id)
+			.delete();
 
 		return count;
 	}

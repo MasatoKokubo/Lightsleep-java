@@ -29,45 +29,39 @@ public class SaleComposite extends Sale implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void postSelect(Connection connection) {
-		new Sql<>(SaleItem.class)
+	public void postSelect(Connection conn) {
+		new Sql<>(SaleItem.class).connection(conn)
 			.where("{saleId} = {}", id)
 			.orderBy("{itemIndex}")
-			.select(connection, items::add);
+			.select(items::add);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postInsert(Connection connection) {
+	public int postInsert(Connection conn) {
 		for (int index = 0; index < items.size(); ++index) {
 			SaleItem item = items.get(index);
 			item.saleId    = id;
 			item.itemIndex = index;
 		}
-		int count = new Sql<>(SaleItem.class).insert(connection, items);
-
-		return count;
+		return new Sql<>(SaleItem.class).connection(conn).insert(items);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postUpdate(Connection connection) {
-		int count = new Sql<>(SaleItem.class).update(connection, items);
-
-		return count;
+	public int postUpdate(Connection conn) {
+		return new Sql<>(SaleItem.class).connection(conn).update(items);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postDelete(Connection connection) {
-		int count = new Sql<>(SaleItem.class).delete(connection, items);
-
-		return count;
+	public int postDelete(Connection conn) {
+		return new Sql<>(SaleItem.class).connection(conn).delete(items);
 	}
 }

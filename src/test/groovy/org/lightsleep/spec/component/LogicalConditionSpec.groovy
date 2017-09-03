@@ -26,7 +26,7 @@ class LogicalConditionSpec extends Specification {
 			def expressions = elements.collect {new Expression(it)}
 			def condition = null
 			def condition2 = null
-			if (clazz == And.class) {
+			if (clazz == And) {
 				switch (type) {
 				case 'list':
 					condition = new And(expressions)
@@ -42,7 +42,7 @@ class LogicalConditionSpec extends Specification {
 					break
 				default: assert false
 				}
-			} else if (clazz == Or.class) {
+			} else if (clazz == Or) {
 				switch (type) {
 				case 'list':
 					condition = new Or(expressions)
@@ -60,8 +60,8 @@ class LogicalConditionSpec extends Specification {
 				}
 			} else assert false
 		/**/DebugTrace.print('condition', condition)
-			def string = condition.toString(new Sql<>(Entity.class), [])
-			def string2 = condition2.toString(new Sql<>(Entity.class), [])
+			def string = condition.toString(new Sql<>(Entity), [])
+			def string2 = condition2.toString(new Sql<>(Entity), [])
 		/**/DebugTrace.print('string', string)
 		/**/DebugTrace.print('string2', string2)
 
@@ -186,14 +186,14 @@ class LogicalConditionSpec extends Specification {
 		Class<? extends LogicalCondition> clazz, String type, String className) {
 	/**/DebugTrace.enter()
 		when:
-			if (clazz == And.class) {
+			if (clazz == And) {
 				switch (type) {
 				case 'list'  : new And(null as List<Condition>  ); break
 				case 'array' : new And(null as Condition[]      ); break
 				case 'stream': new And(null as Stream<Condition>); break
 				default: assert false
 				}
-			} else if (clazz == Or.class) {
+			} else if (clazz == Or) {
 				switch (type) {
 				case 'list'  : new Or(null as List<Condition>  ); break
 				case 'array' : new Or(null as Condition[]      ); break
@@ -223,14 +223,14 @@ class LogicalConditionSpec extends Specification {
 		Class<? extends LogicalCondition> clazz, String type, String className) {
 	/**/DebugTrace.enter()
 		when:
-			if (clazz == And.class) {
+			if (clazz == And) {
 				switch (type) {
 				case 'list'  : new And([null]); break
 				case 'array' : new And([null] as Condition[]); break
 				case 'stream': new And([null].stream()); break
 				default: assert false
 				}
-			} else if (clazz == Or.class) {
+			} else if (clazz == Or) {
 				switch (type) {
 				case 'list'  : new Or([null]); break
 				case 'array' : new Or([null] as Condition[]); break

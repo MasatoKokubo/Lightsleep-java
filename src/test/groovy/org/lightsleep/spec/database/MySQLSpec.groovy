@@ -19,15 +19,15 @@ class MySQLSpec extends Specification {
 	def "MySQLSpec -> SqlString"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, false   , SqlString.class).toString() == '0'
-			TypeConverter.convert(map, true    , SqlString.class).toString() == '1'
-			TypeConverter.convert(map, '\u0000', SqlString.class).toString() == "'\\0'"
-			TypeConverter.convert(map, '\b'    , SqlString.class).toString() == "'\\b'"
-			TypeConverter.convert(map, '\t'    , SqlString.class).toString() == "'\\t'"
-			TypeConverter.convert(map, '\n'    , SqlString.class).toString() == "'\\n'"
-			TypeConverter.convert(map, '\r'    , SqlString.class).toString() == "'\\r'"
-			TypeConverter.convert(map, "'A'"   , SqlString.class).toString() == "'''A'''"
-			TypeConverter.convert(map, '\\'    , SqlString.class).toString() == "'\\\\'"
+			TypeConverter.convert(map, false   , SqlString).toString() == '0'
+			TypeConverter.convert(map, true    , SqlString).toString() == '1'
+			TypeConverter.convert(map, '\u0000', SqlString).toString() == "'\\0'"
+			TypeConverter.convert(map, '\b'    , SqlString).toString() == "'\\b'"
+			TypeConverter.convert(map, '\t'    , SqlString).toString() == "'\\t'"
+			TypeConverter.convert(map, '\n'    , SqlString).toString() == "'\\n'"
+			TypeConverter.convert(map, '\r'    , SqlString).toString() == "'\\r'"
+			TypeConverter.convert(map, "'A'"   , SqlString).toString() == "'''A'''"
+			TypeConverter.convert(map, '\\'    , SqlString).toString() == "'\\\\'"
 	/**/DebugTrace.leave()
 	}
 }

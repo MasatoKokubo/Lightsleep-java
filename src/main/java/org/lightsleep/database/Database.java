@@ -29,10 +29,12 @@ public interface Database {
 	/**
 	 * Creates and returns a SELECT SQL.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
 	 * @return a SELECT SQL string
+	 *
+	 * @throws IllegalStateException if SELECT SQL without columns was generated
 	 */
 	 <E> String selectSql(Sql<E> sql, List<Object> parameters);
 
@@ -42,10 +44,12 @@ public interface Database {
 	 * <b>FOR UPDATE</b> and
 	 * <b>ORDER BY</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
 	 * @return a SELECT SQL string
+	 *
+	 * @throws IllegalStateException if SELECT SQL without columns was generated
 	 */
 	 <E> String subSelectSql(Sql<E> sql, List<Object> parameters);
 
@@ -55,7 +59,7 @@ public interface Database {
 	 * <b>FOR UPDATE</b> and
 	 * <b>ORDER BY</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param sql a <b>Sql</b> object
 	 * @param columnsSupplier a Supplier of the columns string
 	 * @param parameters a list to add the parameters of the SQL
@@ -66,7 +70,7 @@ public interface Database {
 	/**
 	 * Creates and returns a INSERT SQL.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
 	 * @return a INSERT SQL string
@@ -76,7 +80,7 @@ public interface Database {
 	/**
 	 * Creates and returns a UPDATE SQL.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
 	 * @return a INSERT SQL string
@@ -85,12 +89,10 @@ public interface Database {
 
 	/**
 	 * Creates and returns a DELETE SQL.
-
-	 * @param <E> type of the entity
-
+	 *
+	 * @param <E> the type of the entity
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
-
 	 * @return a INSERT SQL string
 	 */
 	 <E> String deleteSql(Sql<E> sql, List<Object> parameters);

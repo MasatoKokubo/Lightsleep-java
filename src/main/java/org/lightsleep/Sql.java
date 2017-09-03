@@ -20,7 +20,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.lightsleep.component.Condition;
@@ -51,19 +53,31 @@ import org.lightsleep.logger.LoggerFactory;
 /**
  * The class to build and execute SQLs.
  *
- * <div class="sampleTitle"><span>Example</span></div>
- * <div class="sampleCode"><pre>
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
  * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
- * Transaction.execute(connection -&gt; {
+ * Transaction.execute(conn -&gt; {
  *     new <b>Sql</b>&lt;&gt;(Contact.class)
- *         .<b>where</b>("{familyName} = {}", "Apple")
- *         .<b>select</b>(connection, contacts::add);
+ *         <b>.where</b>("{lastName}={}", "Apple")
+ *         <b>.connection</b>(conn)
+ *         <b>.select</b>(contacts::add);
  * });
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * SELECT id, familyName, givenName, ... FROM Contact WHERE familyName='Apple'
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ * List&lt;Contact&gt; contacts = []
+ * Transaction.execute {
+ *     new <b>Sql</b>&lt;&gt;(Contact)
+ *         <b>.where</b>('{lastName}={}', 'Apple')
+ *         <b>.connection</b>(it)
+ *         <b>.select</b>({contacts &lt;&lt; it})
+ * }
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Generated SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * SELECT id, lastName, firstName, ... FROM Contact WHERE lastName='Apple'
  * </pre></div>
  *
  * @param <E> the type of the entity related to the main table
@@ -72,7 +86,10 @@ import org.lightsleep.logger.LoggerFactory;
  * @author Masato Kokubo
  */
 @SuppressWarnings("unchecked")
-public class Sql<E> implements SqlEntityInfo<E> {
+// 2.0.0
+//public class Sql<E> implements SqlEntityInfo<E> {
+public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
+////
 	/**
 	 * The wait value of forever
 	 * @since 1.9.0
@@ -93,14 +110,30 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	private static final String messageConnectionSupplier         = resource.getString("messageConnectionSupplier");
 	private static final String messageConnectionSupplierNotFound = resource.getString("messageConnectionSupplierNotFound");
 	private static final String messageNoWhereCondition           = resource.getString("messageNoWhereCondition");
+// 2.0.0
+	private static final String messageNoConnection               = resource.getString("messageNoConnection");
+////
 	private static final String messageRows                       = resource.getString("messageRows");
 	private static final String messageRowsSelect                 = resource.getString("messageRowsSelect");
 
 	// The entity information map
-	private static final Map<Class<?>, EntityInfo<?>> entityInfoMap = new LinkedHashMap<>();
+// 2.0.0
+//	private static final Map<Class<?>, EntityInfo<?>> entityInfoMap = new LinkedHashMap<>();
+	private static final Map<Class<?>, EntityInfo<?>> entityInfoMap = new ConcurrentHashMap<>();
+////
+
+	// The database handler
+	private static Database database;
+
+	// The connection supplier
+	private static ConnectionSupplier connectionSupplier;
+
 
 	// The entity information
-	private final EntityInfo<E> entityInfo;
+// 2.0.0
+//	private final EntityInfo<E> entityInfo;
+	private transient final EntityInfo<E> entityInfo;
+////
 
 	// The table alias
 	private String tableAlias = "";
@@ -115,7 +148,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	private Set<String> columns = new HashSet<>();
 
 	// The expression map (property name : expression)
-	private Map<String, Expression> expressionMap = new HashMap<>();
+// 2.0.0
+//	private Map<String, Expression> expressionMap = new HashMap<>();
+	private final Map<String, Expression> expressionMap = new HashMap<>();
+////
 
 	// The join informations
 	private List<JoinInfo<?>> joinInfos = new ArrayList<>();
@@ -147,21 +183,21 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	// The WAIT time (sec)
 	private int waitTime = FOREVER;
 
-	// The database handler
-	private static Database database;
-
-	// The connection supplier
-	private static ConnectionSupplier connectionSupplier;
+	// The database connection @since 2.0.0
+	private transient Connection connection;
 
 	// The generated SQL @since 1.5.0
-	private String generatedSql;
+// 2.0.0
+//	private String generatedSql;
+	private transient String generatedSql;
+////
 
 	static {
 		logger.info("Lightsleep " + version + " / logger: " + LoggerFactory.loggerClass.getName());
 	}
 
 	/**
-	 * Returns the database handler.
+	 * Returns the current database handler.
 	 *
 	 * @return database the database handler
 	 *
@@ -172,18 +208,16 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Sets the database handler.
+	 * Sets the current database handler.
 	 *
-	 * @param database the database handler
+	 * @param database a database handler
 	 *
 	 * @throws NullPointerException if <b>database</b> is null
 	 *
 	 * @see #getDatabase()
 	 */
 	public static void setDatabase(Database database) {
-		Objects.requireNonNull(database, "database");
-
-		Sql.database = database;
+		Sql.database = Objects.requireNonNull(database, "database");
 		logger.info(() -> MessageFormat.format(messageDatabaseHandler, Sql.database.getClass().getName()));
 	}
 
@@ -211,9 +245,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Returns the connection supplier.
+	 * Returns the current database connection supplier.
 	 *
-	 * @return the connection supplier
+	 * @return the database connection supplier
 	 *
 	 * @see #setConnectionSupplier(ConnectionSupplier)
 	 */
@@ -222,22 +256,20 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Sets the connection supplier.
+	 * Sets the current database connection supplier.
 	 *
-	 * @param supplier the connection supplier
+	 * @param supplier a connection supplier
 	 *
 	 * @throws NullPointerException if <b>supplier</b> is null
 	 *
 	 * @see #getConnectionSupplier()
 	 */
 	public static void setConnectionSupplier(ConnectionSupplier supplier) {
-		Objects.requireNonNull(supplier, "supplier");
-
-		connectionSupplier = supplier;
-		logger.debug(() -> MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getName()));
+		connectionSupplier = Objects.requireNonNull(supplier, "supplier");
+		logger.info(() -> MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getName()));
 	}
 
-	// Initialize the connection supplier
+	// Initialize the database connection supplier
 	static {
 		String supplierName = Resource.globalResource.getString(ConnectionSupplier.class.getSimpleName(), Jdbc.class.getSimpleName());
 		if (supplierName.indexOf('.') < 0)
@@ -265,7 +297,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @param <E> the type of the entity related to the main table
 	 * @param entityClass the entity class
-	 * @return the entity information
+	 * @return the information of the entity
 	 *
 	 * @throws NullPointerException if <b>entityClass</b> is null
 	 *
@@ -277,11 +309,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		EntityInfo<E> entityInfo = (EntityInfo<E>)entityInfoMap.get(entityClass);
 
  		if (entityInfo == null) {
-			synchronized(entityInfoMap) {
-				// creates a new entity information and put it into the map
-				entityInfo = new EntityInfo<>(entityClass);
-				entityInfoMap.put(entityClass, entityInfo);
-			}
+		// 2.0.0
+		//	synchronized(entityInfoMap) {
+		////
+			// creates a new entity information and put it into the map
+			entityInfo = new EntityInfo<>(entityClass);
+			entityInfoMap.put(entityClass, entityInfo);
+		// 2.0.0
+		//	}
+		////
 		}
 
 		return entityInfo;
@@ -290,14 +326,19 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Constructs a new <b>Sql</b>.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
 	 *     new Sql&lt;&gt;(Contact.class)
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact)
 	 * </pre></div>
 	 *
 	 * @throws NullPointerException if <b>entityClass</b> is null
 	 *
-	 * @param entityClass the entity class
+	 * @param entityClass an entity class
 	 */
 	public Sql(Class<E> entityClass) {
 		this(entityClass, "");
@@ -306,23 +347,55 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Constructs a new <b>Sql</b>.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
 	 *     new Sql&lt;&gt;(Contact.class, "C")
 	 * </pre></div>
 	 *
-	 * @param entityClass the entity class
-	 * @param tableAlias the table alias
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 * </pre></div>
+	 *
+	 * @param entityClass an entity class
+	 * @param tableAlias a table alias
 	 *
 	 * @throws NullPointerException if <b>entityClass</b> or <b>tableAlias</b> is null
 	 */
 	public Sql(Class<E> entityClass, String tableAlias) {
-		Objects.requireNonNull(entityClass, "entityClass");
-		Objects.requireNonNull(tableAlias, "tableAlias");
-
-		entityInfo = getEntityInfo(entityClass);
-		this.tableAlias = tableAlias;
+		entityInfo = getEntityInfo(Objects.requireNonNull(entityClass, "entityClass"));
+		this.tableAlias = Objects.requireNonNull(tableAlias, "tableAlias");
 		addSqlEntityInfo(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Sql<E> clone() {
+		Sql<E> sql = new Sql<>(entityClass(), tableAlias());
+
+		sql.entity       = entity        ;
+		sql.distinct     = distinct      ;
+		sql.columns      = getColumns  ();
+		sql.joinInfos    = getJoinInfos();
+		sql.where        = where         ;
+		sql.groupBy      = getGroupBy  ();
+		sql.having       = having        ;
+		sql.orderBy      = getOrderBy  ();
+		sql.limit        = limit         ;
+		sql.offset       = offset        ;
+		sql.forUpdate    = forUpdate     ;
+		sql.waitTime     = waitTime      ;
+		sql.connection   = connection    ;
+		sql.generatedSql = generatedSql  ;
+
+		expressionMap.entrySet()
+			.forEach(entry -> sql.expressionMap.put(entry.getKey(), entry.getValue()));
+		sqlEntityInfoMap.entrySet()
+			.forEach(entry -> sql.sqlEntityInfoMap.put(entry.getKey(), entry.getValue()));
+
+		return sql;
 	}
 
 	/**
@@ -367,7 +440,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Sets the entity that is referenced in expressions.
 	 *
-	 * @param entity the entity
+	 * @param entity an entity
 	 * @return this object
 	 *
 	 * @see #entity()
@@ -401,28 +474,64 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the columns used in SELECT and UPDATE SQL.
+	 * Specifies the property names related to the generated SELECT and UPDATE SQL columns.
 	 *
 	 * <p>
-	 * Specify the property names that related to the columns.
 	 * You can also be specified <b>"*"</b> or <b>"<i>&lt;table alias&gt;</i>.*"</b>.
-	 * If this method is not called it will be in the same manner as <b>"*"</b> is specified.
+	 * If this method is not called it will be in the same as <b>"*"</b> is specified.
 	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>columns("familyName", "givenName")</b>
+	 *         <b>.columns("lastName", "firstName")</b>
+	 *         .where("{lastName}={}", "Apple")
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
 	 * </pre></div>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         <b>.columns('lastName', 'firstName')</b>
+	 *         .where('{lastName}={}', 'Apple')
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .<b>columns("C.id", "P.*")</b>
+	 *         .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
+	 *         <b>.columns("C.id", "P.*")</b>
+	 *         .connection(conn)
+	 *         .&lt;Phone&gt;select(contacts::add, phones::add);
+	 * });
 	 * </pre></div>
 	 *
-	 * @param columns the array of the property names related to the columns
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt; phones = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .innerJoin(Phone, 'P', '{P.contactId}={C.id}')
+	 *         <b>.columns('C.id', 'P.*')</b>
+	 *         .connection(it)
+	 *         .&lt;Phone&gt;select({contacts &lt;&lt; it}, {phones &lt;&lt; it})
+	 * }
+	 * </pre></div>
+	 *
+	 * @param propertyNames an array of property names related to the columns
 	 *
 	 * @return this object
 	 *
@@ -431,15 +540,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #getColumns()
 	 * @see #setColumns(Set)
 	 */
-	public Sql<E> columns(String... columns) {
-		Objects.requireNonNull(columns, "columns");
-
-		Arrays.stream(columns).forEach(this.columns::add);
+	public Sql<E> columns(String... propertyNames) {
+		Arrays.stream(Objects.requireNonNull(propertyNames, "propertyNames"))
+			.forEach(this.columns::add);
 		return this;
 	}
 
 	/**
-	 * Returns a set of property names related to the columns used in SELECT and UPDATE SQL.
+	 * Returns a set of property names related to the generated SELECT and UPDATE SQL columns.
 	 *
 	 * @return a set of property names
 	 *
@@ -456,9 +564,9 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Sets the set of property names related to the columns used in SELECT and UPDATE SQL.
+	 * Sets a set of property names related to the generated SELECT and UPDATE SQL columns.
 	 *
-	 * @param columns the set of property names
+	 * @param propertyNames a set of property names
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>columns</b> is null
@@ -468,28 +576,72 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #columns(String...)
 	 * @see #getColumns()
 	 */
-	public Sql<E> setColumns(Set<String> columns) {
-		Objects.requireNonNull(columns, "columns");
-
-		this.columns = columns;
+	public Sql<E> setColumns(Set<String> propertyNames) {
+		this.columns = Objects.requireNonNull(propertyNames, "propertyNames");
 		return this;
 	}
 
 	/**
-	 * Associates <b>expression</b> to the column related to <b>propertyName</b>.
+	 * Sets the set of property names included in the specified class.
+	 * They are used when generating SELECT and UPDATE SQL columns.
+	 *
+	 * <p>
+	 * <i>This method called from {@link #selectAs(Class, Consumer)} and {@link #selectAs(Class)}.</i>
+	 * </p>
+	 *
+	 * @param <R> the type of <b>resultClass</b>
+	 * @param resultClass a class containing a set of property names to specify
+	 * @return this object
+	 *
+	 * @since 2.0.0
+	 * @see #columns(String...)
+	 * @see #getColumns()
+	 */
+	public <R> Sql<E> setColumns(Class<R> resultClass) {
+		List<String> propertyNames = getEntityInfo(resultClass).accessor().valuePropertyNames();
+		if (!tableAlias.isEmpty())
+			propertyNames = propertyNames.stream()
+				.map(propertyName -> tableAlias + '.' + propertyName)
+				.collect(Collectors.toList());
+
+		columns = new HashSet<String>(propertyNames);
+
+		return this;
+	}
+
+	/**
+	 * Associates <b>expression</b> with the column related to <b>propertyName</b>.
 	 *
 	 * <p>
 	 * If <b>expression</b> is empty, releases the previous association of <b>propertyName</b>.
 	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>expression("birthday", "'['||{birthday}||']'")</b>
+	 *         <b>.expression("firstName", "'['||{firstName}||']'")</b>
+	 *         .where("{lastName}={}", "Orange")
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         <b>.expression('firstName', "'['||{firstName}||']'")</b>
+	 *         .where('{lastName}={}', 'Orange')
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param propertyName the property name
-	 * @param expression the expression
+	 * @param expression an expression
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>propertyName</b> or <b>expression</b> is null
@@ -500,7 +652,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Objects.requireNonNull(propertyName, "propertyName");
 		Objects.requireNonNull(expression, "expression");
 
-		if (expression.content().isEmpty())
+	// 2.0.0
+	//	if (expression.content().isEmpty())
+		if (expression.isEmpty())
+	////
 			expressionMap.remove(propertyName);
 		else
 			expressionMap.put(propertyName, expression);
@@ -516,8 +671,8 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * </p>
 	 *
 	 * @param propertyName the property name
-	 * @param content the content of the expression
-	 * @param arguments the arguments of the expression
+	 * @param content a content of the expression
+	 * @param arguments arguments of the expression
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>propertyName</b>, <b>content</b> or <b>arguments</b> is null
@@ -547,18 +702,35 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Add an information of the table that join with <b>INNER JOIN</b>.
+	 * Add the information of the table that join with <b>INNER JOIN</b>.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .<b>innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
+	 *         <b>.innerJoin(Phone.class, "P", "{P.contactId}={C.id}")</b>
+	 *         .connection(conn)
+	 *         .&lt;Phone&gt;select(contacts::add, phones::add);
+	 * });
 	 * </pre></div>
 	 *
-	 * @param <JE> the type of the entity that related to the table to join
-	 * @param entityClass the entity class that related to the table to join
-	 * @param tableAlias the alias of the table to join
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt; phones = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         <b>.innerJoin(Phone, 'P', '{P.contactId}={C.id}')</b>
+	 *         .connection(it)
+	 *         .&lt;Phone&gt;select({contacts &lt;&lt; it}, {phones &lt;&lt; it})
+	 * }
+	 * </pre></div>
+	 *
+	 * @param <JE> the type of the entity related to the table to join
+	 * @param entityClass the entity class related to the table to join
+	 * @param tableAlias an alias of the table to join
 	 * @param on the join condition
 	 * @return this object
 	 *
@@ -572,11 +744,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Add an information of the table that join with <b>INNER JOIN</b>.
+	 * Add the information of the table that join with <b>INNER JOIN</b>.
 	 *
-	 * @param <JE> the type of the entity that related to the table to join
-	 * @param entityClass the entity class that related to the table to join
-	 * @param tableAlias the alias of the table to join
+	 * @param <JE> the type of the entity related to the table to join
+	 * @param entityClass the entity class related to the table to join
+	 * @param tableAlias an alias of the table to join
 	 * @param on the join condition
 	 * @param arguments the arguments of the join condition
 	 * @return this object
@@ -591,18 +763,35 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Add an information of the table that join with <b>LEFT OUTER JOIN</b>.
+	 * Add the information of the table that join with <b>LEFT OUTER JOIN</b>.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .<b>leftJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
+	 *         <b>.leftJoin(Phone.class, "P", "{P.contactId}={C.id}")</b>
+	 *         .connection(conn)
+	 *         .&lt;Phone&gt;select(contacts::add, phones::add);
+	 * });
 	 * </pre></div>
 	 *
-	 * @param <JE> the type of the entity that related to the table to join
-	 * @param entityClass the entity class that related to the table to join
-	 * @param tableAlias the alias of the table to join
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt; phones = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         <b>.leftJoin(Phone, 'P', '{P.contactId}={C.id}')</b>
+	 *         .connection(it)
+	 *         .&lt;Phone&gt;select({contacts &lt;&lt; it}, {phones &lt;&lt; it})
+	 * }
+	 * </pre></div>
+	 *
+	 * @param <JE> the type of the entity related to the table to join
+	 * @param entityClass the entity class related to the table to join
+	 * @param tableAlias an alias of the table to join
 	 * @param on the join condition
 	 * @return this object
 	 *
@@ -616,11 +805,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Add an information of the table that join with <b>LEFT OUTER JOIN</b>.
+	 * Add the information of the table that join with <b>LEFT OUTER JOIN</b>.
 	 *
-	 * @param <JE> the type of the entity that related to the table to join
-	 * @param entityClass the entity class that related to the table to join
-	 * @param tableAlias the alias of the table to join
+	 * @param <JE> the type of the entity related to the table to join
+	 * @param entityClass the entity class related to the table to join
+	 * @param tableAlias an alias of the table to join
 	 * @param on the join condition
 	 * @param arguments the arguments of the join condition
 	 * @return this object
@@ -635,18 +824,35 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Add an information of the table that join with <b>RIGHT OUTER JOIN</b>.
+	 * Add the information of the table that join with <b>RIGHT OUTER JOIN</b>.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .<b>rightJoin(Phone.class, "P", "{P.contactId} = {C.id}")</b>
-	 *         .&lt;Phone&gt;select(connection, contacts::add, phones::add);
+	 *         <b>.rightJoin(Phone.class, "P", "{P.contactId}={C.id}")</b>
+	 *         .connection(conn)
+	 *         .&lt;Phone&gt;select(contacts::add, phones::add);
+	 * });
 	 * </pre></div>
 	 *
-	 * @param <JE> the type of the entity that related to the table to join
-	 * @param entityClass the entity class that related to the table to join
-	 * @param tableAlias the alias of the table to join
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt; phones = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         <b>.rightJoin(Phone, 'P', '{P.contactId}={C.id}')</b>
+	 *         .connection(it)
+	 *         .&lt;Phone&gt;select({contacts &lt;&lt; it}, {phones &lt;&lt; it})
+	 * }
+	 * </pre></div>
+	 *
+	 * @param <JE> the type of the entity related to the table to join
+	 * @param entityClass the entity class related to the table to join
+	 * @param tableAlias an alias of the table to join
 	 * @param on the join condition
 	 * @return this object
 	 *
@@ -660,11 +866,11 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Add an information of the table that join with <b>RIGHT OUTER JOIN</b>.
+	 * Add the information of the table that join with <b>RIGHT OUTER JOIN</b>.
 	 *
-	 * @param <JE> the type of the entity that related to the table to join
-	 * @param entityClass the entity class that related to the table to join
-	 * @param tableAlias the alias of the table to join
+	 * @param <JE> the type of the entity related to the table to join
+	 * @param entityClass the entity class related to the table to join
+	 * @param tableAlias an alias of the table to join
 	 * @param on the join condition
 	 * @param arguments the arguments of the join condition
 	 * @return this object
@@ -679,20 +885,20 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Add an information of the table that join with
+	 * Add the information of the table that join with
  	 *   <b>INNER JOIN</b>, <b>LEFT OUTER JOIN</b> or <b>RIGHT OUTER JOIN</b>.
 	 *
-	 * @param <JE> the type of the entity that related to the table to join
+	 * @param <JE> the type of the entity related to the table to join
 	 * @param joinType the join type
-	 * @param entityClass the entity class that related to the table to join
-	 * @param tableAlias the alias of the table to join
+	 * @param entityClass the entity class related to the table to join
+	 * @param tableAlias an alias of the table to join
 	 * @param on the join condition
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>joinType</b>, <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is null
 	 */
 	private <JE> Sql<E> join(JoinInfo.JoinType joinType, Class<JE> entityClass, String tableAlias, Condition on) {
-		EntityInfo<JE> entityInfo = Sql.getEntityInfo(entityClass);
+		EntityInfo<JE> entityInfo = getEntityInfo(entityClass);
 		JoinInfo<JE> joinInfo = new JoinInfo<>(joinType, entityInfo, tableAlias, on);
 		addSqlEntityInfo(joinInfo);
 		joinInfos.add(joinInfo);
@@ -712,20 +918,38 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #rightJoin(Class, String, String, Object...)
 	 */
 	public List<JoinInfo<?>> getJoinInfos() {
-		return joinInfos;
+	// 2.0.0
+	//	return joinInfos;
+		return new ArrayList<>(joinInfos);
+	////
 	}
 
 	/**
 	 * Specifies the condition of the <b>WHERE</b> clause.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>where("{birthday} IS NULL")</b>
-	 *         .select(connection, contacts::add);
+	 *         <b>.where("{birthday} IS NULL")</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
 	 * </pre></div>
 	 *
-	 * @param condition the condition
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         <b>.where('{birthday} IS NULL')</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
+	 * </pre></div>
+	 *
+	 * @param condition a condition
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>condition</b> is null
@@ -733,24 +957,38 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #getWhere()
 	 */
 	public Sql<E> where(Condition condition) {
-		Objects.requireNonNull(condition, "condition");
-
-		where = condition;
+		where = Objects.requireNonNull(condition, "condition");
 		return this;
 	}
 
 	/**
 	 * Specifies the condition of the <b>WHERE</b> clause by an <b>Expression</b>.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>where("{id} = {}", contactId)</b>
-	 *         .select(connection).orElse(null);
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int id = 1;
+	 * Contact[] contact = new Contact[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     contact[0] = new Sql&lt;&gt;(Contact.class)
+	 *         <b>.where("{id}={}", id)</b>
+	 *         .connection(conn).select().orElse(null);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int id = 1
+	 * Contact contact
+	 * Transaction.execute {
+	 *     contact = new Sql&lt;&gt;(Contact)
+	 *         <b>.where('{id}={}', id)</b>
+	 *         .connection(it)
+	 *         .select().orElse(null)
+	 * }
 	 * </pre></div>
 	 *
 	 * @param content the content of the <b>Expression</b>
-	 * @param arguments the arguments of the <b>Expression</b>
+	 * @param arguments arguments of the <b>Expression</b>
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
@@ -766,16 +1004,31 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the condition of the <b>WHERE</b> clause by an <b>EntityCondition</b>.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     Contact contact = new Contact();
-	 *     contact.familyName = "Apple";
-	 *     contact.givenName = "Yukari";
-	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>where(contact)</b>
-	 *         .select(connection, contacts::add);
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * Contact[] contact = new Contact[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     contact[0] = new Sql&lt;&gt;(Contact.class)
+	 *         <b>.where(new ContactKey(2))</b>
+	 *         .connection(conn)
+	 *         .select().orElse(null);
+	 * });
 	 * </pre></div>
 	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * Contact contact
+	 * Transaction.execute {
+	 *     Contact key = new Contact()
+	 *     key.id = 2
+	 *     contact = new Sql&lt;&gt;(Contact)
+	 *         <b>.where(key)</b>
+	 *         .connection(it)
+	 *         .select().orElse(null)
+	 * }
+	 * </pre></div>
+	 *
+	 * @param <K> the type of the entity
 	 * @param entity the entity of the EntityCondition
 	 * @return this object
 	 *
@@ -784,7 +1037,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #getWhere()
 	 * @see Condition#of(Object)
 	 */
-	public Sql<E> where(E entity) {
+// 2.0.0
+//	public Sql<E> where(E entity) {
+	public <K> Sql<E> where(K entity) {
+////
 		where = Condition.of(entity);
 		return this;
 	}
@@ -792,19 +1048,38 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the condition of the <b>WHERE</b> clause by a SubqueryCondition.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .<b>where("EXISTS",</b>
+	 *         <b>.where("EXISTS",</b>
 	 *              <b>new Sql&lt;&gt;(Phone.class, "P")</b>
-	 *                  <b>.where("{P.contactId} = {C.id}")</b>
-	 *                  <b>.and("{P.content} LIKE {}", "080%")</b>
+	 *                  <b>.where("{P.contactId}={C.id}")</b>
+	 *                  <b>.and("{P.content} LIKE {}", "0800001%")</b>
 	 *         <b>)</b>
-	 *         .select(connection, contacts::add);
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         <b>.where('EXISTS',</b>
+	 *              <b>new Sql&lt;&gt;(Phone, 'P')</b>
+	 *                  <b>.where('{P.contactId}={C.id}')</b>
+	 *                  <b>.and('{P.content} LIKE {}', '0800001%')</b>
+	 *         <b>)</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param <SE> the type of the entity related to the subquery
-	 * @param content the left part from the SELECT statement of the subquery
+	 * @param content the left part from the SELECT statement of a subquery
 	 * @param subSql the <b>Sql</b> object for the subquery
 	 * @return this object
 	 *
@@ -838,7 +1113,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * if after you call <b>having</b> method, 
 	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
-	 * @param condition the condition
+	 * @param condition a condition
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>condition</b> is null
@@ -860,12 +1135,28 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * if after you call <b>having</b> method, 
 	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .where("{familyName} = {}", "Apple")
-	 *         .<b>and("{givenName} = {}", "Akiyo")</b>
-	 *         .select(connection, contacts::add);
+	 *         .where("{lastName}={}", "Apple")
+	 *         <b>.and("{firstName}={}", "Akiyo")</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .where('{lastName}={}', 'Apple')
+	 *         <b>.and('{firstName}={}', 'Akiyo')</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param content the content of the <b>Expression</b>
@@ -906,7 +1197,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * if after you call <b>having</b> method, 
 	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
-	 * @param condition the condition
+	 * @param condition a condition
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>condition</b> is null
@@ -928,16 +1219,32 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * if after you call <b>having</b> method, 
 	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .where("{familyName} = {}", "Apple")
-	 *         .<b>or("{familyName} = {}", "Orange")</b>
-	 *         .select(connection, contacts::add);
+	 *         .where("{lastName}={}", "Apple")
+	 *         <b>.or("{lastName}={}", "Orange")</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .where('{lastName}={}', 'Apple')
+	 *         <b>.or('{lastName}={}', 'Orange')</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param content the content of the <b>Expression</b>
-	 * @param arguments the arguments of the <b>Expression</b>
+	 * @param arguments arguments of the <b>Expression</b>
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
@@ -972,7 +1279,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Specifies an element of the <b>GROUP BY</b> clause.
 	 *
 	 * @param content the content of the <b>Expression</b>
-	 * @param arguments the arguments of the <b>Expression</b>
+	 * @param arguments arguments of the <b>Expression</b>
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
@@ -1026,9 +1333,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @see #getHaving()
 	 */
 	public Sql<E> having(Condition condition) {
-		Objects.requireNonNull(condition, "condition");
-
-		having = condition;
+		having = Objects.requireNonNull(condition, "condition");
 		return this;
 	}
 
@@ -1036,7 +1341,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Specifies the condition of the <b>HAVING</b> clause by an <b>Expression</b>.
 	 *
 	 * @param content the content of the <b>Expression</b>
-	 * @param arguments the arguments of the <b>Expression</b>
+	 * @param arguments arguments of the <b>Expression</b>
 	 * @return this object
 	 *
 	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
@@ -1083,12 +1388,28 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies an element of the <b>ORDER BY</b> clause.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>orderBy("{familyName}")</b>
-	 *         .<b>orderBy("{givenName}")</b>
-	 *         .select(connection, contacts::add);
+	 *         <b>.orderBy("{lastName}")</b>
+	 *         <b>.orderBy("{firstName}")</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         <b>.orderBy('{lastName}')</b>
+	 *         <b>.orderBy('{firstName}')</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param content the content of the <b>OrderBy.Element</b>
@@ -1112,11 +1433,26 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Sets the element of the last specified <b>ORDER BY</b> clause in ascending order.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .orderBy("{id}").<b>asc()</b>
-	 *         .select(connection, contacts::add);
+	 *         .orderBy("{id}")<b>.asc()</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .orderBy('{id}')<b>.asc()</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @return this object
@@ -1134,11 +1470,26 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Sets the element of the last specified <b>ORDER BY</b> clause in descending order.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .orderBy("{id}").<b>desc()</b>
-	 *         .select(connection, contacts::add);
+	 *         .orderBy("{id}")<b>.desc()</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .orderBy('{id}')<b>.desc()</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @return this object
@@ -1185,11 +1536,26 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the <b>LIMIT</b> value.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>limit(10)</b>
-	 *         .select(connection, contacts::add);
+	 *         <b>.limit(5)</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         <b>.limit(5)</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param limit the <b>LIMIT</b> value
@@ -1216,11 +1582,26 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Specifies the <b>OFFSET</b> value.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .limit(10).<b>offset(100)</b>
-	 *         .select(connection, contacts::add);
+	 *         .limit(5)<b>.offset(5)</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .limit(5)<b>.offset(5)</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
 	 * </pre></div>
 	 *
 	 * @param offset the <b>OFFSET</b> value
@@ -1347,44 +1728,99 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Executes <b>action</b> if <b>condition</b> is true.
+	 * Specifies the database connection used by select, insert, update and delete methods.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .<b>doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)</b>
-	 *         .select(connection, contacts::add);
-	 * </pre></div>
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call this method before using methods for accessing database
+	 * (select, insert, update and delete) added in version 2.0.0.
+	 * </p>
 	 *
-	 * @param condition the condition
-	 * @param action the action that is executed if <b>condition</b> is <b>true</b>
+	 * @param connection the database connection
 	 * @return this object
+	 *
+	 * @since 2.0.0
 	 */
-	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action) {
-		Objects.requireNonNull(action, "action");
+	public Sql<E> connection(Connection connection) {
+		this.connection = Objects.requireNonNull(connection, "connection");
+		return this;
+	}
 
-		if (condition)
-			action.accept(this);
+	/**
+	 * Returns the last generated SQL.
+	 *
+	 * @return the last generated SQL
+	 *
+	 * @since 1.8.4
+	 */
+	public String generatedSql() {
+		return generatedSql;
+	}
+
+	/**
+	 * Executes <b>action</b>.
+	 *
+	 * @param action an action to be executed
+	 * @return this object
+	 *
+	 * @since 2.0.0
+	 * @see #doIf
+	 */
+	public Sql<E> doAlways(Consumer<Sql<E>> action) {
+		Objects.requireNonNull(action, "action").accept(this);
 
 		return this;
 	}
 
 	/**
-	 * Executes <b>action</b> if <b>condition</b> is true, <b>elseAction</b> otherwise.
+	 * Executes <b>action</b> if <b>condition</b> is true.
 	 *
-	 * @param condition the condition
-	 * @param action the action that is executed if <b>condition</b> is true
-	 * @param elseAction the action that is executed if <b>condition</b> is false
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         <b>.doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)</b>
+	 *         .connection(conn)
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         <b>.doIf(!(Sql.getDatabase() instanceof SQLite)) {it.forUpdate}</b>
+	 *         .connection(it)
+	 *         .select({contacts &lt;&lt; it})
+	 * }
+	 * </pre></div>
+	 *
+	 * @param condition the condition of execution
+	 * @param action an action to be executed if <b>condition</b> is true
+	 * @return this object
+	 *
+	 * @see #doAlways
+	 */
+	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action) {
+		if (condition)
+			Objects.requireNonNull(action, "action").accept(this);
+
+		return this;
+	}
+
+	/**
+	 * Executes <b>action</b> if <b>condition</b> is true, executes <b>elseAction</b> otherwise.
+	 *
+	 * @param condition the condition of execution
+	 * @param action an action to be executed if <b>condition</b> is true
+	 * @param elseAction an action to be executed if <b>condition</b> is false
 	 * @return this object
 	 */
 	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction) {
-		Objects.requireNonNull(action, "action");
-		Objects.requireNonNull(elseAction, "elseAction");
-
-		if (condition)
-			action.accept(this);
-		else
-			elseAction.accept(this);
+		Objects.requireNonNull(condition ? action : elseAction,
+			() -> condition ? "action" : "elseAction").accept(this);
 
 		return this;
 	}
@@ -1429,39 +1865,244 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Generates and executes a SELECT SQL that joins no tables.
 	 *
+	 * @deprecated As of release 2.0.0,
+	 * instead use {@link #connection(Connection)}
+	 * and {@link #select(Consumer)}
+	 *
+	 * @param connection the database connection
+	 * @param consumer a consumer of the entities created from the <b>ResultSet</b>
+	 *
+	 * @throws NullPointerException if <b>connection</b> or <b>consumer</b> is null
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 */
+	@Deprecated
+	public void select(Connection connection, Consumer<? super E> consumer) {
+	// 2.0.0
+	//	if (where.isEmpty())
+	//		where = Condition.ALL;
+	//
+	//	if (columns.isEmpty() && joinInfos.size() > 0)
+	//		columns.add(tableAlias + ".*");
+	//	List<Object> parameters = new ArrayList<>();
+	//	String sql = getDatabase().selectSql(this, parameters);
+	//
+	//	executeQuery(connection, sql, parameters, getRowConsumer(connection, this, consumer));
+		this.connection = Objects.requireNonNull(connection, "connection");
+		selectAs(entityInfo.entityClass(), consumer);
+	////
+	}
+
+	/**
+	 * Generates and executes a SELECT SQL that joins no tables.
+	 *
 	 * <p>
 	 * Adds following string to <b>columns</b> set
 	 * if <b>columns</b> method is not called and
-	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called. <i>(since 1.8.4)</i><br>
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called.<br>
 	 * </p>
 	 *
 	 * <ul class="code" style="list-style-type:none">
 	 *   <li>"&lt;Main Table Alias&gt;.*"</li>
 	 * </ul>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class)
-	 *         .<b>select(connection, contacts::add)</b>;
+	 *         .connection(conn)
+	 *         <b>.select(contacts::add)</b>;
+	 * });
 	 * </pre></div>
 	 *
-	 * @param connection the database connection
-	 * @param consumer the consumer of the entities generated from retrieved rows
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.select({contacts &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
 	 *
-	 * @throws NullPointerException if <b>connection</b> or consumer is null
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @param consumer a consumer of the entities created from the <b>ResultSet</b>
+	 *
+	 * @throws NullPointerException if <b>consumer</b> is null
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
+	 * @see #selectAs(Class, Consumer)
+	 */
+	public void select(Consumer<? super E> consumer) {
+		selectAs(entityInfo.entityClass(), consumer);
+	}
+
+	/**
+	 * Generates and executes a SELECT SQL that joins no tables.
+	 *
+	 * <p>
+	 * Adds following string to <b>columns</b> set
+	 * if <b>columns</b> method is not called and
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called.<br>
+	 * </p>
+	 *
+	 * <ul class="code" style="list-style-type:none">
+	 *   <li>"&lt;Main Table Alias&gt;.*"</li>
+	 * </ul>
+	 *
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;ContactName&gt; contactNames = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
+	 *     new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.selectAs(ContactName.class, contactNames::add)</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;ContactName&gt; contactNames = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.selectAs(ContactName, {contactNames &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @param <R> the type of <b>resultClass</b>
+	 * @param resultClass the class of the argumrnt of <b>consumer</b>
+	 * @param consumer a consumer of the entities created from the <b>ResultSet</b>
+	 *
+	 * @throws NullPointerException if <b>resultClass</b> or <b>consumer</b> is null
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
+	 * @see #select(Consumer)
+	 */
+	public <R> void selectAs(Class<R> resultClass, Consumer<? super R> consumer) {
+		Objects.requireNonNull(resultClass, "resultClass");
+		Objects.requireNonNull(consumer, "consumer");
+
+		Sql<E> sql = this;
+
+		if (sql.where.isEmpty()) {
+			sql = clone();
+			sql.where = Condition.ALL;
+		}
+
+		if (sql.columns.isEmpty()) {
+			if (sql == this) sql = clone();
+
+			if (resultClass == sql.entityInfo.entityClass()) {
+				if (sql.joinInfos.size() > 0)
+					sql.columns.add(tableAlias + ".*");
+			} else {
+				sql.setColumns(resultClass);
+			}
+		}
+
+		List<Object> parameters = new ArrayList<>();
+		generatedSql = getDatabase().selectSql(sql, parameters);
+
+		SqlEntityInfo<R> sqlEntityInfo = resultClass == sql.entityInfo.entityClass()
+			? (SqlEntityInfo<R>) sql
+			: newSqlEntityInfo(resultClass, sql.tableAlias);
+
+		sql.executeQuery(generatedSql, parameters, sql.getRowConsumer(sqlEntityInfo, consumer));
+	}
+
+	/**
+	 * Returns a new <b>SqlEntityInfo<b>.
+	 *
+	 * @param entityClass the entity class
+	 * @param tableAlias the table alias
+	 * @return a new <b>SqlEntityInfo<b>
+	 *
+	 * @since 2.0.0
+	 */
+	private <T> SqlEntityInfo<T> newSqlEntityInfo(Class<T> entityClass, String tableAlias) {
+		return new SqlEntityInfo<T>() {
+			@Override
+			public String tableAlias() {
+				return tableAlias;
+			}
+
+			@Override
+			public EntityInfo<T> entityInfo() {
+				return getEntityInfo(entityClass);
+			}
+
+			@Override
+			public T entity() {
+				try {
+					return entityClass.getConstructor().newInstance();
+				}
+				catch (RuntimeException  e) {
+					throw e;
+				}
+				catch (Exception  e) {
+					throw new RuntimeException(e);
+				}
+			}
+		};
+	}
+
+	/**
+	 * Generates and executes a SELECT SQL that joins one table.
+	 *
+	 * @deprecated As of release 2.0.0,
+	 * instead use {@link #connection(Connection)}
+	 * and {@link #select(Consumer, Consumer)}
+	 *
+	 * @param <JE1> the type of the entity related to the joined table
+	 * @param connection the database connection
+	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
+	 * @param consumer1 a consumer of the entities related to the joined table created from the <b>ResultSet</b>
+	 *
+	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b> or <b>consumer1</b> is null
+	 * @throws IllegalStateException if joinInfo information is less than 1
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
-	public void select(Connection connection, Consumer<? super E> consumer) {
-		if (where.isEmpty())
-			where = Condition.ALL;
-
-		if (columns.size() == 0 && joinInfos.size() > 0)
-			columns.add(tableAlias + ".*");
-		List<Object> parameters = new ArrayList<>();
-		String sql = getDatabase().selectSql(this, parameters);
-
-		executeQuery(connection, sql, parameters, getRowConsumer(connection, this, consumer));
+	@Deprecated
+	public <JE1> void select(Connection connection,
+		Consumer<? super E> consumer,
+		Consumer<? super JE1> consumer1) {
+	// 2.0.0
+	//	if (joinInfos.size() < 1) throw new IllegalStateException("joinInfos.size < 1");
+	//
+	//	if (where.isEmpty())
+	//		where = Condition.ALL;
+	//
+	//	if (columns.isEmpty() && joinInfos.size() > 1) {
+	//		columns.add(tableAlias + ".*");
+	//		columns.add(joinInfos.get(0).tableAlias() + ".*");
+	//	}
+	//
+	//	List<Object> parameters = new ArrayList<>();
+	//	String sql = getDatabase().selectSql(this, parameters);
+	//
+	//	executeQuery(connection, sql, parameters,
+	//		getRowConsumer(connection, this, consumer)
+	//		.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
+	//	);
+		this.connection = Objects.requireNonNull(connection, "connection");
+		select(consumer, consumer1);
+	////
 	}
 
 	/**
@@ -1470,7 +2111,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <p>
 	 * Adds following strings to <b>columns</b> set
 	 * if <b>columns</b> method is not called and
-	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than once. <i>(since 1.8.4)</i>
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than once.
 	 * </p>
 	 *
 	 * <ul class="code" style="list-style-type:none">
@@ -1478,44 +2119,120 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *   <li>"&lt;Joined Table Alias&gt;.*"</li>
 	 * </ul>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt;   phones = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .<b>&lt;Phone&gt;select(connection, contacts::add, phones::add)</b>;
+	 *         .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
+	 *         .connection(conn)
+	 *         <b>.&lt;Phone&gt;select(contacts::add, phones::add)</b>;
+	 * });
 	 * </pre></div>
 	 *
-	 * @param <JE1> the type of the entity related to the joined table
-	 * @param connection the database connection
-	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
-	 * @param consumer1 the consumer of the entities related to the joined table generated from retrieved rows
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt;   phones = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .innerJoin(Phone, 'P', '{P.contactId}={C.id}')
+	 *         .connection(it)
+	 *         <b>.select({contacts &lt;&lt; it}, {phones &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b> or consumer1 is null
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @param <JE1> the type of the entity related to the joined table
+	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
+	 * @param consumer1 a consumer of the entities related to the joined table created from the <b>ResultSet</b>
+	 *
+	 * @throws NullPointerException if <b>consumer</b> or <b>consumer1</b> is null
 	 * @throws IllegalStateException if joinInfo information is less than 1
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
 	 */
-	public <JE1> void select(Connection connection,
+	public <JE1> void select(
 		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1) {
 		if (joinInfos.size() < 1) throw new IllegalStateException("joinInfos.size < 1");
 
-		if (where.isEmpty())
-			where = Condition.ALL;
+		Sql<E> sql = this;
 
-		if (columns.size() == 0 && joinInfos.size() > 1) {
-			columns.add(tableAlias + ".*");
-			columns.add(joinInfos.get(0).tableAlias() + ".*");
+		if (sql.where.isEmpty()) {
+			sql = clone();
+			sql.where = Condition.ALL;
+		}
+
+		if (sql.columns.isEmpty() && sql.joinInfos.size() > 1) {
+			if (sql == this) sql = clone();
+			sql.columns.add(sql.tableAlias + ".*");
+			sql.columns.add(sql.joinInfos.get(0).tableAlias() + ".*");
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		String sql = getDatabase().selectSql(this, parameters);
+		generatedSql = getDatabase().selectSql(sql, parameters);
 
-		executeQuery(connection, sql, parameters,
-			getRowConsumer(connection, this, consumer)
-			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
+		sql.executeQuery(generatedSql, parameters,
+			sql.getRowConsumer(sql, consumer)
+			.andThen(sql.getRowConsumer((JoinInfo<JE1>)sql.joinInfos.get(0), consumer1))
 		);
+	}
+
+	/**
+	 * Generates and executes a SELECT SQL that joins two tables.
+	 *
+	 * @deprecated As of release 2.0.0,
+	 * instead use {@link #connection(Connection)}
+	 * and {@link #select(Consumer, Consumer, Consumer)}
+	 *
+	 * @param <JE1> the type of the entity related to the 1st joined table
+	 * @param <JE2> the type of the entity related to the 2nd joined table
+	 * @param connection the database connection
+	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
+	 * @param consumer1 a consumer of the entities related to the 1st joined table created from the <b>ResultSet</b>
+	 * @param consumer2 a consumer of the entities related to the 2nd joined table created from the <b>ResultSet</b>
+	 *
+	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b> or <b>consumer2</b> is null
+	 * @throws IllegalStateException if join information is less than 2
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 */
+	@Deprecated
+	public <JE1, JE2> void select(Connection connection,
+		Consumer<? super  E > consumer,
+		Consumer<? super JE1> consumer1,
+		Consumer<? super JE2> consumer2) {
+	// 2.0.0
+	//	if (joinInfos.size() < 2) throw new IllegalStateException("joinInfos.size < 2");
+	//
+	//	if (where.isEmpty())
+	//		where = Condition.ALL;
+	//
+	//	if (columns.isEmpty() && joinInfos.size() > 2) {
+	//		columns.add(tableAlias + ".*");
+	//		columns.add(joinInfos.get(0).tableAlias() + ".*");
+	//		columns.add(joinInfos.get(1).tableAlias() + ".*");
+	//	}
+	//
+	//	List<Object> parameters = new ArrayList<>();
+	//	String sql = getDatabase().selectSql(this, parameters);
+	//
+	//	executeQuery(connection, sql, parameters,
+	//		getRowConsumer(connection, this, consumer)
+	//		.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
+	//		.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
+	//	);
+		this.connection = Objects.requireNonNull(connection, "connection");
+		select(consumer, consumer1, consumer2);
+	////
 	}
 
 	/**
@@ -1524,7 +2241,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <p>
 	 * Adds following strings to <b>columns</b> set
 	 * if <b>columns</b> method is not called and
-	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than twice. <i>(since 1.8.4)</i>
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than twice.
 	 * </p>
 	 *
 	 * <ul class="code" style="list-style-type:none">
@@ -1533,51 +2250,134 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *   <li>"&lt;2nd Joined Table Alias&gt;.*"</li>
 	 * </ul>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
-	 *     List&lt;Email&gt; emails = new ArrayList&lt;&gt;();
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt;   phones = new ArrayList&lt;&gt;();
+	 * List&lt;Email&gt;   emails = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
-	 *         .<b>&lt;Phone, Email&gt;select(connection, contacts::add, phones::add, emails::add)</b>;
+	 *         .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
+	 *         .innerJoin(Email.class, "E", "{E.contactId}={C.id}")
+	 *         .connection(conn)
+	 *         <b>.&lt;Phone, Email&gt;select(contacts::add, phones::add, emails::add)</b>;
+	 * });
 	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt;   phones = []
+	 * List&lt;Email&gt;   emails = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .innerJoin(Phone, 'P', '{P.contactId}={C.id}')
+	 *         .innerJoin(Email, 'E', '{E.contactId}={C.id}')
+	 *         .connection(it)
+	 *         <b>.select({contacts &lt;&lt; it}, {phones &lt;&lt; it}, {emails &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the 1st joined table
 	 * @param <JE2> the type of the entity related to the 2nd joined table
-	 * @param connection the database connection
-	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
-	 * @param consumer1 the consumer of the entities related to the 1st joined table generated from retrieved rows
-	 * @param consumer2 the consumer of the entities related to the 2nd joined table generated from retrieved rows
+	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
+	 * @param consumer1 a consumer of the entities related to the 1st joined table created from the <b>ResultSet</b>
+	 * @param consumer2 a consumer of the entities related to the 2nd joined table created from the <b>ResultSet</b>
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b> or <b>consumer2</b> is null
+	 * @throws NullPointerException if <b>consumer</b>, <b>consumer1</b> or <b>consumer2</b> is null
 	 * @throws IllegalStateException if join information is less than 2
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
 	 */
-	public <JE1, JE2> void select(Connection connection,
+	public <JE1, JE2> void select(
 		Consumer<? super  E > consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2) {
 		if (joinInfos.size() < 2) throw new IllegalStateException("joinInfos.size < 2");
 
-		if (where.isEmpty())
-			where = Condition.ALL;
+		Sql<E> sql = this;
 
-		if (columns.size() == 0 && joinInfos.size() > 2) {
-			columns.add(tableAlias + ".*");
-			columns.add(joinInfos.get(0).tableAlias() + ".*");
-			columns.add(joinInfos.get(1).tableAlias() + ".*");
+		if (sql.where.isEmpty()) {
+			sql = clone();
+			sql.where = Condition.ALL;
+		}
+
+		if (sql.columns.isEmpty() && sql.joinInfos.size() > 2) {
+			if (sql == this) sql = clone();
+			sql.columns.add(sql.tableAlias + ".*");
+			sql.columns.add(sql.joinInfos.get(0).tableAlias() + ".*");
+			sql.columns.add(sql.joinInfos.get(1).tableAlias() + ".*");
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		String sql = getDatabase().selectSql(this, parameters);
+		generatedSql = getDatabase().selectSql(sql, parameters);
 
-		executeQuery(connection, sql, parameters,
-			getRowConsumer(connection, this, consumer)
-			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
-			.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
+		sql.executeQuery(generatedSql, parameters,
+			sql.getRowConsumer(sql, consumer)
+			.andThen(sql.getRowConsumer((JoinInfo<JE1>)sql.joinInfos.get(0), consumer1))
+			.andThen(sql.getRowConsumer((JoinInfo<JE2>)sql.joinInfos.get(1), consumer2))
 		);
+	}
+
+	/**
+	 * Generates and executes a SELECT SQL that joins three tables.
+	 *
+	 * @deprecated As of release 2.0.0,
+	 * instead use {@link #connection(Connection)}
+	 * and {@link #select(Consumer, Consumer, Consumer, Consumer)}
+	 *
+	 * @param <JE1> the type of the entity related to the 1st joined table
+	 * @param <JE2> the type of the entity related to the 2nd joined table
+	 * @param <JE3> the type of the entity related to the 3rd joined table
+	 * @param connection the database connection
+	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
+	 * @param consumer1 a consumer of the entities related to the 1st joined table created from the <b>ResultSet</b>
+	 * @param consumer2 a consumer of the entities related to the 2nd joined table created from the <b>ResultSet</b>
+	 * @param consumer3 a consumer of the entities related to the 3rd joined table created from the <b>ResultSet</b>
+	 *
+	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> or <b>consumer3</b> is null
+	 * @throws IllegalStateException if join information is less than 3
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 */
+	@Deprecated
+	public <JE1, JE2, JE3> void select(Connection connection,
+		Consumer<? super  E > consumer,
+		Consumer<? super JE1> consumer1,
+		Consumer<? super JE2> consumer2,
+		Consumer<? super JE3> consumer3) {
+	// 2.0.0
+	//	if (joinInfos.size() < 3) throw new IllegalStateException("joinInfos.size < 3");
+	//
+	//	if (where.isEmpty())
+	//		where = Condition.ALL;
+	//
+	//	if (columns.isEmpty() && joinInfos.size() > 3) {
+	//		columns.add(tableAlias + ".*");
+	//		columns.add(joinInfos.get(0).tableAlias() + ".*");
+	//		columns.add(joinInfos.get(1).tableAlias() + ".*");
+	//		columns.add(joinInfos.get(2).tableAlias() + ".*");
+	//	}
+	//
+	//	List<Object> parameters = new ArrayList<>();
+	//	String sql = getDatabase().selectSql(this, parameters);
+	//
+	//	executeQuery(connection, sql, parameters,
+	//		getRowConsumer(connection, this, consumer)
+	//		.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
+	//		.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
+	//		.andThen(getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3))
+	//	);
+		this.connection = Objects.requireNonNull(connection, "connection");
+		select(consumer, consumer1, consumer2, consumer3);
+	////
 	}
 
 	/**
@@ -1586,7 +2386,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <p>
 	 * Adds following strings to <b>columns</b> set
 	 * if <b>columns</b> method is not called and
-	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than 3 times. <i>(since 1.8.4)</i>
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than 3 times.
 	 * </p>
 	 *
 	 * <ul class="code" style="list-style-type:none">
@@ -1596,59 +2396,150 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *   <li>"&lt;3rd Joined Table Alias&gt;.*"</li>
 	 * </ul>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
-	 *     List&lt;Email&gt; emails = new ArrayList&lt;&gt;();
-	 *     List&lt;Address&gt; addresses = new ArrayList&lt;&gt;();
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt;   phones = new ArrayList&lt;&gt;();
+	 * List&lt;Email&gt;   emails = new ArrayList&lt;&gt;();
+	 * List&lt;Address&gt; addresses = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
-	 *         .innerJoin(Address.class, "A", "{A.contactId} = {C.id}")
-	 *         .<b>&lt;Phone, Email, Address&gt;select(connection, contacts::add, phones::add,</b>
-	 *             <b>emails::add, addresses::add)</b>;
+	 *         .innerJoin(  Phone.class, "P", "{P.contactId}={C.id}")
+	 *         .innerJoin(  Email.class, "E", "{E.contactId}={C.id}")
+	 *         .innerJoin(Address.class, "A", "{A.contactId}={C.id}")
+	 *         .connection(conn)
+	 *         <b>.&lt;Phone, Email, Address&gt;select(</b>
+	 *             <b>contacts::add, phones::add, emails::add, addresses::add)</b>;
+	 * });
 	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt;   phones = []
+	 * List&lt;Email&gt;   emails = []
+	 * List&lt;Address&gt; addresses = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .innerJoin(Phone  , 'P', '{P.contactId}={C.id}')
+	 *         .innerJoin(Email  , 'E', '{E.contactId}={C.id}')
+	 *         .innerJoin(Address, 'A', '{A.contactId}={C.id}')
+	 *         .connection(it)
+	 *         <b>.select(</b>
+	 *             <b>{contacts &lt;&lt; it}, {phones &lt;&lt; it}, {emails &lt;&lt; it}, {addresses &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the 1st joined table
 	 * @param <JE2> the type of the entity related to the 2nd joined table
 	 * @param <JE3> the type of the entity related to the 3rd joined table
-	 * @param connection the database connection
-	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
-	 * @param consumer1 the consumer of the entities related to the 1st joined table generated from retrieved rows
-	 * @param consumer2 the consumer of the entities related to the 2nd joined table generated from retrieved rows
-	 * @param consumer3 the consumer of the entities related to the 3rd joined table generated from retrieved rows
+	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
+	 * @param consumer1 a consumer of the entities related to the 1st joined table created from the <b>ResultSet</b>
+	 * @param consumer2 a consumer of the entities related to the 2nd joined table created from the <b>ResultSet</b>
+	 * @param consumer3 a consumer of the entities related to the 3rd joined table created from the <b>ResultSet</b>
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> or <b>consumer3</b> is null
+	 * @throws NullPointerException if <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> or <b>consumer3</b> is null
 	 * @throws IllegalStateException if join information is less than 3
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
 	 */
-	public <JE1, JE2, JE3> void select(Connection connection,
+	public <JE1, JE2, JE3> void select(
 		Consumer<? super  E > consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2,
 		Consumer<? super JE3> consumer3) {
 		if (joinInfos.size() < 3) throw new IllegalStateException("joinInfos.size < 3");
 
-		if (where.isEmpty())
-			where = Condition.ALL;
+		Sql<E> sql = this;
 
-		if (columns.size() == 0 && joinInfos.size() > 3) {
-			columns.add(tableAlias + ".*");
-			columns.add(joinInfos.get(0).tableAlias() + ".*");
-			columns.add(joinInfos.get(1).tableAlias() + ".*");
-			columns.add(joinInfos.get(2).tableAlias() + ".*");
+		if (sql.where.isEmpty()) {
+			sql = clone();
+			sql.where = Condition.ALL;
+		}
+
+		if (columns.isEmpty() && joinInfos.size() > 3) {
+			if (sql == this) sql = clone();
+			sql.columns.add(sql.tableAlias + ".*");
+			sql.columns.add(sql.joinInfos.get(0).tableAlias() + ".*");
+			sql.columns.add(sql.joinInfos.get(1).tableAlias() + ".*");
+			sql.columns.add(sql.joinInfos.get(2).tableAlias() + ".*");
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		String sql = getDatabase().selectSql(this, parameters);
+		generatedSql = getDatabase().selectSql(sql, parameters);
 
-		executeQuery(connection, sql, parameters,
-			getRowConsumer(connection, this, consumer)
-			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
-			.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
-			.andThen(getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3))
+		sql.executeQuery(generatedSql, parameters,
+			sql.getRowConsumer(sql, consumer)
+			.andThen(sql.getRowConsumer((JoinInfo<JE1>)sql.joinInfos.get(0), consumer1))
+			.andThen(sql.getRowConsumer((JoinInfo<JE2>)sql.joinInfos.get(1), consumer2))
+			.andThen(sql.getRowConsumer((JoinInfo<JE3>)sql.joinInfos.get(2), consumer3))
 		);
+	}
+
+	/**
+	 * Generates and executes a SELECT SQL that joins four tables.
+	 *
+	 * @deprecated As of release 2.0.0,
+	 * instead use {@link #connection(Connection)}
+	 * and {@link #select(Consumer, Consumer, Consumer, Consumer, Consumer)}
+	 *
+	 * @param <JE1> the type of the entity related to the 1st joined table
+	 * @param <JE2> the type of the entity related to the 2nd joined table
+	 * @param <JE3> the type of the entity related to the 3rd joined table
+	 * @param <JE4> the type of the entity related to the 4th joined table
+	 * @param connection the database connection
+	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
+	 * @param consumer1 a consumer of the entities related to the 1st join table created from the <b>ResultSet</b>
+	 * @param consumer2 a consumer of the entities related to the 2nd join table created from the <b>ResultSet</b>
+	 * @param consumer3 a consumer of the entities related to the 3rd join table created from the <b>ResultSet</b>
+	 * @param consumer4 a consumer of the entities related to the 4th join table created from the <b>ResultSet</b>
+	 *
+	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> or <b>consumer4</b> is null
+	 * @throws IllegalStateException if join information is less than 4
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 */
+	@Deprecated
+	public <JE1, JE2, JE3, JE4> void select(Connection connection,
+		Consumer<? super  E > consumer,
+		Consumer<? super JE1> consumer1,
+		Consumer<? super JE2> consumer2,
+		Consumer<? super JE3> consumer3,
+		Consumer<? super JE4> consumer4) {
+	// 2.0.0
+	//	if (joinInfos.size() < 4) throw new IllegalStateException("joinInfos.size < 4");
+	//
+	//	if (where.isEmpty())
+	//		where = Condition.ALL;
+	//
+	//	if (columns.isEmpty() && joinInfos.size() > 4) {
+	//		columns.add(tableAlias + ".*");
+	//		columns.add(joinInfos.get(0).tableAlias() + ".*");
+	//		columns.add(joinInfos.get(1).tableAlias() + ".*");
+	//		columns.add(joinInfos.get(2).tableAlias() + ".*");
+	//		columns.add(joinInfos.get(3).tableAlias() + ".*");
+	//	}
+	//
+	//	List<Object> parameters = new ArrayList<>();
+	//	String sql = getDatabase().selectSql(this, parameters);
+	//
+	//	executeQuery(connection, sql, parameters,
+	//		getRowConsumer(connection, this, consumer)
+	//		.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
+	//		.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
+	//		.andThen(getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3))
+	//		.andThen(getRowConsumer(connection, (JoinInfo<JE4>)joinInfos.get(3), consumer4))
+	//	);
+		this.connection = Objects.requireNonNull(connection, "connection");
+		select(consumer, consumer1, consumer2, consumer3, consumer4);
+	////
 	}
 
 	/**
@@ -1657,7 +2548,7 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <p>
 	 * Adds following strings to <b>columns</b> set
 	 * if <b>columns</b> method is not called and
-	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than 4 times. <i>(since 1.8.4)</i>
+	 * <b>innerJoin</b>, <b>leftJoin</b> or <b>rightJoin</b> method called more than 4 times.
 	 * </p>
 	 *
 	 * <ul class="code" style="list-style-type:none">
@@ -1668,38 +2559,69 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *   <li>"&lt;4th Joined Table Alias&gt;.*"</li>
 	 * </ul>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *     List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
-	 *     List&lt;Email&gt; emails = new ArrayList&lt;&gt;();
-	 *     List&lt;Address&gt; addresses = new ArrayList&lt;&gt;();
-	 *     List&lt;Url&gt; urls = new ArrayList&lt;&gt;();
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * List&lt;Phone&gt;   phones = new ArrayList&lt;&gt;();
+	 * List&lt;Email&gt;   emails = new ArrayList&lt;&gt;();
+	 * List&lt;Address&gt; addresses = new ArrayList&lt;&gt;();
+	 * List&lt;Url&gt;     urls = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
 	 *     new Sql&lt;&gt;(Contact.class, "C")
-	 *         .innerJoin(Phone.class, "P", "{P.contactId} = {C.id}")
-	 *         .innerJoin(Email.class, "E", "{E.contactId} = {C.id}")
-	 *         .innerJoin(Address.class, "A", "{A.contactId} = {C.id}")
-	 *         .innerJoin(Url.class, "U", "{U.contactId} = {C.id}")
-	 *         .<b>&lt;Phone, Email, Address, Url&gt;select(connection, contacts::add, phones::add,</b>
-	 *             <b>emails::add, addresses::add, urls::add)</b>;
+	 *         .innerJoin(  Phone.class, "P", "{P.contactId}={C.id}")
+	 *         .innerJoin(  Email.class, "E", "{E.contactId}={C.id}")
+	 *         .innerJoin(Address.class, "A", "{A.contactId}={C.id}")
+	 *         .innerJoin(    Url.class, "U", "{U.contactId}={C.id}")
+	 *         .connection(conn)
+	 *         <b>.&lt;Phone, Email, Address, Url&gt;select(</b>
+	 *             <b>contacts::add, phones::add, emails::add,</b>
+	 *             <b>addresses::add, urls::add)</b>;
+	 * });
 	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * List&lt;Phone&gt;   phones = []
+	 * List&lt;Email&gt;   emails = []
+	 * List&lt;Address&gt; addresses = []
+	 * List&lt;Url&gt;     urls = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .innerJoin(Phone  , 'P', '{P.contactId}={C.id}')
+	 *         .innerJoin(Email  , 'E', '{E.contactId}={C.id}')
+	 *         .innerJoin(Address, 'A', '{A.contactId}={C.id}')
+	 *         .innerJoin(Url    , 'U', '{U.contactId}={C.id}')
+	 *         .connection(it)
+	 *         <b>.select(</b>
+	 *             <b>{contacts &lt;&lt; it}, {phones &lt;&lt; it}, {emails &lt;&lt; it},</b>
+	 *             <b>{addresses &lt;&lt; it}, {urls &lt;&lt; it})</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the 1st joined table
 	 * @param <JE2> the type of the entity related to the 2nd joined table
 	 * @param <JE3> the type of the entity related to the 3rd joined table
 	 * @param <JE4> the type of the entity related to the 4th joined table
-	 * @param connection the database connection
-	 * @param consumer the consumer of the entities related to the main table generated from retrieved rows
-	 * @param consumer1 the consumer of the entities related to the 1st join table generated from retrieved rows
-	 * @param consumer2 the consumer of the entities related to the 2nd join table generated from retrieved rows
-	 * @param consumer3 the consumer of the entities related to the 3rd join table generated from retrieved rows
-	 * @param consumer4 the consumer of the entities related to the 4th join table generated from retrieved rows
+	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
+	 * @param consumer1 a consumer of the entities related to the 1st join table created from the <b>ResultSet</b>
+	 * @param consumer2 a consumer of the entities related to the 2nd join table created from the <b>ResultSet</b>
+	 * @param consumer3 a consumer of the entities related to the 3rd join table created from the <b>ResultSet</b>
+	 * @param consumer4 a consumer of the entities related to the 4th join table created from the <b>ResultSet</b>
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> or <b>consumer4</b> is null
+	 * @throws NullPointerException if <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> or <b>consumer4</b> is null
 	 * @throws IllegalStateException if join information is less than 4
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
 	 */
-	public <JE1, JE2, JE3, JE4> void select(Connection connection,
+	public <JE1, JE2, JE3, JE4> void select(
 		Consumer<? super  E > consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2,
@@ -1707,26 +2629,31 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		Consumer<? super JE4> consumer4) {
 		if (joinInfos.size() < 4) throw new IllegalStateException("joinInfos.size < 4");
 
-		if (where.isEmpty())
-			where = Condition.ALL;
+		Sql<E> sql = this;
 
-		if (columns.size() == 0 && joinInfos.size() > 4) {
-			columns.add(tableAlias + ".*");
-			columns.add(joinInfos.get(0).tableAlias() + ".*");
-			columns.add(joinInfos.get(1).tableAlias() + ".*");
-			columns.add(joinInfos.get(2).tableAlias() + ".*");
-			columns.add(joinInfos.get(3).tableAlias() + ".*");
+		if (sql.where.isEmpty()) {
+			sql = clone();
+			sql.where = Condition.ALL;
+		}
+
+		if (sql.columns.isEmpty() && sql.joinInfos.size() > 4) {
+			if (sql == this) sql = clone();
+			sql.columns.add(sql.tableAlias + ".*");
+			sql.columns.add(sql.joinInfos.get(0).tableAlias() + ".*");
+			sql.columns.add(sql.joinInfos.get(1).tableAlias() + ".*");
+			sql.columns.add(sql.joinInfos.get(2).tableAlias() + ".*");
+			sql.columns.add(sql.joinInfos.get(3).tableAlias() + ".*");
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		String sql = getDatabase().selectSql(this, parameters);
+		generatedSql = getDatabase().selectSql(sql, parameters);
 
-		executeQuery(connection, sql, parameters,
-			getRowConsumer(connection, this, consumer)
-			.andThen(getRowConsumer(connection, (JoinInfo<JE1>)joinInfos.get(0), consumer1))
-			.andThen(getRowConsumer(connection, (JoinInfo<JE2>)joinInfos.get(1), consumer2))
-			.andThen(getRowConsumer(connection, (JoinInfo<JE3>)joinInfos.get(2), consumer3))
-			.andThen(getRowConsumer(connection, (JoinInfo<JE4>)joinInfos.get(3), consumer4))
+		sql.executeQuery(generatedSql, parameters,
+			sql.getRowConsumer(sql, consumer)
+			.andThen(sql.getRowConsumer((JoinInfo<JE1>)sql.joinInfos.get(0), consumer1))
+			.andThen(sql.getRowConsumer((JoinInfo<JE2>)sql.joinInfos.get(1), consumer2))
+			.andThen(sql.getRowConsumer((JoinInfo<JE3>)sql.joinInfos.get(2), consumer3))
+			.andThen(sql.getRowConsumer((JoinInfo<JE4>)sql.joinInfos.get(3), consumer4))
 		);
 	}
 
@@ -1734,54 +2661,208 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * Generates and executes a SELECT SQL
 	 * and returns an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     Contact contact = new Sql&lt;&gt;(Contact.class)
-	 *         .where("{id} = {}", contactId)
-	 *         .<b>select(connection)</b>.orElse(null);
-	 * </pre></div>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #select()}
 	 *
 	 * @param connection the database connection
 	 * @return an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise
 	 *
 	 * @throws NullPointerException if <b>connection</b> is null
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 * @throws ManyRowsException if more than one row searched
 	 */
+	@Deprecated
 	public Optional<E> select(Connection connection) {
-		List<E> entities = new ArrayList<>();
-		select(connection, entity -> {
+	// 2.0.0
+	//	List<E> entities = new ArrayList<>();
+	//	select(connection, entity -> {
+	//		if (entities.size() > 0)
+	//			throw new ManyRowsException(generatedSql);
+	//		entities.add(entity);
+	//	});
+	//	return entities.isEmpty() ? Optional.empty() : Optional.of(entities.get(0));
+		this.connection = Objects.requireNonNull(connection, "connection");
+		return selectAs(entityInfo.entityClass());
+	////
+	}
+
+	/**
+	 * Generates and executes a SELECT SQL
+	 * and returns an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise.
+	 *
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * Contact[] contact = new Contact[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     contact[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .where("{id}={}", 1)
+	 *         .connection(conn)
+	 *         <b>.select()</b>.orElse(null);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * Contact contact
+	 * Transaction.execute {
+	 *     contact = new Sql&lt;&gt;(Contact)
+	 *         .where('{id}={}', 1)
+	 *         .connection(it)
+	 *         <b>.select()</b>.orElse(null)
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @return an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise
+	 *
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 * @throws ManyRowsException if more than one row searched
+	 *
+	 * @since 2.0.0
+	 * @see #selectAs(Class)
+	 */
+	public Optional<E> select() {
+		return selectAs(entityInfo.entityClass());
+	}
+
+	/**
+	 * Generates and executes a SELECT SQL
+	 * and returns an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise.
+	 *
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * ContactName[] contactName = new ContactName[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     contactName[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .where("{id}={}", 1)
+	 *         .connection(conn)
+	 *         <b>.selectAs(ContactName.class)</b>.orElse(null);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * ContactName contactName
+	 * Transaction.execute {
+	 *     contactName = new Sql&lt;&gt;(Contact)
+	 *         .where('{id}={}', 1)
+	 *         .connection(it)
+	 *         <b>.selectAs(ContactName)</b>.orElse(null)
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @param <R> the type of <b>resultClass</b>
+	 * @param resultClass the class of entity to as a return value
+	 * @return an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise
+	 *
+	 * @throws NullPointerException <b>resultClass</b> is null
+	 * @throws IllegalStateException if a SELECT SQL without columns was generated
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 * @throws ManyRowsException if more than one row searched
+	 *
+	 * @since 2.0.0
+	 * @see #select()
+	 */
+	public <R> Optional<R> selectAs(Class<R> resultClass) {
+		List<R> entities = new ArrayList<>();
+		selectAs(resultClass, entity -> {
 			if (entities.size() > 0)
 				throw new ManyRowsException(generatedSql);
 			entities.add(entity);
 		});
-		return entities.size() == 0 ? Optional.empty() : Optional.of(entities.get(0));
+		return entities.isEmpty() ? Optional.empty() : Optional.of(entities.get(0));
 	}
 
 	/**
 	 * Generates and executes a SELECT COUNT(*) SQL and returns the result.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>selectCount(connection)</b>;
-	 * </pre></div>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #selectCount()}
 	 *
 	 * @param connection the database connection
-	 * @return the row count
+	 * @return the number of selected rows
 	 *
 	 * @throws NullPointerException if <b>connection</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
+	@Deprecated
 	public int selectCount(Connection connection) {
-		if (where.isEmpty())
-			where = Condition.ALL;
+	// 2.0.0
+	//	if (where.isEmpty())
+	//		where = Condition.ALL;
+	//
+	//	List<Object> parameters = new ArrayList<>();
+	//	String sql = getDatabase().subSelectSql(this, () -> "COUNT(*)", parameters);
+	//
+	//	int[] count = new int[1];
+	//	executeQuery(connection, sql, parameters, resultSet -> {
+	//		try {
+	//			count[0] = resultSet.getInt(1);
+	//		}
+	//		catch (SQLException e) {throw new RuntimeSQLException(e);}
+	//	});
+	//	return count[0];
+		this.connection = Objects.requireNonNull(connection, "connection");
+		return selectCount();
+	////
+	}
+
+	/**
+	 * Generates and executes a SELECT COUNT(*) SQL and returns the result.
+	 *
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.selectCount()</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.selectCount()</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @return the number of selected rows
+	 *
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
+	 */
+	public int selectCount() {
+		Sql<E> sql = this;
+
+		if (sql.where.isEmpty()) {
+			sql = clone();
+			sql.where = Condition.ALL;
+		}
 
 		List<Object> parameters = new ArrayList<>();
-		String sql = getDatabase().subSelectSql(this, () -> "COUNT(*)", parameters);
+		String sqlString = getDatabase().subSelectSql(sql, () -> "COUNT(*)", parameters);
 
 		int[] count = new int[1];
-		executeQuery(connection, sql, parameters, resultSet -> {
+		executeQuery(sqlString, parameters, resultSet -> {
 			try {
 				count[0] = resultSet.getInt(1);
 			}
@@ -1793,23 +2874,83 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Generates and executes an INSERT SQL.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     Contact contact = new Contact();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>insert(connection, contact)</b>;
-	 * </pre></div>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #insert(Object)}
 	 *
 	 * @param connection the database connection
 	 * @param entity the entity to be inserted
-	 * @return the row count
+	 * @return the number of rows inserted
 	 *
 	 * @throws NullPointerException if <b>connection</b> or <b>entity</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
+	@Deprecated
 	public int insert(Connection connection, E entity) {
+	// 2.0.0
+	//	Objects.requireNonNull(entity, "entity");
+	//
+	//	if (entity instanceof PreStore)
+	//		((PreStore)entity).preStore();
+	//
+	//	int count = 0;
+	//
+	//	// before INSERT
+	//	if (entity instanceof PreInsert)
+	//		count += ((PreInsert)entity).preInsert(connection);
+	//
+	//	this.entity = entity;
+	//	List<Object> parameters = new ArrayList<>();
+	//	String sql = getDatabase().insertSql(this, parameters);
+	//	count += executeUpdate(connection, sql, parameters);
+	//
+	//	// after INSERT
+	//	if (entity instanceof Composite)
+	//		count += ((Composite)entity).postInsert(connection);
+	//
+	//	return count;
+		this.connection = Objects.requireNonNull(connection, "connection");
+		return insert(entity);
+	////
+	}
+
+	/**
+	 * Generates and executes an INSERT SQL.
+	 *
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.insert(new Contact(6, "Setoka", "Orange", 2001, 2, 1))</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.insert(new Contact(6, 'Setoka', 'Orange', 2001, 2, 1))</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @param entity the entity to be inserted
+	 * @return the number of rows inserted
+	 *
+	 * @throws NullPointerException if <b>entity</b> is null
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
+	 */
+	public int insert(E entity) {
 		Objects.requireNonNull(entity, "entity");
+		if (connection == null) throw new IllegalStateException(messageNoConnection);
 
 		if (entity instanceof PreStore)
 			((PreStore)entity).preStore();
@@ -1820,10 +2961,12 @@ public class Sql<E> implements SqlEntityInfo<E> {
 		if (entity instanceof PreInsert)
 			count += ((PreInsert)entity).preInsert(connection);
 
-		this.entity = entity;
+		Sql<E> sql = clone();
+		sql.entity = entity;
+
 		List<Object> parameters = new ArrayList<>();
-		String sql = getDatabase().insertSql(this, parameters);
-		count += executeUpdate(connection, sql, parameters);
+		generatedSql = getDatabase().insertSql(sql, parameters);
+		count += sql.executeUpdate(generatedSql, parameters);
 
 		// after INSERT
 		if (entity instanceof Composite)
@@ -1835,27 +2978,115 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Generates and executes INSERT SQLs for each element of entities.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>insert(connection, contacts)</b>;
-	 * </pre></div>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #insert(Iterable)}
 	 *
 	 * @param connection the database connection
 	 * @param entities an <b>Iterable</b> of entities
-	 * @return the row count
+	 * @return the number of rows inserted
 	 *
 	 * @throws NullPointerException if <b>connection</b>, <b>entities</b> or any element of <b>entities</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
+	@Deprecated
 	public int insert(Connection connection, Iterable<? extends E> entities) {
-		Objects.requireNonNull(entities, "entities");
+	// 2.0.0
+	//	Objects.requireNonNull(entities, "entities");
+	//
+	//	int[] count = new int[1];
+	//	entities.forEach(entity -> count[0] += insert(connection, entity));
+	//	return count[0];
+		this.connection = Objects.requireNonNull(connection, "connection");
+		return insert(entities);
+	////
+	}
 
+	/**
+	 * Generates and executes INSERT SQLs for each element of entities.
+	 *
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.insert(Arrays.asList(</b>
+	 *             <b>new Contact(7, "Harumi", "Orange", 2001, 2, 2),</b>
+	 *             <b>new Contact(8, "Mihaya", "Orange", 2001, 2, 3),</b>
+	 *             <b>new Contact(9, "Asumi" , "Orange", 2001, 2, 4)</b>
+	 *         <b>))</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.insert([</b>
+	 *             <b>new Contact(7, 'Harumi', 'Orange', 2001, 2, 2),</b>
+	 *             <b>new Contact(8, 'Mihaya', 'Orange', 2001, 2, 3),</b>
+	 *             <b>new Contact(9, 'Asumi' , 'Orange', 2001, 2, 4)</b>
+	 *         <b>])</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @param entities an <b>Iterable</b> of entities
+	 * @return the number of rows inserted
+	 *
+	 * @throws NullPointerException if <b>entities</b> or any element of <b>entities</b> is null
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
+	 */
+	public int insert(Iterable<? extends E> entities) {
 		int[] count = new int[1];
-		entities.forEach(entity -> count[0] += insert(connection, entity));
+		Objects.requireNonNull(entities, "entities")
+			.forEach(entity -> count[0] += insert(entity));
 		return count[0];
+	}
+
+	/**
+	 * Generates and executes an UPDATE SQL.
+	 *
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #update(Object)}
+	 *
+	 * @param connection the database connection
+	 * @param entity the entity to be updated
+	 * @return the number of rows updated
+	 *
+	 * @throws NullPointerException if <b>connection</b> or <b>entity</b> is null
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 */
+	@Deprecated
+	public int update(Connection connection, E entity) {
+	// 2.0.0
+	//	Objects.requireNonNull(entity, "entity");
+	//
+	//	if (entity instanceof PreStore)
+	//		((PreStore)entity).preStore();
+	//
+	//	this.entity = entity;
+	//	if (where.isEmpty())
+	//		where = Condition.of(entity);
+	//
+	//	List<Object> parameters = new ArrayList<>();
+	//	String sql = getDatabase().updateSql(this, parameters);
+	//	int count = executeUpdate(connection, sql, parameters);
+	//
+	//	// after UPDATE
+	//	if (where instanceof EntityCondition && entity instanceof Composite)
+	//		count += ((Composite)entity).postUpdate(connection);
+	//
+	//	return count;
+		this.connection = Objects.requireNonNull(connection, "connection");
+		return update(entity);
+	////
 	}
 
 	/**
@@ -1866,40 +3097,89 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * To update all rows of the target table, specify <b>Condition.ALL</b> to <b>WHERE</b> conditions.
 	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     Contact contact = new Contact();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>update(connection, contact)</b>;
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.update(new Contact(6, "Setoka", "Orange", 2017, 2, 1))</b>;
+	 * });
 	 * </pre></div>
 	 *
-	 * @param connection the database connection
-	 * @param entity the entity to be updated
-	 * @return the row count
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.update(new Contact(6, 'Setoka', 'Orange', 2017, 2, 1))</b>
+	 * }
+	 * </pre></div>
 	 *
-	 * @throws NullPointerException if <b>connection</b> or <b>entity</b> is null
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @param entity the entity to be updated
+	 * @return the number of rows updated
+	 *
+	 * @throws NullPointerException if <b>entity</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
 	 */
-	public int update(Connection connection, E entity) {
-		Objects.requireNonNull(entity, "entity");
+	public int update(E entity) {
+		this.entity = Objects.requireNonNull(entity, "entity");
 
 		if (entity instanceof PreStore)
 			((PreStore)entity).preStore();
 
-		this.entity = entity;
-		if (where.isEmpty())
-			where = Condition.of(entity);
+		Sql<E> sql = this;
+
+		if (sql.where.isEmpty()) {
+			sql = clone();
+			sql.where = Condition.of(entity);
+		}
 
 		List<Object> parameters = new ArrayList<>();
-		String sql = getDatabase().updateSql(this, parameters);
-		int count = executeUpdate(connection, sql, parameters);
+		generatedSql = getDatabase().updateSql(sql, parameters);
+		int count = sql.executeUpdate(generatedSql, parameters);
 
 		// after UPDATE
-		if (where instanceof EntityCondition && entity instanceof Composite)
+		if (sql.where instanceof EntityCondition && entity instanceof Composite)
 			count += ((Composite)entity).postUpdate(connection);
 
 		return count;
+	}
+
+	/**
+	 * Generates and executes UPDATE SQLs for each element of <b>entities</b>.
+	 *
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #update(Iterable)}
+	 *
+	 * @param connection the database connection
+	 * @param entities an <b>Iterable</b> of entities
+	 * @return the number of rows updated
+	 *
+	 * @throws NullPointerException if <b>connection</b>, <b>entities</b> or any element of <b>entities</b> is null
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 */
+	@Deprecated
+	public int update(Connection connection, Iterable<? extends E> entities) {
+	// 2.0.0
+	//	Objects.requireNonNull(entities, "entities");
+	//
+	//	int[] count = new int[1];
+	//	entities.forEach(entity -> {
+	//		where = Condition.EMPTY;
+	//		count[0] += update(connection, entity);
+	//	});
+	//	return count[0];
+		this.connection = Objects.requireNonNull(connection, "connection");
+		return update(entities);
+	////
 	}
 
 	/**
@@ -1910,30 +3190,87 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * <b>new EntityCondition(entity)</b> will be specified for each entity.
 	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>update(connection, contacts)</b>;
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.update(Arrays.asList(</b>
+	 *             <b>new Contact(7, "Harumi", "Orange", 2017, 2, 2),</b>
+	 *             <b>new Contact(8, "Mihaya", "Orange", 2017, 2, 3),</b>
+	 *             <b>new Contact(9, "Asumi" , "Orange", 2017, 2, 4)</b>
+	 *         <b>))</b>;
+	 * });
 	 * </pre></div>
 	 *
-	 * @param connection the database connection
-	 * @param entities an <b>Iterable</b> of entities
-	 * @return the row count
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.update([</b>
+	 *             <b>new Contact(7, 'Harumi', 'Orange', 2017, 2, 2),</b>
+	 *             <b>new Contact(8, 'Mihaya', 'Orange', 2017, 2, 3),</b>
+	 *             <b>new Contact(9, 'Asumi' , 'Orange', 2017, 2, 4)</b>
+	 *         <b>])</b>
+	 * }
+	 * </pre></div>
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>entities</b> or any element of <b>entities</b> is null
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @param entities an <b>Iterable</b> of entities
+	 * @return the number of rows updated
+	 *
+	 * @throws NullPointerException if <b>entities</b> or any element of <b>entities</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
 	 */
-	public int update(Connection connection, Iterable<? extends E> entities) {
-		Objects.requireNonNull(entities, "entities");
+	public int update(Iterable<? extends E> entities) {
+		Sql<E> sql = this;
+
+		if (!sql.where.isEmpty()) {
+			sql = clone();
+			sql.where = Condition.EMPTY;
+		}
 
 		int[] count = new int[1];
-		entities.forEach(entity -> {
-			where = Condition.EMPTY;
-			count[0] += update(connection, entity);
-		});
+		Objects.requireNonNull(entities, "entities")
+			.forEach(entity -> count[0] += update(entity));
 		return count[0];
+	}
+
+	/**
+	 * Generates and executes a DELETE SQL.
+	 *
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #delete()}
+	 *
+	 * @param connection the database connection
+	 * @return the number of rows deleted
+	 *
+	 * @throws NullPointerException if <b>connection</b> is null
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 */
+	@Deprecated
+	public int delete(Connection connection) {
+	// 2.0.0
+	//	if (where.isEmpty()) {
+	//		logger.warn(messageNoWhereCondition);
+	//		return 0;
+	//	}
+	//
+	//	List<Object> parameters = new ArrayList<>();
+	//	String sql = getDatabase().deleteSql(this, parameters);
+	//	int count = executeUpdate(connection, sql, parameters);
+	//	return count;
+		this.connection = Objects.requireNonNull(connection, "connection");
+		return delete();
+	////
 	}
 
 	/**
@@ -1944,57 +3281,126 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * To delete all rows of the target table, specify <b>Condition.ALL</b> to <b>WHERE</b> conditions.
 	 * </p>
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     int count = new Sql&lt;&gt;(Contact.class)
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
 	 *         .where(Condition.ALL)
-	 *         .<b>delete(connection)</b>;
+	 *         .connection(conn)
+	 *         <b>.delete()</b>;
+	 * });
 	 * </pre></div>
 	 *
-	 * @param connection the database connection
-	 * @return the row count
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .where(Condition.ALL)
+	 *         .connection(it)
+	 *         <b>.delete()</b>
+	 * }
+	 * </pre></div>
 	 *
-	 * @throws NullPointerException if <b>connection</b> is null
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @return the number of rows deleted
+	 *
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
 	 */
-	public int delete(Connection connection) {
+	public int delete() {
 		if (where.isEmpty()) {
 			logger.warn(messageNoWhereCondition);
 			return 0;
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		String sql = getDatabase().deleteSql(this, parameters);
-		int count = executeUpdate(connection, sql, parameters);
-		return count;
+		String sqlString = getDatabase().deleteSql(this, parameters);
+		return executeUpdate(sqlString, parameters);
 	}
 
 	/**
 	 * Generates and executes a DELETE SQL.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     Contact contact = new Contact();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>delete(connection, contact)</b>;
-	 * </pre></div>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #delete(Object)}
 	 *
 	 * @param connection the database connection
 	 * @param entity the entity to be deleted
-	 * @return the row count
+	 * @return the number of rows deleted
 	 *
 	 * @throws NullPointerException if <b>connection</b> or <b>entity</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
+	@Deprecated
 	public int delete(Connection connection, E entity) {
-		Objects.requireNonNull(entity, "entity");
+	// 2.0.0
+	//	Objects.requireNonNull(entity, "entity");
+	//
+	//	where = Condition.of(entity);
+	//
+	//	List<Object> parameters = new ArrayList<>();
+	//	String sql = getDatabase().deleteSql(this, parameters);
+	//	int count = executeUpdate(connection, sql, parameters);
+	//
+	//	// after DELETE
+	//	if (entity instanceof Composite)
+	//		count += ((Composite)entity).postDelete(connection);
+	//
+	//	return count;
+		this.connection = Objects.requireNonNull(connection, "connection");
+		return delete(entity);
+	////
+	}
 
-		where = Condition.of(entity);
+	/**
+	 * Generates and executes a DELETE SQL.
+	 *
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.delete(new Contact(6))</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.delete(new Contact(6))</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @param entity the entity to be deleted
+	 * @return the number of rows deleted
+	 *
+	 * @throws NullPointerException if <b>entity</b> is null
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
+	 */
+	public int delete(E entity) {
+		Sql<E> sql = clone();
+		sql.where = Condition.of(Objects.requireNonNull(entity, "entity"));
 
 		List<Object> parameters = new ArrayList<>();
-		String sql = getDatabase().deleteSql(this, parameters);
-		int count = executeUpdate(connection, sql, parameters);
+		generatedSql = getDatabase().deleteSql(sql, parameters);
+		int count = sql.executeUpdate(generatedSql, parameters);
 
 		// after DELETE
 		if (entity instanceof Composite)
@@ -2006,28 +3412,71 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	/**
 	 * Generates and executes DELETE SQLs for each element of entities.
 	 *
-	 * <div class="sampleTitle"><span>Example</span></div>
-	 * <div class="sampleCode"><pre>
-	 *     List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
-	 *       ...
-	 *     int count = new Sql&lt;&gt;(Contact.class)
-	 *         .<b>delete(connection, contacts)</b>;
-	 * </pre></div>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #delete(Iterable)}
 	 *
 	 * @param connection the database connection
 	 * @param entities an <b>Iterable</b> of entities
-	 * @return the row count
+	 * @return the number of rows deleted
 	 *
 	 * @throws NullPointerException if <b>connection</b>, <b>entities</b> or any element of <b>entities</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
+	@Deprecated
 	public int delete(Connection connection, Iterable<? extends E> entities) {
-		Objects.requireNonNull(entities, "entities");
+	// 2.0.0
+	//	Objects.requireNonNull(entities, "entities");
+	//
+	//	int[] count = new int[1];
+	//	entities.forEach(entity -> count[0] += delete(connection, entity));
+	//	return count[0];
+		this.connection = Objects.requireNonNull(connection, "connection");
+		return delete(entities);
+	////
+	}
 
+	/**
+	 * Generates and executes DELETE SQLs for each element of entities.
+	 *
+	 * <div class="exampleTitle"><span>Java Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int[] count = new int[1];
+	 * Transaction.execute(conn -&gt; {
+	 *     count[0] = new Sql&lt;&gt;(Contact.class)
+	 *         .connection(conn)
+	 *         <b>.delete(Arrays.asList(new Contact(7), new Contact(8), new Contact(9)))</b>;
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>Groovy Example</span></div>
+	 * <div class="exampleCode"><pre>
+	 * int count
+	 * Transaction.execute {
+	 *     count = new Sql&lt;&gt;(Contact)
+	 *         .connection(it)
+	 *         <b>.delete([new Contact(7), new Contact(8), new Contact(9)])</b>
+	 * }
+	 * </pre></div>
+	 *
+	 * <p>
+	 * <span class="simpleTagLabel">Caution:</span>
+	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * </p>
+	 *
+	 * @param entities an <b>Iterable</b> of entities
+	 * @return the number of rows deleted
+	 *
+	 * @throws NullPointerException if <b>entities</b> or any element of <b>entities</b> is null
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 2.0.0
+	 */
+	public int delete(Iterable<? extends E> entities) {
 		int[] count = new int[1];
-		entities.forEach(entity -> count[0] += delete(connection, entity));
+		Objects.requireNonNull(entities, "entities")
+			.forEach(entity -> count[0] += delete(entity));
 		return count[0];
 	}
+
 
 	/** The time format  */
 	private static DecimalFormat timeFormat = new DecimalFormat();
@@ -2046,7 +3495,10 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 * @throws RuntimeException InstantiationException, IllegalAccessException
 	 */
-	private <T> Consumer<ResultSet> getRowConsumer(Connection connection, SqlEntityInfo<T> sqlEntityInfo, Consumer<? super T> consumer) {
+// 2.0.0
+//	private <T> Consumer<ResultSet> getRowConsumer(Connection connection, SqlEntityInfo<T> sqlEntityInfo, Consumer<? super T> consumer) {
+	private <T> Consumer<ResultSet> getRowConsumer(SqlEntityInfo<T> sqlEntityInfo, Consumer<? super T> consumer) {
+////
 		return resultSet -> {
 			EntityInfo<T> entityInfo = sqlEntityInfo.entityInfo();
 			Accessor<T> accessor = entityInfo.accessor();
@@ -2059,7 +3511,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 				sqlEntityInfo.selectedSqlColumnInfoStream(columns)
 					.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
 					.forEach(sqlColumnInfo -> {
-
 						ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
 						String columnAlias = columnInfo.getColumnAlias(tableAlias);
 
@@ -2099,13 +3550,15 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
-	private void executeQuery(Connection connection, String sql, List<Object> parameters, Consumer<ResultSet> consumer) {
-		Objects.requireNonNull(connection, "connection");
+// 2.0.0
+//	private void executeQuery(Connection connection, String sql, List<Object> parameters, Consumer<ResultSet> consumer) {
+	private void executeQuery(String sql, List<Object> parameters, Consumer<ResultSet> consumer) {
+////
 		Objects.requireNonNull(sql, "sql");
 		Objects.requireNonNull(parameters, "parameters");
 		Objects.requireNonNull(consumer, "consumer");
+		if (connection == null) throw new IllegalStateException(messageNoConnection);
 
-		generatedSql = sql;
 		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
 
 		// Prepares SQL
@@ -2183,12 +3636,14 @@ public class Sql<E> implements SqlEntityInfo<E> {
 	 *
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
-	private int executeUpdate(Connection connection, String sql, List<Object> parameters) {
-		Objects.requireNonNull(connection, "connection");
+// 2.0.0
+//	private int executeUpdate(Connection connection, String sql, List<Object> parameters) {
+	private int executeUpdate(String sql, List<Object> parameters) {
+////
 		Objects.requireNonNull(sql, "sql");
 		Objects.requireNonNull(parameters, "parameters");
+		if (connection == null) throw new IllegalStateException(messageNoConnection);
 
-		generatedSql = sql;
 		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
 
 		// Prepares SQL
@@ -2220,17 +3675,6 @@ public class Sql<E> implements SqlEntityInfo<E> {
 			return rowCount;
 		}
 		catch (SQLException e) {throw new RuntimeSQLException(e);}
-	}
-
-	/**
-	 * Returns generated SQL.
-	 *
-	 * @return generated SQL
-	 *
-	 * @since 1.8.4
-	 */
-	public String generatedSql() {
-		return generatedSql;
 	}
 
 	/**

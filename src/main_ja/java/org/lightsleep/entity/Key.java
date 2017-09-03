@@ -8,16 +8,25 @@ import java.lang.annotation.*;
 /**
  * フィールドに関連するカラムがプライマリー・キーの一部である事を示します。
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * public class Phone {
- *  <b>{@literal @}Key</b>public int contactId;
- *  <b>{@literal @}Key</b>public short childIndex;
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Key</b>
+ *   public int contactId;
+ *  <b>{@literal @}Key</b>
+ *   public short childIndex;
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * UPDATE Phone ... WHERE <b>contactId=100 AND childIndex=0</b>
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Key</b>
+ *   int contactId
+ *  <b>{@literal @}Key</b>
+ *   short childIndex
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * UPDATE ... WHERE <b>contactId=100 AND childIndex=1</b>
  * </pre></div>
  *
  * @since 1.0.0
@@ -29,4 +38,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Key {
+	/**
+	 * @return フィールドに関連するカラムがキーの一部であれば true、そうでなければ false
+	 * @since 2.0.0
+	 */
+	boolean value() default true;
 }

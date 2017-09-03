@@ -1,4 +1,4 @@
-// Example.java
+// ManualExamples.java
 // (C) 2016 Masato Kokubo
 
 package org.lightsleep.example.java;
@@ -16,8 +16,8 @@ import org.lightsleep.example.java.entity.*;
 import org.lightsleep.logger.*;
 
 
-public class Example extends Common {
-	static final Logger logger = LoggerFactory.getLogger(Example.class);
+public class ManualExamples extends Common {
+	static final Logger logger = LoggerFactory.getLogger(ManualExamples.class);
 
 	public static void main(String[] args) {
 	    try {
@@ -64,16 +64,16 @@ public class Example extends Common {
 
 	// README
 	private static void readme() {
-		logger.info("readme");
+		logger.info("README");
 
 		List<Contact> contacts = new ArrayList<Contact>();
-		Transaction.execute(connection ->
-		    new Sql<>(Contact.class)
-		        .where("{familyName}={}", "Apple")
-		        .or   ("{familyName}={}", "Orange")
-		        .orderBy("{familyName}")
-		        .orderBy("{givenName}")
-		        .select(connection, contacts::add)
+		Transaction.execute(conn ->
+		    new Sql<>(Contact.class).connection(conn)
+		        .where("{lastName}={}", "Apple")
+		        .or   ("{lastName}={}", "Orange")
+		        .orderBy("{lastName}")
+		        .orderBy("{firstName}")
+		        .select(contacts::add)
 		);
 	}
 
@@ -83,35 +83,37 @@ public class Example extends Common {
 
 	    Contact contact = new Contact(1, "Akane", "Apple");
 
-	    // トランザクション定義例
-	    Transaction.execute(connection -> {
-	        // トランザクション内容開始
-	        new Sql<>(Contact.class).insert(connection, contact);
+	    // An example of transaction
+	    Transaction.execute(conn -> {
+	        // Start of transaction body
+	        new Sql<>(Contact.class).connection(conn)
+	            .insert(contact);
 
-	        // トランザクション内容終了
+	        // End of transaction body
 	    });
 	}
 
 	// #### 5-1-1. SELECT 1 row with an Expression condition
+	@SuppressWarnings("unused")
 	private static void example5_1_1() {
 		logger.info("example5_1_1");
 
-	    Transaction.execute(connection -> {
-	        Optional<Contact> contactOpt = new Sql<>(Contact.class)
+	    Transaction.execute(conn -> {
+	        Optional<Contact> contactOpt = new Sql<>(Contact.class).connection(conn)
 	            .where("{id}={}", 1)
-	            .select(connection);
+	            .select();
 	    });
 	}
 
 	// #### 5-1-2. SELECT 1 row with an Entity condition
+	@SuppressWarnings("unused")
 	private static void example5_1_2() {
 		logger.info("example5_1_2");
 
-	    Contact contact = new Contact(1);
-	    Transaction.execute(connection -> {
-	        Optional<Contact> contactOpt = new Sql<>(Contact.class)
-	            .where(contact)
-	            .select(connection);
+	    Transaction.execute(conn -> {
+	        Optional<Contact> contactOpt = new Sql<>(Contact.class).connection(conn)
+	            .where(new ContactKey(1))
+	            .select();
 	    });
 	}
 
@@ -120,10 +122,10 @@ public class Example extends Common {
 		logger.info("example5_1_3");
 
 	    List<Contact> contacts = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
-	            .where("{familyName}={}", "Apple")
-	            .select(connection, contacts::add)
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
+	            .where("{lastName}={}", "Apple")
+	            .select(contacts::add)
 	    );
 	}
 
@@ -132,13 +134,13 @@ public class Example extends Common {
 		logger.info("example5_1_4");
 
 	    List<Contact> contacts = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class, "C")
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class, "C").connection(conn)
 	            .where("EXISTS",
 	                new Sql<>(Phone.class, "P")
 	                    .where("{P.contactId}={C.id}")
 	            )
-	            .select(connection, contacts::add)
+	            .select(contacts::add)
 	    );
 	}
 
@@ -147,11 +149,11 @@ public class Example extends Common {
 		logger.info("example5_1_5");
 
 	    List<Contact> contacts = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
-	            .where("{familyName}={}", "Apple")
-	            .and  ("{givenName}={}", "Akane")
-	            .select(connection, contacts::add)
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
+	            .where("{lastName}={}", "Apple")
+	            .and  ("{firstName}={}", "Akane")
+	            .select(contacts::add)
 	    );
 	}
 
@@ -160,11 +162,11 @@ public class Example extends Common {
 		logger.info("example5_1_6");
 
 	    List<Contact> contacts = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
-	            .where("{familyName}={}", "Apple")
-	            .or   ("{familyName}={}", "Orange")
-	            .select(connection, contacts::add)
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
+	            .where("{lastName}={}", "Apple")
+	            .or   ("{lastName}={}", "Orange")
+	            .select(contacts::add)
 	    );
 	}
 
@@ -173,17 +175,17 @@ public class Example extends Common {
 		logger.info("example5_1_7");
 
 	    List<Contact> contacts = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
 	            .where(Condition
-	                .of ("{familyName}={}", "Apple")
-	                .and("{givenName}={}", "Akane")
+	                .of ("{lastName}={}", "Apple")
+	                .and("{firstName}={}", "Akane")
 	            )
 	            .or(Condition
-	                .of ("{familyName}={}", "Orange")
-	                .and("{givenName}={}", "Setoka")
+	                .of ("{lastName}={}", "Orange")
+	                .and("{firstName}={}", "Setoka")
 	            )
-	            .select(connection, contacts::add)
+	            .select(contacts::add)
 	    );
 	}
 
@@ -192,11 +194,11 @@ public class Example extends Common {
 		logger.info("example5_1_8");
 
 	    List<Contact> contacts = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
-	            .where("{familyName}={}", "Apple")
-	            .columns("familyName", "givenName")
-	            .select(connection, contacts::add)
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
+	            .where("{lastName}={}", "Apple")
+	            .columns("lastName", "firstName")
+	            .select(contacts::add)
 	    );
 	}
 
@@ -205,12 +207,12 @@ public class Example extends Common {
 		logger.info("example5_1_9");
 
 	    List<Contact> contacts = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class, "C")
-	            .columns("familyName")
-	            .groupBy("{familyName}")
-	            .having("COUNT({familyName})>=2")
-	            .select(connection, contacts::add)
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class, "C").connection(conn)
+	            .columns("lastName")
+	            .groupBy("{lastName}")
+	            .having("COUNT({lastName})>=2")
+	            .select(contacts::add)
 	    );
 	}
 
@@ -219,26 +221,27 @@ public class Example extends Common {
 		logger.info("example5_1_10");
 
 	    List<Contact> contacts = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
-	            .orderBy("{familyName}")
-	            .orderBy("{givenName}")
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
+	            .orderBy("{lastName}")
+	            .orderBy("{firstName}")
 	            .orderBy("{id}")
 	            .offset(10).limit(5)
-	            .select(connection, contacts::add)
+	            .select(contacts::add)
 	    );
 	}
 
 	// #### 5-1-11. SELECT with FOR UPDATE
+	@SuppressWarnings("unused")
 	private static void example5_1_11() {
 		if (Sql.getDatabase() instanceof SQLite) return;
 		logger.info("example5_1_11");
 
-		Transaction.execute(connection -> {
-		    Optional<Contact> contactOpt = new Sql<>(Contact.class)
+		Transaction.execute(conn -> {
+		    Optional<Contact> contactOpt = new Sql<>(Contact.class).connection(conn)
 		        .where("{id}={}", 1)
 		        .forUpdate()
-		        .select(connection);
+		        .select();
 		});
 	}
 
@@ -248,11 +251,11 @@ public class Example extends Common {
 
 	    List<Contact> contacts = new ArrayList<>();
 	    List<Phone> phones = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class, "C")
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class, "C").connection(conn)
 	            .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
 	            .where("{C.id}={}", 1)
-	            .<Phone>select(connection, contacts::add, phones::add)
+	            .<Phone>select(contacts::add, phones::add)
 	    );
 	}
 
@@ -262,11 +265,11 @@ public class Example extends Common {
 
 	    List<Contact> contacts = new ArrayList<>();
 	    List<Phone> phones = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class, "C")
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class, "C").connection(conn)
 	            .leftJoin(Phone.class, "P", "{P.contactId}={C.id}")
-	            .where("{C.familyName}={}", "Apple")
-	            .<Phone>select(connection, contacts::add, phones::add)
+	            .where("{C.lastName}={}", "Apple")
+	            .<Phone>select(contacts::add, phones::add)
 	    );
 	}
 
@@ -277,11 +280,11 @@ public class Example extends Common {
 
 	    List<Contact> contacts = new ArrayList<>();
 	    List<Phone> phones = new ArrayList<>();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class, "C")
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class, "C").connection(conn)
 	            .rightJoin(Phone.class, "P", "{P.contactId}={C.id}")
 	            .where("{P.label}={}", "Main")
-	            .<Phone>select(connection, contacts::add, phones::add)
+	            .<Phone>select(contacts::add, phones::add)
 	    );
 	}
 
@@ -289,11 +292,11 @@ public class Example extends Common {
 	private static void example5_1_15() {
 		logger.info("example5_1_15");
 
-	    int[] rowCount = new int[1];
-	    Transaction.execute(connection ->
-	        rowCount[0] = new Sql<>(Contact.class)
-	            .where("familyName={}", "Apple")
-	            .selectCount(connection)
+	    int[] count = new int[1];
+	    Transaction.execute(conn ->
+	        count[0] = new Sql<>(Contact.class).connection(conn)
+	            .where("{lastName}={}", "Apple")
+	            .selectCount()
 	    );
 	}
 
@@ -301,9 +304,9 @@ public class Example extends Common {
 	private static void example5_2_1() {
 		logger.info("example5_2_1");
 
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
-	            .insert(connection, new Contact(1, "Akane", "Apple", 2001, 1, 1))
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
+	            .insert(new Contact(1, "Akane", "Apple", 2001, 1, 1))
 	    );
 	}
 
@@ -311,11 +314,12 @@ public class Example extends Common {
 	private static void example5_2_2() {
 		logger.info("example5_2_2");
 
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class).insert(connection, Arrays.asList(
-	            new Contact(2, "Yukari", "Apple", 2001, 1, 2),
-	            new Contact(3, "Azusa", "Apple", 2001, 1, 3)
-	        ))
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
+	            .insert(Arrays.asList(
+	                new Contact(2, "Yukari", "Apple", 2001, 1, 2),
+	                new Contact(3, "Azusa", "Apple", 2001, 1, 3)
+	            ))
 	    );
 	}
 
@@ -323,13 +327,14 @@ public class Example extends Common {
 	private static void example5_3_1() {
 		logger.info("example5_3_1");
 
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
 	            .where("{id}={}", 1)
-	            .select(connection)
+	            .select()
 	            .ifPresent(contact -> {
-	                contact.givenName = "Akiyo";
-	                new Sql<>(Contact.class).update(connection, contact);
+	                contact.firstName = "Akiyo";
+	                new Sql<>(Contact.class).connection(conn)
+	                    .update(contact);
 	            })
 	    );
 	}
@@ -338,15 +343,16 @@ public class Example extends Common {
 	private static void example5_3_2() {
 		logger.info("example5_3_2");
 
-	    Transaction.execute(connection -> {
+	    Transaction.execute(conn -> {
 	        List<Contact> contacts = new ArrayList<>();
-	        new Sql<>(Contact.class)
-	            .where("{familyName}={}", "Apple")
-	            .select(connection, contact -> {
-	                contact.familyName = "Apfel";
+	        new Sql<>(Contact.class).connection(conn)
+	            .where("{lastName}={}", "Apple")
+	            .select(contact -> {
+	                contact.lastName = "Apfel";
 	                contacts.add(contact);
 	            });
-	        new Sql<>(Contact.class).update(connection, contacts);
+	        new Sql<>(Contact.class).connection(conn)
+	            .update(contacts);
 	    });
 	}
 
@@ -355,12 +361,12 @@ public class Example extends Common {
 		logger.info("example5_3_3");
 
 	    Contact contact = new Contact();
-	    contact.familyName = "Pomme";
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
-	            .where("{familyName}={}", "Apfel")
-	            .columns("familyName")
-	            .update(connection, contact)
+	    contact.lastName = "Pomme";
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
+	            .where("{lastName}={}", "Apfel")
+	            .columns("lastName")
+	            .update(contact)
 	    );
 	}
 
@@ -369,11 +375,11 @@ public class Example extends Common {
 		logger.info("example5_3_4");
 
 	    Contact contact = new Contact();
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
 	            .where(Condition.ALL)
 	            .columns("birthday")
-	            .update(connection, contact)
+	            .update(contact)
 	    );
 	}
 
@@ -381,12 +387,14 @@ public class Example extends Common {
 	private static void example5_4_1() {
 		logger.info("example5_4_1");
 
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
 	            .where("{id}={}", 1)
-	            .select(connection)
+	            .select()
 	            .ifPresent(contact ->
-	                new Sql<>(Contact.class).delete(connection, contact))
+	                new Sql<>(Contact.class).connection(conn)
+	                    .delete(contact)
+	            )
 	    );
 	}
 
@@ -394,12 +402,13 @@ public class Example extends Common {
 	private static void example5_4_2() {
 		logger.info("example5_4_2");
 
-	    Transaction.execute(connection -> {
+	    Transaction.execute(conn -> {
 	        List<Contact> contacts = new ArrayList<>();
-	        new Sql<>(Contact.class)
-	            .where("{familyName}={}", "Pomme")
-	            .select(connection, contacts::add);
-	        new Sql<>(Contact.class).delete(connection, contacts);
+	        new Sql<>(Contact.class).connection(conn)
+	            .where("{lastName}={}", "Pomme")
+	            .select(contacts::add);
+	        new Sql<>(Contact.class).connection(conn)
+	            .delete(contacts);
 	    });
 	}
 
@@ -407,10 +416,10 @@ public class Example extends Common {
 	private static void example5_4_3() {
 		logger.info("example5_4_3");
 
-	    Transaction.execute(connection ->
-	        new Sql<>(Contact.class)
-	            .where("{familyName}={}", "Orange")
-	            .delete(connection)
+	    Transaction.execute(conn ->
+	        new Sql<>(Contact.class).connection(conn)
+	            .where("{lastName}={}", "Orange")
+	            .delete()
 	    );
 	}
 
@@ -418,10 +427,10 @@ public class Example extends Common {
 	private static void example5_4_4() {
 		logger.info("example5_4_4");
 
-	    Transaction.execute(connection ->
-	        new Sql<>(Phone.class)
+	    Transaction.execute(conn ->
+	        new Sql<>(Phone.class).connection(conn)
 	            .where(Condition.ALL)
-	            .delete(connection)
+	            .delete()
 	    );
 	}
 }

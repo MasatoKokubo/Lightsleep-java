@@ -9,13 +9,25 @@ MySQL, Oracle, PostgreSQL, SQLite または SQL Server のいずれかのデー�
 
 以下の SQL のいずれかを実行してテーブルを作成します。
 
+```sql:ddl_db2.sql
+-- for DB2
+CREATE TABLE Contact (
+    id        INTEGER        NOT NULL,
+    firstName VARGRAPHIC(20) NOT NULL,
+    lastName  VARGRAPHIC(20) NOT NULL,
+    birthday  DATE               NULL,
+
+    PRIMARY KEY(id)
+);
+```
+
 ```sql:ddl_mysql.sql
 -- for MySQL
 CREATE TABLE Contact (
-    id          INT         NOT NULL,
-    familyName  VARCHAR(20)     NULL,
-    givenName   VARCHAR(20)     NULL,
-    birthday    DATE            NULL,
+    id         INT         NOT NULL,
+    firstName  VARCHAR(20) NOT NULL,
+    lastName   VARCHAR(20) NOT NULL,
+    birthday   DATE            NULL,
 
     PRIMARY KEY(id)
 );
@@ -24,10 +36,10 @@ CREATE TABLE Contact (
 ```sql:ddl_oracle.sql
 -- for Oracle
 CREATE TABLE Contact (
-    id          NUMBER  ( 9)      NOT NULL,
-    familyName  VARCHAR2(20 CHAR) NOT NULL,
-    givenName   VARCHAR2(20 CHAR) NOT NULL,
-    birthday    DATE                  NULL,
+    id         NUMBER  ( 9)      NOT NULL,
+    firstName  VARCHAR2(20 CHAR) NOT NULL,
+    lastName   VARCHAR2(20 CHAR) NOT NULL,
+    birthday   DATE                  NULL,
 
     PRIMARY KEY(id)
 );
@@ -36,10 +48,10 @@ CREATE TABLE Contact (
 ```sql:ddl_postgresql.sql
 -- for PostgreSQL
 CREATE TABLE Contact (
-    id          INT         NOT NULL,
-    familyName  VARCHAR(20)     NULL,
-    givenName   VARCHAR(20)     NULL,
-    birthday    DATE            NULL,
+    id         INT         NOT NULL,
+    firstName  VARCHAR(20) NOT NULL,
+    lastName   VARCHAR(20) NOT NULL,
+    birthday   DATE            NULL,
 
     PRIMARY KEY(id)
 );
@@ -48,10 +60,10 @@ CREATE TABLE Contact (
 ```sql:ddl_sqlite.sql
 -- for SQLite
 CREATE TABLE Contact (
-    id         INTEGER         NOT NULL,
-    familyName VARCHAR(20)     NULL,
-    givenName  VARCHAR(20)     NULL,
-    birthday   TEXT            NULL,
+    id        INTEGER     NOT NULL,
+    firstName VARCHAR(20) NOT NULL,
+    lastName  VARCHAR(20) NOT NULL,
+    birthday  TEXT            NULL,
 
     PRIMARY KEY(id)
 );
@@ -60,10 +72,10 @@ CREATE TABLE Contact (
 ```sql:ddl_sqlserver.sql
 -- for SQLServer
 CREATE TABLE Contact (
-    id          INT         NOT NULL,
-    familyName  VARCHAR(20)     NULL,
-    givenName   VARCHAR(20)     NULL,
-    birthday    DATE            NULL,
+    id         INT         NOT NULL,
+    firstName  VARCHAR(20) NOT NULL,
+    lastName   VARCHAR(20) NOT NULL,
+    birthday   DATE            NULL,
 
     PRIMARY KEY(id)
 );
@@ -73,10 +85,10 @@ CREATE TABLE Contact (
 
 ```sql:sample.sql
 DELETE FROM Contact;
-INSERT INTO Contact VALUES (1, 'First' , 'Sample', DATE'1991-01-01');
-INSERT INTO Contact VALUES (2, 'Second', 'Sample', DATE'1992-02-02');
-INSERT INTO Contact VALUES (3, 'Third' , 'Sample', DATE'1993-03-03');
-INSERT INTO Contact VALUES (4, 'Fourth', 'Sample', DATE'1994-04-04');
+INSERT INTO Contact VALUES (1, 'First' , 'Example', DATE'1991-01-01');
+INSERT INTO Contact VALUES (2, 'Second', 'Example', DATE'1992-02-02');
+INSERT INTO Contact VALUES (3, 'Third' , 'Example', DATE'1993-03-03');
+INSERT INTO Contact VALUES (4, 'Fourth', 'Example', DATE'1994-04-04');
 ````
 
 #### 2. エンティティ・クラスの作成
@@ -91,20 +103,20 @@ import java.sql.Date;
 import org.lightsleep.entity.*;
 
 /**
-    Contact
-*/
+ * Contact エンティティ
+ */
 public class Contact {
     /** ID */
     @Key
     public int id;
 
-    /** Family Name */
-    public String familyName;
+    /** 名前 */
+    public String firstName;
 
-    /** Given Name */
-    public String givenName;
+    /** 苗字 */
+    public String lastName;
 
-    /** Birthday */
+    /** 誕生日 */
     public Date birthday;
 }
 ```
@@ -115,13 +127,23 @@ public class Contact {
 url, user および password の値は、使用するデータベース環境に合わせて変更してください。
 
 ```properties:lightsleep.properties
+# for DB2
+Logger             = Std$Out$Info
+Database           = DB2
+ConnectionSupplier = Jdbc
+url                = jdbc:db2://<DB Server>:50000/<データベース>
+user               = <ユーザー名>
+password           = <パスワード>
+```
+
+```properties:lightsleep.properties
 # for MySQL
 Logger             = Std$Out$Info
 Database           = MySQL
 ConnectionSupplier = Jdbc
-url                = jdbc:mysql://mysql57/test
-user               = test
-password           = _test_
+url                = jdbc:mysql://<DB Server>/<データベース>
+user               = <ユーザー名>
+password           = <パスワード>
 ```
 
 ```properties:lightsleep.properties
@@ -129,9 +151,9 @@ password           = _test_
 Logger             = Std$Out$Info
 Database           = Oracle
 ConnectionSupplier = Jdbc
-url                = jdbc:oracle:thin:@oracle121:1521:test
-user               = test
-password           = _test_
+url                = jdbc:oracle:thin:@<DB Server>:1521:<SID>
+user               = <ユーザー名>
+password           = <パスワード>
 ```
 
 ```properties:lightsleep.properties
@@ -139,9 +161,9 @@ password           = _test_
 Logger             = Std$Out$Info
 Database           = PostgreSQL
 ConnectionSupplier = Jdbc
-url                = jdbc:postgresql://postgres96/test
-user               = test
-password           = _test_
+url                = jdbc:postgresql://<DB Server>/<データベース>
+user               = <ユーザー名>
+password           = <パスワード>
 ```
 
 ```properties:lightsleep.properties
@@ -149,7 +171,7 @@ password           = _test_
 Logger             = Std$Out$Info
 Database           = SQLite
 ConnectionSupplier = Jdbc
-url                = jdbc:sqlite:C:/sqlite/test
+url                = jdbc:sqlite:<Installed Directory>/<データベース>
 ```
 
 ```properties:lightsleep.properties
@@ -157,15 +179,15 @@ url                = jdbc:sqlite:C:/sqlite/test
 Logger             = Std$Out$Info
 Database           = SQLServer
 ConnectionSupplier = Jdbc
-url                = jdbc:sqlserver://sqlserver13;Database=test
-user               = test
-password           = _test_
+url                = jdbc:sqlserver://<DB Server>;Database=<データベース>
+user               = <ユーザー名>
+password           = <パスワード>
 ```
 
 #### 4. データの取得
 テーブルから全行を取得するプログラムを作成します。
 
-```java:Sample1.java
+```java:Example1.java
 package org.lightsleep.tutorial;
 
 import java.util.ArrayList;
@@ -175,20 +197,20 @@ import org.lightsleep.Sql;
 import org.lightsleep.Transaction;
 import org.lightsleep.tutorial.entity.Contact;
 
-public class Sample1 {
+public class Example1 {
     public static void main(String[] args) {
         try {
             List<Contact> contacts = new ArrayList<>();
-            Transaction.execute(connection -> {
-                new Sql<>(Contact.class)
-                    .select(connection, contacts::add);
+            Transaction.execute(conn -> {
+                new Sql<>(Contact.class).connection(conn)
+                    .select(contacts::add);
             });
 
             for (int index = 0; index < contacts.size(); ++index) {
                 Contact contact = contacts.get(index);
                 System.out.println(
                     index
-                    + ": Name: " + contact.givenName + " " + contact.familyName
+                    + ": Name: " + contact.firstName + " " + contact.lastName
                     + ", Birthday: " + contact.birthday
                 );
             }
@@ -200,16 +222,16 @@ public class Sample1 {
 }
 ```
 
-Sample1 を実行すると以下がコンソールに表示されます。
+Example1 を実行すると以下がコンソールに表示されます。
 
 ```log:標準出力
     ...
     ...
     ...
-0: Name: First Sample, Birthday: 1991-01-01
-1: Name: Second Sample, Birthday: 1992-02-02
-2: Name: Third Sample, Birthday: 1993-03-03
-3: Name: Fourth Sample, Birthday: 1994-04-04
+0: Name: First Example, Birthday: 1991-01-01
+1: Name: Second Example, Birthday: 1992-02-02
+2: Name: Third Example, Birthday: 1993-03-03
+3: Name: Fourth Example, Birthday: 1994-04-04
 ```
 
 <div style="text-align:center; margin-top:20px"><i>&copy; 2016 Masato Kokubo</i></div>

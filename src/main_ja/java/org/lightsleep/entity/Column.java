@@ -6,23 +6,31 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * フィールドに関連するカラム名を示します。<br>
+ * フィールドに関連するカラム名を示します。
+ *
+ * <p>
  * カラム名がフィールド名と同じであれば、このアノテーションを指定する必要がありません。
+ * </p>
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
- *
- *  <b>{@literal @}Column("family_name")</b>
- *   public String familyName;
- *
- *  <b>{@literal @}Column("given_name")</b>
- *   public String givenName;
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Column("firstName")</b>
+ *   public String first;
+ *  <b>{@literal @}Column("lastName")</b>
+ *   public String last;
  * </pre></div>
- *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * SELECT ..., <b>family_name</b>, <b>given_name</b>, ... FROM Contact
+ * 
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Column('firstName')</b>
+ *   String first
+ *  <b>{@literal @}Column('lastName')</b>
+ *   String last
+ * </pre></div>
+ * 
+ * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * SELECT ..., <b>firstName</b>, <b>lastName</b>, ...
  * </pre></div>
  *
  * @since 1.0.0

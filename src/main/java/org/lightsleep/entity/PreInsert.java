@@ -10,18 +10,20 @@ import java.sql.Connection;
  * <b>insert</b> method of Sql class calls <b>preInsert</b> method
  * of the entity class before executing INSERT SQL.<br>
  *
+ * <p>
  * In <b>preInsert method,</b> do the implementation of the numbering of the primary key or etc.
+ * </p>
  *
- * <div class="sampleTitle"><span>Example</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact implements <b>PreInsert</b> {
- *  {@literal @}Key public int id;
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ * public abstract class Common implements <b>PreInsert</b> {
+ *  {@literal @}Key
+ *   public int id;
  *     ...
  *
  *  {@literal @}Override
- *   <b>public int preInsert(Connection connection)</b> {
- *     <i>// Numbering of ID before INSERT</i>
- *     id = NextId.getNewId(connection, Contact.class);
+ *   <b>public int preInsert(Connection conn)</b> {
+ *     id = Numbering.getNewId(conn, getClass());
  *     return 0;
  *   }
  * }
@@ -34,10 +36,10 @@ public interface PreInsert {
 	/**
 	 * This method is execute before executing INSERT SQL.
 	 *
-	 * @param connection the database connection
+	 * @param conn the database conn
 	 * @return the number of inserted rows
 	 *
-	 * @throws NullPointerException if <b>connection</b> is null
+	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-	int preInsert(Connection connection);
+	int preInsert(Connection conn);
 }

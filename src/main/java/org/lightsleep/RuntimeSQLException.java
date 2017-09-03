@@ -9,7 +9,6 @@ package org.lightsleep;
  * Original SQLException is stored as the cause.
  *
  * @since 1.0
- *
  * @author Masato Kokubo
  */
 @SuppressWarnings("serial")

@@ -6,21 +6,29 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * Indicates ta column expression instead of the column name in SELECT SQL.
+ * Indicates an expression instead of the name of the column related to the field defined in superclass used in SELECT SQL.
+ *
+ * <p>
  * Specifies the field by <b>property</b>.
+ * </p>
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
- * <div class="sampleCode"><pre>
- * <b>{@literal @}SelectProperty(property="phoneCount", expression="(SELECT COUNT(*) FROM Phone WHERE contactId=Contact.id)")</b>
- * {@literal @}NonInsertProperty("phoneCount"){@literal @}NonUpdateProperty("phoneCount")
- * public class Contact {
- *
- *   public short phoneCount;
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}SelectProperty(property="fullName", expression="{firstName}||' '||{lastName}")</b>
+ * {@literal @}NonInsertProperty(property="fullName"){@literal @}NonUpdateProperty(property="fullName")
+ *   public class Person extends PersonBase {
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * SELECT ..., <b>(SELECT COUNT(*) FROM Phone P WHERE contactId=Contact.id)</b>, ... FROM Contact WHERE ...
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}SelectProperty(property='fullName', expression="{firstName}||' '||{lastName}")</b>
+ * {@literal @}NonInsertProperty(property='fullName'){@literal @}NonUpdateProperty(property='fullName')
+ *  class Person extends PersonBase {
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Generated SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * SELECT ..., <b>firstName||' '||lastName AS fullName</b>, ...
  * </pre></div>
  * 
  * @since 1.3.0
@@ -33,7 +41,7 @@ import java.lang.annotation.*;
 @Repeatable(SelectProperties.class)
 @Target({ElementType.TYPE})
 public @interface SelectProperty {
-	/** @return the property name of the specified field */
+	/** @return the property name that specifies the field */
 	String property();
 
 	/** @return the expression */

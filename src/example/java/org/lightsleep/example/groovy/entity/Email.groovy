@@ -5,10 +5,11 @@ package org.lightsleep.example.groovy.entity
 
 import org.lightsleep.entity.Key
 
-class Email {
-	@Key
-	int    contactId
-	short  childIndex
-	String label
-	String content
+class Email extends ContactChild {
+	public Email() {
+	}
+
+	public Email(int contactId, short childIndex, String label, String content) {
+		super(contactId, childIndex, label, content);
+	}
 }

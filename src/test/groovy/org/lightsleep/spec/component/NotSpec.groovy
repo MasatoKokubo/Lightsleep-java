@@ -17,13 +17,10 @@ class NotSpec extends Specification {
 	def "NotSpec 01 NOT empty"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def condition = Condition.EMPTY.not()
-		/**/DebugTrace.print('condition', condition)
-
+		when: def condition = Condition.EMPTY.not()
 		then:
 			condition.empty
-			condition.getClass() != Not.class
+			condition.getClass() != Not
 
 	/**/DebugTrace.leave()
 	}
@@ -31,19 +28,11 @@ class NotSpec extends Specification {
 	def "NotSpec 02 NOT A = B"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def condition = Condition.of('A = B').not()
-		/**/DebugTrace.print('condition', condition)
+		when: def condition = Condition.of('A = B').not()
+		then: !condition.empty
 
-		then:
-			!condition.empty
-
-		when:
-			def string = condition.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == 'NOT(A = B)'
+		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		then: string == 'NOT(A = B)'
 
 	/**/DebugTrace.leave()
 	}
@@ -51,19 +40,11 @@ class NotSpec extends Specification {
 	def "NotSpec 03 NOT NOT A = B"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def condition = Condition.of('A = B').not().not()
-		/**/DebugTrace.print('condition', condition)
+		when: def condition = Condition.of('A = B').not().not()
+		then: !condition.empty
 
-		then:
-			!condition.empty
-
-		when:
-			def string = condition.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == 'A = B'
+		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		then: string == 'A = B'
 
 	/**/DebugTrace.leave()
 	}
@@ -71,11 +52,8 @@ class NotSpec extends Specification {
 	def "NotSpec 04 exception - null argument"() {
 	/**/DebugTrace.enter()
 
-		when:
-			new Not(null)
-
-		then:
-			thrown NullPointerException
+		when: new Not(null)
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}

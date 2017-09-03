@@ -10,8 +10,8 @@ package org.lightsleep.logger;
  * ロガークラスは、<b>Jdk</b>, <b>Log4j</b>, <b>Log4j2</b>, <b>SLF4J</b> または <b>StdOut</b>
  * のいずれかを指定してください。<br>
  *
- * <div class="sampleTitle"><span>lightsleep.properties 例</span></div>
- * <div class="sampleCode"><pre>
+ * <div class="exampleTitle"><span>lightsleep.properties 例</span></div>
+ * <div class="exampleCode"><pre>
  * logger = Log4j
  * </pre></div>
  *

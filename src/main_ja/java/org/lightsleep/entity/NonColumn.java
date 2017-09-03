@@ -8,12 +8,20 @@ import java.lang.annotation.*;
 /**
  * フィールドがどのカラムにも関連しない事を示します。
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonColumn</b>
+ *   public List&lt;Phone&gt; phones;
+ *  <b>{@literal @}NonColumn</b>
+ *   public List&lt;Address&gt; addresses;
+ * </pre></div>
  *
- *  <b>{@literal @}NonColumn</b>public List&lt;Phone&gt; phones;
- *  <b>{@literal @}NonColumn</b>public List&lt;Address&gt; addresses;
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonColumn</b>
+ *   List&lt;Phone&gt; phones
+ *  <b>{@literal @}NonColumn</b>
+ *   List&lt;Address&gt; addresses
  * </pre></div>
  *
  * @since 1.0.0
@@ -25,4 +33,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonColumn {
+	/**
+	 * @return フィールドがどのカラムにも関連しないなら true、そうでなければ false
+	 * @since 2.0.0
+	 */
+	boolean value() default true;
 }

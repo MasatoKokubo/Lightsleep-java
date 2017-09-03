@@ -8,12 +8,16 @@ import java.lang.annotation.*;
 /**
  * フィールドに関連するカラムが UPDATE SQL で使用されない事を示します。
  * 
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonUpdate</b>
+ *   public Timestamp createdTime;
+ * </pre></div>
  *
- *  {@literal @}Insert("CURRENT_TIMESTAMP")<b>{@literal @}NonUpdate</b>
- *   public Timestamp created;
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonUpdate</b>
+ *   Timestamp createdTime
  * </pre></div>
  *
  * @since 1.0.0

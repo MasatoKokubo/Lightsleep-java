@@ -6,14 +6,26 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * Indicates that the column related the field is not used in INSERT SQL.<br>
- * Specifies the field by <b>value</b>.
+ * Indicates that the column related the field defined in superclass is not used in INSERT SQL.<br>
  *
- * <div class="sampleTitle"><span>Example</span></div>
- * <div class="sampleCode"><pre>
- * {@literal @}KeyProperty("id")<b>{@literal @}NonInsertProperty("id")</b>
- * public class Contact {
- *   public int id;
+ * <p>
+ * Specifies the field by <b>property</b>.
+ * </p>
+ *
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}NonInsertProperty(property="createdTime")</b>
+ * <b>{@literal @}NonInsertProperty(property="updatedTime")</b>
+ *  public class Person extends PersonBase {
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}NonInsertProperties([</b>
+ *   <b>{@literal @}NonInsertProperty(property='createdTime'),</b>
+ *   <b>{@literal @}NonInsertProperty(property='updatedTime')</b>
+ *  <b>])</b>
+ *  class Person extends PersonBase {
  * </pre></div>
  *
  * @since 1.3.0
@@ -26,6 +38,15 @@ import java.lang.annotation.*;
 @Repeatable(NonInsertProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonInsertProperty {
-	/** @return the property name of the specified field */
-	String value();
+	/**
+	 * @return the property name that specifies the field
+	 * @since 2.0.0
+	 */
+// 2.0.0
+//	String value();
+	String property();
+
+	/** @return true if the column related the field is not used in INSERT SQL, false otherwise */
+	boolean value() default true;
+////
 }

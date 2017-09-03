@@ -32,12 +32,8 @@ class AndOrSpec extends Specification {
 		then:
 			!condition.empty
 
-		when:
-			def string = condition.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == '(A OR B) AND (C OR D) OR (E OR F) AND (G OR H)'
+		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		then: string == '(A OR B) AND (C OR D) OR (E OR F) AND (G OR H)'
 
 	/**/DebugTrace.leave()
 	}
@@ -60,12 +56,8 @@ class AndOrSpec extends Specification {
 		then:
 			!condition.empty
 
-		when:
-			def string = condition.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == 'A AND B AND C AND D AND E AND F AND G AND H'
+		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		then: string == 'A AND B AND C AND D AND E AND F AND G AND H'
 
 	/**/DebugTrace.leave()
 	}
@@ -85,15 +77,10 @@ class AndOrSpec extends Specification {
 				)
 			)
 
-		then:
-			!condition.empty
+		then: !condition.empty
 
-		when:
-			def string = condition.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == 'A OR B OR C OR D OR E OR F OR G OR H'
+		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		then: string == 'A OR B OR C OR D OR E OR F OR G OR H'
 
 	/**/DebugTrace.leave()
 	}
@@ -101,18 +88,11 @@ class AndOrSpec extends Specification {
 	def "AndOrSpec 04 A AND B AND C AND D"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def condition = Condition.of('A').and('B').and('C').and('D')
+		when: def condition = Condition.of('A').and('B').and('C').and('D')
+		then: !condition.empty
 
-		then:
-			!condition.empty
-
-		when:
-			def string = condition.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == 'A AND B AND C AND D'
+		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		then: string == 'A AND B AND C AND D'
 
 	/**/DebugTrace.leave()
 	}
@@ -120,18 +100,11 @@ class AndOrSpec extends Specification {
 	def "AndOrSpec 05 A OR B OR C OR D"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def condition = Condition.of('A').or('B').or('C').or('D')
+		when: def condition = Condition.of('A').or('B').or('C').or('D')
+		then: !condition.empty
 
-		then:
-			!condition.empty
-
-		when:
-			def string = condition.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == 'A OR B OR C OR D'
+		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		then: string == 'A OR B OR C OR D'
 
 	/**/DebugTrace.leave()
 	}
@@ -139,18 +112,11 @@ class AndOrSpec extends Specification {
 	def "AndOrSpec 06 ((A OR B) AND C) OR D"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def condition = Condition.of('A').or('B').and('C').or('D')
+		when: def condition = Condition.of('A').or('B').and('C').or('D')
+		then: !condition.empty
 
-		then:
-			!condition.empty
-
-		when:
-			def string = condition.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == '(A OR B) AND C OR D'
+		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		then: string == '(A OR B) AND C OR D'
 
 	/**/DebugTrace.leave()
 	}
@@ -158,11 +124,8 @@ class AndOrSpec extends Specification {
 	def "AndOrSpec 07 exception - AND null"() {
 	/**/DebugTrace.enter()
 
-		when:
-			Condition.EMPTY.and((Condition)null)
-
-		then:
-			thrown NullPointerException
+		when: Condition.EMPTY.and((Condition)null)
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -170,11 +133,8 @@ class AndOrSpec extends Specification {
 	def "AndOrSpec 08  exception - OR null"() {
 	/**/DebugTrace.enter()
 
-		when:
-			Condition.EMPTY.or((Condition)null)
-
-		then:
-			thrown NullPointerException
+		when: Condition.EMPTY.or((Condition)null)
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}

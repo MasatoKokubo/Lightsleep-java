@@ -27,7 +27,7 @@ public class SubqueryCondition<SE> implements Condition {
 	 * Constructs a new <b>SubqueryCondition</b>.
 	 *
 	 * @param <E> the type of the entity related to table of the outer sql.
-	 * @param expression expression of the left part from the SELECT statement of the subquery
+	 * @param expression the expression of the left part from the SELECT statement of the subquery
 	 * @param outerSql the <b>Sql</b> object of the outer query
 	 * @param subSql the <b>Sql</b> object for the subquery
 	 *

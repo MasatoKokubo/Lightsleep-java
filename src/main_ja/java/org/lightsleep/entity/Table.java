@@ -6,19 +6,29 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * クラスに関連するデータベース・テーブル名を示します。<br>
+ * クラスに関連するデータベース・テーブル名を示します。
+ *
+ * <p>
  * テーブル名がクラス名と同じであれば、このアノテーションを指定する必要はありません。<br>
  * <b>@Table("super")</b> を指定した場合は、スーパークラスのクラス名がテーブル名となります。
+ * </p>
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
- *  {@literal @}Key {@literal @}NonInsert
- *   public String id;
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}Table("Contact")</b>
+ *  public class Person extends PersonBase {
  *
- *  <b>{@literal @}Table("super")</b>
- *  {@literal @}InsertProperty(property="id", expression="Contact_seq.nextVal")
- *   public static class Oracle extends Contact {
+ *   <b>{@literal @}Table("super")</b>
+ *    public static class Ex extends Person {
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}Table('Contact')</b>
+ *  class Person extends PersonBase {
+ *
+ *   <b>{@literal @}Table('super')</b>
+ *    static class Ex extends Person {
  * </pre></div>
  *
  * @since 1.0.0

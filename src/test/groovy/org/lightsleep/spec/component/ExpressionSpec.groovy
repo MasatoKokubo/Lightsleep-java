@@ -11,6 +11,7 @@ import org.debugtrace.DebugTrace
 import org.lightsleep.*
 import org.lightsleep.component.*
 import org.lightsleep.database.*
+import org.lightsleep.helper.*
 import org.lightsleep.test.entity.*
 
 import spock.lang.*
@@ -41,48 +42,44 @@ class ExpressionSpec extends Specification {
 	def "ExpressionSpec normal"() {
 	/**/DebugTrace.enter()
 
-		when:
-			def expression = new Expression('\\{}, { }, {\t}, { \t}, {}', 1, 2, 3, null)
-
+		when: def expression = new Expression('\\{}, { }, {\t}, { \t}, {}', 1, 2, 3, null)
 		then:
 			expression.content() == '\\{}, { }, {\t}, { \t}, {}'
 			expression.arguments().length == 4
 			!expression.isEmpty()
 
-		when:
-			def string = expression.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == '{}, 1, 2, 3, NULL'
+		when: def string = expression.toString(new Sql<>(Contact), new ArrayList<Object>())
+		then: string == '{}, 1, 2, 3, NULL'
 
 	/**/DebugTrace.leave()
 	}
 
-	def "ExpressionSpec exception - more placement"() {
+	def "ExpressionSpec exception - less arguments"() {
 	/**/DebugTrace.enter()
 
 		when:
 			def expression = new Expression("{}, {}, {}, {}", 1.1, 1.2, 1.3)
-			expression.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+			expression.toString(new Sql<>(Contact), new ArrayList<Object>())
 
 		then:
-			def e = thrown IllegalArgumentException
+			def e = thrown MissingArgumentsException
+		/**/DebugTrace.print('e', e)
 			e.message.indexOf(expression.content()) >= 0
 			e.message.indexOf('' + expression.arguments().length) >= 0
 
 	/**/DebugTrace.leave()
 	}
 
-	def "ExpressionSpec exception - more argument"() {
+	def "ExpressionSpec exception - more arguments"() {
 	/**/DebugTrace.enter()
 
 		when:
 			def expression = new Expression("{}, {}", 1.1, 1.2, 1.3)
-				expression.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+				expression.toString(new Sql<>(Contact), new ArrayList<Object>())
 
 		then:
-			def e = thrown IllegalArgumentException
+			def e = thrown MissingArgumentsException
+		/**/DebugTrace.print('e', e)
 			e.message.indexOf(expression.content()) >= 0
 			e.message.indexOf('' + expression.arguments().length) >= 0
 
@@ -94,7 +91,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression('{}', "AA'BB''CC")
-			def string = expression.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+			def string = expression.toString(new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
 		then:
@@ -111,7 +108,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression('{}', new Date(1 * 86400_000))
-			def string = expression.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+			def string = expression.toString(new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
 		then:
@@ -141,7 +138,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression('{}', new Time(1 * 3600_000 + 2 * 60_000 + 3 * 1000))
-			def string = expression.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+			def string = expression.toString(new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
 		then:
@@ -175,7 +172,7 @@ class ExpressionSpec extends Specification {
 //
 //		when:
 //			def expression = new Expression('{}', new Timestamp(1 * 86400_000 + 23 * 3600_000 + 58 * 60_000 + 59 * 1000))
-//			def string = expression.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+//			def string = expression.toString(new Sql<>(Contact), new ArrayList<Object>())
 //		/**/DebugTrace.print('string', string)
 //
 //		then:
@@ -201,18 +198,17 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def sql = new Sql<>(Contact.class)
+			def sql = new Sql<>(Contact)
 			def contact = new Contact()
-			contact.name.family = 'Apple'
-			contact.name.given = 'Akane'
+			contact.name.last = 'Apple'
+			contact.name.first = 'Akane'
 			sql.setEntity(contact)
 
-			def expression = new Expression(" {#name.given}||' '||{ # name . family } ")
+			def expression = new Expression(" {#name.first}||' '||{ # name . last } ")
 			def string = expression.toString(sql, new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
-		then:
-			string == " 'Akane'||' '||'Apple' "
+		then: string == " 'Akane'||' '||'Apple' "
 
 	/**/DebugTrace.leave()
 	}
@@ -222,14 +218,13 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def contact = new Contact()
-			contact.name.family = "La'st"
-			def sql = new Sql<>(Contact.class).setEntity(contact)
-			def expression = new Expression("{ name.family } = { # name.family }")
+			contact.name.last = "La'st"
+			def sql = new Sql<>(Contact).setEntity(contact)
+			def expression = new Expression("{ name.last } = { # name.last }")
 			def string = expression.toString(sql, new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
-		then:
-			string == "familyName = 'La''st'"
+		then: string == "lastName = 'La''st'"
 
 	/**/DebugTrace.leave()
 	}
@@ -238,12 +233,11 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def expression = new Expression('{C.name.family}')
-			def string = expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
+			def expression = new Expression('{C.name.last}')
+			def string = expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
-		then:
-			string == 'C.familyName'
+		then: string == 'C.lastName'
 
 	/**/DebugTrace.leave()
 	}
@@ -252,12 +246,11 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def expression = new Expression('{C_name.family}')
-			def string = expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
+			def expression = new Expression('{C_name.last}')
+			def string = expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
-		then:
-			string == 'C_familyName'
+		then: string == 'C_lastName'
 
 	/**/DebugTrace.leave()
 	}
@@ -275,9 +268,9 @@ class ExpressionSpec extends Specification {
 		/**/DebugTrace.print('bytes', bytes)
 			def expression = new Expression('{}', bytes)
 			def paramerters = new ArrayList<Object>()
-			def string = expression.toString(new Sql<>(Contact.class), paramerters)
+			def string = expression.toString(new Sql<>(Contact), paramerters)
 		/**/DebugTrace.print('string', string)
-		/**/DebugTrace.print("paramerters", paramerters)
+		/**/DebugTrace.print('paramerters', paramerters)
 
 		then:
 			if (Sql.database instanceof Standard || Sql.database instanceof MySQL) {
@@ -332,69 +325,87 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	def "ExpressionSpec exception - illegal property name 1"() {
+	def "ExpressionSpec exception - missing property 1"() {
 	/**/DebugTrace.enter()
 
 		when:
-			def expression = new Expression('{P.name.family}')
-			expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
+			def expression = new Expression('{P.name.last}')
+			expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
 
 		then:
-			thrown IllegalArgumentException
+			def e = thrown MissingPropertyException
+		/**/DebugTrace.print('e', e)
+		/**/DebugTrace.print('e', e)
+			e.message.indexOf(Contact.class.name) >= 0
+			e.message.indexOf('name.last') >= 0
+			e.message.indexOf('P.name.last') >= 0
 
 	/**/DebugTrace.leave()
 	}
 
-	def "ExpressionSpec exception - illegal property name 2"() {
+	def "ExpressionSpec exception - missing property 2"() {
 	/**/DebugTrace.enter()
 
 		when:
-			def expression = new Expression("{P_name.family}")
-			expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
+			def expression = new Expression("{P_name.last}")
+			expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
 
 		then:
-			thrown IllegalArgumentException
+			def e = thrown MissingPropertyException
+		/**/DebugTrace.print('e', e)
+			e.message.indexOf(Contact.class.name) >= 0
+			e.message.indexOf('P_name.last') >= 0
+			e.message.indexOf('name.last') >= 0
 
 	/**/DebugTrace.leave()
 	}
 
-	def "ExpressionSpec exception - illegal property name 3"() {
+	def "ExpressionSpec exception - missing property 3"() {
 	/**/DebugTrace.enter()
 
 		when:
-			def expression = new Expression("{family}")
-			expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
+			def expression = new Expression("{last}")
+			expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
 
 		then:
-			thrown IllegalArgumentException
+			def e = thrown MissingPropertyException
+		/**/DebugTrace.print('e', e)
+			e.message.indexOf(Contact.class.name) >= 0
+			e.message.indexOf('last') >= 0
 
 	/**/DebugTrace.leave()
 	}
 
-	def "ExpressionSpec exception - illegal property name 4"() {
+	def "ExpressionSpec exception - missing property 4"() {
 	/**/DebugTrace.enter()
 
 		when:
-			def expression = new Expression("{C.family}")
-			expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
+			def expression = new Expression("{C.last}")
+			expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
 
 		then:
-			def e = thrown IllegalArgumentException
-			e.message.indexOf("C.family\", \"family") >= 0
+			def e = thrown MissingPropertyException
+		/**/DebugTrace.print('e', e)
+			e.message.indexOf(Contact.class.name) >= 0
+			e.message.indexOf('C.last') >= 0
+			e.message.indexOf('last') >= 0
 
 	/**/DebugTrace.leave()
 	}
 
-	def "ExpressionSpec exception - illegal property name 5"() {
+	def "ExpressionSpec exception - missing property 5"() {
 	/**/DebugTrace.enter()
 
 		when:
-			def expression = new Expression("{C_family}")
-			expression.toString(new Sql<>(Contact.class, 'C'), new ArrayList<Object>())
+			def expression = new Expression("{C_last}")
+			expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
 
 		then:
-			def e = thrown IllegalArgumentException
-			e.message.indexOf("C_family\", \"family") >= 0
+			def e = thrown MissingPropertyException
+		/**/DebugTrace.print('e', e)
+			e.message.indexOf(Contact.class.name) >= 0
+			e.message.indexOf('C_last') >= 0
+			e.message.indexOf('last') >= 0
 
 	/**/DebugTrace.leave()
 	}
@@ -402,11 +413,8 @@ class ExpressionSpec extends Specification {
 	def "ExpressionSpec exception - [content] argument is null 1"() {
 	/**/DebugTrace.enter()
 
-		when:
-			new Expression(null)
-
-		then:
-			thrown NullPointerException
+		when: new Expression(null)
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -414,11 +422,8 @@ class ExpressionSpec extends Specification {
 	def "ExpressionSpec exception - [arguments] argument is null 2"() {
 	/**/DebugTrace.enter()
 
-		when:
-			new Expression('', (Object[])null)
-
-		then:
-			thrown NullPointerException
+		when: new Expression('', (Object[])null)
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -427,11 +432,10 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.enter()
 
 		when:
-			def expression = new Expression("{name.family} = {#name.family}")
-			expression.toString(new Sql<>(Contact.class), new ArrayList<Object>())
+			def expression = new Expression("{name.last} = {#name.last}")
+			expression.toString(new Sql<>(Contact), new ArrayList<Object>())
 
-		then:
-			thrown NullPointerException
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}

@@ -22,9 +22,13 @@ i {
 b, b i {
 	font-family: Consolas, monospace;
 	font-weight: normal;
-	background-color: #E7E7E7;
+	background-color: #EEE7E7;
 	border-radius: 2px;
 	padding: 1px 2px 1px 2px;
+}
+
+a code, dd code a, dd a {
+	color: #4444DD;
 }
 
 .title {
@@ -62,7 +66,7 @@ b, b i {
 	margin-top: 110px;
 }
 
-.sampleTitle {
+.exampleTitle {
 	margin: 12px 0px -4px 12px;
 }
 
@@ -71,7 +75,7 @@ table.additional caption {
 	text-align: left;
 }
 
-.sampleTitle span, table.additional caption span {
+.exampleTitle span, table.additional caption span {
 	background-color: #F8981D;
 	padding: 2px 6px 2px 6px;
 	font-family: 'Segoe UI', sans-serif;
@@ -79,7 +83,7 @@ table.additional caption {
 	font-weight: bold;
 }
 
-.sampleCode {
+.exampleCode {
 	margin: 8px 8px 12px 8px;
 	padding: 4px 0px 0px 12px;
 	font-family: Consolas, monospace;
@@ -90,18 +94,18 @@ table.additional caption {
 	border-color: #AAAAAA;
 }
 
-.sampleCode pre {
+.exampleCode pre {
     font-size: 13px;
 }
 
-.sampleCode pre b {
+.exampleCode pre b {
 	color: #2266FF;
 	background-color: #FFFFAA;
 	font-weight: normal;
 	padding: 1px 2px 1px 2px;
 }
 
-.sampleCode pre i {
+.exampleCode pre i {
 	color: #00AA00;
 }
 

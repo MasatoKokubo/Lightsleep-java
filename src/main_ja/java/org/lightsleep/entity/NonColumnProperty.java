@@ -6,17 +6,26 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * フィールドがどのカラムにも関連しない事を示します。<br>
- * 対象のフィールドは、<b>value</b> で指定します。
+ * スーパークラスで定義されたフィールドがどのカラムにも関連しない事を示します。
+ * 
+ * <p>
+ * 対象のフィールドは、<b>property</b> で指定します。
+ * </p>
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * <b>{@literal @}NonColumnProperty("phones")</b>
- * <b>{@literal @}NonColumnProperty("addresses")</b>
- * public class Contact {
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}NonColumnProperty(property="phones")</b>
+ * <b>{@literal @}NonColumnProperty(property="addresses")</b>
+ *  public class PersonComposite {
+ * </pre></div>
  *
- *   public List&lt;Phone&gt; phones;
- *   public List&lt;Address&gt; addresses;
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}NonColumnProperties([</b>
+ *   <b>{@literal @}NonColumnProperty(property='phones'),</b>
+ *   <b>{@literal @}NonColumnProperty(property='addresses')</b>
+ *  <b>])</b>
+ *  class PersonComposite extends PersonCompositeBase {
  * </pre></div>
  *
  * @since 1.3.0
@@ -29,6 +38,12 @@ import java.lang.annotation.*;
 @Repeatable(NonColumnProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonColumnProperty {
-	/** @return 指定対象のフィールドのプロパティ名 */
+	/**
+	 * @return フィールドを指定するプロパティ名
+	 * @since 2.0.0
+	 */
+	String property();
+
+	/** @return フィールドがどのカラムにも関連しないなら true、そうでなければ false */
 	String value();
 }

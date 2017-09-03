@@ -94,36 +94,36 @@ Lightsleep / マニュアル
 Lihgtsleep は、エンティティ・クラスまたはオブジェクトを引数とするメソッドでは自動でテーブルとの関連付けを行いますが、エンティティ・クラスにアノテーションを使用する事が必要な場合もあります。
 Lightsleep には、以下のアノテーションがあります。
 
-|アノテーション・クラス|指定する内容|付与する対象|
-|:--|:--|:--|
-|[`@Table`             ](#Entity-Table        )|テーブル名|クラス|
-|[`@Key`               ](#Entity-Key          )|プライマリ・キーに対応|フィールド|
-|[`@Column`            ](#Entity-Column       )|カラム名|フィールド|
-|[`@ColumnType`        ](#Entity-ColumnType   )|カラムの型|フィールド|
-|[`@NonColumn`         ](#Entity-NonColumn    )|カラムに関連しない|フィールド|
-|[`@NonSelect`         ](#Entity-NonSelect    )|SELECT SQL に使用しない|フィールド|
-|[`@NonInsert`         ](#Entity-NonInsert    )|INSERT SQL に使用しない|フィールド|
-|[`@NonUpdate`         ](#Entity-NonUpdate    )|UPDATE SQL に使用しない|フィールド|
-|[`@Select`            ](#Entity-Select       )|SELECT SQL で使用する式|フィールド|
-|[`@Insert`            ](#Entity-Insert       )|INSERT SQL で使用する式|フィールド|
-|[`@Update`            ](#Entity-Update       )|UPDATE SQL で使用する式|フィールド|
-|[`@KeyProperty`       ](#Entity-XxxxxProperty)|プライマリ・キーに対応|クラス|
-|[`@ColumnProperty`    ](#Entity-XxxxxProperty)|カラム名|クラス|
-|[`@ColumnTypeProperty`](#Entity-XxxxxProperty)|カラムの型|クラス|
-|[`@NonColumnProperty` ](#Entity-XxxxxProperty)|カラムに関連しない|クラス|
-|[`@NonSelectProperty` ](#Entity-XxxxxProperty)|SELECT SQL に使用しない|クラス|
-|[`@NonInsertProperty` ](#Entity-XxxxxProperty)|INSERT SQL に使用しない|クラス|
-|[`@NonUpdateProperty` ](#Entity-XxxxxProperty)|UPDATE SQL に使用しない|クラス|
-|[`@SelectProperty`    ](#Entity-XxxxxProperty)|SELECT SQL で使用する式|クラス|
-|[`@InsertProperty`    ](#Entity-XxxxxProperty)|INSERT SQL で使用する式|クラス|
-|[`@UpdateProperty`    ](#Entity-XxxxxProperty)|UPDATE SQL で使用する式|クラス|
+|アノテーション型|要素|示す内容|付与する対象|
+|:--|:--|:--|:--|
+|[`@Table`             ](#Entity-Table        )|String value                                   |関連するテーブル名     |クラス|
+|[`@Key`               ](#Entity-Key          )|boolean value (省略値: true)                   |プライマリ・キーに対応 |フィールド|
+|[`@Column`            ](#Entity-Column       )|String value                                   |関連するカラムの名前   |フィールド|
+|[`@ColumnType`        ](#Entity-ColumnType   )|Class<?> value                                 |関連するカラムの型     |フィールド|
+|[`@NonColumn`         ](#Entity-NonColumn    )|boolean value (省略値: true)                   |カラムに関連しない     |フィールド|
+|[`@NonSelect`         ](#Entity-NonSelect    )|boolean value (省略値: true)                   |SELECT SQL に使用しない|フィールド|
+|[`@NonInsert`         ](#Entity-NonInsert    )|boolean value (省略値: true)                   |INSERT SQL に使用しない|フィールド|
+|[`@NonUpdate`         ](#Entity-NonUpdate    )|boolean value (省略値: true)                   |UPDATE SQL に使用しない|フィールド|
+|[`@Select`            ](#Entity-Select       )|String value                                   |SELECT SQL で使用する式|フィールド|
+|[`@Insert`            ](#Entity-Insert       )|String value                                   |INSERT SQL で使用する式|フィールド|
+|[`@Update`            ](#Entity-Update       )|String value                                   |UPDATE SQL で使用する式|フィールド|
+|[`@KeyProperty`       ](#Entity-XxxxxProperty)|String property<br>boolean value (省略値: true)|プライマリ・キーに対応 |クラス|
+|[`@ColumnProperty`    ](#Entity-XxxxxProperty)|String property<br>String column               |関連するカラムの名前   |クラス|
+|[`@ColumnTypeProperty`](#Entity-XxxxxProperty)|String property<br>Class<?> type               |関連するカラムの型     |クラス|
+|[`@NonColumnProperty` ](#Entity-XxxxxProperty)|String property<br>boolean value (省略値: true)|カラムに関連しない     |クラス|
+|[`@NonSelectProperty` ](#Entity-XxxxxProperty)|String property<br>boolean value (省略値: true)|SELECT SQL に使用しない|クラス|
+|[`@NonInsertProperty` ](#Entity-XxxxxProperty)|String property<br>boolean value (省略値: true)|INSERT SQL に使用しない|クラス|
+|[`@NonUpdateProperty` ](#Entity-XxxxxProperty)|String property<br>boolean value (省略値: true)|UPDATE SQL に使用しない|クラス|
+|[`@SelectProperty`    ](#Entity-XxxxxProperty)|String property<br>String expression           |SELECT SQL で使用する式|クラス|
+|[`@InsertProperty`    ](#Entity-XxxxxProperty)|String property<br>String expression           |INSERT SQL で使用する式|クラス|
+|[`@UpdateProperty`    ](#Entity-XxxxxProperty)|String property<br>String expression           |UPDATE SQL で使用する式|クラス|
 
 <div id="Entity-Table"></div>
 
 [【目次へ】](#TOC) [【アノテーション一覧へ】](#Entity-Annotation)
 
 ##### 2-1-1. @Table
-クラスに関連するデータベース・テーブル名を指定します。
+クラスに関連するデータベース・テーブル名を示します。
 テーブル名がクラス名と同じであれば、このアノテーションを指定する必要はありません。
 
 ```java:Java
@@ -138,45 +138,83 @@ public class Contact1 extends Contact {
 `@Table("super")` を指定した場合は、スーパークラスのクラス名がテーブル名となります。
 
 ```java:Java
-import org.lightsleep.entity.*;
+// Java での例
+@Table("Contact")
+public class Person extends PersonBase {
 
-@Table("super")
-public class Contact1 extends Contact {
-   ...
-}
+    @Table("super")
+     public static class Ex extends Person {
+```
+
+```groovy:Groovy
+// Groovy での例
+@Table('Contact')
+class Person extends PersonBase {
+
+    @Table('super')
+     static class Ex extends Person {
 ```
 
 <div id="Entity-Key"></div>
 
 ##### 2-1-2. @Key
-フィールドに関連するカラムがプライマリー・キーの一部である事を指定します。
+フィールドに関連するカラムがプライマリー・キーの一部である事を示します。
 
 ```java:Java
-@Key
-public String id;
+// Java での例
+    @Key
+    public int contactId;
+    @Key
+    public short childIndex;
+```
+
+```groovy:Groovy
+// Groovy での例
+    @Key
+    int contactId
+    @Key
+    short childIndex
 ```
 
 <div id="Entity-Column"></div>
 
 ##### 2-1-3. @Column
-フィールドに関連するデータベース・カラム名を指定します。
+フィールドに関連するデータベース・カラム名を示します。
 カラム名がフィールド名と同じであれば、このアノテーションを指定する必要がありません。
 
 ```java:Java
-    @Column("family_name")
-    public String familyName;
+// Java での例
+    @Column("firstName")
+    public String first;
+    @Column("lastName")
+    public String last;
+```
+
+```groovy:Groovy
+// Groovy での例
+    @Column('firstName')
+    String first
+    @Column('lastName')
+    String last
 ```
 
 <div id="Entity-ColumnType"></div>
 
 ##### 2-1-4. @ColumnType
-フィールドに関連するカラムの型を指定します。
+フィールドに関連するカラムの型を示します。
 フィールド型とカラム型が同種類の場合は、指定する必要がありません。
 フィールド型が日付型で、カラム型が数値型のように異なる場合に指定します。
 
 ```java:Java
+// Java での例
     @ColumnType(Long.class)
-    public Date birhtday;
+    public Date birthday;
+```
+
+```groovy:Groovy
+// Groovy での例
+    @ColumnType(Long)
+    Date birthday
 ```
 
 <div id="Entity-NonColumn"></div>
@@ -184,43 +222,81 @@ public String id;
 [【目次へ】](#TOC) [【アノテーション一覧へ】](#Entity-Annotation)
 
 ##### 2-1-5. @NonColumn
-フィールドがどのカラムにも関連しない事を指定します。
+フィールドがどのカラムにも関連しない事を示します。
 
 ```java:Java
+// Java での例
     @NonColumn
-    public List<Phone> phones = new ArrayList<>();
+    public List<Phone> phones;
+    @NonColumn
+    public List<Address> addresses;
+```
+
+```groovy:Groovy
+// Groovy での例
+    @NonColumn
+    List<Phone> phones
+    @NonColumn
+    List<Address> addresses
 ```
 
 <div id="Entity-NonSelect"></div>
 
 ##### 2-1-6. @NonSelect
-フィールドに関連するカラムが SELECT SQL で使用されない事を指定します。
+フィールドに関連するカラムが SELECT SQL で使用されない事を示します。
 
 ```java:Java
+// Java での例
     @NonSelect
-    public String givenName;
+    public Timestamp createdTime;
+    @NonSelect
+    public Timestamp updatedTime;
+```
+
+```groovy:Groovy
+// Groovy での例
+    @NonSelect
+    Timestamp createdTime
+    @NonSelect
+    Timestamp updatedTime
 ```
 
 <div id="Entity-NonInsert"></div>
 
 ##### 2-1-7. @NonInsert
-フィールドに関連するカラムが INSERT SQL で使用されない事を指定します。
+フィールドに関連するカラムが INSERT SQL で使用されない事を示します。
 
 ```java:Java
-    @Select("CONCAT({givenName}, ' ', {familyName})") // MySQL, Oracle
-    @NonInsert @NonUpdate
-    public String fullName;
+// Java での例
+    @NonInsert
+    public Timestamp createdTime;
+    @NonInsert
+    public Timestamp updatedTime;
+```
+
+```groovy:Groovy
+// Groovy での例
+    @NonInsert
+    Timestamp createdTime
+    @NonInsert
+    Timestamp updatedTime
 ```
 
 <div id="Entity-NonUpdate"></div>
 
 ##### 2-1-8. @NonUpdate
-フィールドに関連するカラムが UPDATE SQL で使用されない事を指定します。
+フィールドに関連するカラムが UPDATE SQL で使用されない事を示します。
 
 ```java:Java
-    @Insert("CURRENT_TIMESTAMP")
+// Java での例
     @NonUpdate
-    public Timestamp created;
+    public Timestamp createdTime;
+```
+
+```groovy:Groovy
+// Groovy での例
+    @NonUpdate
+    Timestamp createdTime
 ```
 
 <div id="Entity-Select"></div>
@@ -231,73 +307,110 @@ public String id;
 SELECT SQL のカラム名の代わりの式を指定します。
 
 ```java:Java
-    @Select("CONCAT({givenName}, ' ', {familyName})") // MySQL, Oracle
-    @NonInsert @NonUpdate
+// Java での例
+    @Select("{firstName}||' '||{lastName}")
+    @NonInsert@NonUpdate
     public String fullName;
+```
+
+```groovy:Groovy
+// Groovy での例
+    @Select("{firstName}||' '||{lastName}")
+    @NonInsert@NonUpdate
+    String fullName
 ```
 
 <div id="Entity-Insert"></div>
 
 ##### 2-1-10. @Insert
-INSERT SQL の挿入値の式を指定します。
+INSERT SQL の挿入値の式を示します。
 このアノテーションが指定された場合、フィールドの値は使用されません。
 
 ```java:Java
+// Java での例
     @Insert("CURRENT_TIMESTAMP")
-    @NonUpdate
-    public Timestamp created;
+    public Timestamp createdTime;
+    @Insert("CURRENT_TIMESTAMP")
+    public Timestamp updatedTime;
+```
+
+```groovy:Groovy
+// Groovy での例
+    @Insert('CURRENT_TIMESTAMP')
+    Timestamp createdTime
+    @Insert('CURRENT_TIMESTAMP')
+    Timestamp updatedTime
 ```
 
 <div id="Entity-Update"></div>
 
 ##### 2-1-11. @Update
-UPDATE SQL の更新値の式を指定します。
+UPDATE SQL の更新値の式を示します。
 このアノテーションが指定された場合、フィールドの値は使用されません。
 
 ```java:Java
-    @Insert("CURRENT_TIMESTAMP")
+// Java での例
+    @Update("{updateCount}+1")
+    public int updateCount;
     @Update("CURRENT_TIMESTAMP")
-    public Timestamp modified;
+    public Timestamp updatedTime;
+```
+
+```groovy:Groovy
+// Groovy での例
+    @Update('{updateCount}+1')
+    int updateCount
+    @Update("CURRENT_TIMESTAMP")
+    Timestamp updatedTime
 ```
 
 <div id="Entity-XxxxxProperty"></div>
 
+[【目次へ】](#TOC) [【アノテーション一覧へ】](#Entity-Annotation)
+
 ##### 2-1-12. @KeyProperty, @ColumnProperty, ... @UpdateProperty
-これらのアノテーションは、スーパークラスで定義されているフィールドに対して指定する場合に使用します。
-同一アノテーションを1つのクラスに複数付与できます。
+これらのアノテーションは、スーパークラスで定義されているフィールドに対して指定する場合に使用します。  
+指定された内容はサブクラスにも影響しますが、サブクラスでの指定が優先します。  
+`value=false`, `column=""`, `type=Void.class`, `expression=""` を指定する事で、スーパークラスでの指定を打ち消す事も可能です。
 
 ```java:Java
-import org.lightsleep.entity.*;
+// Java での例
+@KeyProperty(property="contactId")
+@KeyProperty(property="childIndex")
+public class Child extends ChildKey {
+```
 
-@Table("super")
-@ColumnProperty(property="familyName", column="family_name")
-public class Contact1 extends Contact {
+```groovy:Groovy
+// Groovy での例
+@KeyProperties([
+    @KeyProperty(property='contactId'),
+    @KeyProperty(property='childIndex')
+])
+class Child extends ChildKey {
 ```
 
 <div id="Entity-Interface"></div>
 
-[【目次へ】](#TOC) [【アノテーション一覧へ】](#Entity-Annotation)
-
 ### 2-2. エンティティ・クラスで実装するインターフェース
 
 <div id="Entity-PreInsert"></div>
+
+[【目次へ】](#TOC)
 
 #### 2-2-1. PreInsert インターフェース
 エンティティ・クラスがこのインターフェースを実装している場合、`Sql クラス`の `insert` メソッドで、INSERT SQL 実行前に `preInsert` メソッドがコールされます。
 `preInsert` メソッドでは、プライマリー・キーの採番の実装等を行います。
 
 ```java:Java
-import org.lightsleep.entity.*;
-
-public class Contact implements PreInsert {
+// Java での例
+public abstract class Common implements PreInsert {
     @Key
-    public String id;
-
-   ...
+    public int id;
+        ...
 
     @Override
-    public int preInsert(Connection connection) {
-        id = NextId.getNewId(connection, Contact.class);
+    public int preInsert(Connection conn) {
+        id = Numbering.getNewId(conn, getClass());
         return 0;
     }
 }
@@ -313,53 +426,68 @@ public class Contact implements PreInsert {
 エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、内包するエンティティへの SQL 処理を連動して行う事ができるようになります。
 
 ```java:Java
-import org.lightsleep.entity.*;
-
+// Java での例
 @Table("super")
 public class ContactComposite extends Contact implements Composite {
     @NonColumn
     public final List<Phone> phones = new ArrayList<>();
 
     @Override
-    public void postSelect(Connection connection) {
-        if (id > 0)
-            new Sql<>(Phone.class)
-                .where("{contactId} = {}", id)
-                .orderBy("{childIndex}")
-                .select(connection, phones::add);
+    public void postSelect(Connection conn) {
+        if (id != 0) {
+            new Sql<>(Phone.class).connection(conn)
+                .where("{contactId}={}", id)
+                .orderBy("{phoneNumber}")
+                .select(phones::add);
+        }
     }
 
     @Override
-    public int postInsert(Connection connection) {
-        short[] childIndex = new short[1];
-        // Inserts phones
-        childIndex[0] = 1;
-        phones.stream().forEach(phone -> {
-            phone.contactId = id;
-            phone.childIndex = childIndex[0]++;
-        });
-        int count = new Sql<>(Phone.class).insert(connection, phones);
+    public int postInsert(Connection conn) {
+        phones.forEach(phone -> phone.contactId = id);
+        int count = new Sql<>(Phone.class).connection(conn)
+                .insert(phones);
         return count;
     }
 
     @Override
-    public int postUpdate(Connection connection) {
-      // Deletes and inserts phones
-      int count = postDelete(connection);
-      count += postInsert(connection);
-      return count;
-    }
+    public int postUpdate(Connection conn) {
+        List<Integer> phoneIds = phones.stream()
+            .map(phone -> phone.id)
+            .filter(id -> id != 0)
+            .collect(Collectors.toList());
 
-    @Override
-    public int postDelete(Connection connection) {
-        int count += new Sql<>(Phone.class)
-            .where("{contactId} = {}", id)
-            .delete(connection);
+        // Delete phones
+        int count += new Sql<>(Phone.class).connection(conn)
+            .where("{contactId}={}", id)
+            .doIf(phoneIds.size() > 0,
+                sql -> sql.and("{id} NOT IN {}", phoneIds)
+            )
+            .delete();
+
+        // Uptete phones
+        count += new Sql<>(Phone.class).connection(conn)
+            .update(phones.stream()
+                .filter(phone -> phone.id != 0)
+                .collect(Collectors.toList()));
+
+        // Insert phones
+        count += new Sql<>(Phone.class).connection(conn)
+            .insert(phones.stream()
+                .filter(phone -> phone.id == 0)
+                .collect(Collectors.toList()));
+
         return count;
     }
-}
+ 
+    @Override
+    public int postDelete(Connection conn) {
+        int count = new Sql<>(Phone.class).connection(conn)
+            .where("{contactId}={}", id)
+            .delete(conn);
+        return count;
+    }
 ```
-
 
 <div id="Entity-PreStore"></div>
 
@@ -566,8 +694,8 @@ dataSource         = jdbc/example
 // Java での例
 import org.lightsleep.*;
 contact.id = 1;
-contact.familyName = "Apple";
-contact.givenName  = "Akane";
+contact.lastName = "Apple";
+contact.firstName  = "Akane";
 
 // トランザクション例
 Transaction.execute(connection -> {
@@ -583,8 +711,8 @@ Transaction.execute(connection -> {
 // Groovy での例
 def contact = new Contact()
 contact.id = 1
-contact.familyName = 'Apple'
-contact.givenName  = 'Akane'
+contact.lastName = 'Apple'
+contact.firstName  = 'Akane'
 
 // トランザクション例
 Transaction.execute {
@@ -633,7 +761,7 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
 
 <div id="ExecuteSQL-select-Entity"></div>
@@ -666,7 +794,7 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
 
 <div id="ExecuteSQL-select-N-Expression"></div>
@@ -680,7 +808,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
-        .where("{familyName}={}", "Apple")
+        .where("{lastName}={}", "Apple")
         .select(connection, contacts::add)
 );
 ```
@@ -690,7 +818,7 @@ Transaction.execute(connection ->
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
-        .where('{familyName}={}', 'Apple')
+        .where('{lastName}={}', 'Apple')
         .select(it, {contacts << it})
 }
 ```
@@ -729,7 +857,7 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL
-SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime FROM Contact C WHERE EXISTS (SELECT * FROM Phone P WHERE P.contactId=C.id)
+SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime FROM Contact C WHERE EXISTS (SELECT * FROM Phone P WHERE P.contactId=C.id)
 ```
 
 <div id="ExecuteSQL-select-Expression-and"></div>
@@ -743,8 +871,8 @@ SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
-        .where("{familyName}={}", "Apple")
-        .and  ("{givenName}={}", "Akane")
+        .where("{lastName}={}", "Apple")
+        .and  ("{firstName}={}", "Akane")
         .select(connection, contacts::add)
 );
 ```
@@ -754,15 +882,15 @@ Transaction.execute(connection ->
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
-        .where('{familyName}={}', 'Apple')
-        .and  ('{givenName}={}', 'Akane')
+        .where('{lastName}={}', 'Apple')
+        .and  ('{firstName}={}', 'Akane')
         .select(it, {contacts << it})
 }
 ```
 
 ```sql:SQL
 -- 実行される SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' AND givenName='Akane'
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' AND firstName='Akane'
 ```
 
 <div id="ExecuteSQL-select-Expression-or"></div>
@@ -776,8 +904,8 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
-        .where("{familyName}={}", "Apple")
-        .or   ("{familyName}={}", "Orange")
+        .where("{lastName}={}", "Apple")
+        .or   ("{lastName}={}", "Orange")
         .select(connection, contacts::add)
 );
 ```
@@ -787,15 +915,15 @@ Transaction.execute(connection ->
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
-        .where('{familyName}={}', 'Apple')
-        .or   ('{familyName}={}', 'Orange')
+        .where('{lastName}={}', 'Apple')
+        .or   ('{lastName}={}', 'Orange')
         .select(it, {contacts << it})
 }
 ```
 
 ```sql:SQL
 -- 実行される SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' OR familyName='Orange'
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange'
 ```
 
 <div id="ExecuteSQL-select-Expression-andor"></div>
@@ -809,12 +937,12 @@ List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
         .where(Condition
-            .of ("{familyName}={}", "Apple")
-            .and("{givenName}={}", "Akane")
+            .of ("{lastName}={}", "Apple")
+            .and("{firstName}={}", "Akane")
         )
         .or(Condition
-            .of ("{familyName}={}", "Orange")
-            .and("{givenName}={}", "Setoka")
+            .of ("{lastName}={}", "Orange")
+            .and("{firstName}={}", "Setoka")
         )
         .select(connection, contacts::add)
 );
@@ -824,12 +952,12 @@ List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
         .where(Condition
-            .of ("{familyName}={}", "Apple")
-            .and("{givenName}={}", "Akane")
+            .of ("{lastName}={}", "Apple")
+            .and("{firstName}={}", "Akane")
         )
         .or(Condition
-            .of ("{familyName}={}", "Orange")
-            .and("{givenName}={}", "Setoka")
+            .of ("{lastName}={}", "Orange")
+            .and("{firstName}={}", "Setoka")
         )
         .select(connection, contacts::add)
 );
@@ -837,7 +965,7 @@ Transaction.execute(connection ->
 
 ```sql:SQL
 -- 実行される SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' AND givenName='Akane' OR familyName='Orange' AND givenName='Setoka'
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' AND firstName='Akane' OR lastName='Orange' AND firstName='Setoka'
 ```
 
 <div id="ExecuteSQL-select-columns"></div>
@@ -851,8 +979,8 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
-        .where("{familyName}={}", "Apple")
-        .columns("familyName", "givenName")
+        .where("{lastName}={}", "Apple")
+        .columns("lastName", "firstName")
         .select(connection, contacts::add)
 );
 ```
@@ -862,15 +990,15 @@ Transaction.execute(connection ->
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
-        .where('{familyName}={}', 'Apple')
-        .columns('familyName', 'givenName')
+        .where('{lastName}={}', 'Apple')
+        .columns('lastName', 'firstName')
         .select(it, {contacts << it})
 }
 ```
 
 ```sql:SQL
 -- 実行される SQL
-SELECT familyName, givenName FROM Contact WHERE familyName='Apple'
+SELECT firstName, lastName FROM Contact WHERE lastName='Apple'
 ```
 
 <div id="ExecuteSQL-select-groupBy-having"></div>
@@ -884,9 +1012,9 @@ SELECT familyName, givenName FROM Contact WHERE familyName='Apple'
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class, "C")
-        .columns("familyName")
-        .groupBy("{familyName}")
-        .having("COUNT({familyName})>=2")
+        .columns("lastName")
+        .groupBy("{lastName}")
+        .having("COUNT({lastName})>=2")
         .select(connection, contacts::add)
 );
 ```
@@ -896,16 +1024,16 @@ Transaction.execute(connection ->
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class, 'C')
-        .columns('familyName')
-        .groupBy('{familyName}')
-        .having('COUNT({familyName})>=2')
+        .columns('lastName')
+        .groupBy('{lastName}')
+        .having('COUNT({lastName})>=2')
         .select(it, {contacts << it})
 }
 ```
 
 ```sql:SQL
 -- 実行される SQL
-SELECT MIN(C.familyName) AS C_familyName FROM Contact C GROUP BY C.familyName HAVING COUNT(C.familyName)>=2
+SELECT MIN(C.lastName) AS C_lastName FROM Contact C GROUP BY C.lastName HAVING COUNT(C.lastName)>=2
 ```
 
 <div id="ExecuteSQL-select-orderBy-offset-limit"></div>
@@ -919,8 +1047,8 @@ SELECT MIN(C.familyName) AS C_familyName FROM Contact C GROUP BY C.familyName HA
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
-        .orderBy("{familyName}")
-        .orderBy("{givenName}")
+        .orderBy("{lastName}")
+        .orderBy("{firstName}")
         .orderBy("{id}")
         .offset(10).limit(5)
         .select(connection, contacts::add)
@@ -932,8 +1060,8 @@ Transaction.execute(connection ->
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
-        .orderBy('{familyName}')
-        .orderBy('{givenName}')
+        .orderBy('{lastName}')
+        .orderBy('{firstName}')
         .orderBy('{id}')
         .offset(10).limit(5)
         .select(it, {contacts << it})
@@ -942,12 +1070,12 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL / DB2, MySQL, PostgreSQL, SQLite
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY familyName ASC, givenName ASC, id ASC LIMIT 5 OFFSET 10
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY lastName ASC, firstName ASC, id ASC LIMIT 5 OFFSET 10
 ```
 
 ```sql:SQL
 -- 実行される SQL / Oracle, SQLServer (取得時に行をスキップする)
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY familyName ASC, givenName ASC, id ASC
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY lastName ASC, firstName ASC, id ASC
 ```
 
 <div id="ExecuteSQL-select-forUpdate"></div>
@@ -978,12 +1106,12 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL / DB2
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE WITH RS
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE WITH RS
 ```
 
 ```sql:SQL
 -- 実行される SQL / MySQL, Oracle, PostgreSQL, SQLite
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE
 ```
 
 ```sql:SQL
@@ -993,7 +1121,7 @@ SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTim
 
 ```sql:SQL
 -- 実行される SQL / SQLServer
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WITH (ROWLOCK,UPDLOCK) WHERE id=1
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WITH (ROWLOCK,UPDLOCK) WHERE id=1
 ```
 
 -- SQLite では、FOR UPDATE が未サポートのため、例外がスローされます。
@@ -1030,7 +1158,7 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL
-SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C INNER JOIN Phone P ON P.contactId=C.id WHERE C.id=1
+SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C INNER JOIN Phone P ON P.contactId=C.id WHERE C.id=1
 ```
 
 <div id="ExecuteSQL-select-leftJoin"></div>
@@ -1046,7 +1174,7 @@ List<Phone> phones = new ArrayList<>();
 Transaction.execute(connection ->
 	new Sql<>(Contact.class, "C")
 	    .leftJoin(Phone.class, "P", "{P.contactId}={C.id}")
-	    .where("{C.familyName}={}", "Apple")
+	    .where("{C.lastName}={}", "Apple")
 	    .<Phone>select(connection, contacts::add, phones::add)
 );
 ```
@@ -1058,14 +1186,14 @@ def phones = []
 Transaction.execute {
     new Sql<>(Contact.class, 'C')
         .leftJoin(Phone.class, 'P', '{P.contactId}={C.id}')
-        .where('{C.familyName}={}', 'Apple')
+        .where('{C.lastName}={}', 'Apple')
         .select(it, {contacts << it}, {phones << it})
 }
 ```
 
 ```sql:SQL
 -- 実行される SQL
-SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C LEFT OUTER JOIN Phone P ON P.contactId=C.id WHERE C.familyName='Apple'
+SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C LEFT OUTER JOIN Phone P ON P.contactId=C.id WHERE C.lastName='Apple'
 ```
 
 <div id="ExecuteSQL-select-rightJoin"></div>
@@ -1101,7 +1229,7 @@ Transaction.execute {
 ```sql:SQL
 -- 実行される SQL
 -- SQLite では、RIGHT OUTER JOIN が未サポートのため、例外がスローされます。
-SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C RIGHT OUTER JOIN Phone P ON P.contactId=C.id WHERE P.label='Main'
+SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C RIGHT OUTER JOIN Phone P ON P.contactId=C.id WHERE P.label='Main'
 ```
 
 #### 5-1-15. SELECT COUNT(*)
@@ -1110,7 +1238,7 @@ SELECT C.id AS C_id, C.familyName AS C_familyName, C.givenName AS C_givenName, C
 int[] rowCount = new int[1];
 Transaction.execute(connection ->
     rowCount[0] = new Sql<>(Contact.class)
-        .where("familyName={}", "Apple")
+        .where("lastName={}", "Apple")
         .selectCount(connection)
 );
 ```
@@ -1120,14 +1248,14 @@ Transaction.execute(connection ->
 def rowCount = 0
 Transaction.execute {
     rowCount = new Sql<>(Contact.class)
-        .where('familyName={}', 'Apple')
+        .where('lastName={}', 'Apple')
         .selectCount(it)
 }
 ```
 
 ```sql:SQL
 -- 実行される SQL
-SELECT COUNT(*) FROM Contact WHERE familyName='Apple'
+SELECT COUNT(*) FROM Contact WHERE lastName='Apple'
 ```
 
 <div id="ExecuteSQL-insert"></div>
@@ -1144,8 +1272,8 @@ SELECT COUNT(*) FROM Contact WHERE familyName='Apple'
 // Java での例
 Contact contact = new Contact();
 contact.id = 1;
-contact.familyName = "Apple";
-contact.givenName = "Akane";
+contact.lastName = "Apple";
+contact.firstName = "Akane";
 Calendar calendar = Calendar.getInstance();
 calendar.set(2001, 1-1, 1, 0, 0, 0);
 contact.birthday = new Date(calendar.getTimeInMillis())
@@ -1158,8 +1286,8 @@ Transaction.execute(connection ->
 // Groovy での例
 def contact = new Contact()
 contact.id = 1
-contact.familyName = 'Apple'
-contact.givenName = 'Akane'
+contact.lastName = 'Apple'
+contact.firstName = 'Akane'
 Calendar calendar = Calendar.instance
 calendar.set(2001, 1-1, 1, 0, 0, 0)
 contact.birthday = new Date(calendar.timeInMillis)
@@ -1171,17 +1299,17 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
-INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', DATE'2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', DATE'2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
 -- 実行される SQL / SQLite
-INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', '2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', '2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
 -- 実行される SQL / SQLServer
-INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', CAST('2001-01-01' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', CAST('2001-01-01' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 <div id="ExecuteSQL-insert-N"></div>
@@ -1195,14 +1323,14 @@ INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTi
 List<Contact> contacts = new ArrayList<>();
 
 Contact contact = new Contact();
-contact.id = 2; contact.familyName = "Apple"; contact.givenName = "Yukari";
+contact.id = 2; contact.lastName = "Apple"; contact.firstName = "Yukari";
 Calendar calendar = Calendar.getInstance();
 calendar.set(2001, 1-1, 2, 0, 0, 0);
 contact.birthday = new Date(calendar.getTimeInMillis());
 contacts.add(contact);
 
 contact = new Contact();
-contact.id = 3; contact.familyName = "Apple"; contact.givenName = "Azusa";
+contact.id = 3; contact.lastName = "Apple"; contact.firstName = "Azusa";
 calendar = Calendar.getInstance();
 calendar.set(2001, 1-1, 3, 0, 0, 0);
 contact.birthday = new Date(calendar.getTimeInMillis());
@@ -1217,14 +1345,14 @@ Transaction.execute(connection ->
 def contacts = []
 
 def contact = new Contact()
-contact.id = 2; contact.familyName = 'Apple'; contact.givenName = 'Yukari'
+contact.id = 2; contact.lastName = 'Apple'; contact.firstName = 'Yukari'
 def calendar = Calendar.instance
 calendar.set(2001, 1-1, 2, 0, 0, 0)
 contact.birthday = new Date(calendar.timeInMillis)
 contacts << contact
 
 contact = new Contact()
-contact.id = 3; contact.familyName = 'Apple'; contact.givenName = 'Azusa'
+contact.id = 3; contact.lastName = 'Apple'; contact.firstName = 'Azusa'
 calendar = Calendar.instance
 calendar.set(2001, 1-1, 3, 0, 0, 0)
 contact.birthday = new Date(calendar.timeInMillis)
@@ -1237,20 +1365,20 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
-INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', DATE'2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', DATE'2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', DATE'2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', DATE'2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
 -- 実行される SQL / SQLite
-INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', '2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', '2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', '2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', '2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
 -- 実行される SQL / SQLServer
-INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', CAST('2001-01-02' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-INSERT INTO Contact (id, familyName, givenName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', CAST('2001-01-03' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', CAST('2001-01-02' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', CAST('2001-01-03' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 
@@ -1271,7 +1399,7 @@ Transaction.execute(connection ->
         .where("{id}={}", 1)
         .select(connection)
         .ifPresent(contact -> {
-            contact.givenName = "Akiyo";
+            contact.firstName = "Akiyo";
             new Sql<>(Contact.class).update(connection, contact);
         })
 );
@@ -1284,7 +1412,7 @@ Transaction.execute {
         .where('{id}={}', 1)
         .select(it)
         .ifPresent {Contact contact ->
-            contact.givenName = 'Akiyo'
+            contact.firstName = 'Akiyo'
             new Sql<>(Contact.class).update(it, contact)
         }
 }
@@ -1292,20 +1420,20 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
-UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
+UPDATE Contact SET lastName='Apple', firstName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
 ```sql:SQL
 -- 実行される SQL / SQLite
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
-UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
+UPDATE Contact SET lastName='Apple', firstName='Akiyo', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
 ```sql:SQL
 -- 実行される SQL / SQLServer
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
-UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
+UPDATE Contact SET lastName='Apple', firstName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
 <div id="ExecuteSQL-update-N"></div>
@@ -1319,9 +1447,9 @@ UPDATE Contact SET familyName='Apple', givenName='Akiyo', birthday=CAST('2001-01
 Transaction.execute(connection -> {
     List<Contact> contacts = new ArrayList<>();
     new Sql<>(Contact.class)
-        .where("{familyName}={}", "Apple")
+        .where("{lastName}={}", "Apple")
         .select(connection, contact -> {
-            contact.familyName = "Apfel";
+            contact.lastName = "Apfel";
             contacts.add(contact);
         });
     new Sql<>(Contact.class).update(connection, contacts);
@@ -1333,9 +1461,9 @@ Transaction.execute(connection -> {
 Transaction.execute {
     def contacts = []
     new Sql<>(Contact.class)
-        .where('{familyName}={}', 'Apple')
+        .where('{lastName}={}', 'Apple')
         .select(it, {Contact contact ->
-            contact.familyName = 'Apfel'
+            contact.lastName = 'Apfel'
             contacts << contact
         })
     new Sql<>(Contact.class).update(it, contacts)
@@ -1344,26 +1472,26 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
-UPDATE Contact SET familyName='Apfel', givenName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
-UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday=DATE'2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
-UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday=DATE'2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
+UPDATE Contact SET lastName='Apfel', firstName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET lastName='Apfel', firstName='Yukari', birthday=DATE'2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
+UPDATE Contact SET lastName='Apfel', firstName='Azusa', birthday=DATE'2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
 ```
 
 ```sql:SQL
 -- 実行される SQL / SQLite
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
-UPDATE Contact SET familyName='Apfel', givenName='Akiyo', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
-UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday='2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
-UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday='2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
+UPDATE Contact SET lastName='Apfel', firstName='Akiyo', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET lastName='Apfel', firstName='Yukari', birthday='2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
+UPDATE Contact SET lastName='Apfel', firstName='Azusa', birthday='2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
 ```
 
 ```sql:SQL
 -- 実行される SQL / SQLServer
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple'
-UPDATE Contact SET familyName='Apfel', givenName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
-UPDATE Contact SET familyName='Apfel', givenName='Yukari', birthday=CAST('2001-01-02' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
-UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday=CAST('2001-01-03' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
+UPDATE Contact SET lastName='Apfel', firstName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET lastName='Apfel', firstName='Yukari', birthday=CAST('2001-01-02' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
+UPDATE Contact SET lastName='Apfel', firstName='Azusa', birthday=CAST('2001-01-03' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
 ```
 
 <div id="ExecuteSQL-update-Condition"></div>
@@ -1375,11 +1503,11 @@ UPDATE Contact SET familyName='Apfel', givenName='Azusa', birthday=CAST('2001-01
 ```java:Java
 // Java での例
 Contact contact = new Contact();
-contact.familyName = "Pomme";
+contact.lastName = "Pomme";
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
-        .where("{familyName}={}", "Apfel")
-        .columns("familyName")
+        .where("{lastName}={}", "Apfel")
+        .columns("lastName")
         .update(connection, contact)
 );
 ```
@@ -1387,18 +1515,18 @@ Transaction.execute(connection ->
 ```groovy:Groovy
 // Groovy での例
 def contact = new Contact()
-contact.familyName = 'Pomme'
+contact.lastName = 'Pomme'
 Transaction.execute {
     new Sql<>(Contact.class)
-        .where('{familyName}={}', 'Apfel')
-        .columns('familyName')
+        .where('{lastName}={}', 'Apfel')
+        .columns('lastName')
         .update(it, contact)
 }
 ```
 
 ```sql:SQL
 -- 実行される SQL
-UPDATE Contact SET familyName='Pomme' WHERE familyName='Apfel'
+UPDATE Contact SET lastName='Pomme' WHERE lastName='Apfel'
 ```
 
 <div id="ExecuteSQL-update-all"></div>
@@ -1469,7 +1597,7 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 DELETE FROM Contact WHERE id=1
 ```
 
@@ -1484,7 +1612,7 @@ DELETE FROM Contact WHERE id=1
 Transaction.execute(connection -> {
     List<Contact> contacts = new ArrayList<>();
     new Sql<>(Contact.class)
-        .where("{familyName}={}", "Pomme")
+        .where("{lastName}={}", "Pomme")
         .select(connection, contacts::add);
     new Sql<>(Contact.class).delete(connection, contacts);
 });
@@ -1495,7 +1623,7 @@ Transaction.execute(connection -> {
 Transaction.execute {
     def contacts = []
     new Sql<>(Contact.class)
-        .where('{familyName}={}', 'Pomme')
+        .where('{lastName}={}', 'Pomme')
         .select(it, {contacts << it})
     new Sql<>(Contact.class).delete(it, contacts)
 }
@@ -1503,7 +1631,7 @@ Transaction.execute {
 
 ```sql:SQL
 -- 実行される SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Pomme'
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Pomme'
 DELETE FROM Contact WHERE id=2
 DELETE FROM Contact WHERE id=3
 ```
@@ -1518,7 +1646,7 @@ DELETE FROM Contact WHERE id=3
 // Java での例
 Transaction.execute(connection ->
     new Sql<>(Contact.class)
-        .where("{familyName}={}", "Orange")
+        .where("{lastName}={}", "Orange")
         .delete(connection)
 );
 ```
@@ -1527,14 +1655,14 @@ Transaction.execute(connection ->
 // Groovy での例
 Transaction.execute {
     new Sql<>(Contact.class)
-        .where('{familyName}={}', 'Orange')
+        .where('{lastName}={}', 'Orange')
         .delete(it)
 }
 ```
 
 ```sql:SQL
 -- 実行される SQL
-DELETE FROM Contact WHERE familyName='Orange'
+DELETE FROM Contact WHERE lastName='Orange'
 ```
 
 <div id="ExecuteSQL-delete-all"></div>

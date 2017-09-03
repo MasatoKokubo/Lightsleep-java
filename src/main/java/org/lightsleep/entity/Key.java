@@ -6,18 +6,27 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * Indicates that the column associated with the field is part of the primary key.
+ * Indicates that the column related to the field is part of the primary key.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
- * <div class="sampleCode"><pre>
- * public class Phone {
- *  <b>{@literal @}Key</b>public int contactId;
- *  <b>{@literal @}Key</b>public short childIndex;
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Key</b>
+ *   public int contactId;
+ *  <b>{@literal @}Key</b>
+ *   public short childIndex;
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * UPDATE Phone ... WHERE <b>contactId=100 AND childIndex=0</b>
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Key</b>
+ *   int contactId
+ *  <b>{@literal @}Key</b>
+ *   short childIndex
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Generated SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * UPDATE ... WHERE <b>contactId=100 AND childIndex=1</b>
  * </pre></div>
  *
  * @since 1.0.0
@@ -29,4 +38,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Key {
+// 2.0.0
+	/**
+	 * @return true if the column related to the field is part of the primary key, false otherwise
+	 * @since 2.0.0
+	 */
+	boolean value() default true;
+////
 }

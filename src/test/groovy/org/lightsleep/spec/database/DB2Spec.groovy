@@ -19,19 +19,19 @@ class DB2Spec extends Specification {
 	def "DB2Spec -> SqlString"() {
 	/**/DebugTrace.enter()
 		expect:
-			TypeConverter.convert(map, false     , SqlString.class).toString() == 'FALSE'
-			TypeConverter.convert(map, true      , SqlString.class).toString() == 'TRUE'
-			TypeConverter.convert(map, '\u0000'  , SqlString.class).toString() == "''||CHR(0)"
-			TypeConverter.convert(map, '\b'      , SqlString.class).toString() == "''||CHR(8)"
-			TypeConverter.convert(map, '\t'      , SqlString.class).toString() == "''||CHR(9)"
-			TypeConverter.convert(map, '\n'      , SqlString.class).toString() == "''||CHR(10)"
-			TypeConverter.convert(map, '\f'      , SqlString.class).toString() == "''||CHR(12)"
-			TypeConverter.convert(map, '\r'      , SqlString.class).toString() == "''||CHR(13)"
-			TypeConverter.convert(map, '\u001F'  , SqlString.class).toString() == "''||CHR(31)"
-			TypeConverter.convert(map, '\u007F'  , SqlString.class).toString() == "''||CHR(127)"
-			TypeConverter.convert(map, "'A'"     , SqlString.class).toString() == "'''A'''"
-			TypeConverter.convert(map, '\\'      , SqlString.class).toString() == "'\\'"
-			TypeConverter.convert(map, 'A\tB\n\r', SqlString.class).toString() == "'A'||CHR(9)||'B'||CHR(10)||CHR(13)"
+			TypeConverter.convert(map, false     , SqlString).toString() == 'FALSE'
+			TypeConverter.convert(map, true      , SqlString).toString() == 'TRUE'
+			TypeConverter.convert(map, '\u0000'  , SqlString).toString() == "''||CHR(0)"
+			TypeConverter.convert(map, '\b'      , SqlString).toString() == "''||CHR(8)"
+			TypeConverter.convert(map, '\t'      , SqlString).toString() == "''||CHR(9)"
+			TypeConverter.convert(map, '\n'      , SqlString).toString() == "''||CHR(10)"
+			TypeConverter.convert(map, '\f'      , SqlString).toString() == "''||CHR(12)"
+			TypeConverter.convert(map, '\r'      , SqlString).toString() == "''||CHR(13)"
+			TypeConverter.convert(map, '\u001F'  , SqlString).toString() == "''||CHR(31)"
+			TypeConverter.convert(map, '\u007F'  , SqlString).toString() == "''||CHR(127)"
+			TypeConverter.convert(map, "'A'"     , SqlString).toString() == "'''A'''"
+			TypeConverter.convert(map, '\\'      , SqlString).toString() == "'\\'"
+			TypeConverter.convert(map, 'A\tB\n\r', SqlString).toString() == "'A'||CHR(9)||'B'||CHR(10)||CHR(13)"
 	/**/DebugTrace.leave()
 	}
 }

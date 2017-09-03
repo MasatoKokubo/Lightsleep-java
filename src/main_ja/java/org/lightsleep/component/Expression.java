@@ -6,6 +6,7 @@ package org.lightsleep.component;
 import java.util.List;
 
 import org.lightsleep.Sql;
+import org.lightsleep.helper.MissingPropertyException;
 
 /**
  * 文字列と文字列中に埋め込む引数オブジェクトの配列で式を構成します。
@@ -86,7 +87,8 @@ public class Expression implements Condition {
 	 *   </tr>
 	 * </table>
 	 *	 *
-	 * @throws IllegalArgumentException 式の引数がプレースメントよりも少ないか多い場合
+	 * @throws MissingArgumentsException 式のプレースメントと引数の数が一致しない場合
+	 * @throws MissingPropertyException 式に存在しないプロパティが参照された場合
 	 */
 	@Override
 	public <E> String toString(Sql<E> sql, List<Object> parameters) {

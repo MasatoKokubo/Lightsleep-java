@@ -248,11 +248,8 @@ public class TypeConverter<ST, DT> {
 	 * @throws NullPointerException <b>sourceType</b> or <b>destinType</b> is null
 	 */
 	public static String key(Class<?> sourceType, Class<?> destinType) {
-		Objects.requireNonNull(sourceType, "sourceType");
-		Objects.requireNonNull(destinType, "destinType");
-
-		sourceType = Utils.toClassType(sourceType);
-		destinType = Utils.toClassType(destinType);
+		sourceType = Utils.toClassType(Objects.requireNonNull(sourceType, "sourceType"));
+		destinType = Utils.toClassType(Objects.requireNonNull(destinType, "destinType"));
 
 		String sourceTypeName = wellKnownClasses.contains(sourceType)
 			? sourceType.getSimpleName() : sourceType.getCanonicalName();
@@ -412,9 +409,16 @@ public class TypeConverter<ST, DT> {
 	 *
 	 * @throws NullPointerException if <b>typeConverterMap</b> or <b>destinType</b> is null
 	 * @throws ConvertException if can not find the converter or the accuracy is lowered in the conversion
+	 * @throws IllegalArgumentException if <b>destinType</b> is a primitive type
 	 */
 	@SuppressWarnings("unchecked")
 	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
+	// 2.0.0
+		Objects.requireNonNull(typeConverterMap, "typeConverterMap");
+		if (Objects.requireNonNull(destinType, "destinType").isPrimitive())
+			throw new IllegalArgumentException("destinType: " + destinType.getName() + "(primitive type)");
+	////
+
 		DT destin = null;
 		if (source == null) {
 			logger.debug(() -> "convert: null -> null");
@@ -471,11 +475,9 @@ public class TypeConverter<ST, DT> {
 	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b> or <b>function</b> is null
 	 */
 	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<ST, DT> function) {
-		Objects.requireNonNull(function, "function");
-
-		this.sourceType = sourceType;
-		this.destinType = destinType;
-		this.function = function;
+		this.sourceType = Objects.requireNonNull(sourceType, "sourceType");
+		this.destinType = Objects.requireNonNull(destinType, "destinType");
+		this.function = Objects.requireNonNull(function, "function");
 		key = key(sourceType, destinType);
 		hashCode = key.hashCode();
 	}
@@ -492,11 +494,8 @@ public class TypeConverter<ST, DT> {
 	 * @since 1.8.0
 	 */
 	public <MT> TypeConverter(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2) {
-		Objects.requireNonNull(typeConverter1, "typeConverter1");
-		Objects.requireNonNull(typeConverter2, "typeConverter2");
-
-		this.sourceType = typeConverter1.sourceType;
-		this.destinType = typeConverter2.destinType;
+		this.sourceType = Objects.requireNonNull(typeConverter1, "typeConverter1").sourceType;
+		this.destinType = Objects.requireNonNull(typeConverter2, "typeConverter2").destinType;
 		this.function = typeConverter1.function.andThen(typeConverter2.function);
 		key = key(sourceType, destinType);
 		hashCode = key.hashCode();

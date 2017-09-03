@@ -26,30 +26,32 @@ public class Numbering {
 	 * Gets and returns a new Identifier of the specified enyity class.
 	 *
 	 * @param <E> the entity type
+	 * @param conn the database connection
 	 * @param entityClass the entity class
 	 * @return a new Identifier
 	 */
-	public static synchronized <E extends Common> int getNewId(Connection connection, Class<E> entityClass) {
+	public static synchronized <E extends Common> int getNewId(Connection conn, Class<E> entityClass) {
 		EntityInfo<E> entityInfo = Sql.getEntityInfo(entityClass);
 		String tableName = entityInfo.tableName();
 
 		Optional<Numbering> numberingOpt = new Sql<>(Numbering.class)
 			.where("{tableName}={}", tableName)
 			.doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)
-			.select(connection);
+			.connection(conn)
+			.select();
 
 		int id[] = new int[1];
 		if (numberingOpt.isPresent()) {
 			Numbering numbering = numberingOpt.get();
-			new Sql<>(Numbering.class).update(connection, numbering);
+			new Sql<>(Numbering.class).connection(conn).update(numbering);
 			id[0] = numbering.nextId;
 		} else {
 			Numbering numbering = new Numbering(tableName);
-			new Sql<>(Numbering.class).insert(connection, numbering);
+			new Sql<>(Numbering.class).connection(conn).insert(numbering);
 			id[0] = 1;
 		}
 
-		Transaction.commit(connection);
+		Transaction.commit(conn);
 
 		return id[0];
 	}

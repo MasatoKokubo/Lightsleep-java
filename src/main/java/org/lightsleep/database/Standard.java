@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.lightsleep.Sql;
 import org.lightsleep.component.Condition;
@@ -94,6 +96,10 @@ import org.lightsleep.helper.Utils;
  * @see org.lightsleep.helper.TypeConverter
  */
 public class Standard implements Database {
+	// Class Resources
+	private static final Resource resource = new Resource(Standard.class);
+	private static final String messageSelectSqlWithoutColumns = resource.getString("messageSelectSqlWithoutColumns");
+
 	/**
 	 * The maximum length of string literal when creates SQL.<br>
 	 * If the string literal exceeds this length, it generated as SQL parameters (?).<br>
@@ -618,18 +624,27 @@ public class Standard implements Database {
 
 						if (!sql.getGroupBy().isEmpty()) buff.append(")");
 
-						//  column alias
+						// column alias
 						if (!columnAlias.equals(columnName))
 							buff.append(" AS ").append(columnAlias);
 
 					} else {
-						// Given expression
+						// First expression
 						buff.append(expression.toString(sql, parameters));
 
-						//  column alias
+						// column alias
 						buff.append(" AS ").append(columnAlias);
 					}
 				});
+		// 2.0.0
+			if (buff.length() == 0)
+				throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
+					sql.entityClass().getName(),
+					'[' + sql.getColumns().stream()
+						.map(name -> '"' + name + '"')
+						.collect(Collectors.joining(", ")) + ']'
+				));
+		////
 			return buff;
 		}, parameters);
 	}
@@ -757,7 +772,7 @@ public class Standard implements Database {
 	/**
 	 * Appends DISTINCT to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 *
@@ -772,7 +787,7 @@ public class Standard implements Database {
 	/**
 	 * Appends the main table name and alias to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 *
@@ -790,7 +805,7 @@ public class Standard implements Database {
 	/**
 	 * Appends the join table names and aliases to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
@@ -815,7 +830,7 @@ public class Standard implements Database {
 	/**
 	 * Appends INSERT column names and values to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
@@ -861,7 +876,7 @@ public class Standard implements Database {
 	/**
 	 * Appends UPDATE column names and values to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
@@ -900,7 +915,7 @@ public class Standard implements Database {
 	/**
 	 * Appends WHERE clause to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
@@ -915,7 +930,7 @@ public class Standard implements Database {
 	/**
 	 * Appends GROUP BY clause to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
@@ -930,7 +945,7 @@ public class Standard implements Database {
 	/**
 	 * Appends HAVING clause to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
@@ -945,7 +960,7 @@ public class Standard implements Database {
 	/**
 	 * Appends ORDER BY clause to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 * @param parameters a list to add the parameters of the SQL
@@ -960,7 +975,7 @@ public class Standard implements Database {
 	/**
 	 * Appends LIMIT clause to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 *
@@ -974,7 +989,7 @@ public class Standard implements Database {
 	/**
 	 * Appends OFFSET clause to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 *
@@ -988,7 +1003,7 @@ public class Standard implements Database {
 	/**
 	 * Appends FOR UPDATE clause to <b>buff</b>.
 	 *
-	 * @param <E> type of the entity
+	 * @param <E> the type of the entity
 	 * @param buff the string buffer to be appended
 	 * @param sql a <b>Sql</b> object
 	 *

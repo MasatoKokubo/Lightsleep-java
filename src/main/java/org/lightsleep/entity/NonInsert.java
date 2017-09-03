@@ -8,10 +8,20 @@ import java.lang.annotation.*;
 /**
  * Indicates that the column related the field is not used in INSERT SQL.
  *
- * <div class="sampleTitle"><span>Example</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
- *   {@literal @}Key<b>{@literal @}NonInsert</b>public int id;
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonInsert</b>
+ *   public Timestamp createdTime;
+ *  <b>{@literal @}NonInsert</b>
+ *   public Timestamp updatedTime;
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonInsert</b>
+ *   Timestamp createdTime
+ *  <b>{@literal @}NonInsert</b>
+ *   Timestamp updatedTime
  * </pre></div>
  *
  * @since 1.0.0
@@ -23,4 +33,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonInsert {
+// 2.0.0
+	/**
+	 * @return true if the column related the field is not used in INSERT SQL, false otherwise
+	 * @since 2.0.0
+	 */
+	boolean value() default true;
+////
 }

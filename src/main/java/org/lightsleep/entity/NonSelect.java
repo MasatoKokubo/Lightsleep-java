@@ -8,15 +8,20 @@ import java.lang.annotation.*;
 /**
  * Indicates that the column related the field is not used in SELECT SQL.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonSelect</b>
+ *   public Timestamp createdTime;
+ *  <b>{@literal @}NonSelect</b>
+ *   public Timestamp updatedTime;
+ * </pre></div>
  *
- *  <b>{@literal @}NonSelect</b>{@literal @}Insert("CURRENT_TIMESTAMP"){@literal @}NonUpdate
- *   public Timestamp created;
- *
- *  <b>{@literal @}NonSelect</b>{@literal @}Insert("CURRENT_TIMESTAMP"){@literal @}Update("CURRENT_TIMESTAMP")
- *   public Timestamp modified;
+ * <div class='exampleTitle'><span>Groovy Example</span></div>
+ * <div class='exampleCode'><pre>
+ *  <b>{@literal @}NonSelect</b>
+ *   Timestamp createdTime
+ *  <b>{@literal @}NonSelect</b>
+ *   Timestamp updatedTime
  * </pre></div>
  *
  * @since 1.0.0
@@ -28,4 +33,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonSelect {
+// 2.0.0
+	/**
+	 * @return true if the column related the field is not used in SELECT SQL, false otherwise
+	 * @since 2.0.0
+	 */
+	boolean value() default true;
+////
 }

@@ -10,16 +10,20 @@ import java.sql.Connection;
  * <b>Sql</b> クラスの <b>insert</b> メソッドで、
  * INSERT SQL 実行前に <b>preInsert</b> メソッドがコールされます。<br>
  *
+ * <p>
  * <b>preInsert</b> メソッドでは、プライマリー・キーの採番の実装等を行います。
+ * </p>
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact implements <b>PreInsert</b> {
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ * public abstract class Common implements <b>PreInsert</b> {
+ *  {@literal @}Key
+ *   public int id;
+ *     ...
  *
  *  {@literal @}Override
- *   <b>public int preInsert(Connection connection)</b> {
- *     <i>// 挿入前に ID を採番</i>
- *     id = NextId.getNewId(connection, Contact.class);
+ *   <b>public int preInsert(Connection conn)</b> {
+ *     id = Numbering.getNewId(conn, getClass());
  *     return 0;
  *   }
  * }

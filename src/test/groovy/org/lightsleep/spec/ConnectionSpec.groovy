@@ -43,14 +43,14 @@ class ConnectionSpec extends Specification {
 	}
 
 	static connectionSupplierMap = [
-		(C3p0    .class): new C3p0    (modifier),
-		(Dbcp    .class): new Dbcp    (modifier),
-		(HikariCP.class): new HikariCP(modifier),
-		(Jdbc    .class): new Jdbc    (modifier),
-		(TomcatCP.class): new TomcatCP(modifier)
+		(C3p0    ): new C3p0    (modifier),
+		(Dbcp    ): new Dbcp    (modifier),
+		(HikariCP): new HikariCP(modifier),
+		(Jdbc    ): new Jdbc    (modifier),
+		(TomcatCP): new TomcatCP(modifier)
 	] as Map
 
-	static def defaultConnectionSupplier = connectionSupplierMap[Jdbc.class]
+	static def defaultConnectionSupplier = connectionSupplierMap[Jdbc]
 
 	static ConnectionSupplier getConnectionSupplier(Class<? extends ConnectionSupplier> connectionSupplierClass) {
 		return connectionSupplierMap.get(connectionSupplierClass)
@@ -63,9 +63,9 @@ class ConnectionSpec extends Specification {
 		Sql.connectionSupplier = defaultConnectionSupplier
 
 		Transaction.execute {
-			new Sql<>(Contact .class).where(Condition.ALL).delete(it)
-			new Sql<>(Address.class).where(Condition.ALL).delete(it)
-			new Sql<>(Phone  .class).where(Condition.ALL).delete(it)
+			new Sql<>(Contact ).where(Condition.ALL).delete(it)
+			new Sql<>(Address).where(Condition.ALL).delete(it)
+			new Sql<>(Phone  ).where(Condition.ALL).delete(it)
 		}
 	}
 
@@ -112,9 +112,9 @@ class ConnectionSpec extends Specification {
 								)
 							}
 
-							new Sql<>(ContactComposite.class).insert(it, contact)
+							new Sql<>(ContactComposite).insert(it, contact)
 
-							ContactComposite contact2 = new Sql<>(ContactComposite.class).where(contact).select(it).orElse(null)
+							ContactComposite contact2 = new Sql<>(ContactComposite).where(contact).select(it).orElse(null)
 							try {
 								Thread.sleep(isSQLite ? SLEEP_TIME2_SQLITE : SLEEP_TIME2)
 							}
@@ -146,7 +146,7 @@ class ConnectionSpec extends Specification {
 	/**/DebugTrace.leave()
 
 		where:
-			connectionSupplierClass << [C3p0.class, Dbcp.class, HikariCP.class, TomcatCP.class]
+			connectionSupplierClass << [C3p0, Dbcp, HikariCP, TomcatCP]
 			connectionSupplierName = connectionSupplierClass.simpleName
 	}
 }

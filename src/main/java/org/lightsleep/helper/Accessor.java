@@ -44,8 +44,13 @@ public class Accessor<T> {
 
 	// Class Resources
 	private static final Resource resource = new Resource(Accessor.class);
-	private static final String messagePropertyIsNotFound       = resource.getString("messagePropertyIsNotFound");
-	private static final String messagePropertyExceededMaxNest  = resource.getString("messagePropertyExceededMaxNest");
+// 2.0.0
+//	private static final String messagePropertyIsNotFound       = resource.getString("messagePropertyIsNotFound");
+	private static final String messageMissingProperty          = resource.getString("messageMissingProperty");
+	private static final String messageMissingGetMethod         = resource.getString("messageMissingGetMethod");
+	private static final String messageMissingSetMethod         = resource.getString("messageMissingSetMethod");
+////
+	private static final String messagePropertyExceedsMaxNest   = resource.getString("messagePropertyExceedsMaxNest");
 	private static final String messageIntermediateObjectIsNull = resource.getString("messageIntermediateObjectIsNull");
 
 	// Maximum nesting level of property
@@ -115,8 +120,16 @@ public class Accessor<T> {
 
 		// @NonColumnProperty, @NonColumnProperties
 		List<NonColumnProperty> nonColumnProperties = Utils.getAnnotations(objectClass, NonColumnProperty.class);
-		if (nonColumnProperties != null)
-			nonColumnProperties.forEach(annotation -> nonColumnSet.add(annotation.value()));
+	// 2.0.0
+	//	if (nonColumnProperties != null)
+	//		nonColumnProperties.forEach(annotation -> nonColumnSet.add(annotation.value()));
+		nonColumnProperties.forEach(annotation -> {
+			if (annotation.value())
+				nonColumnSet.add(annotation.property());
+			else
+				nonColumnSet.remove(annotation.property());
+		});
+	////
 
 		putToMaps(objectClass, "", null, 0);
 
@@ -159,7 +172,11 @@ public class Accessor<T> {
 		Field[] fields = objectClass.getDeclaredFields();
 		for (Field field : fields) {
 			// @NonColumn
-			if (field.getAnnotation(NonColumn.class) != null) continue;
+		// 2.0.0
+		//	if (field.getAnnotation(NonColumn.class) != null) continue;
+			NonColumn nonColumn = field.getAnnotation(NonColumn.class);
+			if (nonColumn != null && nonColumn.value()) continue;
+		////
 
 			int modifier = field.getModifiers();
 			if (Modifier.isStatic(modifier)) continue; // static
@@ -277,7 +294,7 @@ public class Accessor<T> {
 
 				if (nestCount >= MAX_NEST)
 					throw new IllegalArgumentException(
-						MessageFormat.format(messagePropertyExceededMaxNest, this.objectClass.getName(), propertyName, MAX_NEST));
+						MessageFormat.format(messagePropertyExceedsMaxNest, this.objectClass.getName(), propertyName, MAX_NEST));
 
 				if (!valueTypes.contains(fieldType) && !fieldType.isEnum())
 					putToMaps(fieldType, basePropertyName + fieldName + '.', getter, nestCount + 1);
@@ -395,14 +412,18 @@ public class Accessor<T> {
 	 * @param propertyName a property name
 	 * @return the <b>Field</b> object
 	 *
-	 * @throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
+	 * @throws MissingPropertyException if the field that are specified by <b>propertyName</b> dose not exist
 	 */
 	public Field getField(String propertyName) {
 		Field field = fieldMap.get(propertyName);
 		if (field == null)
 			// Not found
-			throw new IllegalArgumentException(
-				MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
+		// 2.0.0
+		//	throw new IllegalArgumentException(
+		//		MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
+			throw new MissingPropertyException(
+				MessageFormat.format(messageMissingProperty, objectClass.getName(), propertyName));
+		////
 
 		return field;
 	}
@@ -413,7 +434,7 @@ public class Accessor<T> {
 	 * @param propertyName a property name
 	 * @return the type
 	 *
-	 * @throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
+	 * @throws MissingPropertyException if the field that are specified by <b>propertyName</b> dose not exist
 	 */
 	public Class<?> getType(String propertyName) {
 		return getField(propertyName).getType();
@@ -422,7 +443,7 @@ public class Accessor<T> {
 	/**
 	 * Returns a value of the field of the specified object.<br>
 	 * If the field is <b>public</b>, gets the value directly,
-	 * otherwise uses the <b>public</b> getting method associated with the the field.<br>
+	 * otherwise uses the <b>public</b> getting method related to the the field.<br>
 	 * If the field name is <b>foo</b>, getting method is one of the following.<br>
 	 * <ul>
 	 *   <li><b>foo()   </b></li>
@@ -435,7 +456,7 @@ public class Accessor<T> {
 	 * @return a value (might be null)
 	 *
 	 * @throws NullPointerException if <b>object</b> is null
-	 * @throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
+	 * @throws MissingPropertyException if the get method for the field that are specified by <b>propertyName</b> dose not exist
 	 * @throws RuntimeException if <b>IllegalAccessException</b> was thrown
 	 */
 	public Object getValue(T object, String propertyName) {
@@ -444,8 +465,12 @@ public class Accessor<T> {
 		Function<T, Object> getter = getterMap.get(propertyName);
 		if (getter == null)
 			// Not found
-			throw new IllegalArgumentException(
-				MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
+		// 2.0.0
+		//	throw new IllegalArgumentException(
+		//		MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
+			throw new MissingPropertyException(
+				MessageFormat.format(messageMissingGetMethod, objectClass.getName(), propertyName));
+		////
 
 		Object value = getter.apply(object);
 		return value;
@@ -454,7 +479,7 @@ public class Accessor<T> {
 	/**
 	 * Sets a value to the field of the specified object.<br>
 	 * If the field is <b>public</b>, sets the value directly,
-	 * otherwise uses the <b>public</b> setting method associated with the the field.<br>
+	 * otherwise uses the <b>public</b> setting method related to the the field.<br>
 	 * If the field name is <b>foo</b>, setting method is one of the following.<br>
 	 * <ul>
 	 *   <li><b>foo()   </b></li>
@@ -466,7 +491,7 @@ public class Accessor<T> {
 	 * @param value a value to be set the field (permit null)
 	 *
 	 * @throws NullPointerException if <b>object</b> is null
-	 * @throws IllegalArgumentException if the field that are specified by <b>propertyName</b> is not found
+	 * @throws MissingPropertyException if the set method for the field that are specified by <b>propertyName</b> does not exist
 	 * @throws RuntimeException if <b>IllegalAccessException</b> or <b>InvocationTargetException</b> was thrown
 	 */
 	public void setValue(T object, String propertyName, Object value) {
@@ -475,8 +500,12 @@ public class Accessor<T> {
 		BiConsumer<T, Object> setter = setterMap.get(propertyName);
 		if (setter == null)
 			// Not found
-			throw new IllegalArgumentException(
-				MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
+		// 2.0.0
+		//	throw new IllegalArgumentException(
+		//		MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
+			throw new MissingPropertyException(
+				MessageFormat.format(messageMissingSetMethod, objectClass.getName(), propertyName));
+		////
 
 		if (value == null) {
 			Field field = getField(propertyName);

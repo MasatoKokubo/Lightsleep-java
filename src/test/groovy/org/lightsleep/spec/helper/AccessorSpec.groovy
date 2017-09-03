@@ -10,7 +10,7 @@ import java.util.List
 
 import org.debugtrace.DebugTrace
 import org.lightsleep.entity.*
-import org.lightsleep.helper.Accessor
+import org.lightsleep.helper.*
 
 import spock.lang.*
 
@@ -60,21 +60,18 @@ class AccessorSpec extends Specification {
 		public short value8
 	}
 
-	@NonColumnProperty('metaClass')
+	@NonColumnProperty(property='metaClass')
 	static class Entity4 {
 	}
 
-	@Shared Accessor<Entity3> entity3Accessor = new Accessor<>(Entity3.class)
+	@Shared Accessor<Entity3> entity3Accessor = new Accessor<>(Entity3)
 
 	// constructor
 	def constructor() {
 	/**/DebugTrace.enter()
 
-		when:
-			new Accessor<>((Class<Entity1>)null)
-
-		then:
-			thrown NullPointerException
+		when: new Accessor<>((Class<Entity1>)null)
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -85,65 +82,49 @@ class AccessorSpec extends Specification {
 		setup:
 			Entity3 entity3 = new Entity3()
 
-		when:
-			entity3Accessor.setValue(entity3, 'entity1.value1', 123456789)
-		then:
-			entity3Accessor.getValue(entity3, 'entity1.value1') == 123456789
+		when: entity3Accessor.setValue(entity3, 'entity1.value1', 123456789)
+		then: entity3Accessor.getValue(entity3, 'entity1.value1') == 123456789
 
-		when:
-			entity3Accessor.setValue(entity3, 'entity1.value1', null)
-		then:
-			entity3Accessor.getValue(entity3, 'entity1.value1') == 123456789 // int
+		when: entity3Accessor.setValue(entity3, 'entity1.value1', null)
+		then: entity3Accessor.getValue(entity3, 'entity1.value1') == 123456789 // int
 
-		when:
-			entity3Accessor.setValue(entity3, 'entity1.value3', ['ABCDEFGH', 'abcdefgh'] as String[])
-		then:
-			entity3Accessor.getValue(entity3, 'entity1.value3') == ['ABCDEFGH', 'abcdefgh'] as String[]
+		when: entity3Accessor.setValue(entity3, 'entity1.value3', ['ABCDEFGH', 'abcdefgh'] as String[])
+		then: entity3Accessor.getValue(entity3, 'entity1.value3') == ['ABCDEFGH', 'abcdefgh'] as String[]
 
-		when:
-			entity3Accessor.setValue(entity3, 'entity1.value3', null)
-		then:
-			entity3Accessor.getValue(entity3, 'entity1.value3') == null
+		when: entity3Accessor.setValue(entity3, 'entity1.value3', null)
+		then: entity3Accessor.getValue(entity3, 'entity1.value3') == null
 
-		when:
-			entity3Accessor.setValue(entity3, 'entity1.size', Size.M)
-		then:
-			entity3Accessor.getValue(entity3, 'entity1.size') == Size.M
+		when: entity3Accessor.setValue(entity3, 'entity1.size', Size.M)
+		then: entity3Accessor.getValue(entity3, 'entity1.size') == Size.M
 
-		when:
-			entity3Accessor.setValue(entity3, 'entity2.value2', true)
-		then:
-			entity3Accessor.getValue(entity3, 'entity2.value2') == true
+		when: entity3Accessor.setValue(entity3, 'entity2.value2', true)
+		then: entity3Accessor.getValue(entity3, 'entity2.value2') == true
 
-		when:
-			entity3Accessor.setValue(entity3, 'entity2.value9', 'A' as char)
-		then:
-			entity3Accessor.getValue(entity3, 'entity2.value9') == 'A' as char
+		when: entity3Accessor.setValue(entity3, 'entity2.value9', 'A' as char)
+		then: entity3Accessor.getValue(entity3, 'entity2.value9') == 'A' as char
 
-		when:
-			entity3Accessor.setValue(entity3, 'value7', (byte)127)
-		then:
-			entity3Accessor.getValue(entity3, 'value7') == (byte)127
+		when: entity3Accessor.setValue(entity3, 'value7', (byte)127)
+		then: entity3Accessor.getValue(entity3, 'value7') == (byte)127
 
-		when:
-			entity3Accessor.setValue(entity3, 'value8', (short)-32768)
-		then:
-			entity3Accessor.getValue(entity3, 'value8') == (short)-32768
+		when: entity3Accessor.setValue(entity3, 'value8', (short)-32768)
+		then: entity3Accessor.getValue(entity3, 'value8') == (short)-32768
 
-		when:
-			entity3Accessor.setValue(null, 'entity1.value1', 123456789)
-		then:
-			thrown NullPointerException
+		when: entity3Accessor.setValue(null, 'entity1.value1', 123456789)
+		then: thrown NullPointerException
 
-		when:
-			entity3Accessor.setValue(entity3, 'entity1.value4', 123456789L)
+		when: entity3Accessor.setValue(entity3, 'entity1.value4', 123456789L)
 		then:
-			thrown IllegalArgumentException
+			def e = thrown MissingPropertyException
+		/**/DebugTrace.print('e', e)
+			e.message.indexOf(Entity3.name) >= 0
+			e.message.indexOf('entity1.value4') >= 0
 
-		when:
-			entity3Accessor.getValue(entity3, 'entity1.value4')
+		when: entity3Accessor.getValue(entity3, 'entity1.value4')
 		then:
-			thrown IllegalArgumentException
+			e = thrown MissingPropertyException
+		/**/DebugTrace.print('e', e)
+			e.message.indexOf(Entity3.name) >= 0
+			e.message.indexOf('entity1.value4') >= 0
 
 	/**/DebugTrace.leave()
 	}
@@ -178,17 +159,25 @@ class AccessorSpec extends Specification {
 				'value8'
 			]
 
-		when:
-			def entity1_value1Field = Entity1Base.class.getDeclaredField('value1')
+		when: def entity1_value1Field = Entity1Base.getDeclaredField('value1')
 		then:
 			entity3Accessor.getField('entity1.value1') == entity1_value1Field
-			entity3Accessor.getType('entity1.value1') == int.class
-			entity3Accessor.getType('entity1.value3') == String[].class
+			entity3Accessor.getType('entity1.value1') == int
+			entity3Accessor.getType('entity1.value3') == String[]
 
-		when:
-			entity3Accessor.getType('entity1.valueX')
+		when: entity3Accessor.getField('entity1.entityX')
 		then:
-			thrown IllegalArgumentException
+			def e = thrown MissingPropertyException
+		/**/DebugTrace.print('e', e)
+			e.message.indexOf(Entity3.name) >= 0
+			e.message.indexOf('entity1.entityX') >= 0
+
+		when: entity3Accessor.getType('entity1.entityX')
+		then:
+			e = thrown MissingPropertyException
+		/**/DebugTrace.print('e', e)
+			e.message.indexOf(Entity3.name) >= 0
+			e.message.indexOf('entity1.entityX') >= 0
 
 	/**/DebugTrace.leave()
 	}

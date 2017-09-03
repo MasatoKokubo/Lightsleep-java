@@ -218,6 +218,7 @@ public class TypeConverter<ST, DT> {
 	 *
 	 * @throws NullPointerException <b>typeConverterMap</b> または <b>destinType</b> が null の場合	 *
 	 * @throws ConvertException コンバータが見つからない場合か変換処理で精度が落ちた場合
+	 * @throws IllegalArgumentException <b>destinType</b> がプリミティブ・タイプの場合
 	 */
 	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
 		return null;

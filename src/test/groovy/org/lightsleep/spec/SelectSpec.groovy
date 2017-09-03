@@ -19,31 +19,41 @@ import spock.lang.*
 // SelectSpec
 @Unroll
 class SelectSpec extends Specification {
-	static connectionSupplierClasses = [
-		C3p0.class,
-		Dbcp.class,
-		HikariCP.class,
-		TomcatCP.class,
-		Jdbc.class
+	static def connectionSupplierClasses = [
+		C3p0,
+		Dbcp,
+		HikariCP,
+		TomcatCP,
+		Jdbc
 	]
 
-	@Shared connectionSupplier
+	@Shared ConnectionSupplier connectionSupplier
+	@Shared Calendar birthdayStart
+	@Shared Calendar saleDateStart
 
 	/**
 	 * Inserts data for tests.
 	 */
 	def setupSpec() {
 	/**/DebugTrace.enter()
-		connectionSupplier = ConnectionSpec.getConnectionSupplier(Jdbc.class)
+		connectionSupplier = ConnectionSpec.getConnectionSupplier(Jdbc)
 
 		Transaction.execute(connectionSupplier) {
-			new Sql<>(Contact .class).where(Condition.ALL).delete(it)
-			new Sql<>(Address .class).where(Condition.ALL).delete(it)
-			new Sql<>(Phone   .class).where(Condition.ALL).delete(it)
-			new Sql<>(Product .class).where(Condition.ALL).delete(it)
-			new Sql<>(Sale    .class).where(Condition.ALL).delete(it)
-			new Sql<>(SaleItem.class).where(Condition.ALL).delete(it)
+			new Sql<>(Contact ).where(Condition.ALL).delete(it)
+			new Sql<>(Address ).where(Condition.ALL).delete(it)
+			new Sql<>(Phone   ).where(Condition.ALL).delete(it)
+			new Sql<>(Product ).where(Condition.ALL).delete(it)
+			new Sql<>(Sale    ).where(Condition.ALL).delete(it)
+			new Sql<>(SaleItem).where(Condition.ALL).delete(it)
 		}
+
+		// 2001-01-01
+		birthdayStart = Calendar.instance
+		birthdayStart.clear(); birthdayStart.set(2001, 1-1, 1, 0, 0, 0)
+
+		// 2017-05-05
+		saleDateStart = Calendar.instance
+		saleDateStart.clear(); saleDateStart.set(2017, 5-1, 5, 0, 0, 0)
 
 		insertContacts()
 		insertProducts()
@@ -56,24 +66,46 @@ class SelectSpec extends Specification {
 	 */
 	def insertContacts() {
 	/**/DebugTrace.enter()
-		Calendar calendar = Calendar.getInstance()
-		calendar.setTimeInMillis(0L)
-		calendar.set(2001, 1-1, 1, 0, 0, 0)
+		Calendar calendar = birthdayStart.clone()
 
+		// 0 ~ 99
 		(0..<100).each {index ->
 			ContactComposite contact = new ContactComposite()
 
-			contact.name.family  = 'Family' + ((index / 10) as int)
-			contact.name.given = 'Given' + (index % 10)
+			// Last0, Last0, ..., Last0,
+			// Last1, Last1, ..., Last1,
+			//   ...,
+			// Last9, Last9, ..., Last9
+			contact.name.last  = 'Last' + ((index / 10) as int)
 
+			// First0, First1, ..., First9,
+			// First0, First1, ..., First9,
+			//   ...,
+			// First0, First1, ..., First9
+			contact.name.first = 'First' + (index % 10)
+
+			// 2001-01-01, 2001-01-02, ...
 			contact.birthday = new Date(calendar.timeInMillis)
-			calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1)
+			calendar.add(Calendar.DAY_OF_MONTH, 1)
 
 			contact.address.postCode = '1310045'
 			contact.address.address1 = 'Tokyo'
 			contact.address.address2 = 'Sumida-ku'
-			contact.address.address3 = 'Oshiue' + ((index / 100) as int) + '-' + (((index / 10) as int) % 10) + '-' + (index % 10)
 
+			// 0-0-0 Oshiage ..., 0-0-9 Oshiage,
+			// 0-1-0 Oshiage ..., 0-1-9 Oshiage,
+			//   ...,
+			// 0-9-0 Oshiage ..., 0-9-9 Oshiage
+			contact.address.address3 =  ((index / 100) as int) + '-' + (((index / 10) as int) % 10) + '-' + (index % 10) + ' Oshiage'
+
+			// index =  0 : []
+			// index =  1 : [09000010000]
+			// index =  2 : [09000020000, 09000020001]
+			// index =  3 : [09000030000, 09000030001, 09000030002]
+			//   ...
+			// index =  9 : [09000090000, 09000090001, 09000090002, ..., 09000090009]
+			//   ...
+			// index = 99 : [09000990000, 09000990001, 09000990002, ..., 09000990009]
 			(0..<(index % 10)).each {index2 ->
 				Phone phone = new Phone()
 				phone.phoneNumber = '0' + (90_0000_0000L + index * 10000 + index2)
@@ -81,7 +113,7 @@ class SelectSpec extends Specification {
 			}
 
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class).insert(it, contact)
+				new Sql<>(Contact).insert(it, contact)
 			}
 		}
 	/**/DebugTrace.leave()
@@ -113,18 +145,25 @@ class SelectSpec extends Specification {
 			int sizeIndex = index % 5
 			int colorIndex = index % colors.size()
 
+			// Product0, Product1, ... Product99
 			product.productName = 'Product' + index
-			product.price       = 1000 + index * 10
+
+			// 1000, 1010, ... 1990
+			product.price = 1000 + index * 10
+
+			// XS, S, M, L, XL, XS, S, M, L, XL, ....
 			product.productSize =
 				sizeIndex == 0 ? Size.XS :
 				sizeIndex == 1 ? Size.S  :
 				sizeIndex == 2 ? Size.M  :
 				sizeIndex == 3 ? Size.L  :
 				sizeIndex == 4 ? Size.XL : null
-			product.color       = colors[colorIndex]
+
+			// Beige, Black, ..., Yellow, Beige, Black, ..., Yellow, ...
+			product.color = colors[colorIndex]
 
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Product.class).insert(it, product)
+				new Sql<>(Product).insert(it, product)
 			}
 		}
 	/**/DebugTrace.leave()
@@ -135,32 +174,37 @@ class SelectSpec extends Specification {
 	 */
 	def insertSales() {
 	/**/DebugTrace.enter()
-		Calendar calendar = Calendar.getInstance()
-		calendar.setTimeInMillis(0L)
-		calendar.set(2017, 5-1, 5, 0, 0, 0)
+		Calendar calendar = saleDateStart.clone()
 
+		// 0 ~ 99
 		(0..<100).each {index ->
 			SaleComposite sale = new SaleComposite()
 
-			int index1 = index
 			Transaction.execute(connectionSupplier) {
-				Contact contact = new Sql<>(Contact.class)
-					.where('{name.family} = {}', 'Family' + (((index1 / 10) as int) % 10))
-					  .and('{name.given} = {}', 'Given' + (index1 % 10))
+				Contact contact = new Sql<>(Contact)
+					.where('{name.last} = {}', 'Last' + (((index / 10) as int) % 10))
+					  .and('{name.first} = {}', 'First' + (index % 10))
 					.select(it).orElse(null)
 
+				// id(Last0, First0), id(Last0, First1), ... id(Last0, First9)
+				// id(Last1, First0), id(Last1, First1), ... id(Last1, First9)
+				//    ...
+				// id(Last9, First0), id(Last9, First1), ... id(Last9, First9)
 				sale.contactId = contact.id
 
+				// 2017-05-05, 2017-05-06, ...
 				sale.saleDate = new Date(calendar.timeInMillis)
-				calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1)
+				calendar.add(Calendar.DAY_OF_MONTH, 1)
 
+				// 8%
 				sale.taxRate = 8
 
+				// 0 ~ 9
 				(0..<10).each {index2 ->
 					SaleItem item = new SaleItem()
 
-					Product product = new Sql<>(Product.class)
-						.where('{productName} = {}', 'Product' + ((index1 + index2) % 100))
+					Product product = new Sql<>(Product)
+						.where('{productName} = {}', 'Product' + ((index + index2) % 100))
 						.select(it).orElse(null)
 
 					item.productId = product.id
@@ -171,7 +215,7 @@ class SelectSpec extends Specification {
 			}
 
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Sale.class).insert(it, sale)
+				new Sql<>(Sale).insert(it, sale)
 			}
 		}
 	/**/DebugTrace.leave()
@@ -208,7 +252,7 @@ class SelectSpec extends Specification {
 		//                               Consumer<? super JE1> consumer1)
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class, 'C')
+				new Sql<>(Contact, 'C')
 					.<Address>select(it, {contacts << it}, {addresses << it})
 			}
 
@@ -220,8 +264,8 @@ class SelectSpec extends Specification {
 		//                               Consumer<? super JE2> consumer2)
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class, 'C')
-					.innerJoin(Address.class, 'A', '{A.adressId} = {P.adressId}')
+				new Sql<>(Contact, 'C')
+					.innerJoin(Address, 'A', '{A.adressId} = {P.adressId}')
 					.<Address, Address>select(it, {contacts << it}, {addresses << it}, {addresses << it})
 			}
 
@@ -234,9 +278,9 @@ class SelectSpec extends Specification {
 		//                               Consumer<? super JE3> consumer3)
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class, 'C')
-					.innerJoin(Address.class, 'A1', '{A1.adressId} = {P.adressId}')
-					.innerJoin(Address.class, 'A2', '{A2.adressId} = {P.adressId}')
+				new Sql<>(Contact, 'C')
+					.innerJoin(Address, 'A1', '{A1.adressId} = {P.adressId}')
+					.innerJoin(Address, 'A2', '{A2.adressId} = {P.adressId}')
 					.<Address, Address, Address>select(it, {contacts << it}, {addresses << it}, {addresses << it}, {addresses << it})
 			}
 
@@ -250,10 +294,10 @@ class SelectSpec extends Specification {
 		//                               Consumer<? super JE4> consumer4)
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class, 'C')
-					.innerJoin(Address.class, 'A1', '{A1.adressId} = {P.adressId}')
-					.innerJoin(Address.class, 'A2', '{A2.adressId} = {P.adressId}')
-					.innerJoin(Address.class, 'A3', '{A3.adressId} = {P.adressId}')
+				new Sql<>(Contact, 'C')
+					.innerJoin(Address, 'A1', '{A1.adressId} = {P.adressId}')
+					.innerJoin(Address, 'A2', '{A2.adressId} = {P.adressId}')
+					.innerJoin(Address, 'A3', '{A3.adressId} = {P.adressId}')
 					.<Address, Address, Address, Address>select(it, {contacts << it}, {addresses << it}, {addresses << it}, {addresses << it}, {addresses << it})
 			}
 
@@ -276,7 +320,7 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class).select(it)
+				new Sql<>(Contact).select(it)
 			}
 
 		then:
@@ -285,7 +329,7 @@ class SelectSpec extends Specification {
 		when:
 			Contact contact = null
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(Contact.class).where('0<>0').select(it).orElse(null)
+				contact = new Sql<>(Contact).where('0<>0').select(it).orElse(null)
 			}
 
 		then:
@@ -311,12 +355,11 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(Contact.class) // without table alias
+				contact = new Sql<>(Contact) // without table alias
 					.expression('id', 'MAX({id})') // without table alias
 					.columns('id')                 // without table alias
 					.select(it).orElse(null)
 			}
-			/**/DebugTrace.print('contact', contact)
 
 		then:
 			contact != null
@@ -324,12 +367,11 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(Contact.class, 'C')// with table alias
+				contact = new Sql<>(Contact, 'C')// with table alias
 					.expression('id', 'MAX({C.id})')   // with table alias
 					.columns('C.id')                   // with table alias
 					.select(it).orElse(null)
 			}
-		/**/DebugTrace.print('contact', contact)
 
 		then:
 			contact != null
@@ -337,12 +379,11 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(Contact.class, 'C') // with table alias
+				contact = new Sql<>(Contact, 'C') // with table alias
 					.expression('id', 'MAX({id})')      // without table alias
 					.columns('C.id')                    // with table alias
 					.select(it).orElse(null)
 			}
-		/**/DebugTrace.print('contact', contact)
 
 		then:
 			contact != null
@@ -350,12 +391,11 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(Contact.class, 'C') // with table alias
+				contact = new Sql<>(Contact, 'C') // with table alias
 					.expression('id', 'MAX({C.id})')    // with table alias
 					.columns('id')                      // without table alias
 					.select(it).orElse(null)
 			}
-		/**/DebugTrace.print('contact', contact)
 
 		then:
 			contact != null
@@ -380,24 +420,24 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class)
-					.where('{name.family} = {}', 'Family0')
-					.and  ('{name.given} = {}' , 'Given0')
+				new Sql<>(Contact)
+					.where('{name.last} = {}', 'Last0')
+					.and  ('{name.first} = {}' , 'First0')
 					.or(Condition
-						.of ('{name.family} = {}', 'Family1')
-						.and('{name.given} = {}' , 'Given1')
+						.of ('{name.last} = {}', 'Last1')
+						.and('{name.first} = {}' , 'First1')
 					)
-					.orderBy('{name.family}')
-					.orderBy('{name.given}')
+					.orderBy('{name.last}')
+					.orderBy('{name.first}')
 					.select(it, {contacts << it})
 			}
 
 		then:
 			contacts.size() == 2
-			contacts[0].name.family == 'Family0'
-			contacts[0].name.given  == 'Given0'
-			contacts[1].name.family == 'Family1'
-			contacts[1].name.given  == 'Given1'
+			contacts[0].name.last == 'Last0'
+			contacts[0].name.first  == 'First0'
+			contacts[1].name.last == 'Last1'
+			contacts[1].name.first  == 'First1'
 
 	/**/DebugTrace.leave()
 		where:
@@ -418,28 +458,28 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class)
-					.where('{name.family} = {}', 'Family0')
-					.or   ('{name.family} = {}', 'Family1')
+				new Sql<>(Contact)
+					.where('{name.last} = {}', 'Last0')
+					.or   ('{name.last} = {}', 'Last1')
 					.and(Condition
-						.of('{name.given} = {}', 'Given0')
-						.or('{name.given} = {}', 'Given1')
+						.of('{name.first} = {}', 'First0')
+						.or('{name.first} = {}', 'First1')
 					)
-					.orderBy('{name.family}')
-					.orderBy('{name.given}')
+					.orderBy('{name.last}')
+					.orderBy('{name.first}')
 					.select(it, {contacts << it})
 			}
 
 		then:
 			contacts.size() == 4
-			contacts[0].name.family == 'Family0'
-			contacts[0].name.given  == 'Given0'
-			contacts[1].name.family == 'Family0'
-			contacts[1].name.given  == 'Given1'
-			contacts[2].name.family == 'Family1'
-			contacts[2].name.given  == 'Given0'
-			contacts[3].name.family == 'Family1'
-			contacts[3].name.given  == 'Given1'
+			contacts[0].name.last  == 'Last0'
+			contacts[0].name.first == 'First0'
+			contacts[1].name.last  == 'Last0'
+			contacts[1].name.first == 'First1'
+			contacts[2].name.last  == 'Last1'
+			contacts[2].name.first == 'First0'
+			contacts[3].name.last  == 'Last1'
+			contacts[3].name.first == 'First1'
 
 	/**/DebugTrace.leave()
 		where:
@@ -460,13 +500,12 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				count = new Sql<>(Phone.class, 'P')
-					.innerJoin(Contact.class, 'C', '{C.id} = {P.contactId}')
+				count = new Sql<>(Phone, 'P')
+					.innerJoin(Contact, 'C', '{C.id} = {P.contactId}')
 					.where('{P.phoneNumber} LIKE {}', '090____0003')
-						.and('{C.name.family} = {}', 'Family1')
+						.and('{C.name.last} = {}', 'Last1')
 					.selectCount(it)
 			}
-	/**/DebugTrace.print('count', count)
 
 		then:
 			count == 6 // 4, 5, 6, 7, 8, 9
@@ -490,21 +529,21 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class)
-					.where('{name.family} IN {}', ['Family0', 'Family1', 'Family2', 'Family3', 'Family4'])
-					  .and('{name.given} IN {}', ['Given5', 'Given6', 'Given7', 'Given8', 'Given9'])
-					.orderBy('{name.family}').desc()
-					.orderBy('{name.given}').desc()
+				new Sql<>(Contact)
+					.where('{name.last} IN {}', ['Last0', 'Last1', 'Last2', 'Last3', 'Last4'])
+					  .and('{name.first} IN {}', ['First5', 'First6', 'First7', 'First8', 'First9'])
+					.orderBy('{name.last}').desc()
+					.orderBy('{name.first}').desc()
 					.offset(5).limit(15)
 					.select(it, {contacts << it})
 			}
 
 		then:
 			contacts.size() == 15
-			contacts[ 0].name.family == 'Family3'
-			contacts[ 0].name.given  == 'Given9'
-			contacts[14].name.family == 'Family1'
-			contacts[14].name.given  == 'Given5'
+			contacts[ 0].name.last  == 'Last3'
+			contacts[ 0].name.first == 'First9'
+			contacts[14].name.last  == 'Last1'
+			contacts[14].name.first == 'First5'
 
 	/**/DebugTrace.leave()
 		where:
@@ -526,16 +565,16 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Phone.class, 'P')
-					.innerJoin(Contact.class, 'C', '{C.id} = {P.contactId}')
+				new Sql<>(Phone, 'P')
+					.innerJoin(Contact, 'C', '{C.id} = {P.contactId}')
 					.where('{P.phoneNumber} LIKE {}', '090____0003')
-						.and('{C.name.family} = {}', 'Family5')
+						.and('{C.name.last} = {}', 'Last5')
 					.orderBy('{P.phoneNumber}').desc()
 					.columns('P.phoneId', 'P.phoneNumber', 'C.id')
-					.<Contact>select(it, {phones << it}, {contacts << it})
+					.<Contact>select(it,
+						{phones << it}, {contacts << it}
+					)
 			}
-		/**/DebugTrace.print('phones .size', phones .size())
-		/**/DebugTrace.print('contacts.size', contacts.size())
 
 		then:
 			phones  .size() == 6 // 4, 5, 6, 7, 8, 9
@@ -563,10 +602,12 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(SaleItem.class, 'SI')
-					.innerJoin(Sale.class, 'S', '{S.id} = {SI.saleId}')
-					.limit(100)
-					.<Sale>select(it, {saleItems << it}, {sales << it})
+				new Sql<>(SaleItem, 'SI')
+					.innerJoin(Sale, 'S', '{S.id} = {SI.saleId}')
+					.where('{S.saleDate} = {}', new Date(saleDateStart.timeInMillis))
+					.<Sale>select(it,
+						{saleItems << it}, {sales << it}
+					)
 			}
 		/**/DebugTrace.print('sales.size', sales.size())
 
@@ -594,13 +635,14 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(SaleItem.class, 'SI')
-					.innerJoin(Sale   .class, 'S', '{S.id} = {SI.saleId}')
-					.innerJoin(Contact.class, 'C', '{C.id} = {S.contactId}')
-					.limit(100)
-					.<Sale, Contact>select(it, {saleItems << it}, {sales << it}, {contacts << it})
+				new Sql<>(SaleItem, 'SI')
+					.innerJoin(Sale   , 'S', '{S.id} = {SI.saleId}')
+					.innerJoin(Contact, 'C', '{C.id} = {S.contactId}')
+					.where("{C.birthday} = {}", new Date(birthdayStart.timeInMillis))
+					.<Sale, Contact>select(it,
+						{saleItems << it}, {sales << it}, {contacts << it}
+					)
 			}
-		/**/DebugTrace.print('sales.size', sales.size())
 
 		then:
 			sales   .size() == saleItems .size()
@@ -628,14 +670,16 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(SaleItem.class, 'SI')
-					.innerJoin(Sale   .class, 'S', '{S.id} = {SI.saleId}')
-					.innerJoin(Contact.class, 'C', '{C.id} = {S.contactId}')
-					.innerJoin(Address.class, 'A', '{A.id} = {C.addressId}')
-					.limit(100)
-					.<Sale, Contact, Address>select(it, {saleItems << it}, {sales << it}, {contacts << it}, {addresses << it})
+				new Sql<>(SaleItem, 'SI')
+					.innerJoin(Sale   , 'S', '{S.id} = {SI.saleId}')
+					.innerJoin(Contact, 'C', '{C.id} = {S.contactId}')
+					.innerJoin(Address, 'A', '{A.id} = {C.addressId}')
+					.where('{A.address3} LIKE {}', '%0-0-0')
+					.<Sale, Contact, Address>select(it,
+						{saleItems << it}, {sales << it},
+						{contacts << it}, {addresses << it}
+					)
 			}
-		/**/DebugTrace.print('sales.size', sales.size())
 
 		then:
 			sales    .size() == saleItems .size()
@@ -665,62 +709,24 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(SaleItem.class, 'SI')
-					.innerJoin(Sale   .class, 'S', '{S.id} = {SI.saleId}')
-					.innerJoin(Contact.class, 'C', '{C.id} = {S.contactId}')
-					.innerJoin(Address.class, 'A', '{A.id} = {C.addressId}')
-					.leftJoin (Phone  .class, 'P', '{P.contactId} = {C.id}')
-					.limit(100)
-					.<Sale, Contact, Address, Phone>select(it, {saleItems << it}, {sales << it}, {contacts << it}, {addresses << it}, {phones << it})
+				new Sql<>(SaleItem, 'SI')
+					.innerJoin(Sale   , 'S', '{S.id} = {SI.saleId}')
+					.innerJoin(Contact, 'C', '{C.id} = {S.contactId}')
+					.innerJoin(Address, 'A', '{A.id} = {C.addressId}')
+					.leftJoin (Phone  , 'P', '{P.contactId} = {C.id}')
+					.where('{P.phoneNumber} = {}', '09000010000')
+					.<Sale, Contact, Address, Phone>select(it,
+						{saleItems << it}, {sales << it},
+						{contacts << it}, {addresses << it},
+						{phones << it}
+					)
 			}
-		/**/DebugTrace.print('sales.size', sales.size())
 
 		then:
 			sales    .size() == saleItems .size()
 			contacts .size() == saleItems .size()
 			addresses.size() == saleItems .size()
 			phones   .size() == saleItems .size()
-
-	/**/DebugTrace.leave()
-		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
-	}
-
-	// select(Connection connection) / innerJoin x 3 + leftJoin
-	def "SelectSpec select join x 4 #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('innerJoin innerJoin innerJoin leftJoin 2')
-
-		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
-			List<SaleItem> saleItems = []
-			List<Sale    > sales     = []
-
-		when:
-			Sql<SaleItem> sql =  new Sql<>(SaleItem.class)
-			sql .innerJoin(Sale   .class, 'S', '{S.id} = {saleId}')
-				.innerJoin(Contact.class, 'C', '{C.id} = {S.contactId}')
-				.innerJoin(Address.class, 'A', '{A.id} = {C.addressId}')
-				.leftJoin (Phone  .class, 'P', '{P.contactId} = {C.id}')
-				.limit(100)
-			Transaction.execute(connectionSupplier) {
-				sql.<Sale>select(it, {saleItems << it}, {sales << it})
-			}
-		/**/DebugTrace.print('saleItems.size  ', saleItems.size())
-		/**/DebugTrace.print('sales.size      ', sales.size())
-		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql())
-		/**/DebugTrace.print('sql.columns     ', sql.getColumns())
-
-		then:
-			sql.generatedSql().indexOf('itemIndex'    ) >= 0
-			sql.generatedSql().indexOf('S.updateCount') >= 0
-			sql.generatedSql().indexOf('C.updateCount') == -1
-			sql.generatedSql().indexOf('A.updateCount') == -1
-			sql.generatedSql().indexOf('P.updateCount') == -1
-			new ArrayList<String>(sql.getColumns()) == ['.*', 'S.*']
 
 	/**/DebugTrace.leave()
 		where:
@@ -747,12 +753,12 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactPhoneCount.class, 'P')
-					.innerJoin(Contact.class, 'C', '{C.id} = {P.contactId}')
+				new Sql<>(ContactPhoneCount, 'P')
+					.innerJoin(Contact, 'C', '{C.id} = {P.contactId}')
 					.columns('P.contactId', 'P.count')
-					.where('{C.name.given} LIKE {}', '%4')
-						.or('{C.name.given} LIKE {}', '%5')
-						.or('{C.name.given} LIKE {}', '%6')
+					.where('{C.name.first} LIKE {}', '%4')
+						.or('{C.name.first} LIKE {}', '%5')
+						.or('{C.name.first} LIKE {}', '%6')
 					.groupBy('{P.contactId}')
 					.having('COUNT({P.id}) >= {}', 6)
 					.select(it, {phoneCounts << it})
@@ -782,12 +788,11 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact.class)
+				contact0 = new Sql<>(Contact)
 					.limit(1)
 					.orderBy('{id}')
 					.select(it).orElse(null)
 			}
-		/**/DebugTrace.print('1 contact0', contact0)
 			
 		then:
 			assert contact0 != null
@@ -798,22 +803,18 @@ class SelectSpec extends Specification {
 				threads[index] = new Thread({
 					Transaction.execute(connectionSupplier) {
 						def myIndex = index
-					/**/DebugTrace.print('1 myIndex', myIndex)
-						Contact contact = new Sql<>(Contact.class)
+						Contact contact = new Sql<>(Contact)
 							.where('{id} = {}', contact0.id)
 							.forUpdate()
 							.select(it).orElse(null)
-					/**/DebugTrace.print('2-' + myIndex + ' contact', contact)
 						assert contact != null
 
-						contact.name.given  += myIndex
-					/**/DebugTrace.print('contact.name.given' , contact.name.given )
+						contact.name.first  += myIndex
 
 						if (myIndex == 0)
 							Thread.sleep(1000L)
 
-					/**/DebugTrace.print('2 myIndex', myIndex)
-						new Sql<>(Contact.class).update(it, contact)
+						new Sql<>(Contact).update(it, contact)
 					}
 				})
 				threads[index].start()
@@ -829,23 +830,23 @@ class SelectSpec extends Specification {
 
 			Contact contact1 = null
 			Transaction.execute(connectionSupplier) {
-				contact1 = new Sql<>(Contact.class)
+				contact1 = new Sql<>(Contact)
 					.where('{id} = {}', contact0.id)
 					.select(it).orElse(null)
 			/**/DebugTrace.print('3 contact1', contact1)
 				assert contact1 != null
-				assert contact1.name.given.indexOf('0') >= 0
-				assert contact1.name.given.indexOf('1') >= 0
-				assert contact1.name.given.indexOf('2') >= 0
-				assert contact1.name.given.indexOf('3') >= 0
-				assert contact1.name.given.indexOf('4') >= 0
-				assert contact1.name.given.indexOf('5') >= 0
-				assert contact1.name.given.indexOf('6') >= 0
-				assert contact1.name.given.indexOf('7') >= 0
-				assert contact1.name.given.indexOf('8') >= 0
-				assert contact1.name.given.indexOf('9') >= 0
+				assert contact1.name.first.indexOf('0') >= 0
+				assert contact1.name.first.indexOf('1') >= 0
+				assert contact1.name.first.indexOf('2') >= 0
+				assert contact1.name.first.indexOf('3') >= 0
+				assert contact1.name.first.indexOf('4') >= 0
+				assert contact1.name.first.indexOf('5') >= 0
+				assert contact1.name.first.indexOf('6') >= 0
+				assert contact1.name.first.indexOf('7') >= 0
+				assert contact1.name.first.indexOf('8') >= 0
+				assert contact1.name.first.indexOf('9') >= 0
 
-				new Sql<>(Contact.class).update(it, contact1)
+				new Sql<>(Contact).update(it, contact1)
 			}
 
 		then:
@@ -853,7 +854,7 @@ class SelectSpec extends Specification {
 
 		cleanup:
 			if (contact0 != null)
-				Transaction.execute(connectionSupplier) {new Sql<>(Contact.class).update(it, contact0)}
+				Transaction.execute(connectionSupplier) {new Sql<>(Contact).update(it, contact0)}
 
 	/**/DebugTrace.leave()
 		where:
@@ -878,12 +879,11 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact.class)
+				contact0 = new Sql<>(Contact)
 					.limit(1)
 					.orderBy('{id}')
 					.select(it).orElse(null)
 			}
-		/**/DebugTrace.print('1 contact0', contact0)
 			
 		then:
 			assert contact0 != null
@@ -895,21 +895,17 @@ class SelectSpec extends Specification {
 					Transaction.execute(connectionSupplier) {
 						try {
 							def myIndex = index
-						/**/DebugTrace.print('1 myIndex', myIndex)
-							Contact contact = new Sql<>(Contact.class)
+							Contact contact = new Sql<>(Contact)
 								.where('{id} = {}', contact0.id)
 								.forUpdate().noWait()
 								.select(it).orElse(null)
-						/**/DebugTrace.print('2-' + myIndex + ' contact', contact)
 
-							contact.name.given  += myIndex
-						/**/DebugTrace.print('contact.name.given' , contact.name.given )
+							contact.name.first  += myIndex
 
 							if (myIndex == 0)
 								Thread.sleep(1500L)
 
-						/**/DebugTrace.print('2 myIndex', myIndex)
-							new Sql<>(Contact.class).update(it, contact)
+							new Sql<>(Contact).update(it, contact)
 						}
 						catch (RuntimeSQLException e) {
 						/**/DebugTrace.print('e', e)
@@ -929,23 +925,22 @@ class SelectSpec extends Specification {
 
 			Contact contact1 = null
 			Transaction.execute(connectionSupplier) {
-				contact1 = new Sql<>(Contact.class)
+				contact1 = new Sql<>(Contact)
 					.where('{id} = {}', contact0.id)
 					.select(it).orElse(null)
-			/**/DebugTrace.print('3 contact1', contact1)
 				assert contact1 != null
-				assert contact1.name.given.indexOf('0') >= 0
-				assert contact1.name.given.indexOf('1') == -1
-				assert contact1.name.given.indexOf('2') == -1
-				assert contact1.name.given.indexOf('3') == -1
-				assert contact1.name.given.indexOf('4') == -1
-				assert contact1.name.given.indexOf('5') == -1
-				assert contact1.name.given.indexOf('6') == -1
-				assert contact1.name.given.indexOf('7') == -1
-				assert contact1.name.given.indexOf('8') == -1
-				assert contact1.name.given.indexOf('9') == -1
+				assert contact1.name.first.indexOf('0') >= 0
+				assert contact1.name.first.indexOf('1') == -1
+				assert contact1.name.first.indexOf('2') == -1
+				assert contact1.name.first.indexOf('3') == -1
+				assert contact1.name.first.indexOf('4') == -1
+				assert contact1.name.first.indexOf('5') == -1
+				assert contact1.name.first.indexOf('6') == -1
+				assert contact1.name.first.indexOf('7') == -1
+				assert contact1.name.first.indexOf('8') == -1
+				assert contact1.name.first.indexOf('9') == -1
 
-				new Sql<>(Contact.class).update(it, contact1)
+				new Sql<>(Contact).update(it, contact1)
 			}
 
 		then:
@@ -953,7 +948,7 @@ class SelectSpec extends Specification {
 
 		cleanup:
 			if (contact0 != null)
-				Transaction.execute(connectionSupplier) {new Sql<>(Contact.class).update(it, contact0)}
+				Transaction.execute(connectionSupplier) {new Sql<>(Contact).update(it, contact0)}
 
 	/**/DebugTrace.leave()
 		where:
@@ -979,12 +974,11 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact.class)
+				contact0 = new Sql<>(Contact)
 					.limit(1)
 					.orderBy('{id}')
 					.select(it).orElse(null)
 			}
-		/**/DebugTrace.print('1 contact0', contact0)
 			
 		then:
 			assert contact0 != null
@@ -996,21 +990,18 @@ class SelectSpec extends Specification {
 					Transaction.execute(connectionSupplier) {
 						try {
 							def myIndex = index
-						/**/DebugTrace.print('1 myIndex', myIndex)
-							Contact contact = new Sql<>(Contact.class)
+							Contact contact = new Sql<>(Contact)
 								.where('{id} = {}', contact0.id)
 								.forUpdate().wait(1) // wait 1000ms
 								.select(it).orElse(null)
-						/**/DebugTrace.print('2-' + myIndex + ' contact', contact)
 
-							contact.name.given  += myIndex
-						/**/DebugTrace.print('contact.name.given' , contact.name.given )
+							contact.name.first  += myIndex
 
 							if (myIndex == 0)
 								Thread.sleep(1550L)
 
 						/**/DebugTrace.print('2 myIndex', myIndex)
-							new Sql<>(Contact.class).update(it, contact)
+							new Sql<>(Contact).update(it, contact)
 						}
 						catch (RuntimeSQLException e) {
 						/**/DebugTrace.print('e', e)
@@ -1030,23 +1021,23 @@ class SelectSpec extends Specification {
 
 			Contact contact1 = null
 			Transaction.execute(connectionSupplier) {
-				contact1 = new Sql<>(Contact.class)
+				contact1 = new Sql<>(Contact)
 					.where('{id} = {}', contact0.id)
 					.select(it).orElse(null)
 			/**/DebugTrace.print('3 contact1', contact1)
 				assert contact1 != null
-				assert contact1.name.given.indexOf('0') >= 0  //   0~1550ms
-				assert contact1.name.given.indexOf('1') == -1 // 100~1100ms
-				assert contact1.name.given.indexOf('2') == -1 // 200~1200ms
-				assert contact1.name.given.indexOf('3') == -1 // 300~1300ms
-				assert contact1.name.given.indexOf('4') == -1 // 400~1400ms
-				assert contact1.name.given.indexOf('5') >= 0 || // 500~1500ms
-				       contact1.name.given.indexOf('6') >= 0 || // 600~1600ms
-				       contact1.name.given.indexOf('7') >= 0  // 700~1700ms
-				assert contact1.name.given.indexOf('8') == -1 // 800~1800ms
-				assert contact1.name.given.indexOf('9') == -1 // 900~1900ms
+				assert contact1.name.first.indexOf('0') >= 0  //   0~1550ms
+				assert contact1.name.first.indexOf('1') == -1 // 100~1100ms
+				assert contact1.name.first.indexOf('2') == -1 // 200~1200ms
+				assert contact1.name.first.indexOf('3') == -1 // 300~1300ms
+				assert contact1.name.first.indexOf('4') == -1 // 400~1400ms
+				assert contact1.name.first.indexOf('5') >= 0 || // 500~1500ms
+				       contact1.name.first.indexOf('6') >= 0 || // 600~1600ms
+				       contact1.name.first.indexOf('7') >= 0  // 700~1700ms
+				assert contact1.name.first.indexOf('8') == -1 // 800~1800ms
+				assert contact1.name.first.indexOf('9') == -1 // 900~1900ms
 
-				new Sql<>(Contact.class).update(it, contact1)
+				new Sql<>(Contact).update(it, contact1)
 			}
 
 		then:
@@ -1054,7 +1045,7 @@ class SelectSpec extends Specification {
 
 		cleanup:
 			if (contact0 != null)
-				Transaction.execute(connectionSupplier) {new Sql<>(Contact.class).update(it, contact0)}
+				Transaction.execute(connectionSupplier) {new Sql<>(Contact).update(it, contact0)}
 
 	/**/DebugTrace.leave()
 		where:
@@ -1080,7 +1071,7 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact.class)
+				contact0 = new Sql<>(Contact)
 					.limit(1)
 					.orderBy('{id}')
 					.select(it).orElse(null)
@@ -1092,7 +1083,7 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class)
+				new Sql<>(Contact)
 					.where('{id} = {}', contact0.id)
 					.forUpdate()
 					.select(it)
@@ -1104,7 +1095,7 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass = Jdbc.class
+			connectionSupplierClass = Jdbc
 			connectionSupplierName = connectionSupplierClass.simpleName
 	}
 
@@ -1124,7 +1115,7 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact.class)
+				contact0 = new Sql<>(Contact)
 					.limit(1)
 					.orderBy('{id}')
 					.select(it).orElse(null)
@@ -1136,7 +1127,7 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class)
+				new Sql<>(Contact)
 					.where('{id} = {}', contact0.id)
 					.forUpdate().noWait()
 					.select(it)
@@ -1148,7 +1139,7 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass = Jdbc.class
+			connectionSupplierClass = Jdbc
 			connectionSupplierName = connectionSupplierClass.simpleName
 	}
 
@@ -1167,7 +1158,7 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact.class)
+				contact0 = new Sql<>(Contact)
 					.limit(1)
 					.orderBy('{id}')
 					.select(it).orElse(null)
@@ -1179,7 +1170,7 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class)
+				new Sql<>(Contact)
 					.where('{id} = {}', contact0.id)
 					.forUpdate().wait(5)
 					.select(it)
@@ -1191,7 +1182,7 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass = Jdbc.class
+			connectionSupplierClass = Jdbc
 			connectionSupplierName = connectionSupplierClass.simpleName
 	}
 
@@ -1202,8 +1193,8 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact.class)
-					.where('{name.family} LIKE {}', 'Family2%')
+				new Sql<>(Contact)
+					.where('{name.last} LIKE {}', 'Last2%')
 					.select(it)
 			}
 
@@ -1219,22 +1210,28 @@ class SelectSpec extends Specification {
 		public String fullName
 	}
 
-	@SelectProperty(property = 'fullName', expression = "{name.given}||' '||{name.family}")
+	@Table('super')
+	@SelectProperty(property = 'fullName', expression = "{name.first}||' '||{name.last}")
 	static class ContactFnDB2 extends ContactFn {}
 
-	@SelectProperty(property = 'fullName', expression = "CONCAT({name.given},' ',{name.family})")
+	@Table('super')
+	@SelectProperty(property = 'fullName', expression = "CONCAT({name.first},' ',{name.last})")
 	static class ContactFnMySQL extends ContactFn {}
 
-	@SelectProperty(property = 'fullName', expression = "{name.given}||' '||{name.family}")
+	@Table('super')
+	@SelectProperty(property = 'fullName', expression = "{name.first}||' '||{name.last}")
 	static class ContactFnOracle extends ContactFn {}
 
-	@SelectProperty(property = 'fullName', expression = "{name.given}||' '||{name.family}")
+	@Table('super')
+	@SelectProperty(property = 'fullName', expression = "{name.first}||' '||{name.last}")
 	static class ContactFnPostgreSQL extends ContactFn {}
 
-	@SelectProperty(property = 'fullName', expression = "{name.given}||' '||{name.family}")
+	@Table('super')
+	@SelectProperty(property = 'fullName', expression = "{name.first}||' '||{name.last}")
 	static class ContactFnSQLite extends ContactFn {}
 
-	@SelectProperty(property = 'fullName', expression = "{name.given}+' '+{name.family}")
+	@Table('super')
+	@SelectProperty(property = 'fullName', expression = "{name.first}+' '+{name.last}")
 	static class ContactFnSQLServer extends ContactFn {}
 
 	// extendsClassTest
@@ -1249,12 +1246,12 @@ class SelectSpec extends Specification {
 
 		when:
 			Class<? extends ContactFn> contactClass =
-				Sql.database instanceof DB2        ? ContactFnDB2       .class :
-				Sql.database instanceof MySQL      ? ContactFnMySQL     .class :
-				Sql.database instanceof Oracle     ? ContactFnOracle    .class :
-				Sql.database instanceof PostgreSQL ? ContactFnPostgreSQL.class :
-				Sql.database instanceof SQLite     ? ContactFnSQLite    .class :
-				Sql.database instanceof SQLServer  ? ContactFnSQLServer .class : null
+				Sql.database instanceof DB2        ? ContactFnDB2        :
+				Sql.database instanceof MySQL      ? ContactFnMySQL      :
+				Sql.database instanceof Oracle     ? ContactFnOracle     :
+				Sql.database instanceof PostgreSQL ? ContactFnPostgreSQL :
+				Sql.database instanceof SQLite     ? ContactFnSQLite     :
+				Sql.database instanceof SQLServer  ? ContactFnSQLServer  : null
 
 		then:
 			contactClass != null

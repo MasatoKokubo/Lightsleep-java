@@ -9,8 +9,7 @@ import org.lightsleep.helper.Resource;
 import org.lightsleep.helper.Utils;
 
 /**
- * If it fails to data conversion in the method of TypeConverter class,
- * this exception will be thrown.
+ * This exception is thrown if it fails to data conversion in the method of TypeConverter class.
  *
  * @since 1.0.0
  * @author Masato Kokubo
@@ -43,7 +42,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * Constructs a new <b>ConvertException</b>.
+	 * Constructs a new <b>ConvertException</b> with the specified detail message.
 	 *
 	 * @param message the detail message
 	 */
@@ -52,7 +51,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * Constructs a new <b>ConvertException</b>.
+	 * Constructs a new <b>ConvertException</b> with the specified detail message and cause.
 	 *
 	 * @param message the detail message
 	 * @param cause the cause
@@ -62,7 +61,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * Constructs a new <b>ConvertException</b>.
+	 * Constructs a new <b>ConvertException</b> with the specified cause.
 	 *
 	 * @param cause the cause
 	 */

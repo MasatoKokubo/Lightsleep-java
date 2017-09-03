@@ -8,12 +8,16 @@ import java.lang.annotation.*;
 /**
  * Indicates that the column related the field is not used in UPDATE SQL.
  *
- * <div class="sampleTitle"><span>Example of use</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonUpdate</b>
+ *   public Timestamp createdTime;
+ * </pre></div>
  *
- *  {@literal @}Insert("CURRENT_TIMESTAMP")<b>{@literal @}NonUpdate</b>
- *   public Timestamp created;
+ * <div class="exampleTitle"><span>Example of Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}NonUpdate</b>
+ *   Timestamp createdTime
  * </pre></div>
  *
  * @since 1.0.0
@@ -25,4 +29,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonUpdate {
+// 2.0.0
+	/**
+	 * @return true if the column related the field is not used in UPDATE SQL, false otherwise
+	 * @since 2.0.0
+	 */
+	boolean value() default true;
+////
 }

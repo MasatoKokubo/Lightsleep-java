@@ -63,7 +63,7 @@ public class Accessor<T> {
 	 * @param propertyName フィールドのプロパティ名
 	 * @return Field オブジェクト
 	 *
-	 * @throws IllegalArgumentException <b>propertyName</b> で指定されるフィールドが見つからない場合
+	 * @throws MissingPropertyException <b>propertyName</b> で指定されるフィールドが存在しない場合
 	 */
 	public Field getField(String propertyName) {
 		return null;
@@ -75,7 +75,7 @@ public class Accessor<T> {
 	 * @param propertyName フィールドのプロパティ名
 	 * @return フィールドの型
 	 *
-	 * @throws IllegalArgumentException <b>propertyName</b> で指定されるフィールドが見つからない場合
+	 * @throws MissingPropertyException <b>propertyName</b> で指定されるフィールドが存在しない場合
 	 */
 	public Class<?> getType(String propertyName) {
 		return null;
@@ -97,7 +97,7 @@ public class Accessor<T> {
 	 * @return フィールドから取得した値 (null 有)
 	 *
 	 * @throws NullPointerException <b>object</b> が null の場合
-	 * @throws IllegalArgumentException <b>propertyName</b> で指定されるフィールドの取得メソッドが見つからない場合
+	 * @throws MissingPropertyException <b>propertyName</b> で指定されるフィールドの取得メソッドが存在しない場合
 	 * @throws RuntimeException <b>IllegalAccessException</b> または <b>InvocationTargetException</b> がスローされた場合
 	 */
 	public Object getValue(T object, String propertyName) {
@@ -119,7 +119,7 @@ public class Accessor<T> {
 	 * @param value フィールドに設定する値 (null 可)
 	 *
 	 * @throws NullPointerException <b>object</b> が null の場合	 *
-	 * @throws IllegalArgumentException <b>propertyName</b> で指定されるフィールドの設定メソッドが見つからない場合	 *
+	 * @throws MissingPropertyException <b>propertyName</b> で指定されるフィールドの設定メソッドが存在しない場合
 	 * @throws RuntimeException <b>IllegalAccessException</b> または <b>InvocationTargetException</b> がスローされた場合
 	 */
 	public void setValue(T object, String propertyName, Object value) {

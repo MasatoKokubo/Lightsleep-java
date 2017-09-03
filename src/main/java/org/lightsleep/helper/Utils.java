@@ -4,7 +4,6 @@
 package org.lightsleep.helper;
 
 import java.lang.annotation.Annotation;
-import java.lang.annotation.Repeatable;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -571,26 +570,30 @@ public class Utils {
 		// Adds annotations of superclasses to the annotation list.
 		addAnnotations(annotations, clazz.getSuperclass(), annotationClass);
 
-		A annotation = clazz.getAnnotation(annotationClass);
-		if (annotation != null)
-			annotations.add(annotation);
-
-		Repeatable repeatable = annotationClass.getAnnotation(Repeatable.class);
-		if (repeatable != null) {
-			// the annotation is repeatable
-			Annotation repeatAnnotation = clazz.getAnnotation(repeatable.value());
-			if (repeatAnnotation != null) {
-				// has repeat annotation
-				try {
-					// gets repeat annotation array
-					@SuppressWarnings("unchecked")
-					A[] annotationArray = (A[])repeatAnnotation.annotationType().getMethod("value").invoke(repeatAnnotation);
-					Arrays.stream(annotationArray).forEach(ann -> annotations.add(ann));
-				}
-				catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
+	// 2.0.0
+	//	A annotation = clazz.getAnnotation(annotationClass);
+	//	if (annotation != null)
+	//		annotations.add(annotation);
+	//
+	//	Repeatable repeatable = annotationClass.getAnnotation(Repeatable.class);
+	//	if (repeatable != null) {
+	//		// the annotation is repeatable
+	//		Annotation repeatAnnotation = clazz.getAnnotation(repeatable.value());
+	//		if (repeatAnnotation != null) {
+	//			// has repeat annotation
+	//			try {
+	//				// gets repeat annotation array
+	//				@SuppressWarnings("unchecked")
+	//				A[] annotationArray = (A[])repeatAnnotation.annotationType().getMethod("value").invoke(repeatAnnotation);
+	//				Arrays.stream(annotationArray).forEach(ann -> annotations.add(ann));
+	//			}
+	//			catch (Exception e) {
+	//				throw new RuntimeException(e);
+	//			}
+	//		}
+	//	}
+		Arrays.stream(clazz.getAnnotationsByType(annotationClass))
+			.forEach(annotation -> annotations.add(annotation));
+	////
 	}
 }

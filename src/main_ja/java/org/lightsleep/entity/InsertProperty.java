@@ -6,22 +6,31 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * INSERT SQL で、フィールド値の代わりに使用される式を示します。<br>
- * フィールドは、プロパティ名で指定します。
+ * INSERT SQL で、スーパークラスで定義されたフィールドの値の代わりに使用される式を示します。
+ * 
+ * <p>
+ * 対象のフィールドは、<b>property</b> で指定します。
+ * </p>
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * <b>{@literal @}InsertProperty(property="created", expression="CURRENT_TIMESTAMP")</b>
- * <b>{@literal @}InsertProperty(property="modified", expression="CURRENT_TIMESTAMP")</b>
- * public class Contact {
- *
- *   public Timestamp created;
- *   public Timestamp modified;
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}InsertProperty(property="createdTime", expression="CURRENT_TIMESTAMP")</b>
+ * <b>{@literal @}InsertProperty(property="updatedTime", expression="CURRENT_TIMESTAMP")</b>
+ *   public class Person extends PersonBase {
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * INSERT INTO Contact (..., <b>created</b>, <b>modified</b>) VALUES (..., <b>CURRENT_TIMESTAMP</b>, <b>CURRENT_TIMESTAMP</b>)
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}InsertProperties([</b>
+ *   <b>{@literal @}InsertProperty(property='createdTime', expression='CURRENT_TIMESTAMP'),</b>
+ *   <b>{@literal @}InsertProperty(property='updatedTime', expression='CURRENT_TIMESTAMP')</b>
+ *  <b>])</b>
+ *  public class Person extends PersonBase {
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * INSERT INTO ... (..., <b>createdTime</b>, <b>updatedTime</b>) VALUES (..., <b>CURRENT_TIMESTAMP</b>, <b>CURRENT_TIMESTAMP</b>)
  * </pre></div>
  *
  * @since 1.3.0
@@ -34,7 +43,7 @@ import java.lang.annotation.*;
 @Repeatable(InsertProperties.class)
 @Target({ElementType.TYPE})
 public @interface InsertProperty {
-	/** @return 指定対象のフィールドのプロパティ名 */
+	/** @return フィールドを指定するプロパティ名 */
 	String property();
 
 	/** @return 式 */

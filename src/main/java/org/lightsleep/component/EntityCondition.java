@@ -15,21 +15,21 @@ import org.lightsleep.helper.Resource;
 /**
  * Configure a condition using the value of the primary key of an entity.
  *
- * @param <E> the type of the entity
+ * @param <K> the type of the entity
  *
  * @since 1.0.0
  * @author Masato Kokubo
  */
-public class EntityCondition<E> implements Condition {
+public class EntityCondition<K> implements Condition {
 	// Class resources
 	private static final Resource resource = new Resource(EntityCondition.class);
 	private static final String messageEntityNotHaveKeyColumns = resource.getString("messageEntityNotHaveKeyColumns");
 
 	// The entity
-	private E entity;
+	private K entity;
 
 	// The entity info
-	private EntityInfo<E> entityInfo;
+	private EntityInfo<K> entityInfo;
 
 	/**
 	 * Constructs a new <b>EntityCondition</b>.
@@ -39,14 +39,12 @@ public class EntityCondition<E> implements Condition {
 	 * @throws NullPointerException <b>entity</b> is null
 	 */
 	@SuppressWarnings("unchecked")
-	public EntityCondition(E entity) {
-		Objects.requireNonNull(entity, "entity");
+	public EntityCondition(K entity) {
+		this.entity = Objects.requireNonNull(entity, "entity");
 
-		entityInfo = Sql.getEntityInfo((Class<E>)entity.getClass());
+		entityInfo = Sql.getEntityInfo((Class<K>)entity.getClass());
 		if (entityInfo.keyColumnInfos().size() == 0)
 			throw new IllegalArgumentException(MessageFormat.format(messageEntityNotHaveKeyColumns, entityInfo.entityClass()));
-
-		this.entity = entity;
 	}
 
 	/**
@@ -63,7 +61,7 @@ public class EntityCondition<E> implements Condition {
 	@Override
 	public <T> String toString(Sql<T> sql, List<Object> parameters) {
 		String tableAlias = sql.tableAlias();
-		Accessor<E> accessor = entityInfo.accessor();
+		Accessor<K> accessor = entityInfo.accessor();
 
 		Condition[] condition = new Condition[] {Condition.EMPTY};
 

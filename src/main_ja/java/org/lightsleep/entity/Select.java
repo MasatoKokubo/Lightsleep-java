@@ -8,18 +8,23 @@ import java.lang.annotation.*;
 /**
  * SELECT SQL で、 のカラム名の代わりに使用される式を示します。
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
- *
- *  <b>{@literal @}Select("(SELECT COUNT(*) FROM Phone WHERE contactId=Contact.id)")</b>
- *  {@literal @}NonInsert {@literal @}NonUpdate
- *   public short phoneCount;
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Select("{firstName}||' '||{lastName}")</b>
+ *  {@literal @}NonInsert{@literal @}NonUpdate
+ *   public String fullName;
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * SELECT ..., <b>(SELECT COUNT(*) FROM Phone WHERE contactId=Contact.id)</b>, ... FROM Contact WHERE ...
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Select("{firstName}||' '||{lastName}")</b>
+ *  {@literal @}NonInsert{@literal @}NonUpdate
+ *   String fullName
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * SELECT ..., <b>firstName||' '||lastName AS fullName</b>, ...
  * </pre></div>
  *
  * @since 1.0.0

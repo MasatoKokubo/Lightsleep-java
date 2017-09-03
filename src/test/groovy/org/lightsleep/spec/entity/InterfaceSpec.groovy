@@ -43,37 +43,37 @@ class InterfaceSpec extends Specification {
 
 		when:
 			def contact = new Contact2()
-			contact.name.family = 'familyName'
-			contact.name.given  = 'givenName'
+			contact.name.first = 'firstName'
+			contact.name.last  = 'lastName'
 
 		then:
 			contact.preStoreCount == 0
 			contact.postLoadCount == 0
 
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact2.class).where(Condition.ALL).delete(it)
+				new Sql<>(Contact2).where(Condition.ALL).connection(it).delete()
 				assert contact.preStoreCount == 0
 				assert contact.postLoadCount == 0
 
-				new Sql<>(Contact2.class).insert(it, contact)
+				new Sql<>(Contact2).connection(it).insert(contact)
 				assert contact.preStoreCount == 1
 				assert contact.postLoadCount == 0
 
-				contact.name.family = 'familyName2'
-				contact.name.given  = 'givenName2'
+				contact.name.first = 'firstName2'
+				contact.name.last  = 'lastName2'
 
-				new Sql<>(Contact2.class).update(it, contact)
+				new Sql<>(Contact2).connection(it).update(contact)
 				assert contact.preStoreCount == 2
 				assert contact.postLoadCount == 0
 
-				contact.name.family = 'familyName3'
-				contact.name.given  = 'givenName3'
+				contact.name.first = 'firstName3'
+				contact.name.last  = 'lastName3'
 
-				new Sql<>(Contact2.class).where(Condition.ALL).update(it, contact)
+				new Sql<>(Contact2).where(Condition.ALL).connection(it).update(contact)
 				assert contact.preStoreCount == 3
 				assert contact.postLoadCount == 0
 
-				Optional<Contact2> contactOpt = new Sql<>(Contact2.class).where('{id}={}', contact.id).select(it)
+				Optional<Contact2> contactOpt = new Sql<>(Contact2).where('{id}={}', contact.id).connection(it).select()
 				assert contactOpt.isPresent()
 				assert contactOpt.get().preStoreCount == 0
 				assert contactOpt.get().postLoadCount == 1
@@ -81,7 +81,7 @@ class InterfaceSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << [C3p0.class, Dbcp.class, HikariCP.class, TomcatCP.class, Jdbc.class]
+			connectionSupplierClass << [C3p0, Dbcp, HikariCP, TomcatCP, Jdbc]
 			connectionSupplierName = connectionSupplierClass.simpleName
 	}
 }

@@ -6,26 +6,38 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * Indicates the table name associated with the class.<br>
+ * Indicates the table name related to the class.
+ *
+ * <p>
  * If the table name is the same as the class name, you do not need to specify this annotation.<br>
  * If you specify <b>{@literal @}Table("super")</b>, the class name of the superclass is the table name.
+ * </p>
  *
- * <div class="sampleTitle"><span>Example</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
- *  {@literal @}Key {@literal @}NonInsert
- *   public String id;
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}Table("Contact")</b>
+ *  public class Person extends PersonBase {
  *
- *  <b>{@literal @}Table("super")</b>
- *  {@literal @}InsertProperty(property="id", expression="Contact_seq.nextVal")
- *   public static class Oracle extends Contact {
+ *   <b>{@literal @}Table("super")</b>
+ *    public static class Ex extends Person {
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>{@literal @}Table('Contact')</b>
+ *  class Person extends PersonBase {
+ *
+ *   <b>{@literal @}Table('super')</b>
+ *    static class Ex extends Person {
  * </pre></div>
  *
  * @since 1.0.0
  * @author Masato Kokubo
  */
 @Documented
-@Inherited
+// 2.0.0
+// @Inherited
+////
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Table {

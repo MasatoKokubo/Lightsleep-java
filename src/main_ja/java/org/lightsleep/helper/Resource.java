@@ -146,7 +146,7 @@ public class Resource {
 	 * <br>
 	 *
 	 *	プロパティファイルで以下が定義されていた場合に<br>
-	 * <div class="sampleCode">
+	 * <div class="exampleCode">
 	 *   baseKey.key1 = vakue1<br>
 	 *   baseKey.key2 = vakue2<br>
 	 *   baseKey.key3 = value3<br>
@@ -155,7 +155,7 @@ public class Resource {
 	 *
 	 * <b>getProperties("baseKey")</b> で返される <b>Properties</b> オブジェクトは以下になります。<br>
 	 *
-	 * <div class="sampleCode">
+	 * <div class="exampleCode">
 	 *   {"key1":"value1", "key2":"value2", "key3":"value3"}
 	 * </div>
 	 *

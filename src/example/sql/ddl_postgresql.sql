@@ -6,14 +6,14 @@
 DROP TABLE IF EXISTS Contact;
 CREATE TABLE Contact (
 	id          INT          NOT NULL,
-	lastName  VARCHAR( 20)     NULL,
+	lastName    VARCHAR( 20)     NULL,
 	firstName   VARCHAR( 20)     NULL,
 	birthday    DATE             NULL,
 	birthday2   BIGINT           NULL,
 
-	updateCount INT          NOT NULL,
-	createdTime TIMESTAMP    NOT NULL,
-	updatedTime TIMESTAMP    NOT NULL,
+	updateCount INT          NOT NULL DEFAULT 0,
+	createdTime TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updatedTime TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(id)
 );

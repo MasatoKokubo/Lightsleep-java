@@ -13,69 +13,76 @@ import java.sql.Connection;
  * 各 SQL の実行後にエンティティ・クラスの <b>postSelect</b>, <b>postInsert</b>,
  * <b>postUpdate</b> または <b>postDelete</b> メソッドがコールされます。<br>
  *
+ * <p>
  * ただし <b>update</b>, <b>delete</b>
  * メソッドで、引数にエンティティがない場合は、コールされません。<br>
  *
  * エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、
  * 内包するエンティティへの SQL 処理を連動して行う事ができるようになります。
+ * </p>
  * 
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact implements PreInsert {
- *  {@literal @}Key public int id;
- *     ...
- * }
- * 
- * public class Phone {
- *  {@literal @}Key public int contactId;
- *  {@literal @}Key public short childIndex;
- *     ...
- * }
- * 
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
  * {@literal @}Table("super")
- * public class ContactComposite extends Contact implements <b>Composite</b> {
- *  {@literal @}NonColumn
- *   public final List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
- * 
- *  {@literal @}Override
- *   <b>public void postSelect(Connection connection)</b> {
- *     if (id &gt; 0) {
- *       new Sql&lt;&gt;(Phone.class)
- *         .where("{contactId}={}", id)
- *         .orderBy("{childIndex}")
- *         .select(connection, phones::add);
- *     }
- *   }
- * 
- *  {@literal @}Override
- *   <b>public int postInsert(Connection connection)</b> {
- *     short[] childIndex = new short[1];
- *     <i>// phones を挿入</i>
- *     childIndex[0] = 1;
- *     phones.forEach(phone -&gt; {
- *       phone.contactId = id;
- *       phone.childIndex = childIndex[0]++;
- *     });
- *     int count = new Sql&lt;&gt;(Phone.class).insert(connection, phones);
- *     return count;
- *   }
- * 
- *  {@literal @}Override
- *   <b>public int postUpdate(Connection connection)</b> {
- *     <i>// phones を削除して挿入</i>
- *     int count = postDelete(connection);
- *     count += postInsert(connection);
- *     return count;
- *   }
- * 
- *  {@literal @}Override
- *   <b>public int postDelete(Connection connection)</b> {
- *     <i>// phones を削除</i>
- *     int count = new Sql&lt;&gt;(Phone.class)
- *       .where("{contactId}={}", id)
- *       .delete(connection);
- *     return count;
- *   }
+ *  public class ContactComposite extends Contact implements <b>Composite</b> {
+ *   {@literal @}NonColumn
+ *    public final List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
+ *  
+ *   {@literal @}Override
+ *    <b>public void postSelect(Connection conn)</b> {
+ *      if (id != 0) {
+ *        new Sql&lt;&gt;(Phone.class).connection(conn)
+ *          .where("{contactId}={}", id)
+ *          .orderBy("{phoneNumber}")
+ *          .select(phones::add);
+ *      }
+ *    }
+ *  
+ *   {@literal @}Override
+ *    <b>public int postInsert(Connection conn)</b> {
+ *      phones.forEach(phone -&gt; phone.contactId = id);
+ *      int count = new Sql&lt;&gt;(Phone.class).connection(conn)
+ *          .insert(phones);
+ *      return count;
+ *    }
+ *  
+ *   {@literal @}Override
+ *    <b>public int postUpdate(Connection conn)</b> {
+ *      List&lt;Integer&gt; phoneIds = phones.stream()
+ *        .map(phone -&gt; phone.id)
+ *        .filter(id -&gt; id != 0)
+ *        .collect(Collectors.toList());
+ *
+ *      // Delete phones
+ *      int count += new Sql&lt;&gt;(Phone.class).connection(conn)
+ *        .where("{contactId}={}", id)
+ *        .doIf(phoneIds.size() &gt; 0,
+ *          sql -&gt; sql.and("{id} NOT IN {}", phoneIds)
+ *        )
+ *        .delete();
+ *
+ *      // Uptete phones
+ *      count += new Sql&lt;&gt;(Phone.class).connection(conn)
+ *        .update(phones.stream()
+ *          .filter(phone -&gt; phone.id != 0)
+ *          .collect(Collectors.toList()));
+ *
+ *      // Insert phones
+ *      count += new Sql&lt;&gt;(Phone.class).connection(conn)
+ *        .insert(phones.stream()
+ *          .filter(phone -&gt; phone.id == 0)
+ *          .collect(Collectors.toList()));
+ *
+ *      return count;
+ *    }
+ *  
+ *   {@literal @}Override
+ *    <b>public int postDelete(Connection conn)</b> {
+ *      int count = new Sql&lt;&gt;(Phone.class).connection(conn)
+ *        .where("{contactId}={}", id)
+ *        .delete(conn);
+ *      return count;
+ *    }
  * </pre></div>
  * 
  * @since 1.0.0

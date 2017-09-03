@@ -1,7 +1,7 @@
 Lightsleep
 ===========
 
-Lightsleep is a lightweight Object-Relational (O/R) mapping library and is available in Java 8. It does not work in Java 7 or earlier.
+Lightsleep is a lightweight Object-Relational (O/R) mapping library and is available in Java 8 or later. It does not work in Java 7 or earlier.
 It is not compatible with the Java Persistence API (JPA).
 
 #### Features
@@ -30,13 +30,15 @@ repositories {
 }
 
 dependencies {
-    compile 'org.lightsleep:lightsleep:1.+'
+    compile 'org.lightsleep:lightsleep:2.+' // If you use the latest version
+
+    compile 'org.lightsleep:lightsleep:1.+' // If you use the previous version.
 }
 ```
 #### Definition example of entity class used in Lightsleep
 
 ```java:Contact.java
-// Java
+// Java Example
 package org.lightsleep.example.java.entity;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -45,8 +47,8 @@ import org.lightsleep.entity.*;
 public class Contact {
 	@Key
 	public int    id;
-	public String familyName;
-	public String givenName;
+	public String lastName;
+	public String firstName;
 	public Date   birthday;
 
 	@Insert("0") @Update("{updateCount}+1")
@@ -61,7 +63,7 @@ public class Contact {
 ```
 
 ```groovy:Contact.groovy
-// Groovy
+// Groovy Example
 package org.lightsleep.example.groovy.entity
 import java.sql.Date
 import java.sql.Timestamp
@@ -70,8 +72,8 @@ import org.lightsleep.entity.*
 class Contact {
 	@Key
 	int    id
-	String familyName
-	String givenName
+	String lastName
+	String firstName
 	Date   birthday
 
 	@Insert('0') @Update('{updateCount}+1')
@@ -88,34 +90,60 @@ class Contact {
 #### Examples of using Lightsleep
 
 ```java:Java
-// Java
-List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
-        .where("{familyName}={}", "Apple")
-        .or   ("{familyName}={}", "Orange")
-        .orderBy("{familyName}")
-        .orderBy("{givenName}")
-        .select(connection, contacts::add)
+// Java Example using Lightsleep 2.x.x
+List<Contact> contacts = new ArrayList<>();
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
+        .where("{lastName}={}", "Apple")
+        .or   ("{lastName}={}", "Orange")
+        .orderBy("{lastName}")
+        .orderBy("{firstName}")
+        .select(contacts::add)
 );
 ```
 
 ```groovy:Groovy
-// Groovy
-def contacts = []
+// Groovy Example using Lightsleep 2.x.x
+List<Contact> contacts = []
 Transaction.execute {
+    new Sql<>(Contact).connection(it)
+        .where('{lastName}={}', 'Apple')
+        .or   ('{lastName}={}', 'Orange')
+        .orderBy('{lastName}')
+        .orderBy('{firstName}')
+        .select({contacts << it})
+}
+```
+
+```java:Java
+// Java Example using Lightsleep 1.x.x
+List<Contact> contacts = new ArrayList<>();
+Transaction.execute(conn ->
     new Sql<>(Contact.class)
-        .where('{familyName}={}', 'Apple')
-        .or   ('{familyName}={}', 'Orange')
-        .orderBy('{familyName}')
-        .orderBy('{givenName}')
+        .where("{lastName}={}", "Apple")
+        .or   ("{lastName}={}", "Orange")
+        .orderBy("{lastName}")
+        .orderBy("{firstName}")
+        .select(conn, contacts::add)
+);
+```
+
+```groovy:Groovy
+// Groovy Example using Lightsleep 1.x.x
+List<Contact> contacts = []
+Transaction.execute {
+    new Sql<>(Contact)
+        .where('{lastName}={}', 'Apple')
+        .or   ('{lastName}={}', 'Orange')
+        .orderBy('{lastName}')
+        .orderBy('{firstName}')
         .select(it, {contacts << it})
 }
 ```
 
 ```sql
--- Executed SQL
-SELECT id, familyName, givenName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE familyName='Apple' OR familyName='Orange' ORDER BY familyName ASC, givenName ASC
+-- Generated SQLs
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange' ORDER BY lastName ASC, firstName ASC
 ```
 
 #### License

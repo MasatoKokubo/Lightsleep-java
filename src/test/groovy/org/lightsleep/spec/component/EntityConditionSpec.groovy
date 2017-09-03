@@ -22,15 +22,10 @@ class EntityConditionSpec extends Specification {
 			contact.id = 1
 			def condition = Condition.of(contact)
 
-		then:
-			!condition.empty
+		then: !condition.empty
 
-		when:
-			def string = condition.toString(new Sql<>(Contact.class), new ArrayList<Object>())
-		/**/DebugTrace.print('string', string)
-
-		then:
-			string == 'id=1'
+		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		then: string == 'id=1'
 
 	/**/DebugTrace.leave()
 	}
@@ -38,11 +33,8 @@ class EntityConditionSpec extends Specification {
 	def "EntityConditionSpec 02 exception - null argument"() {
 	/**/DebugTrace.enter()
 
-		when:
-			Condition.of((Contact)null)
-
-		then:
-			thrown NullPointerException
+		when: Condition.of((Contact)null)
+		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
@@ -53,11 +45,8 @@ class EntityConditionSpec extends Specification {
 	def "EntityConditionSpec 03 exception - entity without key property"() {
 	/**/DebugTrace.enter()
 
-		when:
-			Condition.of(new Entity())
-
-		then:
-			thrown IllegalArgumentException
+		when: Condition.of(new Entity())
+		then: thrown IllegalArgumentException
 
 	/**/DebugTrace.leave()
 	}

@@ -15,8 +15,8 @@ CREATE TABLE Numbering (
 DROP TABLE IF EXISTS Contact;
 CREATE TABLE Contact (
     id          INTEGER NOT NULL,
-    familyName  TEXT    NOT NULL,
-    givenName   TEXT    NOT NULL,
+    firstName   TEXT    NOT NULL,
+    lastName    TEXT    NOT NULL,
     birthday    TEXT        NULL,
     addressId   INTEGER     NULL,
 

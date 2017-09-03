@@ -8,20 +8,25 @@ import java.lang.annotation.*;
 /**
  * INSERT SQL で、フィールド値の代わりに使用される式を示します。
  *
- * <div class="sampleTitle"><span>使用例</span></div>
- * <div class="sampleCode"><pre>
- * public class Contact {
- *
+ * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleCode"><pre>
  *  <b>{@literal @}Insert("CURRENT_TIMESTAMP")</b>
- *   public Timestamp created;
- *
+ *   public Timestamp createdTime;
  *  <b>{@literal @}Insert("CURRENT_TIMESTAMP")</b>
- *   public Timestamp modified;
+ *   public Timestamp updatedTime;
  * </pre></div>
  *
- * <div class="sampleTitle"><span>SQL</span></div>
- * <div class="sampleCode"><pre>
- * INSERT INTO Contact (..., <b>created</b>, <b>modified</b>) VALUES (..., <b>CURRENT_TIMESTAMP</b>, <b>CURRENT_TIMESTAMP</b>)
+ * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleCode"><pre>
+ *  <b>{@literal @}Insert('CURRENT_TIMESTAMP')</b>
+ *   Timestamp createdTime
+ *  <b>{@literal @}Insert('CURRENT_TIMESTAMP')</b>
+ *   Timestamp updatedTime
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleCode"><pre>
+ * INSERT INTO ... (..., <b>createdTime</b>, <b>updatedTime</b>) VALUES (..., <b>CURRENT_TIMESTAMP</b>, <b>CURRENT_TIMESTAMP</b>)
  * </pre></div>
  *
  * @since 1.0.0

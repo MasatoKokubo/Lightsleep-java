@@ -17,12 +17,36 @@ import org.lightsleep.logger.LoggerFactory;
 /**
  * A functional interface to execute transactions.
  *
- * <div class="sampleTitle"><span>Example</span></div>
- * <div class="sampleCode"><pre>
- * <b>Transaction.execute(connection -&gt; {</b>
- *     new Sql&lt;&gt;(Person.class)
- *         .update(connection, person);
+ * <div class="exampleTitle"><span>Java Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>Transaction.execute(conn -&gt; {</b>
+ *     Optional&lt;Contact&gt; contactOpt = new Sql&lt;&gt;(Contact.class)
+ *         .where("{id}={}", 1)
+ *         .connection(conn)
+ *         .select();
+ *     contactOpt.ifPresent(contact -&gt; {
+ *         contact.setBirthday(2017, 1, 1);
+ *         new Sql&lt;&gt;(Contact.class)
+ *             .connection(conn)
+ *             .update(contact);
+ *     });
  * <b>});</b>
+ * </pre></div>
+ *
+ * <div class="exampleTitle"><span>Groovy Example</span></div>
+ * <div class="exampleCode"><pre>
+ * <b>Transaction.execute {</b>
+ *     def contactOpt = new Sql&lt;&gt;(Contact)
+ *         .where('{id}={}', 1)
+ *         .connection(it)
+ *         .select()
+ *     contactOpt.ifPresent {Contact contact -&gt;
+ *         contact.setBirthday(2017, 1, 1)
+ *         new Sql&lt;&gt;(Contact)
+ *             .connection(it)
+ *             .update(contact)
+ *     }
+ * <b>}</b>
  * </pre></div>
  *
  * @author Masato Kokubo
@@ -51,7 +75,7 @@ public interface Transaction {
 	void executeBody(Connection connection) throws Exception;
 
 	/**
-	 * Executes the transaction in the following order.
+	 * Executes a transaction in the following order.
 	 *
 	 * <ol>
 	 *   <li>Gets a database connection by calling <b>Sql.getConnectionSupplier().get()</b>.</li>
@@ -68,17 +92,20 @@ public interface Transaction {
 	 * Describe the transaction body in <b>transaction</b> using a lumbda expression.
 	 * </p>
 	 *
-	 * @param transaction a <b>Transaction</b> object
+	 * @param transaction the <b>Transaction</b> object
 	 *
 	 * @throws NullPointerException if <b>transaction</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
 	static void execute(Transaction transaction) {
-		execute(Sql.getConnectionSupplier(), transaction);
+	// 2.0.0
+	//	execute(Sql.getConnectionSupplier(), transaction);
+		execute(Sql.getConnectionSupplier(), Objects.requireNonNull(transaction, "transaction"));
+	////
 	}
 
 	/**
-	 * Executes the transaction in the following order.
+	 * Executes a transaction in the following order.
 	 *
 	 * <ol>
 	 *   <li>Gets a database connection by calling <b>connectionSupplier.get()</b>.</li>
@@ -96,7 +123,7 @@ public interface Transaction {
 	 * </p>
 	 *
 	 * @param connectionSupplier a <b>ConnectionSupplier</b> object
-	 * @param transaction a <b>Transaction</b> object
+	 * @param transaction the <b>Transaction</b> object
 	 *
 	 * @throws NullPointerException if <b>connectionSupplier</b> or <b>transaction</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
@@ -200,6 +227,9 @@ public interface Transaction {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
 	static void commit(Connection connection) {
+	// 2.0.0
+		Objects.requireNonNull(connection, "connection");
+	////
 		try {
 			if (!connection.getAutoCommit()) {
 				// Is not not auto-commit
@@ -229,6 +259,9 @@ public interface Transaction {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
 	static void rollback(Connection connection) {
+	// 2.0.0
+		Objects.requireNonNull(connection, "connection");
+	////
 		try {
 			if (!connection.getAutoCommit()) {
 				// Is not not auto-commit
