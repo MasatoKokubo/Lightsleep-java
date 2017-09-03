@@ -9,7 +9,9 @@ import java.lang.annotation.*;
  * Indicates the column type related to the field defined in superclass.<br>
  *
  * <p>
- * Specifies the field by <b>property</b>.
+ * This annotation is used to specify for fields defined in superclass.
+ * The specified contents also affects subclasses, but specifications in the subclass takes precedence.
+ * If you specify <b>type=Void.class</b> or <b>type=Void</b> (Groovy), the specification in the superclass is canceled.
  * </p>
  *
  * <div class="exampleTitle"><span>Java Example</span></div>

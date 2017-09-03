@@ -9,7 +9,9 @@ import java.lang.annotation.*;
  * Indicates the column name related to the field defined in superclass.
  *
  * <p>
- * Specifies the field by <b>property</b>.
+ * This annotation is used to specify for fields defined in superclass.
+ * The specified contents also affects subclasses, but specifications in the subclass takes precedence.
+ * If you specify <b>column=""</b>, the specification in the superclass is canceled.
  * </p>
  *
  * <div class="exampleTitle"><span>Java Example</span></div>

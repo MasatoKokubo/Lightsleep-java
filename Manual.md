@@ -361,9 +361,9 @@ If this annotation is specified, the value of the field is not used.
 [[To TOC]](#TOC) [[To Annotation List]](#Entity-Annotation)
 
 ##### 2-1-12. @KeyProperty, @ColumnProperty, ... and @UpdateProperty
-These annotations are used to specify for fields defined in superclass.  
-The specified contents also affects subclasses, but specifications in the subclass takes precedence.  
-You can cancel specifications in superclasses by specifying `value=false`, `column="" `, `type=Void.class` or `expression=""`.
+These annotations are used to specify for fields defined in superclass.
+The specified contents also affects subclasses, but specifications in the subclass takes precedence.
+If you specify `value=false`, `column="" `, `type=Void.class` or `expression=""`, specifications in the superclass are canceled.
 
 ```java:Java
 // Java Example

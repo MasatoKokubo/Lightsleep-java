@@ -9,7 +9,9 @@ import java.lang.annotation.*;
  * Indicates that the column related to the field is part of the primary key.<br>
  *
  * <p>
- * Specifies the field by <b>property</b>.
+ * This annotation is used to specify for fields defined in superclass.
+ * The specified contents also affects subclasses, but specifications in the subclass takes precedence.
+ * If you specify <b>value=false</b>, the specification in the superclass is canceled.
  * </p>
  *
  * <div class="exampleTitle"><span>Java Example</span></div>

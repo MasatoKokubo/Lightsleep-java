@@ -9,7 +9,9 @@ import java.lang.annotation.*;
  * スーパークラスで定義されたフィールドに関連するカラムが UPDATE SQL で使用されない事を示します。
  * 
  * <p>
- * 対象のフィールドは、<b>property</b> で指定します。
+ * このアノテーションは、スーパークラスで定義されているフィールドに対して指定する場合に使用します。
+ * 指定された内容はサブクラスにも影響しますが、サブクラスでの指定が優先されます。
+ * <b>value=false</b> を指定すると、スーパークラスでの指定が打ち消されます。
  * </p>
  *
  * <div class="exampleTitle"><span>使用例 / Java</span></div>
@@ -41,5 +43,5 @@ public @interface NonUpdateProperty {
 	String property();
 
 	/** @return フィールドに関連するカラムが UPDATE SQL で使用されない true、そうでなければ false */
-	String value();
+	boolean value();
 }

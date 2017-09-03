@@ -9,7 +9,9 @@ import java.lang.annotation.*;
  * Indicates an expression instead of the name of the column related to the field defined in superclass used in SELECT SQL.
  *
  * <p>
- * Specifies the field by <b>property</b>.
+ * This annotation is used to specify for fields defined in superclass.
+ * The specified contents also affects subclasses, but specifications in the subclass takes precedence.
+ * If you specify <b>expression=""</b>, the specification in the superclass is canceled.
  * </p>
  *
  * <div class="exampleTitle"><span>Java Example</span></div>
