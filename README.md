@@ -1,10 +1,12 @@
-Lightsleep
+Lightsleep 2
 ===========
+
+[[Japanese]](README_ja.md)
 
 Lightsleep is a lightweight Object-Relational (O/R) mapping library and is available in Java 8 or later. It does not work in Java 7 or earlier.
 It is not compatible with the Java Persistence API (JPA).
 
-#### Features
+### Features
 
 - Has APIs using features added in Java 8 (functional interface and Optional class).
 - It is easy to understand intuitively because method names resemble reserved words in SQL.
@@ -12,7 +14,7 @@ It is not compatible with the Java Persistence API (JPA).
 - No mapping definition file such as XML file is necessary.
 - Learning is relatively easy because it is not a large library.
 
-#### Supported DBMS
+### Supported DBMS
 
 - DB2
 - MySQL
@@ -22,7 +24,7 @@ It is not compatible with the Java Persistence API (JPA).
 - Microsoft SQL Server
 - DBMSs that conforms to the standard SQL
 
-#### Description example of dependency in build.gradle
+### Description example of dependency in build.gradle
 
 ```gradle:build.gradle
 repositories {
@@ -35,7 +37,7 @@ dependencies {
     compile 'org.lightsleep:lightsleep:1.+' // If you use the previous version.
 }
 ```
-#### Definition example of entity class used in Lightsleep
+### Definition example of entity class used in Lightsleep
 
 ```java:Contact.java
 // Java Example
@@ -87,7 +89,7 @@ class Contact {
 }
 ```
 
-#### Examples of using Lightsleep
+### Examples of using Lightsleep
 
 ```java:Java
 // Java Example using Lightsleep 2.x.x
@@ -146,18 +148,73 @@ Transaction.execute {
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange' ORDER BY lastName ASC, firstName ASC
 ```
 
-#### License
+### Changes since version 1.9.2
+
+##### Changes
+- Added `property` element and changed the specification of `value` element to following annotations.
+    - `KeyProperty`
+    - `NonColumnProperty`
+    - `NonInsertProperty`
+    - `NonSelectProperty`
+    - `NonUpdateProperty`
+
+##### Added methods
+- `Sql` class
+    - `connection(Connection connection)`
+    - `doAlways(Consumer<Sql<E>> action)`
+    - `select(Consumer<? super E> consumer)`
+    - `selectAs(Class<R> resultClass, Consumer<? super R> consumer)`
+    - `select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1)`
+    - `select(Consumer<? super  E > consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)`
+    - `select(Consumer<? super  E > consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)`
+    - `select(Consumer<? super  E > consumer, Consumer<? super JE1> consumer, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)`
+    - `select()`
+    - `selectAs(Class<R> resultClass)`
+    - `selectCount()`
+    - `insert(E entity)`
+    - `insert(Iterable<? extends E> entities)`
+    - `update(E entity)`
+    - `update(Iterable<? extends E> entities)`
+    - `delete()`
+    - `delete(E entity)`
+    - `delete(Iterable<? extends E> entities)`
+
+##### Deprecated methods
+- `Sql` class
+    - `select(Connection connection, Consumer<? super E> consumer)`
+    - `select(Connection connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1)`
+    - `select(Connection connection, Consumer<? super  E > consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)`
+    - `select(Connection connection, Consumer<? super  E > consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)`
+    - `select(Connection connection, Consumer<? super  E > consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)`
+    - `select(Connection connection)`
+    - `selectCount(Connection connection)`
+    - `insert(Connection connection, E entity)`
+    - `insert(Connection connection, Iterable<? extends E> entities)`
+    - `update(Connection connection, E entity)`
+    - `update(Connection connection, Iterable<? extends E> entities)`
+    - `delete(Connection connection)`
+    - `delete(Connection connection, E entity)`
+    - `delete(Connection connection, Iterable<? extends E> entities)`
+
+##### Added exception class
+- `MissingPropertyException`
+
+### License
 
 The MIT License (MIT)
 
 *&copy; 2016 Masato Kokubo*
 
+### Documents
+
 [Tutorial](Tutorial.md)
 
 [Manual](Manual.md)
 
+[Manual (version 1.9.2)](Manual-v1.md)
+
 [API Specification](http://masatokokubo.github.io/Lightsleep/javadoc/index.html)
 
-<a href="http://lightsleep.hatenablog.com/" target="_blank">BLOG @Hatena</a>
+[API Specification (version 1.9.2)](http://masatokokubo.github.io/Lightsleep/javadoc-v1/index.html)
 
-[Japanese](README_ja.md)
+<a href="http://lightsleep.hatenablog.com/" target="_blank">BLOG @Hatena</a>
