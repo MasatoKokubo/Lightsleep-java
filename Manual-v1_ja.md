@@ -687,7 +687,7 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
         .where('{familyName}={}', 'Apple')
@@ -716,7 +716,7 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact.class, 'C')
         .where('EXISTS',
@@ -751,7 +751,7 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
         .where('{familyName}={}', 'Apple')
@@ -784,7 +784,7 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
         .where('{familyName}={}', 'Apple')
@@ -859,7 +859,7 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
         .where('{familyName}={}', 'Apple')
@@ -893,7 +893,7 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact.class, 'C')
         .columns('familyName')
@@ -929,7 +929,7 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact.class)
         .orderBy('{familyName}')
@@ -1018,8 +1018,8 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
-def phones = []
+List<Contact> contacts = []
+List<Phone> phones = []
 Transaction.execute {
     new Sql<>(Contact.class, 'C')
         .innerJoin(Phone.class, 'P', '{P.contactId}={C.id}')
@@ -1053,8 +1053,8 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
-def phones = []
+List<Contact> contacts = []
+List<Phone> phones = []
 Transaction.execute {
     new Sql<>(Contact.class, 'C')
         .leftJoin(Phone.class, 'P', '{P.contactId}={C.id}')
@@ -1088,8 +1088,8 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
-def phones = []
+List<Contact> contacts = []
+List<Phone> phones = []
 Transaction.execute {
     new Sql<>(Contact.class, 'C')
         .rightJoin(Phone.class, 'P', '{P.contactId}={C.id}')
@@ -1214,7 +1214,7 @@ Transaction.execute(connection ->
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
+List<Contact> contacts = []
 
 def contact = new Contact()
 contact.id = 2; contact.familyName = 'Apple'; contact.givenName = 'Yukari'
@@ -1331,7 +1331,7 @@ Transaction.execute(connection -> {
 ```groovy:Groovy
 // Groovy での例
 Transaction.execute {
-    def contacts = []
+    List<Contact> contacts = []
     new Sql<>(Contact.class)
         .where('{familyName}={}', 'Apple')
         .select(it, {Contact contact ->
@@ -1493,7 +1493,7 @@ Transaction.execute(connection -> {
 ```groovy:Groovy
 // Groovy での例
 Transaction.execute {
-    def contacts = []
+    List<Contact> contacts = []
     new Sql<>(Contact.class)
         .where('{familyName}={}', 'Pomme')
         .select(it, {contacts << it})

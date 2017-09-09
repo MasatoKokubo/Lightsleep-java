@@ -797,7 +797,7 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
@@ -831,7 +831,7 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact, 'C').connection(it)
         .where('EXISTS',
@@ -866,7 +866,7 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
@@ -899,7 +899,7 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
@@ -938,7 +938,7 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .where(Condition
@@ -977,7 +977,7 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
@@ -1011,7 +1011,7 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact, 'C').connection(it)
         .columns('lastName')
@@ -1047,7 +1047,7 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .orderBy('{lastName}')
@@ -1134,8 +1134,8 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
-def phones = []
+List<Contact> contacts = []
+List<Phone> phones = []
 Transaction.execute {
     new Sql<>(Contact, 'C').connection(it)
         .innerJoin(Phone, 'P', '{P.contactId}={C.id}')
@@ -1169,8 +1169,8 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
-def phones = []
+List<Contact> contacts = []
+List<Phone> phones = []
 Transaction.execute {
     new Sql<>(Contact, 'C').connection(it)
         .leftJoin(Phone, 'P', '{P.contactId}={C.id}')
@@ -1204,8 +1204,8 @@ Transaction.execute(conn ->
 
 ```groovy:Groovy
 // Groovy Example
-def contacts = []
-def phones = []
+List<Contact> contacts = []
+List<Phone> phones = []
 Transaction.execute {
     new Sql<>(Contact, 'C').connection(it)
         .rightJoin(Phone, 'P', '{P.contactId}={C.id}')
@@ -1412,7 +1412,7 @@ Transaction.execute(conn -> {
 ```groovy:Groovy
 // Groovy Example
 Transaction.execute {
-    def contacts = []
+    List<Contact> contacts = []
     new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
         .select({Contact contact ->
@@ -1578,7 +1578,7 @@ Transaction.execute(conn -> {
 ```groovy:Groovy
 // Groovy Example
 Transaction.execute {
-    def contacts = []
+    List<Contact> contacts = []
     new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Pomme')
         .select({contacts << it})

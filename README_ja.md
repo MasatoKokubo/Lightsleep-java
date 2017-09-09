@@ -150,7 +150,7 @@ Transaction.execute {
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange' ORDER BY lastName ASC, firstName ASC
 ```
 
-### バージョン 1.9.2 から変更点
+### バージョン 1.9.2 からの変更点
 
 ##### 仕様変更
 - 以下のアノテーションに対して `property` 要素を追加し `value` 要素の仕様を変更しました。
