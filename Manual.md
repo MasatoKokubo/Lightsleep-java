@@ -679,10 +679,7 @@ The lambda expression is equivalent to the contents of `Transaction.executeBody`
 
 ```java:Java
 // Java Example
-Contact contact = new Contact();
-contact.id = 1;
-contact.firstName = "Akane";
-contact.lastName = "Apple";
+Contact contact = new Contact(1, "Akane", "Apple");
 
 // An example of transaction
 Transaction.execute(conn -> {
@@ -696,10 +693,7 @@ Transaction.execute(conn -> {
 
 ```groovy:Groovy
 // Groovy Example
-def contact = new Contact()
-contact.id = 1
-contact.firstName = 'Akane'
-contact.lastName = 'Apple'
+def contact = new Contact(1, 'Akane', 'Apple')
 
 // An example of transaction
 Transaction.execute {
@@ -928,8 +922,8 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime 
 ```java:Java
 // Java Example
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(conn ->.connection(conn)
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where(Condition
             .of ("{lastName}={}", "Apple")
             .and("{firstName}={}", "Akane")
@@ -1160,6 +1154,7 @@ SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.bir
 [[To TOC]](#TOC)
 
 #### 5-1-13. SELECT with LEFT OUTER JOIN
+
 ```java:Java
 // Java Example
 List<Contact> contacts = new ArrayList<>();
@@ -1194,6 +1189,7 @@ SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.bir
 [[To TOC]](#TOC)
 
 #### 5-1-14. SELECT with RIGHT OUTER JOIN
+
 ```java:Java
 // Java Example
 List<Contact> contacts = new ArrayList<>();
@@ -1225,6 +1221,7 @@ SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.bir
 ```
 
 #### 5-1-15. SELECT COUNT(*)
+
 ```java:Java
 // Java Example
 int[] count = new int[1];
@@ -1545,8 +1542,8 @@ Transaction.execute(conn ->
 ```groovy:Groovy
 // Groovy Example
 Transaction.execute {
-    new Sql<>(Contact)
-        .where('{id}={}', 1).connection(it)
+    new Sql<>(Contact).connection(it)
+        .where('{id}={}', 1)
         .select()
         .ifPresent {contact ->
             new Sql<>(Contact).connection(it)

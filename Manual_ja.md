@@ -692,15 +692,13 @@ dataSource         = jdbc/example
 
 ```java:Java
 // Java での例
-import org.lightsleep.*;
-contact.id = 1;
-contact.lastName = "Apple";
-contact.firstName  = "Akane";
+Contact contact = new Contact(1, "Akane", "Apple");
 
 // トランザクション例
-Transaction.execute(connection -> {
+Transaction.execute(conn -> {
     // トランザクション開始
-    new Sql<>(Contact.class).insert(connection, contact);
+    new Sql<>(Contact.class).connection(conn)
+        .insert(contact);
    ...
     // トランザクション終了
 });
@@ -709,15 +707,13 @@ Transaction.execute(connection -> {
 
 ```groovy:Groovy
 // Groovy での例
-def contact = new Contact()
-contact.id = 1
-contact.lastName = 'Apple'
-contact.firstName  = 'Akane'
+def contact = new Contact(1, 'Akane', 'Apple')
 
 // トランザクション例
 Transaction.execute {
     // トランザクション開始
-    new Sql<>(Contact.class).insert(it, contact)
+    new Sql<>(Contact).connection(it)
+        .insert(contact)
     ...
     // トランザクション終了
 }
@@ -743,24 +739,24 @@ SQLの実行は、`Sql` クラスの各種メソッドを使用し、`Transactio
 
 ```java:Java
 // Java での例
-Transaction.execute(connection -> {
-    Optional<Contact> contactOpt = new Sql<>(Contact.class)
+Transaction.execute(conn -> {
+    Optional<Contact> contactOpt = new Sql<>(Contact.class).connection(conn)
         .where("{id}={}", 1)
-        .select(connection);
+        .select();
 });
 ```
 
 ```groovy:Groovy
 // Groovy での例
 Transaction.execute {
-    def contactOpt = new Sql<>(Contact.class)
+    def contactOpt = new Sql<>(Contact).connection(it)
         .where('{id}={}', 1)
-        .select(it)
+        .select()
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
 
@@ -774,10 +770,10 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime 
 // Java での例
 Contact contact = new Contact();
 contact.id = 1;
-Transaction.execute(connection -> {
-    Optional<Contact> contactOpt = new Sql<>(Contact.class)
+Transaction.execute(conn -> {
+    Optional<Contact> contactOpt = new Sql<>(Contact.class).connection(conn)
         .where(contact)
-        .select(connection);
+        .select();
 });
 ```
 
@@ -786,14 +782,14 @@ Transaction.execute(connection -> {
 def contact = new Contact()
 contact.id = 1
 Transaction.execute {
-    def contactOpt = new Sql<>(Contact.class)
+    def contactOpt = new Sql<>(Contact).connection(it)
         .where(contact)
-        .select(it)
+        .select()
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 ```
 
@@ -806,10 +802,10 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime 
 ```java:Java
 // Java での例
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where("{lastName}={}", "Apple")
-        .select(connection, contacts::add)
+        .select(contacts::add)
 );
 ```
 
@@ -817,10 +813,16 @@ Transaction.execute(connection ->
 // Groovy での例
 def contacts = []
 Transaction.execute {
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
-        .select(it, {contacts << it})
+        .select({contacts << it})
 }
+```
+
+
+```sql:SQL
+-- 生成される SQL
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
 ```
 
 <div id="ExecuteSQL-select-Subquery"></div>
@@ -832,13 +834,13 @@ Transaction.execute {
 ```java:Java
 // Java での例
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class, "C")
+Transaction.execute(conn ->
+    new Sql<>(Contact.class, "C").connection(conn)
         .where("EXISTS",
             new Sql<>(Phone.class, "P")
                 .where("{P.contactId}={C.id}")
         )
-        .select(connection, contacts::add)
+        .select(contacts::add)
 );
 ```
 
@@ -846,18 +848,18 @@ Transaction.execute(connection ->
 // Groovy での例
 def contacts = []
 Transaction.execute {
-    new Sql<>(Contact.class, 'C')
+    new Sql<>(Contact, 'C').connection(it)
         .where('EXISTS',
-            new Sql<>(Phone.class, 'P')
+            new Sql<>(Phone, 'P')
                 .where('{P.contactId}={C.id}')
         )
-        .select(it, {contacts << it})
+        .select({contacts << it})
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
-SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime FROM Contact C WHERE EXISTS (SELECT * FROM Phone P WHERE P.contactId=C.id)
+-- 生成される SQL
+SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime FROM Contact C WHERE EXISTS (SELECT * FROM Phone P WHERE P.contactId=C.id)
 ```
 
 <div id="ExecuteSQL-select-Expression-and"></div>
@@ -869,11 +871,11 @@ SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.bir
 ```java:Java
 // Java での例
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where("{lastName}={}", "Apple")
         .and  ("{firstName}={}", "Akane")
-        .select(connection, contacts::add)
+        .select(contacts::add)
 );
 ```
 
@@ -881,15 +883,15 @@ Transaction.execute(connection ->
 // Groovy での例
 def contacts = []
 Transaction.execute {
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
         .and  ('{firstName}={}', 'Akane')
-        .select(it, {contacts << it})
+        .select({contacts << it})
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' AND firstName='Akane'
 ```
 
@@ -902,11 +904,11 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime 
 ```java:Java
 // Java での例
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where("{lastName}={}", "Apple")
         .or   ("{lastName}={}", "Orange")
-        .select(connection, contacts::add)
+        .select(contacts::add)
 );
 ```
 
@@ -914,15 +916,15 @@ Transaction.execute(connection ->
 // Groovy での例
 def contacts = []
 Transaction.execute {
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
         .or   ('{lastName}={}', 'Orange')
-        .select(it, {contacts << it})
+        .select({contacts << it})
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange'
 ```
 
@@ -934,8 +936,8 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime 
 
 ```java:Java
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where(Condition
             .of ("{lastName}={}", "Apple")
             .and("{firstName}={}", "Akane")
@@ -944,27 +946,27 @@ Transaction.execute(connection ->
             .of ("{lastName}={}", "Orange")
             .and("{firstName}={}", "Setoka")
         )
-        .select(connection, contacts::add)
+        .select(contacts::add)
 );
 ```
 ```java:Java
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact).connection(it)
         .where(Condition
-            .of ("{lastName}={}", "Apple")
-            .and("{firstName}={}", "Akane")
+            .of ('{lastName}={}', 'Apple')
+            .and('{firstName}={}', 'Akane')
         )
         .or(Condition
-            .of ("{lastName}={}", "Orange")
-            .and("{firstName}={}", "Setoka")
+            .of ('{lastName}={}', 'Orange')
+            .and('{firstName}={}', 'Setoka')
         )
-        .select(connection, contacts::add)
+        .select({contacts << it})
 );
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' AND firstName='Akane' OR lastName='Orange' AND firstName='Setoka'
 ```
 
@@ -977,11 +979,11 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime 
 ```java:Java
 // Java での例
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where("{lastName}={}", "Apple")
         .columns("lastName", "firstName")
-        .select(connection, contacts::add)
+        .select(contacts::add)
 );
 ```
 
@@ -989,15 +991,15 @@ Transaction.execute(connection ->
 // Groovy での例
 def contacts = []
 Transaction.execute {
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
         .columns('lastName', 'firstName')
-        .select(it, {contacts << it})
+        .select({contacts << it})
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 SELECT firstName, lastName FROM Contact WHERE lastName='Apple'
 ```
 
@@ -1010,12 +1012,12 @@ SELECT firstName, lastName FROM Contact WHERE lastName='Apple'
 ```java:Java
 // Java での例
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class, "C")
+Transaction.execute(conn ->
+    new Sql<>(Contact.class, "C").connection(conn)
         .columns("lastName")
         .groupBy("{lastName}")
         .having("COUNT({lastName})>=2")
-        .select(connection, contacts::add)
+        .select(contacts::add)
 );
 ```
 
@@ -1023,16 +1025,16 @@ Transaction.execute(connection ->
 // Groovy での例
 def contacts = []
 Transaction.execute {
-    new Sql<>(Contact.class, 'C')
+    new Sql<>(Contact, 'C').connection(it)
         .columns('lastName')
         .groupBy('{lastName}')
         .having('COUNT({lastName})>=2')
-        .select(it, {contacts << it})
+        .select({contacts << it})
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 SELECT MIN(C.lastName) AS C_lastName FROM Contact C GROUP BY C.lastName HAVING COUNT(C.lastName)>=2
 ```
 
@@ -1045,13 +1047,13 @@ SELECT MIN(C.lastName) AS C_lastName FROM Contact C GROUP BY C.lastName HAVING C
 ```java:Java
 // Java での例
 List<Contact> contacts = new ArrayList<Contact>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .orderBy("{lastName}")
         .orderBy("{firstName}")
         .orderBy("{id}")
         .offset(10).limit(5)
-        .select(connection, contacts::add)
+        .select(contacts::add)
 );
 ```
 
@@ -1059,22 +1061,22 @@ Transaction.execute(connection ->
 // Groovy での例
 def contacts = []
 Transaction.execute {
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .orderBy('{lastName}')
         .orderBy('{firstName}')
         .orderBy('{id}')
         .offset(10).limit(5)
-        .select(it, {contacts << it})
+        .select({contacts << it})
 }
 ```
 
 ```sql:SQL
--- 実行される SQL / DB2, MySQL, PostgreSQL, SQLite
+-- 生成される SQL / DB2, MySQL, PostgreSQL, SQLite
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY lastName ASC, firstName ASC, id ASC LIMIT 5 OFFSET 10
 ```
 
 ```sql:SQL
--- 実行される SQL / Oracle, SQLServer (取得時に行をスキップする)
+-- 生成される SQL / Oracle, SQLServer (取得時に行をスキップする)
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY lastName ASC, firstName ASC, id ASC
 ```
 
@@ -1086,41 +1088,41 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime 
 
 ```java:Java
 // Java での例
-Transaction.execute(connection -> {
-    Optional<Contact> contactOpt = new Sql<>(Contact.class)
+Transaction.execute(conn -> {
+    Optional<Contact> contactOpt = new Sql<>(Contact.class).connection(conn)
         .where("{id}={}", 1)
         .forUpdate()
-        .select(connection);
+        .select();
 });
 ```
 
 ```groovy:Groovy
 // Groovy での例
 Transaction.execute {
-    def contactOpt = new Sql<>(Contact.class)
+    def contactOpt = new Sql<>(Contact).connection(it)
         .where('{id}={}', 1)
         .forUpdate()
-        .select(it)
+        .select()
 }
 ```
 
 ```sql:SQL
--- 実行される SQL / DB2
+-- 生成される SQL / DB2
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE WITH RS
 ```
 
 ```sql:SQL
--- 実行される SQL / MySQL, Oracle, PostgreSQL, SQLite
+-- 生成される SQL / MySQL, Oracle, PostgreSQL, SQLite
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE
 ```
 
 ```sql:SQL
--- 実行される SQL / SQLite
+-- 生成される SQL / SQLite
 -- SQLite では FOR UPDATE をサポートしていないので UnsupportedOperationException がスローされます。
 ```
 
 ```sql:SQL
--- 実行される SQL / SQLServer
+-- 生成される SQL / SQLServer
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WITH (ROWLOCK,UPDLOCK) WHERE id=1
 ```
 
@@ -1136,11 +1138,11 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime 
 // Java での例
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class, "C")
+Transaction.execute(conn ->
+    new Sql<>(Contact.class, "C").connection(conn)
         .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
         .where("{C.id}={}", 1)
-        .<Phone>select(connection, contacts::add, phones::add)
+        .<Phone>select(contacts::add, phones::add)
 );
 ```
 
@@ -1149,16 +1151,16 @@ Transaction.execute(connection ->
 def contacts = []
 def phones = []
 Transaction.execute {
-    new Sql<>(Contact.class, 'C')
-        .innerJoin(Phone.class, 'P', '{P.contactId}={C.id}')
+    new Sql<>(Contact, 'C').connection(it)
+        .innerJoin(Phone, 'P', '{P.contactId}={C.id}')
         .where('{C.id}={}', 1)
-        .select(it, {contacts << it}, {phones << it})
+        .select({contacts << it}, {phones << it})
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
-SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C INNER JOIN Phone P ON P.contactId=C.id WHERE C.id=1
+-- 生成される SQL
+SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C INNER JOIN Phone P ON P.contactId=C.id WHERE C.id=1
 ```
 
 <div id="ExecuteSQL-select-leftJoin"></div>
@@ -1171,11 +1173,11 @@ SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.bir
 // Java での例
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
-Transaction.execute(connection ->
-	new Sql<>(Contact.class, "C")
+Transaction.execute(conn ->
+	new Sql<>(Contact.class, "C").connection(conn)
 	    .leftJoin(Phone.class, "P", "{P.contactId}={C.id}")
 	    .where("{C.lastName}={}", "Apple")
-	    .<Phone>select(connection, contacts::add, phones::add)
+	    .<Phone>select(contacts::add, phones::add)
 );
 ```
 
@@ -1184,16 +1186,16 @@ Transaction.execute(connection ->
 def contacts = []
 def phones = []
 Transaction.execute {
-    new Sql<>(Contact.class, 'C')
-        .leftJoin(Phone.class, 'P', '{P.contactId}={C.id}')
+    new Sql<>(Contact, 'C').connection(it)
+        .leftJoin(Phone, 'P', '{P.contactId}={C.id}')
         .where('{C.lastName}={}', 'Apple')
-        .select(it, {contacts << it}, {phones << it})
+        .select({contacts << it}, {phones << it})
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
-SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C LEFT OUTER JOIN Phone P ON P.contactId=C.id WHERE C.lastName='Apple'
+-- 生成される SQL
+SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C LEFT OUTER JOIN Phone P ON P.contactId=C.id WHERE C.lastName='Apple'
 ```
 
 <div id="ExecuteSQL-select-rightJoin"></div>
@@ -1206,11 +1208,11 @@ SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.bir
 // Java での例
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class, "C")
+Transaction.execute(conn ->
+    new Sql<>(Contact.class, "C").connection(conn)
         .rightJoin(Phone.class, "P", "{P.contactId}={C.id}")
         .where("{P.label}={}", "Main")
-        .<Phone>select(connection, contacts::add, phones::add)
+        .<Phone>select(contacts::add, phones::add)
 );
 ```
 
@@ -1219,27 +1221,28 @@ Transaction.execute(connection ->
 def contacts = []
 def phones = []
 Transaction.execute {
-    new Sql<>(Contact.class, 'C')
-        .rightJoin(Phone.class, 'P', '{P.contactId}={C.id}')
+    new Sql<>(Contact, 'C').connection(it)
+        .rightJoin(Phone, 'P', '{P.contactId}={C.id}')
         .where('{P.label}={}', 'Main')
-        .select(it, {contacts << it}, {phones << it})
+        .select({contacts << it}, {phones << it})
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 -- SQLite では、RIGHT OUTER JOIN が未サポートのため、例外がスローされます。
-SELECT C.id AS C_id, C.lastName AS C_lastName, C.firstName AS C_firstName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C RIGHT OUTER JOIN Phone P ON P.contactId=C.id WHERE P.label='Main'
+SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C RIGHT OUTER JOIN Phone P ON P.contactId=C.id WHERE P.label='Main'
 ```
 
 #### 5-1-15. SELECT COUNT(*)
+
 ```java:Java
 // Java での例
 int[] rowCount = new int[1];
-Transaction.execute(connection ->
-    rowCount[0] = new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    count[0] = new Sql<>(Contact.class).connection(conn)
         .where("lastName={}", "Apple")
-        .selectCount(connection)
+        .selectCount()
 );
 ```
 
@@ -1247,14 +1250,14 @@ Transaction.execute(connection ->
 // Groovy での例
 def rowCount = 0
 Transaction.execute {
-    rowCount = new Sql<>(Contact.class)
+    count = new Sql<>(Contact).connection(it)
         .where('lastName={}', 'Apple')
-        .selectCount(it)
+        .selectCount()
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 SELECT COUNT(*) FROM Contact WHERE lastName='Apple'
 ```
 
@@ -1270,46 +1273,32 @@ SELECT COUNT(*) FROM Contact WHERE lastName='Apple'
 
 ```java:Java
 // Java での例
-Contact contact = new Contact();
-contact.id = 1;
-contact.lastName = "Apple";
-contact.firstName = "Akane";
-Calendar calendar = Calendar.getInstance();
-calendar.set(2001, 1-1, 1, 0, 0, 0);
-contact.birthday = new Date(calendar.getTimeInMillis())
-
-Transaction.execute(connection ->
-    new Sql<>(Contact.class).insert(connection, contact));
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
+        .insert(new Contact(1, "Akane", "Apple", 2001, 1, 1))
 ```
 
 ```groovy:Groovy
 // Groovy での例
-def contact = new Contact()
-contact.id = 1
-contact.lastName = 'Apple'
-contact.firstName = 'Akane'
-Calendar calendar = Calendar.instance
-calendar.set(2001, 1-1, 1, 0, 0, 0)
-contact.birthday = new Date(calendar.timeInMillis)
-
 Transaction.execute {
-    new Sql<>(Contact.class).insert(it, contact)
+    new Sql<>(Contact).connection(it)
+       .insert(new Contact(1, "Akane", "Apple", 2001, 1, 1))
 }
 ```
 
 ```sql:SQL
--- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
-INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', DATE'2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+-- 生成される SQL / DB2, MySQL, Oracle, PostgreSQL
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Akane', 'Apple', DATE'2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
--- 実行される SQL / SQLite
-INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', '2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+-- 生成される SQL / SQLite
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Akane', 'Apple', '2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
--- 実行される SQL / SQLServer
-INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Apple', 'Akane', CAST('2001-01-01' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+-- 生成される SQL / SQLServer
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Akane', 'Apple', CAST('2001-01-01' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 <div id="ExecuteSQL-insert-N"></div>
@@ -1320,67 +1309,42 @@ INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime
 
 ```java:Java
 // Java での例
-List<Contact> contacts = new ArrayList<>();
-
-Contact contact = new Contact();
-contact.id = 2; contact.lastName = "Apple"; contact.firstName = "Yukari";
-Calendar calendar = Calendar.getInstance();
-calendar.set(2001, 1-1, 2, 0, 0, 0);
-contact.birthday = new Date(calendar.getTimeInMillis());
-contacts.add(contact);
-
-contact = new Contact();
-contact.id = 3; contact.lastName = "Apple"; contact.firstName = "Azusa";
-calendar = Calendar.getInstance();
-calendar.set(2001, 1-1, 3, 0, 0, 0);
-contact.birthday = new Date(calendar.getTimeInMillis());
-contacts.add(contact);
-
-Transaction.execute(connection ->
-    new Sql<>(Contact.class).insert(connection, contacts));
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
+        .insert(Arrays.asList(
+            new Contact(2, "Yukari", "Apple", 2001, 1, 2),
+            new Contact(3, "Azusa", "Apple", 2001, 1, 3)
+        ))
 ```
 
 ```groovy:Groovy
 // Groovy での例
-def contacts = []
-
-def contact = new Contact()
-contact.id = 2; contact.lastName = 'Apple'; contact.firstName = 'Yukari'
-def calendar = Calendar.instance
-calendar.set(2001, 1-1, 2, 0, 0, 0)
-contact.birthday = new Date(calendar.timeInMillis)
-contacts << contact
-
-contact = new Contact()
-contact.id = 3; contact.lastName = 'Apple'; contact.firstName = 'Azusa'
-calendar = Calendar.instance
-calendar.set(2001, 1-1, 3, 0, 0, 0)
-contact.birthday = new Date(calendar.timeInMillis)
-contacts << contact
-
 Transaction.execute {
-    new Sql<>(Contact.class).insert(it, contacts)
+    new Sql<>(Contact).connection(it)
+        .insert([
+            new Contact(2, "Yukari", "Apple", 2001, 1, 2),
+            new Contact(3, "Azusa", "Apple", 2001, 1, 3)
+        ])
 }
 ```
 
 ```sql:SQL
--- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
-INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', DATE'2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', DATE'2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+-- 生成される SQL / DB2, MySQL, Oracle, PostgreSQL
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Yukari', 'Apple', DATE'2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Azusa', 'Apple', DATE'2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
--- 実行される SQL / SQLite
-INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', '2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', '2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+-- 生成される SQL / SQLite
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Yukari', 'Apple', '2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Azusa', 'Apple', '2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
 
 ```sql:SQL
--- 実行される SQL / SQLServer
-INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Apple', 'Yukari', CAST('2001-01-02' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Apple', 'Azusa', CAST('2001-01-03' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+-- 生成される SQL / SQLServer
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Yukari', 'Apple', CAST('2001-01-02' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Azusa', 'Apple', CAST('2001-01-03' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ```
-
 
 <div id="ExecuteSQL-update"></div>
 
@@ -1394,13 +1358,14 @@ INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime
 
 ```java:Java
 // Java での例
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where("{id}={}", 1)
-        .select(connection)
+        .select()
         .ifPresent(contact -> {
             contact.firstName = "Akiyo";
-            new Sql<>(Contact.class).update(connection, contact);
+            new Sql<>(Contact.class).connection(conn)
+                .update(contact);
         })
 );
 ```
@@ -1408,32 +1373,33 @@ Transaction.execute(connection ->
 ```groovy:Groovy
 // Groovy での例
 Transaction.execute {
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where('{id}={}', 1)
-        .select(it)
+        .select()
         .ifPresent {Contact contact ->
             contact.firstName = 'Akiyo'
-            new Sql<>(Contact.class).update(it, contact)
+            new Sql<>(Contact).connection(it)
+                .update(contact)
         }
 }
 ```
 
 ```sql:SQL
--- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
+-- 生成される SQL / DB2, MySQL, Oracle, PostgreSQL
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
-UPDATE Contact SET lastName='Apple', firstName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET firstName='Akiyo', lastName='Apple', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
 ```sql:SQL
--- 実行される SQL / SQLite
+-- 生成される SQL / SQLite
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
-UPDATE Contact SET lastName='Apple', firstName='Akiyo', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET firstName='Akiyo', lastName='Apple', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
 ```sql:SQL
--- 実行される SQL / SQLServer
+-- 生成される SQL / SQLServer
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
-UPDATE Contact SET lastName='Apple', firstName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET firstName='Akiyo', lastName='Apple', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 ```
 
 <div id="ExecuteSQL-update-N"></div>
@@ -1444,15 +1410,16 @@ UPDATE Contact SET lastName='Apple', firstName='Akiyo', birthday=CAST('2001-01-0
 
 ```java:Java
 // Java での例
-Transaction.execute(connection -> {
+Transaction.execute(conn -> {
     List<Contact> contacts = new ArrayList<>();
-    new Sql<>(Contact.class)
+    new Sql<>(Contact.class).connection(conn)
         .where("{lastName}={}", "Apple")
-        .select(connection, contact -> {
+        .select(contact -> {
             contact.lastName = "Apfel";
             contacts.add(contact);
         });
-    new Sql<>(Contact.class).update(connection, contacts);
+    new Sql<>(Contact.class).connection(conn)
+        .update(contacts);
 });
 ```
 
@@ -1460,38 +1427,39 @@ Transaction.execute(connection -> {
 // Groovy での例
 Transaction.execute {
     def contacts = []
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
-        .select(it, {Contact contact ->
+        .select({Contact contact ->
             contact.lastName = 'Apfel'
             contacts << contact
         })
-    new Sql<>(Contact.class).update(it, contacts)
+    new Sql<>(Contact).connection(it)
+        .update(contacts)
 }
 ```
 
 ```sql:SQL
--- 実行される SQL / DB2, MySQL, Oracle, PostgreSQL
+-- 生成される SQL / DB2, MySQL, Oracle, PostgreSQL
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
-UPDATE Contact SET lastName='Apfel', firstName='Akiyo', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
-UPDATE Contact SET lastName='Apfel', firstName='Yukari', birthday=DATE'2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
-UPDATE Contact SET lastName='Apfel', firstName='Azusa', birthday=DATE'2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
+UPDATE Contact SET firstName='Akiyo', lastName='Apfel', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET firstName='Yukari', lastName='Apfel', birthday=DATE'2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
+UPDATE Contact SET firstName='Azusa', lastName='Apfel', birthday=DATE'2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
 ```
 
 ```sql:SQL
--- 実行される SQL / SQLite
+-- 生成される SQL / SQLite
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
-UPDATE Contact SET lastName='Apfel', firstName='Akiyo', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
-UPDATE Contact SET lastName='Apfel', firstName='Yukari', birthday='2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
-UPDATE Contact SET lastName='Apfel', firstName='Azusa', birthday='2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
+UPDATE Contact SET firstName='Akiyo', lastName='Apfel', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET firstName='Yukari', lastName='Apfel', birthday='2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
+UPDATE Contact SET firstName='Azusa', lastName='Apfel', birthday='2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
 ```
 
 ```sql:SQL
--- 実行される SQL / SQLServer
+-- 生成される SQL / SQLServer
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
-UPDATE Contact SET lastName='Apfel', firstName='Akiyo', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
-UPDATE Contact SET lastName='Apfel', firstName='Yukari', birthday=CAST('2001-01-02' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
-UPDATE Contact SET lastName='Apfel', firstName='Azusa', birthday=CAST('2001-01-03' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
+UPDATE Contact SET firstName='Akiyo', lastName='Apfel', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
+UPDATE Contact SET firstName='Yukari', lastName='Apfel', birthday=CAST('2001-01-02' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
+UPDATE Contact SET firstName='Azusa', lastName='Apfel', birthday=CAST('2001-01-03' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
 ```
 
 <div id="ExecuteSQL-update-Condition"></div>
@@ -1504,11 +1472,11 @@ UPDATE Contact SET lastName='Apfel', firstName='Azusa', birthday=CAST('2001-01-0
 // Java での例
 Contact contact = new Contact();
 contact.lastName = "Pomme";
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where("{lastName}={}", "Apfel")
         .columns("lastName")
-        .update(connection, contact)
+        .update(contact)
 );
 ```
 
@@ -1517,15 +1485,15 @@ Transaction.execute(connection ->
 def contact = new Contact()
 contact.lastName = 'Pomme'
 Transaction.execute {
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apfel')
         .columns('lastName')
-        .update(it, contact)
+        .update(contact)
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 UPDATE Contact SET lastName='Pomme' WHERE lastName='Apfel'
 ```
 
@@ -1538,11 +1506,11 @@ UPDATE Contact SET lastName='Pomme' WHERE lastName='Apfel'
 ```java:Java
 // Java での例
 Contact contact = new Contact();
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where(Condition.ALL)
         .columns("birthday")
-        .update(connection, contact)
+        .update(contact)
 );
 ```
 
@@ -1550,15 +1518,15 @@ Transaction.execute(connection ->
 // Groovy での例
 def contact = new Contact()
 Transaction.execute {
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where(Condition.ALL)
         .columns('birthday')
-        .update(it, contact)
+        .update(contact)
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 UPDATE Contact SET birthday=NULL
 ```
 
@@ -1574,29 +1542,31 @@ UPDATE Contact SET birthday=NULL
 
 ```java:Java
 // Java での例
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where("{id}={}", 1)
-        .select(connection)
+        .select()
         .ifPresent(contact ->
-            new Sql<>(Contact.class).delete(connection, contact))
+            new Sql<>(Contact.class).connection(conn)
+                .delete(contact))
 );
 ```
 
 ```groovy:Groovy
 // Groovy での例
 Transaction.execute {
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where('{id}={}', 1)
-        .select(it)
+        .select()
         .ifPresent {contact ->
-            new Sql<>(Contact.class).delete(it, contact)
+            new Sql<>(Contact).connection(it)
+                .delete(contact)
         }
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 DELETE FROM Contact WHERE id=1
 ```
@@ -1609,12 +1579,13 @@ DELETE FROM Contact WHERE id=1
 
 ```java:Java
 // Java での例
-Transaction.execute(connection -> {
+Transaction.execute(conn -> {
     List<Contact> contacts = new ArrayList<>();
-    new Sql<>(Contact.class)
+    new Sql<>(Contact.class).connection(conn)
         .where("{lastName}={}", "Pomme")
-        .select(connection, contacts::add);
-    new Sql<>(Contact.class).delete(connection, contacts);
+        .select(contacts::add);
+    new Sql<>(Contact.class).connection(conn)
+        .delete(contacts);
 });
 ```
 
@@ -1622,15 +1593,16 @@ Transaction.execute(connection -> {
 // Groovy での例
 Transaction.execute {
     def contacts = []
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Pomme')
-        .select(it, {contacts << it})
-    new Sql<>(Contact.class).delete(it, contacts)
+        .select({contacts << it})
+    new Sql<>(Contact).connection(it)
+        .delete(contacts)
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Pomme'
 DELETE FROM Contact WHERE id=2
 DELETE FROM Contact WHERE id=3
@@ -1644,24 +1616,24 @@ DELETE FROM Contact WHERE id=3
 
 ```java:Java
 // Java での例
-Transaction.execute(connection ->
-    new Sql<>(Contact.class)
+Transaction.execute(conn ->
+    new Sql<>(Contact.class).connection(conn)
         .where("{lastName}={}", "Orange")
-        .delete(connection)
+        .delete()
 );
 ```
 
 ```groovy:Groovy
 // Groovy での例
 Transaction.execute {
-    new Sql<>(Contact.class)
+    new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Orange')
-        .delete(it)
+        .delete()
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 DELETE FROM Contact WHERE lastName='Orange'
 ```
 
@@ -1673,24 +1645,24 @@ DELETE FROM Contact WHERE lastName='Orange'
 
 ```java:Java
 // Java での例
-Transaction.execute(connection ->
-    new Sql<>(Phone.class)
+Transaction.execute(conn ->
+    new Sql<>(Phone.class).connection(conn)
         .where(Condition.ALL)
-        .delete(connection)
+        .delete()
 );
 ```
 
 ```groovy:Groovy
 // Groovy での例
 Transaction.execute {
-    new Sql<>(Phone.class)
+    new Sql<>(Phone).connection(it)
         .where(Condition.ALL)
-        .delete(it)
+        .delete()
 }
 ```
 
 ```sql:SQL
--- 実行される SQL
+-- 生成される SQL
 DELETE FROM Phone
 ```
 
