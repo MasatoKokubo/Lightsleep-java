@@ -1,11 +1,13 @@
-Lightsleep / Tutorial
+Lightsleep Tutorial
 ===========
+
+[[Japanese]](Tutorial_ja.md)
 
 Let's create a simple program that gets rows from the table and output to the console.
 
 #### 1. Preparing the table
 
-Create the Contact table to any database in MySQL, Oracle, PostgreSQL, SQLite or SQL Server, and then insert the sample data.
+Create the Contact table to any database in DB2, MySQL, Oracle, PostgreSQL, SQLite or SQL Server, and then insert the sample data.
 
 Create a table using one of the following SQL.
 
@@ -123,65 +125,46 @@ public class Contact {
 
 #### 3. Preparation of properties file
 
-Create ```lightsleep.properties``` file below.
-Change to match the database environment to use the value of url, user and password.
+Create `lightsleep.properties` file below and place one of the class paths. Change to match the database environment to use the value of `url`, `user` and `password`.
 
 ```properties:lightsleep.properties
 # for DB2
-Logger             = Std$Out$Info
-Database           = DB2
-ConnectionSupplier = Jdbc
-url                = jdbc:db2://<DB Server>:50000/<Database>
-user               = <User Name>
-password           = <Password>
+url      = jdbc:db2://<Database Server>:50000/<Database>
+user     = <User Name>
+password = <Password>
 ```
 
 ```properties:lightsleep.properties
 # for MySQL
-Logger             = Std$Out$Info
-Database           = MySQL
-ConnectionSupplier = Jdbc
-url                = jdbc:mysql://<DB Server>/<Database>
-user               = <User Name>
-password           = <Password>
+url      = jdbc:mysql://<Database Server>/<Database>
+user     = <User Name>
+password = <Password>
 ```
 
 ```properties:lightsleep.properties
 # for Oracle
-Logger             = Std$Out$Info
-Database           = Oracle
-ConnectionSupplier = Jdbc
-url                = jdbc:oracle:thin:@<DB Server>:1521:<SID>
-user               = <User Name>
-password           = <Password>
+url      = jdbc:oracle:thin:@<Database Server>:1521:<SID>
+user     = <User Name>
+password = <Password>
 ```
 
 ```properties:lightsleep.properties
 # for PostgreSQL
-Logger             = Std$Out$Info
-Database           = PostgreSQL
-ConnectionSupplier = Jdbc
-url                = jdbc:postgresql://<DB Server>/<Database>
-user               = <User Name>
-password           = <Password>
+url      = jdbc:postgresql://<Database Server>/<Database>
+user     = <User Name>
+password = <Password>
 ```
 
 ```properties:lightsleep.properties
 # for SQLite
-Logger             = Std$Out$Info
-Database           = SQLite
-ConnectionSupplier = Jdbc
-url                = jdbc:sqlite:<Installed Directory>/<Database>
+url = jdbc:sqlite:<Installed Directory>/<Database>
 ```
 
 ```properties:lightsleep.properties
 # for SQL Server
-Logger             = Std$Out$Info
-Database           = SQLServer
-ConnectionSupplier = Jdbc
-url                = jdbc:sqlserver://<DB Server>;Database=<Database>
-user               = <User Name>
-password           = <Password>
+url      = jdbc:sqlserver://<Database Server>;Database=<Database>
+user     = <User Name>
+password = <Password>
 ```
 
 #### 4. Getting data

@@ -3,7 +3,7 @@
 
 package org.lightsleep.entity;
 
-import java.sql.Connection;
+import org.lightsleep.connection.ConnectionWrapper;
 
 /**
  * If an entity class implements this interface,
@@ -93,39 +93,51 @@ public interface Composite {
 	/**
 	 * <b>postSelect</b> is executed after select a row and set it to the entity.
 	 *
-	 * @param conn the database connection
+	 * @param conn the connection wrapper
 	 *
 	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-	void postSelect(Connection conn);
+// 2.1.0
+//	void postSelect(Connection conn);
+	void postSelect(ConnectionWrapper conn);
+////
 
 	/**
 	 * <b>postInsert</b> is executed after a row has been inserted.
 	 *
-	 * @param conn the database connection
+	 * @param conn the connection wrapper
 	 * @return the number of inserted rows
 	 *
 	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-	int postInsert(Connection conn);
+// 2.1.0
+//	int postInsert(Connection conn);
+	int postInsert(ConnectionWrapper conn);
+////
 
 	/**
 	 * <b>postUpdate</b> is executed after a row has been updated.
 	 *
-	 * @param conn the database connection
+	 * @param conn the connection wrapper
 	 * @return the number of updated rows
 	 *
 	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-	int postUpdate(Connection conn);
+// 2.1.0
+//	int postUpdate(Connection conn);
+	int postUpdate(ConnectionWrapper conn);
+////
 
 	/**
 	 * <b>postDelete</b> is executed after a row has been deleted.
 	 *
-	 * @param conn the database connection
+	 * @param conn the connection wrapper
 	 * @return the number of deleted rows
 	 *
 	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-	int postDelete(Connection conn);
+// 2.1.0
+//	int postDelete(Connection conn);
+	int postDelete(ConnectionWrapper conn);
+////
 }

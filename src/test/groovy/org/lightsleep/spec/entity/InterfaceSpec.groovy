@@ -15,7 +15,7 @@ import spock.lang.*
 
 // AnnotationSpec
 @Unroll
-class InterfaceSpec extends Specification {
+class InterfaceSpec extends SpecCommon {
 	@Table("super")
 	static class Contact2 extends Contact implements PreStore, PostLoad {
 		@NonColumn public int preStoreCount
@@ -33,14 +33,9 @@ class InterfaceSpec extends Specification {
 	}
 
 	// PreStore PostLoad
-	def "InterfaceSpec PreStore PostLoad #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	def "InterfaceSpec PreStore PostLoad #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-
-		setup:
-			ConnectionSupplier connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		when:
 			def contact = new Contact2()
 			contact.name.first = 'firstName'
@@ -81,7 +76,6 @@ class InterfaceSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << [C3p0, Dbcp, HikariCP, TomcatCP, Jdbc]
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 }

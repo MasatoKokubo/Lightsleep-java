@@ -12,7 +12,7 @@ import java.lang.annotation.*;
  * カラム名がフィールド名と同じであれば、このアノテーションを指定する必要がありません。
  * </p>
  *
- * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleTitle"><span>使用例/Java</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}Column("firstName")</b>
  *   public String first;
@@ -20,7 +20,7 @@ import java.lang.annotation.*;
  *   public String last;
  * </pre></div>
  * 
- * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleTitle"><span>使用例/Groovy</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}Column('firstName')</b>
  *   String first
@@ -28,7 +28,7 @@ import java.lang.annotation.*;
  *   String last
  * </pre></div>
  * 
- * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleTitle"><span>生成されるSQL</span></div>
  * <div class="exampleCode"><pre>
  * SELECT ..., <b>firstName</b>, <b>lastName</b>, ...
  * </pre></div>

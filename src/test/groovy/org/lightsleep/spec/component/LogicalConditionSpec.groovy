@@ -8,6 +8,7 @@ import java.util.stream.Stream
 import org.debugtrace.DebugTrace
 import org.lightsleep.*
 import org.lightsleep.component.*
+import org.lightsleep.database.*
 import org.lightsleep.entity.*
 
 import spock.lang.*
@@ -60,8 +61,8 @@ class LogicalConditionSpec extends Specification {
 				}
 			} else assert false
 		/**/DebugTrace.print('condition', condition)
-			def string = condition.toString(new Sql<>(Entity), [])
-			def string2 = condition2.toString(new Sql<>(Entity), [])
+			def string = condition.toString(Standard.instance, new Sql<>(Entity), [])
+			def string2 = condition2.toString(Standard.instance, new Sql<>(Entity), [])
 		/**/DebugTrace.print('string', string)
 		/**/DebugTrace.print('string2', string2)
 

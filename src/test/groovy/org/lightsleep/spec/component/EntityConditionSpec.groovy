@@ -24,7 +24,7 @@ class EntityConditionSpec extends Specification {
 
 		then: !condition.empty
 
-		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == 'id=1'
 
 	/**/DebugTrace.leave()

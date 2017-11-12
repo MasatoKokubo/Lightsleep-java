@@ -29,14 +29,28 @@ import org.lightsleep.helper.TypeConverter;
  * @see org.lightsleep.database.Standard
  */
 public class PostgreSQL extends Standard {
-	// The PostgreSQL instance
-	private static final Database instance = new PostgreSQL();
+	/**
+	 * The only instance of this class
+	 *
+	 * @since 2.1.0
+	 */
+// 2.1.0
+//	private static final Database instance = new PostgreSQL();
+	public static final PostgreSQL instance = new PostgreSQL();
+////
 
 	/**
-	 * Returns the <b>PostgreSQL</b> instance.
+	 * Returns the only instance of this class.
 	 *
-	 * @return the <b>PostgreSQL</b> instance
+	 * <p>
+	 * @deprecated As of release 2.1.0, instead use {@link #instance}
+	 * </p>
+	 *
+	 * @return the only instance of this class
 	 */
+// 2.1.0
+	@Deprecated
+////
 	public static Database instance() {
 		return instance;
 	}

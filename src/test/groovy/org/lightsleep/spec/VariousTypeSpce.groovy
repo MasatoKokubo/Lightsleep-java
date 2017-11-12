@@ -24,16 +24,13 @@ import spock.lang.*
 
 // VariousTypeSpce
 @Unroll
-class VariousTypeSpce extends Specification {
-	@Shared connectionSupplier
-
-	def setupSpec() {
-		connectionSupplier = ConnectionSpec.getConnectionSupplier(Jdbc)
+class VariousTypeSpce extends SpecCommon {
+	def setup() {
+		deleteAllTables()
 	}
 
 	def "VariousTypeSpce various types"() {
 	/**/DebugTrace.enter()
-
 		setup:
 			Calendar dayCal = Calendar.instance
 			dayCal.set(Calendar.HOUR_OF_DAY, 0)
@@ -51,7 +48,8 @@ class VariousTypeSpce extends Specification {
 			Calendar timestampCal = Calendar.instance
 			timestampCal.set(Calendar.MILLISECOND, 0)
 
-			Various various1 = Sql.database instanceof PostgreSQL ? new Various.PostgreSQL() : new Various()
+			Various various1 = connectionSupplier.database instanceof PostgreSQL
+				? new Various.PostgreSQL() : new Various()
 
 			various1.id               = 1
 
@@ -66,7 +64,7 @@ class VariousTypeSpce extends Specification {
 
 			various1.booleanValue     = true
 			various1.char1Value       = 'い' as char
-			if (Sql.database instanceof SQLServer)
+			if (connectionSupplier.database instanceof SQLServer)
 				various1.tinyIntValue = 0x00
 			else
 				various1.tinyIntValue = -0x80
@@ -101,9 +99,9 @@ class VariousTypeSpce extends Specification {
 				various1p.booleans         = [false, true, false, true] as boolean[]
 			//	various1p.shorts           = [-1, 0, 1, 2] as short[]
 				various1p.shortList        = [(short)-1, (short)0, (short)1, (short)2]
-				various1p.ints             = [-1   , 0   , 1   , 2   ] as int[]   
-				various1p.longs            = [-1L  , 0L  , 1L  , 2L  ] as long[]  
-				various1p.floats           = [-1.1F, 0.0F, 1.1F, 2.2F] as float[] 
+				various1p.ints             = [-1   , 0   , 1   , 2   , 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] as int[]
+				various1p.longs            = [-1L  , 0L  , 1L  , 2L  ] as long[]
+				various1p.floats           = [-1.1F, 0.0F, 1.1F, 2.2F] as float[]
 				various1p.doubles          = [-1.1D, 0.0D, 1.1D, 2.2D] as double[]
 				various1p.decimals         = [new BigDecimal('-2.22'), new BigDecimal('-1.11'), new BigDecimal('1.11'), new BigDecimal('2.22')] as BigDecimal[]
 				various1p.texts            = [
@@ -132,19 +130,19 @@ class VariousTypeSpce extends Specification {
 		when:
 			Transaction.execute(connectionSupplier) {
 				if (various1 instanceof Various.PostgreSQL) {
-					new Sql<>(Various.PostgreSQL).delete(it, various1 as Various.PostgreSQL)
-					new Sql<>(Various.PostgreSQL).insert(it, various1 as Various.PostgreSQL)
+					new Sql<>(Various.PostgreSQL).connection(it).delete(various1 as Various.PostgreSQL)
+					new Sql<>(Various.PostgreSQL).connection(it).insert(various1 as Various.PostgreSQL)
 				} else {
-					new Sql<>(Various).delete(it, various1)
-					new Sql<>(Various).insert(it, various1)
+					new Sql<>(Various).connection(it).delete(various1)
+					new Sql<>(Various).connection(it).insert(various1)
 				}
 			}
 
 			Various various2
 			Transaction.execute(connectionSupplier) {
-				various2 = new Sql<>(various1.getClass())
+				various2 = new Sql<>(various1.getClass()).connection(it)
 					.where('{id}={}', various1.id)
-					.select(it).orElseThrow({new NotFoundException()})
+					.select().orElseThrow({new NotFoundException()})
 			}
 
 		then:
@@ -228,7 +226,7 @@ class VariousTypeSpce extends Specification {
 			various1.floatPValue      = 123_123
 			various1.doublePValue     = 1_232_456_123
 
-			if (Sql.database instanceof SQLServer)
+			if (connectionSupplier.database instanceof SQLServer)
 				various1.tinyIntValue = 0x00
 			else
 				various1.tinyIntValue = -0x80
@@ -241,13 +239,14 @@ class VariousTypeSpce extends Specification {
 			various1.decimalValue     = 1_234_567_890
 
 		when:
+		/**/DebugTrace.print('number types: insertion value', various1)
 			VariousInteger various2
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(VariousInteger).delete(it, various1)
-				new Sql<>(VariousInteger).insert(it, various1)
-				various2 = new Sql<>(VariousInteger)
+				new Sql<>(VariousInteger).connection(it).delete(various1)
+				new Sql<>(VariousInteger).connection(it).insert(various1)
+				various2 = new Sql<>(VariousInteger).connection(it)
 					.where(various1)
-					.select(it).orElseThrow({new NotFoundException()})
+					.select().orElseThrow({new NotFoundException()})
 			}
 
 		then:
@@ -288,7 +287,7 @@ class VariousTypeSpce extends Specification {
 			various1.doublePValue     = '' + 1232456.123456
 
 			various1.char1Value       = 'い'
-			if (Sql.database instanceof SQLServer)
+			if (connectionSupplier.database instanceof SQLServer)
 				various1.tinyIntValue = '' + (byte)0x00
 			else
 				various1.tinyIntValue = '' + (byte )0x80
@@ -306,11 +305,11 @@ class VariousTypeSpce extends Specification {
 		when:
 			VariousString various2
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(VariousString).delete(it, various1)
-				new Sql<>(VariousString).insert(it, various1)
-				various2 = new Sql<>(VariousString)
+				new Sql<>(VariousString).connection(it).delete(various1)
+				new Sql<>(VariousString).connection(it).insert(various1)
+				various2 = new Sql<>(VariousString).connection(it)
 					.where(various1)
-					.select(it).orElseThrow({throw new NotFoundException()})
+					.select().orElseThrow({throw new NotFoundException()})
 			}
 
 		then:
@@ -332,7 +331,7 @@ class VariousTypeSpce extends Specification {
 			various2.floatValue       == various1.floatValue
 			various2.doubleValue      == various1.doubleValue
 
-			if (Sql.database instanceof SQLite)
+			if (connectionSupplier.database instanceof SQLite)
 				new BigDecimal(various2.decimalValue) == new BigDecimal(various1.decimalValue)
 			else
 				various2.decimalValue == various1.decimalValue

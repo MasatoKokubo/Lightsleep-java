@@ -3,7 +3,7 @@
 
 package org.lightsleep.entity;
 
-import java.sql.Connection;
+import org.lightsleep.connection.ConnectionWrapper;
 
 /**
  * If an entity class implements this interface,
@@ -36,10 +36,13 @@ public interface PreInsert {
 	/**
 	 * This method is execute before executing INSERT SQL.
 	 *
-	 * @param conn the database conn
+	 * @param conn the connection wrapper
 	 * @return the number of inserted rows
 	 *
 	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-	int preInsert(Connection conn);
+// 2.1.0
+//	int preInsert(Connection conn);
+	int preInsert(ConnectionWrapper conn);
+////
 }

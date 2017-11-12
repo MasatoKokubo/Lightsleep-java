@@ -6,7 +6,7 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * <b>ColumnProperty</b> アノテーションの配列を示します。
+ * <b>ColumnProperty</b>アノテーションの配列を示します。
  *
  * @since 1.3.0
  * @author Masato Kokubo
@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface ColumnProperties {
-	/** @return <b>ColumnProperty</b> アノテーションの配列 */
+	/** @return <b>ColumnProperty</b>アノテーションの配列 */
 	ColumnProperty[] value();
 }

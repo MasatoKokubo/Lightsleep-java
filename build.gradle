@@ -1,16 +1,11 @@
 // (C) 2016 Masato Kokubo
-buildscript {
-	repositories {
-		jcenter()
-	}
-	dependencies {
-		classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
-	}
+plugins {
+	id "com.jfrog.bintray" version "1.7.3"
 }
 
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'groovy'
 
 repositories {
@@ -23,37 +18,74 @@ repositories {
 }
 
 dependencies {
-	compile     'org.debugtrace:debugtrace:2.4.1'
-	compile     'log4j:log4j:1.+'
-	compile     'org.apache.logging.log4j:log4j-api:2.+'
-	testRuntime 'org.apache.logging.log4j:log4j-core:2.+'
-	compile     'org.slf4j:slf4j-api:1.7.+'
-	testRuntime 'ch.qos.logback:logback-classic:1.+'
+	compileOnly     'org.debugtrace:debugtrace:2.+'
+	testCompile     'org.debugtrace:debugtrace:2.+'
+	compileOnly     'log4j:log4j:1.+'
+	testRuntimeOnly 'log4j:log4j:1.+'
+	compileOnly     'org.apache.logging.log4j:log4j-api:2.+'
+	testRuntimeOnly 'org.apache.logging.log4j:log4j-core:2.+'
+	compileOnly     'org.slf4j:slf4j-api:1.7.+'
+	testRuntimeOnly 'ch.qos.logback:logback-classic:1.+'
 
-	compile     'com.mchange:c3p0:0.+'
-	compile     'com.zaxxer:HikariCP:2.+'
-	compile     'org.apache.commons:commons-dbcp2:2.+'
-	compile     'org.apache.tomcat:tomcat-jdbc:8.+'
+	compileOnly     'com.mchange:c3p0:0.+'
+	testRuntimeOnly 'com.mchange:c3p0:0.+'
+	compileOnly     'com.zaxxer:HikariCP:2.+'
+	testRuntimeOnly 'com.zaxxer:HikariCP:2.+'
+	compileOnly     'org.apache.commons:commons-dbcp2:2.+'
+	testRuntimeOnly 'org.apache.commons:commons-dbcp2:2.+'
+	compileOnly     'org.apache.tomcat:tomcat-jdbc:8.+'
+	testRuntimeOnly 'org.apache.tomcat:tomcat-jdbc:8.+'
 
-	testCompile 'org.codehaus.groovy:groovy-all:2.4.+'
-	testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
+	testCompileOnly 'org.codehaus.groovy:groovy-all:2.4.+'
+	testCompileOnly 'org.spockframework:spock-core:1.1-groovy-2.4'
 
-	testRuntime 'com.ibm.db2.jcc:db2jcc4:10.+'
-	testRuntime 'mysql:mysql-connector-java:5.+'
-	compile     'com.hynnet:oracle-driver-ojdbc:12.+'
-	testRuntime 'org.postgresql:postgresql:9.+'
-	testRuntime 'org.xerial:sqlite-jdbc:3.+'
-	testRuntime 'com.microsoft.sqlserver:mssql-jdbc:6.1.0.jre8'
+	testRuntimeOnly 'com.ibm.db2.jcc:db2jcc4:10.+'
+	testRuntimeOnly 'mysql:mysql-connector-java:5.+'
+	compileOnly     'com.hynnet:oracle-driver-ojdbc:12.+'
+	testCompile     'com.hynnet:oracle-driver-ojdbc:12.+'
+	testRuntimeOnly 'org.postgresql:postgresql:42.+'
+	testRuntimeOnly 'org.xerial:sqlite-jdbc:3.+'
+	testRuntimeOnly 'com.microsoft.sqlserver:mssql-jdbc:6.2.1.jre8'
 }
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '2.0.0'
+version             = '2.1.0'
+
+sourceSets {
+	example {
+		java {
+			srcDir 'src/example/java'
+		}
+		resources {
+			srcDir 'src/example/resources'
+		}
+	}
+	main {
+		java {
+			srcDir 'src/main/java'
+		}
+		resources {
+			srcDir 'src/main/resources'
+		}
+	}
+	test {
+		groovy {
+			srcDir 'src/test/groovy'
+		}
+		java {
+			srcDir 'src/test/java'
+		}
+		resources {
+			srcDir 'src/test/resources'
+		}
+	}
+}
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.1'
+	gradleVersion = '4.3.1'
 }
 
 compileJava {
@@ -117,7 +149,8 @@ javadoc.doLast {
 task javadoc_ja(type:Javadoc) {
 	dependsOn = ['compileJava_ja']
 
-	title               = "$project.name $version API \u4ED5\u69D8"
+//	title               = "$project.name $version API \u4ED5\u69D8"
+	title               = "$project.name $version API Specification"
 	options.charSet     = javadoc.options.charSet
 	options.encoding    = javadoc.options.encoding
 	options.locale      = 'ja'
@@ -151,8 +184,8 @@ task zip(type: Zip) {
 
 	into('/'         , {from "build/libs/${archivesBaseName}-${version}.jar"})
 	into('/'         , {from 'LICENSE.txt'})
-	into('/'         , {from 'README.md', 'Tutorial.md', 'Manual.md'})
-	into('/'         , {from 'README_ja.md', 'Tutorial_ja.md', 'Manual_ja.md'})
+	into('/'         , {from 'README.md', 'ReleaseNotes.md', 'Tutorial.md', 'Manual.md'})
+	into('/'         , {from 'README_ja.md', 'ReleaseNotes_ja.md', 'Tutorial_ja.md', 'Manual_ja.md'})
 	into('javadoc'   , {from 'build/docs/javadoc'})
 	into('javadoc_ja', {from 'build/docs/javadoc_ja'})
 }

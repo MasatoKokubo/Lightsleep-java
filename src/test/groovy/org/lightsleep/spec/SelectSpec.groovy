@@ -18,16 +18,7 @@ import spock.lang.*
 
 // SelectSpec
 @Unroll
-class SelectSpec extends Specification {
-	static def connectionSupplierClasses = [
-		C3p0,
-		Dbcp,
-		HikariCP,
-		TomcatCP,
-		Jdbc
-	]
-
-	@Shared ConnectionSupplier connectionSupplier
+class SelectSpec extends SpecCommon {
 	@Shared Calendar birthdayStart
 	@Shared Calendar saleDateStart
 
@@ -36,16 +27,7 @@ class SelectSpec extends Specification {
 	 */
 	def setupSpec() {
 	/**/DebugTrace.enter()
-		connectionSupplier = ConnectionSpec.getConnectionSupplier(Jdbc)
-
-		Transaction.execute(connectionSupplier) {
-			new Sql<>(Contact ).where(Condition.ALL).delete(it)
-			new Sql<>(Address ).where(Condition.ALL).delete(it)
-			new Sql<>(Phone   ).where(Condition.ALL).delete(it)
-			new Sql<>(Product ).where(Condition.ALL).delete(it)
-			new Sql<>(Sale    ).where(Condition.ALL).delete(it)
-			new Sql<>(SaleItem).where(Condition.ALL).delete(it)
-		}
+		deleteAllTables()
 
 		// 2001-01-01
 		birthdayStart = Calendar.instance
@@ -113,7 +95,7 @@ class SelectSpec extends Specification {
 			}
 
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact).insert(it, contact)
+				new Sql<>(Contact).connection(it).insert(contact)
 			}
 		}
 	/**/DebugTrace.leave()
@@ -139,6 +121,7 @@ class SelectSpec extends Specification {
 	 */
 	def insertProducts() {
 	/**/DebugTrace.enter()
+		// 0 ~ 99
 		(0..<100).each {index ->
 			Product product = new Product()
 
@@ -163,7 +146,7 @@ class SelectSpec extends Specification {
 			product.color = colors[colorIndex]
 
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Product).insert(it, product)
+				new Sql<>(Product).connection(it).insert(product)
 			}
 		}
 	/**/DebugTrace.leave()
@@ -181,10 +164,10 @@ class SelectSpec extends Specification {
 			SaleComposite sale = new SaleComposite()
 
 			Transaction.execute(connectionSupplier) {
-				Contact contact = new Sql<>(Contact)
+				Contact contact = new Sql<>(Contact).connection(it)
 					.where('{name.last} = {}', 'Last' + (((index / 10) as int) % 10))
 					  .and('{name.first} = {}', 'First' + (index % 10))
-					.select(it).orElse(null)
+					.select().orElse(null)
 
 				// id(Last0, First0), id(Last0, First1), ... id(Last0, First9)
 				// id(Last1, First0), id(Last1, First1), ... id(Last1, First9)
@@ -192,22 +175,23 @@ class SelectSpec extends Specification {
 				// id(Last9, First0), id(Last9, First1), ... id(Last9, First9)
 				sale.contactId = contact.id
 
-				// 2017-05-05, 2017-05-06, ...
+				// 2017-05-05, 017-05-06, ...
 				sale.saleDate = new Date(calendar.timeInMillis)
 				calendar.add(Calendar.DAY_OF_MONTH, 1)
 
-				// 8%
 				sale.taxRate = 8
 
 				// 0 ~ 9
 				(0..<10).each {index2 ->
 					SaleItem item = new SaleItem()
 
-					Product product = new Sql<>(Product)
+					Product product = new Sql<>(Product).connection(it)
 						.where('{productName} = {}', 'Product' + ((index + index2) % 100))
-						.select(it).orElse(null)
+						.select().orElse(null)
 
 					item.productId = product.id
+
+					// 10, 11, 12, 13, 14
 					item.quantity  = (short)(10 + index2 % 5)
 
 					sale.items.add(item)
@@ -215,31 +199,31 @@ class SelectSpec extends Specification {
 			}
 
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Sale).insert(it, sale)
+				new Sql<>(Sale).connection(it).insert(sale)
 			}
 		}
 	/**/DebugTrace.leave()
 	}
 
-	// select(Connection connection, Consumer<? super E> consumer,
+	// select(Consumer<? super E> consumer,
 	//                               Consumer<? super JE1> consumer1)
 	//
-	// select(Connection connection, Consumer<? super E> consumer,
+	// select(Consumer<? super E> consumer,
 	//                               Consumer<? super JE1> consumer1,
 	//                               Consumer<? super JE2> consumer2)
 	//
-	// select(Connection connection, Consumer<? super E> consumer,
+	// select(Consumer<? super E> consumer,
 	//                               Consumer<? super JE1> consumer1,
 	//                               Consumer<? super JE2> consumer2,
 	//                               Consumer<? super JE3> consumer3)
 	//
-	// select(Connection connection, Consumer<? super E> consumer,
+	// select(Consumer<? super E> consumer,
 	//                               Consumer<? super JE1> consumer1,
 	//                               Consumer<? super JE2> consumer2,
 	//                               Consumer<? super JE3> consumer3,
 	//                               Consumer<? super JE4> consumer4)
 	//
-	// select(Connection connection)
+	// select()
 	def "SelectSpec select - exception"() {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('select - exception')
@@ -248,57 +232,57 @@ class SelectSpec extends Specification {
 			List<Contact> contacts = []
 			List<Address> addresses = []
 
-		// select(Connection connection, Consumer<? super E> consumer,
+		// select(Consumer<? super E> consumer,
 		//                               Consumer<? super JE1> consumer1)
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact, 'C')
-					.<Address>select(it, {contacts << it}, {addresses << it})
+				new Sql<>(Contact, 'C').connection(it)
+					.<Address>select({contacts << it}, {addresses << it})
 			}
 
 		then:
 			thrown IllegalStateException
 
-		// select(Connection connection, Consumer<? super E> consumer,
+		// select(Consumer<? super E> consumer,
 		//                               Consumer<? super JE1> consumer1,
 		//                               Consumer<? super JE2> consumer2)
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact, 'C')
+				new Sql<>(Contact, 'C').connection(it)
 					.innerJoin(Address, 'A', '{A.adressId} = {P.adressId}')
-					.<Address, Address>select(it, {contacts << it}, {addresses << it}, {addresses << it})
+					.<Address, Address>select({contacts << it}, {addresses << it}, {addresses << it})
 			}
 
 		then:
 			thrown IllegalStateException
 
-		// select(Connection connection, Consumer<? super E> consumer,
+		// select(Consumer<? super E> consumer,
 		//                               Consumer<? super JE1> consumer1,
 		//                               Consumer<? super JE2> consumer2,
 		//                               Consumer<? super JE3> consumer3)
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact, 'C')
+				new Sql<>(Contact, 'C').connection(it)
 					.innerJoin(Address, 'A1', '{A1.adressId} = {P.adressId}')
 					.innerJoin(Address, 'A2', '{A2.adressId} = {P.adressId}')
-					.<Address, Address, Address>select(it, {contacts << it}, {addresses << it}, {addresses << it}, {addresses << it})
+					.<Address, Address, Address>select({contacts << it}, {addresses << it}, {addresses << it}, {addresses << it})
 			}
 
 		then:
 			thrown IllegalStateException
 
-		// select(Connection connection, Consumer<? super E> consumer,
+		// select(Consumer<? super E> consumer,
 		//                               Consumer<? super JE1> consumer1,
 		//                               Consumer<? super JE2> consumer2,
 		//                               Consumer<? super JE3> consumer3,
 		//                               Consumer<? super JE4> consumer4)
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact, 'C')
+				new Sql<>(Contact, 'C').connection(it)
 					.innerJoin(Address, 'A1', '{A1.adressId} = {P.adressId}')
 					.innerJoin(Address, 'A2', '{A2.adressId} = {P.adressId}')
 					.innerJoin(Address, 'A3', '{A3.adressId} = {P.adressId}')
-					.<Address, Address, Address, Address>select(it, {contacts << it}, {addresses << it}, {addresses << it}, {addresses << it}, {addresses << it})
+					.<Address, Address, Address, Address>select({contacts << it}, {addresses << it}, {addresses << it}, {addresses << it}, {addresses << it})
 			}
 
 		then:
@@ -308,19 +292,14 @@ class SelectSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-	// select(Connection connection)
-	def "SelectSpec select1 #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// select()
+	def "SelectSpec select1 #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('select1')
-	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-
-		setup:
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact).select(it)
+				new Sql<>(Contact).connection(it).select()
 			}
 
 		then:
@@ -329,7 +308,7 @@ class SelectSpec extends Specification {
 		when:
 			Contact contact = null
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(Contact).where('0<>0').select(it).orElse(null)
+				contact = new Sql<>(Contact).connection(it).where('0<>0').select().orElse(null)
 			}
 
 		then:
@@ -337,29 +316,26 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection)
+	// select()
 	// SELECT MAX(...)
-	def "SelectSpec select MAX #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	def "SelectSpec select MAX #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('select MAX')
-	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			Contact contact = null
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(Contact) // without table alias
+				contact = new Sql<>(Contact).connection(it) // without table alias
 					.expression('id', 'MAX({id})') // without table alias
 					.columns('id')                 // without table alias
-					.select(it).orElse(null)
+					.select().orElse(null)
 			}
+			/**/DebugTrace.print('contact', contact)
 
 		then:
 			contact != null
@@ -367,11 +343,12 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(Contact, 'C')// with table alias
+				contact = new Sql<>(Contact, 'C').connection(it)// with table alias
 					.expression('id', 'MAX({C.id})')   // with table alias
 					.columns('C.id')                   // with table alias
-					.select(it).orElse(null)
+					.select().orElse(null)
 			}
+		/**/DebugTrace.print('contact', contact)
 
 		then:
 			contact != null
@@ -379,11 +356,12 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(Contact, 'C') // with table alias
+				contact = new Sql<>(Contact, 'C').connection(it) // with table alias
 					.expression('id', 'MAX({id})')      // without table alias
 					.columns('C.id')                    // with table alias
-					.select(it).orElse(null)
+					.select().orElse(null)
 			}
+		/**/DebugTrace.print('contact', contact)
 
 		then:
 			contact != null
@@ -391,11 +369,12 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(Contact, 'C') // with table alias
+				contact = new Sql<>(Contact, 'C').connection(it) // with table alias
 					.expression('id', 'MAX({C.id})')    // with table alias
 					.columns('id')                      // without table alias
-					.select(it).orElse(null)
+					.select().orElse(null)
 			}
+		/**/DebugTrace.print('contact', contact)
 
 		then:
 			contact != null
@@ -403,24 +382,20 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / where A and B or C and D
-	def "SelectSpec where A and B or C and D #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// select() / where A and B or C and D
+	def "SelectSpec where A and B or C and D #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('where A and B or C and D')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			List<Contact> contacts = []
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact)
+				new Sql<>(Contact).connection(it)
 					.where('{name.last} = {}', 'Last0')
 					.and  ('{name.first} = {}' , 'First0')
 					.or(Condition
@@ -429,7 +404,7 @@ class SelectSpec extends Specification {
 					)
 					.orderBy('{name.last}')
 					.orderBy('{name.first}')
-					.select(it, {contacts << it})
+					.select({contacts << it})
 			}
 
 		then:
@@ -441,24 +416,20 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / where (A or B) and (C or D)
-	def "SelectSpec where (A or B) and (C or D) #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// select() / where (A or B) and (C or D)
+	def "SelectSpec where (A or B) and (C or D) #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('where (A or B) and (C or D)')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			List<Contact> contacts = []
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact)
+				new Sql<>(Contact).connection(it)
 					.where('{name.last} = {}', 'Last0')
 					.or   ('{name.last} = {}', 'Last1')
 					.and(Condition
@@ -467,44 +438,48 @@ class SelectSpec extends Specification {
 					)
 					.orderBy('{name.last}')
 					.orderBy('{name.first}')
-					.select(it, {contacts << it})
+					.select({contacts << it})
 			}
 
 		then:
 			contacts.size() == 4
-			contacts[0].name.last  == 'Last0'
-			contacts[0].name.first == 'First0'
-			contacts[1].name.last  == 'Last0'
-			contacts[1].name.first == 'First1'
-			contacts[2].name.last  == 'Last1'
-			contacts[2].name.first == 'First0'
-			contacts[3].name.last  == 'Last1'
-			contacts[3].name.first == 'First1'
+			contacts[0].name.last == 'Last0'
+			contacts[0].name.first  == 'First0'
+			contacts[1].name.last == 'Last0'
+			contacts[1].name.first  == 'First1'
+			contacts[2].name.last == 'Last1'
+			contacts[2].name.first  == 'First0'
+			contacts[3].name.last == 'Last1'
+			contacts[3].name.first  == 'First1'
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// selectCount(Connection connection)
-	def "SelectSpec selectCount #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// selectCount()
+	def "SelectSpec selectCount #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('selectCount')
-	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			def count = 0
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				count = new Sql<>(Phone, 'P')
+				count = new Sql<>(Contact).connection(it).selectCount()
+			}
+
+		then:
+			count == 100
+
+		when:
+			Transaction.execute(connectionSupplier) {
+				count = new Sql<>(Phone, 'P').connection(it)
 					.innerJoin(Contact, 'C', '{C.id} = {P.contactId}')
 					.where('{P.phoneNumber} LIKE {}', '090____0003')
 						.and('{C.name.last} = {}', 'Last1')
-					.selectCount(it)
+					.selectCount()
 			}
 
 		then:
@@ -512,30 +487,26 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / limit, offset
-	def "SelectSpec limit, offset #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// select() / limit, offset
+	def "SelectSpec limit, offset #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('limit, offset')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			List<Contact> contacts = []
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact)
+				new Sql<>(Contact).connection(it)
 					.where('{name.last} IN {}', ['Last0', 'Last1', 'Last2', 'Last3', 'Last4'])
 					  .and('{name.first} IN {}', ['First5', 'First6', 'First7', 'First8', 'First9'])
 					.orderBy('{name.last}').desc()
 					.orderBy('{name.first}').desc()
 					.offset(5).limit(15)
-					.select(it, {contacts << it})
+					.select({contacts << it})
 			}
 
 		then:
@@ -547,34 +518,30 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / innerJoin
-	def "SelectSpec innerJoin #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// select() / innerJoin
+	def "SelectSpec innerJoin #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('innerJoin')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			List<Phone> phones = []
 			List<Contact> contacts = []
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Phone, 'P')
+				new Sql<>(Phone, 'P').connection(it)
 					.innerJoin(Contact, 'C', '{C.id} = {P.contactId}')
 					.where('{P.phoneNumber} LIKE {}', '090____0003')
 						.and('{C.name.last} = {}', 'Last5')
 					.orderBy('{P.phoneNumber}').desc()
 					.columns('P.phoneId', 'P.phoneNumber', 'C.id')
-					.<Contact>select(it,
-						{phones << it}, {contacts << it}
-					)
+					.<Contact>select({phones << it}, {contacts << it})
 			}
+		/**/DebugTrace.print('phones .size', phones .size())
+		/**/DebugTrace.print('contacts.size', contacts.size())
 
 		then:
 			phones  .size() == 6 // 4, 5, 6, 7, 8, 9
@@ -582,30 +549,42 @@ class SelectSpec extends Specification {
 			phones[0].phoneNumber == '09000590003'
 			phones[5].phoneNumber == '09000540003'
 
+		when:
+			phones = []
+			def sql = new Sql<>(Phone, 'P')
+				.innerJoin(Contact, 'C', '{C.id} = {P.contactId}')
+				.where('{P.phoneNumber} LIKE {}', '090____0006')
+					.and('{C.name.last} = {}', 'Last5')
+				.orderBy('{P.phoneNumber}')
+			Transaction.execute(connectionSupplier) {
+				sql.connection(it).select({phones << it})
+			}
+
+		then:
+			// No 'C_xxxx' columns
+		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql)
+			sql.generatedSql.indexOf('P_phoneNumber FROM') >= 0
+
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / innerJoin
-	def "SelectSpec innerJoin2 #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// select() / innerJoin
+	def "SelectSpec innerJoin2 #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('innerJoin')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			List<SaleItem> saleItems = []
 			List<Sale    > sales     = []
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(SaleItem, 'SI')
+				new Sql<>(SaleItem, 'SI').connection(it)
 					.innerJoin(Sale, 'S', '{S.id} = {SI.saleId}')
 					.where('{S.saleDate} = {}', new Date(saleDateStart.timeInMillis))
-					.<Sale>select(it,
+					.<Sale>select(
 						{saleItems << it}, {sales << it}
 					)
 			}
@@ -616,53 +595,64 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / innerJoin x 2
-	def "SelectSpec innerJoin innerJoin #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// select() / innerJoin x 2
+	def "SelectSpec innerJoin innerJoin #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('innerJoin innerJoin')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			List<SaleItem> saleItems = []
 			List<Sale    > sales     = []
 			List<Contact > contacts  = []
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(SaleItem, 'SI')
+				new Sql<>(SaleItem, 'SI').connection(it)
 					.innerJoin(Sale   , 'S', '{S.id} = {SI.saleId}')
 					.innerJoin(Contact, 'C', '{C.id} = {S.contactId}')
-					.where("{C.birthday} = {}", new Date(birthdayStart.timeInMillis))
-					.<Sale, Contact>select(it,
+					.where('{C.birthday} = {}', new Date(birthdayStart.timeInMillis))
+					.<Sale, Contact>select(
 						{saleItems << it}, {sales << it}, {contacts << it}
 					)
 			}
+		/**/DebugTrace.print('sales.size', sales.size())
 
 		then:
 			sales   .size() == saleItems .size()
 			contacts.size() == saleItems .size()
 
+		when:
+			saleItems = []
+			sales     = []
+			def sql = new Sql<>(SaleItem, 'SI')
+				.innerJoin(Sale   , 'S', '{S.id} = {SI.saleId}')
+				.innerJoin(Contact, 'C', '{C.id} = {S.contactId}')
+				.limit(1)
+			Transaction.execute(connectionSupplier) {
+				sql.connection(it)
+					.<Sale>select({saleItems << it}, {sales << it})
+			}
+		/**/DebugTrace.print('sales.size', sales.size())
+
+		then:
+			// No 'C_xxxx' columns
+		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql)
+			sql.generatedSql.indexOf('S_taxRate FROM') >= 0
+
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / innerJoin x 3
-	def "SelectSpec innerJoin innerJoin innerJoin #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// select() / innerJoin x 3
+	def "SelectSpec innerJoin x 3 #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
-	/**/DebugTrace.print('innerJoin innerJoin innerJoin')
-
+	/**/DebugTrace.print('innerJoin x 3')
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			List<SaleItem> saleItems = []
 			List<Sale    > sales     = []
 			List<Contact > contacts  = []
@@ -670,37 +660,56 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(SaleItem, 'SI')
+				new Sql<>(SaleItem, 'SI').connection(it)
 					.innerJoin(Sale   , 'S', '{S.id} = {SI.saleId}')
 					.innerJoin(Contact, 'C', '{C.id} = {S.contactId}')
 					.innerJoin(Address, 'A', '{A.id} = {C.addressId}')
 					.where('{A.address3} LIKE {}', '%0-0-0')
-					.<Sale, Contact, Address>select(it,
+					.<Sale, Contact, Address>select(
 						{saleItems << it}, {sales << it},
 						{contacts << it}, {addresses << it}
 					)
 			}
+		/**/DebugTrace.print('sales.size', sales.size())
 
 		then:
 			sales    .size() == saleItems .size()
 			contacts .size() == saleItems .size()
 			addresses.size() == saleItems .size()
 
+		when:
+			saleItems = []
+			sales     = []
+			contacts  = []
+			def sql = new Sql<>(SaleItem, 'SI')
+				.innerJoin(Sale   , 'S', '{S.id} = {SI.saleId}')
+				.innerJoin(Contact, 'C', '{C.id} = {S.contactId}')
+				.innerJoin(Address, 'A', '{A.id} = {C.addressId}')
+				.limit(1)
+			Transaction.execute(connectionSupplier) {
+				sql.connection(it)
+					.<Sale, Contact>select(
+						{saleItems << it}, {sales << it}, {contacts << it}
+					)
+			}
+		/**/DebugTrace.print('sales.size', sales.size())
+
+		then:
+			// No 'A_xxxx' columns
+		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql)
+			sql.generatedSql.indexOf('C_addressId FROM') >= 0
+
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / innerJoin x 3 + leftJoin
-	def "SelectSpec innerJoin innerJoin innerJoin leftJoin #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// select() / innerJoin x 3 + leftJoin
+	def "SelectSpec innerJoin x 3  leftJoin #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
-	/**/DebugTrace.print('innerJoin innerJoin innerJoin leftJoin')
-
+	/**/DebugTrace.print('innerJoin x 3 leftJoin')
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			List<SaleItem> saleItems = []
 			List<Sale    > sales     = []
 			List<Contact > contacts  = []
@@ -709,18 +718,19 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(SaleItem, 'SI')
+				new Sql<>(SaleItem, 'SI').connection(it)
 					.innerJoin(Sale   , 'S', '{S.id} = {SI.saleId}')
 					.innerJoin(Contact, 'C', '{C.id} = {S.contactId}')
 					.innerJoin(Address, 'A', '{A.id} = {C.addressId}')
 					.leftJoin (Phone  , 'P', '{P.contactId} = {C.id}')
 					.where('{P.phoneNumber} = {}', '09000010000')
-					.<Sale, Contact, Address, Phone>select(it,
+					.<Sale, Contact, Address, Phone>select(
 						{saleItems << it}, {sales << it},
 						{contacts << it}, {addresses << it},
 						{phones << it}
 					)
 			}
+		/**/DebugTrace.print('sales.size', sales.size())
 
 		then:
 			sales    .size() == saleItems .size()
@@ -728,10 +738,72 @@ class SelectSpec extends Specification {
 			addresses.size() == saleItems .size()
 			phones   .size() == saleItems .size()
 
+		when:
+			saleItems = []
+			sales     = []
+			contacts  = []
+			addresses = []
+			def sql = new Sql<>(SaleItem, 'SI')
+				.innerJoin(Sale   , 'S', '{S.id} = {SI.saleId}')
+				.innerJoin(Contact, 'C', '{C.id} = {S.contactId}')
+				.innerJoin(Address, 'A', '{A.id} = {C.addressId}')
+				.leftJoin (Phone  , 'P', '{P.contactId} = {C.id}')
+				.limit(1)
+			Transaction.execute(connectionSupplier) {
+				sql.connection(it)
+					.<Sale, Contact, Address, Phone>select(
+						{saleItems << it}, {sales << it},
+						{contacts << it}, {addresses << it}
+					)
+			}
+
+		then:
+			// No 'P_xxxx' columns
+		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql)
+			sql.generatedSql.indexOf('A_address4 FROM') >= 0
+
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
+	}
+
+	// select() / innerJoin x 3 + leftJoin x 2
+	def "SelectSpec innerJoin x 3  leftJoin x 2 #connectionSupplier"(ConnectionSupplier connectionSupplier) {
+	/**/DebugTrace.enter()
+	/**/DebugTrace.print('innerJoin x 3 leftJoin x 2')
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		setup:
+			List<SaleItem> saleItems = []
+			List<Sale    > sales     = []
+			List<Contact > contacts  = []
+			List<Address > addresses = []
+			List<Phone   > phones    = []
+
+		when:
+			def sql = new Sql<>(SaleItem, 'SI')
+				.innerJoin(Sale   , 'S', '{S.id} = {SI.saleId}')
+				.innerJoin(Contact, 'C', '{C.id} = {S.contactId}')
+				.innerJoin(Address, 'A', '{A.id} = {C.addressId}')
+				.leftJoin (Phone  , 'P1', '{P1.contactId} = {C.id}')
+				.leftJoin (Phone  , 'P2', '{P2.contactId} = {C.id}')
+				.limit(1)
+			Transaction.execute(connectionSupplier) {
+				sql.connection(it)
+					.<Sale, Contact, Address, Phone>select(
+						{saleItems << it}, {sales << it},
+						{contacts << it}, {addresses << it},
+						{phones << it}
+					)
+			}
+
+		then:
+			// No 'P2_xxxx' columns
+		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql)
+			sql.generatedSql.indexOf('P1_phoneNumber FROM') >= 0
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplier << connectionSuppliers
 	}
 
 	@Table('super')
@@ -740,20 +812,17 @@ class SelectSpec extends Specification {
 		public int count
 	}
 
-	// select(Connection connection) / gourpBy
-	def "SelectSpec gourpBy #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	// select() / gourpBy
+	def "SelectSpec gourpBy #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('gourpBy')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			List<ContactPhoneCount> phoneCounts = []
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactPhoneCount, 'P')
+				new Sql<>(ContactPhoneCount, 'P').connection(it)
 					.innerJoin(Contact, 'C', '{C.id} = {P.contactId}')
 					.columns('P.contactId', 'P.count')
 					.where('{C.name.first} LIKE {}', '%4')
@@ -761,7 +830,7 @@ class SelectSpec extends Specification {
 						.or('{C.name.first} LIKE {}', '%6')
 					.groupBy('{P.contactId}')
 					.having('COUNT({P.id}) >= {}', 6)
-					.select(it, {phoneCounts << it})
+					.select({phoneCounts << it})
 			}
 
 		then:
@@ -770,28 +839,31 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / forUpdate
-	def "SelectSpec forUpdate #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
-		if (Sql.database instanceof SQLite) return
+	// select() / forUpdate
+	def "SelectSpec forUpdate #connectionSupplier"(ConnectionSupplier connectionSupplier) {
+		if (connectionSupplier.database instanceof SQLite) return
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('forUpdate')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			Contact contact0 = null
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact)
+				contact0 = new Sql<>(Contact).connection(it)
 					.limit(1)
 					.orderBy('{id}')
-					.select(it).orElse(null)
+					.select().orElse(null)
+				Contact contact = new Sql<>(Contact).connection(it)
+					.where(contact0)
+					.select().orElse(null)
+				contact.name.first = '-'
+				new Sql<>(Contact).connection(it)
+					.columns('name.first', 'updateCount', 'updated')
+					.update(contact)
 			}
 			
 		then:
@@ -803,37 +875,38 @@ class SelectSpec extends Specification {
 				threads[index] = new Thread({
 					Transaction.execute(connectionSupplier) {
 						def myIndex = index
-						Contact contact = new Sql<>(Contact)
+						Contact contact = new Sql<>(Contact).connection(it)
 							.where('{id} = {}', contact0.id)
 							.forUpdate()
-							.select(it).orElse(null)
+							.select().orElse(null)
 						assert contact != null
 
 						contact.name.first  += myIndex
 
 						if (myIndex == 0)
-							Thread.sleep(1000L)
+							Thread.sleep(1500L) // sleep 1500ms
 
-						new Sql<>(Contact).update(it, contact)
+						new Sql<>(Contact).connection(it)
+							.columns('name.first', 'updateCount', 'updated')
+							.update(contact)
 					}
 				})
 				threads[index].start()
-				Thread.sleep(100L)
+				Thread.sleep(100L) // sleep 100ms
 			}
 
 		then:
 			true
 
 		when:
-			// Waits for all threads to finish.
+			// Wait for all threads to finish.
 			(0..<threads.length).each {threads[it].join()}
 
 			Contact contact1 = null
 			Transaction.execute(connectionSupplier) {
-				contact1 = new Sql<>(Contact)
+				contact1 = new Sql<>(Contact).connection(it)
 					.where('{id} = {}', contact0.id)
-					.select(it).orElse(null)
-			/**/DebugTrace.print('3 contact1', contact1)
+					.select().orElse(null)
 				assert contact1 != null
 				assert contact1.name.first.indexOf('0') >= 0
 				assert contact1.name.first.indexOf('1') >= 0
@@ -845,8 +918,6 @@ class SelectSpec extends Specification {
 				assert contact1.name.first.indexOf('7') >= 0
 				assert contact1.name.first.indexOf('8') >= 0
 				assert contact1.name.first.indexOf('9') >= 0
-
-				new Sql<>(Contact).update(it, contact1)
 			}
 
 		then:
@@ -854,37 +925,44 @@ class SelectSpec extends Specification {
 
 		cleanup:
 			if (contact0 != null)
-				Transaction.execute(connectionSupplier) {new Sql<>(Contact).update(it, contact0)}
+				Transaction.execute(connectionSupplier) {
+					new Sql<>(Contact).connection(it)
+					.columns('name.first', 'updateCount', 'updated')
+					.update(contact0)
+				}
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / forUpdate noWait
-	def "SelectSpec forUpdate noWait #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
-		if (Sql.database instanceof DB2) return
-		if (Sql.database instanceof MySQL) return
-		if (Sql.database instanceof PostgreSQL) return
-		if (Sql.database instanceof SQLite) return
+	// select() / forUpdate noWait
+	def "SelectSpec forUpdate noWait #connectionSupplier"(ConnectionSupplier connectionSupplier) {
+		if (connectionSupplier.database instanceof DB2) return
+		if (connectionSupplier.database instanceof MySQL) return
+		if (connectionSupplier.database instanceof PostgreSQL) return
+		if (connectionSupplier.database instanceof SQLite) return
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('forUpdate noWait')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			Contact contact0 = null
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact)
+				contact0 = new Sql<>(Contact).connection(it)
 					.limit(1)
 					.orderBy('{id}')
-					.select(it).orElse(null)
+					.select().orElse(null)
+				Contact contact = new Sql<>(Contact).connection(it)
+					.where(contact0)
+					.select().orElse(null)
+				contact.name.first = '-'
+				new Sql<>(Contact).connection(it)
+					.columns('name.first', 'updateCount', 'updated')
+					.update(contact)
 			}
-			
+
 		then:
 			assert contact0 != null
 
@@ -895,17 +973,19 @@ class SelectSpec extends Specification {
 					Transaction.execute(connectionSupplier) {
 						try {
 							def myIndex = index
-							Contact contact = new Sql<>(Contact)
+							Contact contact = new Sql<>(Contact).connection(it)
 								.where('{id} = {}', contact0.id)
 								.forUpdate().noWait()
-								.select(it).orElse(null)
+								.select().orElse(null)
 
 							contact.name.first  += myIndex
 
 							if (myIndex == 0)
-								Thread.sleep(1500L)
+								Thread.sleep(1500L) // sleep 1500ms
 
-							new Sql<>(Contact).update(it, contact)
+							new Sql<>(Contact).connection(it)
+								.columns('name.first', 'updateCount', 'updated')
+								.update(contact)
 						}
 						catch (RuntimeSQLException e) {
 						/**/DebugTrace.print('e', e)
@@ -913,21 +993,21 @@ class SelectSpec extends Specification {
 					}
 				})
 				threads[index].start()
-				Thread.sleep(100L)
+				Thread.sleep(100L) // sleep 100ms
 			}
 
 		then:
 			true
 
 		when:
-			// Waits for all threads to finish.
+			// Wait for all threads to finish.
 			(0..<threads.length).each {threads[it].join()}
 
 			Contact contact1 = null
 			Transaction.execute(connectionSupplier) {
-				contact1 = new Sql<>(Contact)
+				contact1 = new Sql<>(Contact).connection(it)
 					.where('{id} = {}', contact0.id)
-					.select(it).orElse(null)
+					.select().orElse(null)
 				assert contact1 != null
 				assert contact1.name.first.indexOf('0') >= 0
 				assert contact1.name.first.indexOf('1') == -1
@@ -939,8 +1019,6 @@ class SelectSpec extends Specification {
 				assert contact1.name.first.indexOf('7') == -1
 				assert contact1.name.first.indexOf('8') == -1
 				assert contact1.name.first.indexOf('9') == -1
-
-				new Sql<>(Contact).update(it, contact1)
 			}
 
 		then:
@@ -948,36 +1026,43 @@ class SelectSpec extends Specification {
 
 		cleanup:
 			if (contact0 != null)
-				Transaction.execute(connectionSupplier) {new Sql<>(Contact).update(it, contact0)}
+				Transaction.execute(connectionSupplier) {
+					new Sql<>(Contact).connection(it)
+					.columns('name.first', 'updateCount', 'updated')
+					.update(contact0)
+				}
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / forUpdate wait N
-	def "SelectSpec forUpdate wait N #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
-		if (Sql.database instanceof DB2) return
-		if (Sql.database instanceof MySQL) return
-		if (Sql.database instanceof PostgreSQL) return
-		if (Sql.database instanceof SQLite) return
-		if (Sql.database instanceof SQLServer) return
+	// select() / forUpdate wait N
+	def "SelectSpec forUpdate wait N #connectionSupplier"(ConnectionSupplier connectionSupplier) {
+		if (connectionSupplier.database instanceof DB2) return
+		if (connectionSupplier.database instanceof MySQL) return
+		if (connectionSupplier.database instanceof PostgreSQL) return
+		if (connectionSupplier.database instanceof SQLite) return
+		if (connectionSupplier.database instanceof SQLServer) return
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('forUpdate wait N')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			Contact contact0 = null
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact)
+				contact0 = new Sql<>(Contact).connection(it)
 					.limit(1)
 					.orderBy('{id}')
-					.select(it).orElse(null)
+					.select().orElse(null)
+				Contact contact = new Sql<>(Contact).connection(it)
+					.where(contact0)
+					.select().orElse(null)
+				contact.name.first = '-'
+				new Sql<>(Contact).connection(it)
+					.columns('name.first', 'updateCount', 'updated')
+					.update(contact)
 			}
 			
 		then:
@@ -988,20 +1073,20 @@ class SelectSpec extends Specification {
 			(0..<threads.length).each {index ->
 				threads[index] = new Thread({
 					Transaction.execute(connectionSupplier) {
+						def myIndex = index
 						try {
-							def myIndex = index
-							Contact contact = new Sql<>(Contact)
+							Contact contact = new Sql<>(Contact).connection(it)
 								.where('{id} = {}', contact0.id)
 								.forUpdate().wait(1) // wait 1000ms
-								.select(it).orElse(null)
+								.select().orElse(null)
 
 							contact.name.first  += myIndex
 
-							if (myIndex == 0)
-								Thread.sleep(1550L)
+							Thread.sleep(1550L) // sleep 1550ms
 
-						/**/DebugTrace.print('2 myIndex', myIndex)
-							new Sql<>(Contact).update(it, contact)
+							new Sql<>(Contact).connection(it)
+								.columns('name.first', 'updateCount', 'updated')
+								.update(contact)
 						}
 						catch (RuntimeSQLException e) {
 						/**/DebugTrace.print('e', e)
@@ -1009,35 +1094,32 @@ class SelectSpec extends Specification {
 					}
 				})
 				threads[index].start()
-				Thread.sleep(100L)
+				Thread.sleep(100L) // sleep 100ms
 			}
 
 		then:
 			true
 
 		when:
-			// Waits for all threads to finish.
+			// Wait for all threads to finish.
 			(0..<threads.length).each {threads[it].join()}
 
 			Contact contact1 = null
 			Transaction.execute(connectionSupplier) {
-				contact1 = new Sql<>(Contact)
+				contact1 = new Sql<>(Contact).connection(it)
 					.where('{id} = {}', contact0.id)
-					.select(it).orElse(null)
-			/**/DebugTrace.print('3 contact1', contact1)
+					.select().orElse(null)
 				assert contact1 != null
-				assert contact1.name.first.indexOf('0') >= 0  //   0~1550ms
-				assert contact1.name.first.indexOf('1') == -1 // 100~1100ms
-				assert contact1.name.first.indexOf('2') == -1 // 200~1200ms
-				assert contact1.name.first.indexOf('3') == -1 // 300~1300ms
-				assert contact1.name.first.indexOf('4') == -1 // 400~1400ms
+				assert contact1.name.first.indexOf('0') >= 0    //   0~1550ms
+				assert contact1.name.first.indexOf('1') == -1   // 100~1100ms
+				assert contact1.name.first.indexOf('2') == -1   // 200~1200ms
+				assert contact1.name.first.indexOf('3') == -1   // 300~1300ms
+				assert contact1.name.first.indexOf('4') == -1   // 400~1400ms
 				assert contact1.name.first.indexOf('5') >= 0 || // 500~1500ms
 				       contact1.name.first.indexOf('6') >= 0 || // 600~1600ms
-				       contact1.name.first.indexOf('7') >= 0  // 700~1700ms
-				assert contact1.name.first.indexOf('8') == -1 // 800~1800ms
-				assert contact1.name.first.indexOf('9') == -1 // 900~1900ms
-
-				new Sql<>(Contact).update(it, contact1)
+				       contact1.name.first.indexOf('7') >= 0    // 700~1700ms
+				assert contact1.name.first.indexOf('8') == -1   // 800~1800ms
+				assert contact1.name.first.indexOf('9') == -1   // 900~1900ms
 			}
 
 		then:
@@ -1045,36 +1127,37 @@ class SelectSpec extends Specification {
 
 		cleanup:
 			if (contact0 != null)
-				Transaction.execute(connectionSupplier) {new Sql<>(Contact).update(it, contact0)}
+				Transaction.execute(connectionSupplier) {
+					new Sql<>(Contact).connection(it)
+					.columns('name.first', 'updateCount', 'updated')
+					.update(contact0)
+				}
+			Thread.sleep(1000)
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
-	// select(Connection connection) / forUpdate - exception
-	def "SelectSpec forUpdate - exception #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
-		if (Sql.database instanceof DB2) return
-		if (Sql.database instanceof MySQL) return
-		if (Sql.database instanceof Oracle) return
-		if (Sql.database instanceof PostgreSQL) return
-		if (Sql.database instanceof SQLServer) return
+	// select() / forUpdate - exception
+	def "SelectSpec forUpdate - exception #connectionSupplier"(ConnectionSupplier connectionSupplier) {
+		if (connectionSupplier.database instanceof DB2) return
+		if (connectionSupplier.database instanceof MySQL) return
+		if (connectionSupplier.database instanceof Oracle) return
+		if (connectionSupplier.database instanceof PostgreSQL) return
+		if (connectionSupplier.database instanceof SQLServer) return
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('forUpdate - exception')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			Contact contact0 = null
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact)
+				contact0 = new Sql<>(Contact).connection(it)
 					.limit(1)
 					.orderBy('{id}')
-					.select(it).orElse(null)
+					.select().orElse(null)
 			}
 		/**/DebugTrace.print('1 contact0', contact0)
 			
@@ -1083,42 +1166,38 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact)
+				new Sql<>(Contact).connection(it)
 					.where('{id} = {}', contact0.id)
 					.forUpdate()
-					.select(it)
+					.select()
 			}
 
 		then:
-			def e =thrown UnsupportedOperationException
+			def e = thrown UnsupportedOperationException
 			e.message.indexOf('forUpdate') >= 0
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass = Jdbc
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSupplier
 	}
 
-	// select(Connection connection) / forUpdate noWait - exception
-	def "SelectSpec forUpdate noWait - exception #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
-		if (Sql.database instanceof Oracle) return
-		if (Sql.database instanceof SQLite) return
-		if (Sql.database instanceof SQLServer) return
+	// select() / forUpdate noWait - exception
+	def "SelectSpec forUpdate noWait - exception #connectionSupplier"(ConnectionSupplier connectionSupplier) {
+		if (connectionSupplier.database instanceof Oracle) return
+		if (connectionSupplier.database instanceof SQLite) return
+		if (connectionSupplier.database instanceof SQLServer) return
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('forUpdate noWait - exception')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			Contact contact0 = null
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact)
+				contact0 = new Sql<>(Contact).connection(it)
 					.limit(1)
 					.orderBy('{id}')
-					.select(it).orElse(null)
+					.select().orElse(null)
 			}
 		/**/DebugTrace.print('1 contact0', contact0)
 			
@@ -1127,10 +1206,10 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact)
+				new Sql<>(Contact).connection(it)
 					.where('{id} = {}', contact0.id)
 					.forUpdate().noWait()
-					.select(it)
+					.select()
 			}
 
 		then:
@@ -1139,29 +1218,25 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass = Jdbc
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSupplier
 	}
 
-	// select(Connection connection) / forUpdate wait N - exception
-	def "SelectSpec forUpdate wait N - exception #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
-		if (Sql.database instanceof Oracle) return
-		if (Sql.database instanceof SQLite) return
+	// select() / forUpdate wait N - exception
+	def "SelectSpec forUpdate wait N - exception #connectionSupplier"(ConnectionSupplier connectionSupplier) {
+		if (connectionSupplier.database instanceof Oracle) return
+		if (connectionSupplier.database instanceof SQLite) return
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('forUpdate noWait N - exception')
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
 			Contact contact0 = null
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				contact0 = new Sql<>(Contact)
+				contact0 = new Sql<>(Contact).connection(it)
 					.limit(1)
 					.orderBy('{id}')
-					.select(it).orElse(null)
+					.select().orElse(null)
 			}
 		/**/DebugTrace.print('1 contact0', contact0)
 			
@@ -1170,10 +1245,10 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact)
+				new Sql<>(Contact).connection(it)
 					.where('{id} = {}', contact0.id)
 					.forUpdate().wait(5)
-					.select(it)
+					.select()
 			}
 
 		then:
@@ -1182,8 +1257,7 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass = Jdbc
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSupplier
 	}
 
 	// exceptionTest
@@ -1193,9 +1267,9 @@ class SelectSpec extends Specification {
 
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact)
+				new Sql<>(Contact).connection(it)
 					.where('{name.last} LIKE {}', 'Last2%')
-					.select(it)
+					.select()
 			}
 
 		then:
@@ -1235,23 +1309,18 @@ class SelectSpec extends Specification {
 	static class ContactFnSQLServer extends ContactFn {}
 
 	// extendsClassTest
-	def "SelectSpec extends class #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	def "SelectSpec extends class #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('extends Class')
-
-		setup:
-		/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		when:
 			Class<? extends ContactFn> contactClass =
-				Sql.database instanceof DB2        ? ContactFnDB2        :
-				Sql.database instanceof MySQL      ? ContactFnMySQL      :
-				Sql.database instanceof Oracle     ? ContactFnOracle     :
-				Sql.database instanceof PostgreSQL ? ContactFnPostgreSQL :
-				Sql.database instanceof SQLite     ? ContactFnSQLite     :
-				Sql.database instanceof SQLServer  ? ContactFnSQLServer  : null
+				connectionSupplier.database instanceof DB2        ? ContactFnDB2        :
+				connectionSupplier.database instanceof MySQL      ? ContactFnMySQL      :
+				connectionSupplier.database instanceof Oracle     ? ContactFnOracle     :
+				connectionSupplier.database instanceof PostgreSQL ? ContactFnPostgreSQL :
+				connectionSupplier.database instanceof SQLite     ? ContactFnSQLite     :
+				connectionSupplier.database instanceof SQLServer  ? ContactFnSQLServer  : null
 
 		then:
 			contactClass != null
@@ -1259,10 +1328,10 @@ class SelectSpec extends Specification {
 		when:
 			ContactFn contact = null
 			Transaction.execute(connectionSupplier) {
-				contact = new Sql<>(contactClass)
+				contact = new Sql<>(contactClass).connection(it)
 					.columns('fullName')
 					.limit(1)
-					.select(it).orElse(null)
+					.select().orElse(null)
 			}
 		/**/DebugTrace.print('contact', contact)
 
@@ -1271,7 +1340,58 @@ class SelectSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
+	}
+
+	static class ContactName {
+		final PersonName name = new PersonName()
+	}
+
+	// selectAs
+	def "SelectSpec selectAs #connectionSupplier"(ConnectionSupplier connectionSupplier) {
+	/**/DebugTrace.enter()
+	/**/DebugTrace.print('selectBy')
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		setup:
+			List<Contact> contacts = []
+			List<ContactName> contactNames = []
+
+		// selectAs(ContactName, Consumer)
+		when:
+			def sql1 = new Sql<>(Contact).orderBy('{id}').limit(5)
+			def sql2 = new Sql<>(Contact).orderBy('{id}').limit(5)
+			Transaction.execute(connectionSupplier) {
+				sql1.connection(it).select({contacts << it})
+				sql2.connection(it).selectAs(ContactName,  {contactNames  << it})
+			}
+
+		then:
+		/**/DebugTrace.print('contacts', contacts)
+		/**/DebugTrace.print('contactNames', contactNames)
+			contactNames*.name*.first == contacts*.name*.first
+			contactNames*.name*.last == contacts*.name*.last
+			sql2.generatedSql.indexOf('SELECT firstName, lastName FROM') == 0
+
+		// selectAs(ContactName)
+		when:
+			Optional<Contact> contactOpt = null
+			Optional<ContactName> contactNameOpt = null
+			sql1 = new Sql<>(Contact).orderBy('{id}').limit(1)
+			sql2 = new Sql<>(Contact).orderBy('{id}').limit(1)
+			Transaction.execute(connectionSupplier) {
+				contactOpt     = sql1.connection(it).select()
+				contactNameOpt = sql2.connection(it).selectAs(ContactName)
+			}
+
+		then:
+		/**/DebugTrace.print('contactOpt', contactOpt)
+		/**/DebugTrace.print('contactNameOpt', contactNameOpt)
+			contactNameOpt.get().name.first == contactOpt.get().name.first
+			contactNameOpt.get().name.last == contactOpt.get().name.last
+			sql2.generatedSql.indexOf('SELECT firstName, lastName FROM') == 0
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplier << connectionSuppliers
 	}
 }

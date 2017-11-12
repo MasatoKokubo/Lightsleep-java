@@ -4,7 +4,7 @@
 package org.lightsleep.helper;
 
 /**
- * <b>TypeConverter</b> クラスのメソッドでデータ変換に失敗した場合にこの例外がスローされます。
+ * <b>TypeConverter</b>クラスのメソッドでデータ変換に失敗した場合にこの例外がスローされます。
  *
  * @since 1.0.0
  * @author Masato Kokubo
@@ -12,13 +12,13 @@ package org.lightsleep.helper;
 @SuppressWarnings("serial")
 public class ConvertException extends RuntimeException {
 	/**
-	 * 新規 <b>ConvertException</b> を構築します。
+	 * 新規<b>ConvertException</b>を構築します。
 	 */
 	public ConvertException() {
 	}
 
 	/**
-	 * 指定の詳細メッセージで新規 <b>ConvertException</b> を構築します。
+	 * 指定の詳細メッセージで新規<b>ConvertException</b>を構築します。
 	 *
 	 * @param message 詳細メッセージ
 	 */
@@ -26,7 +26,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * 指定の詳細メッセージと原因で新規 <b>ConvertException</b> を構築します。
+	 * 指定の詳細メッセージと原因で新規<b>ConvertException</b>を構築します。
 	 *
 	 * @param message 詳細メッセージ
 	 * @param cause 原因 (null 可)
@@ -35,7 +35,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * 指定の原因で新規 <b>ConvertException</b> を構築します。
+	 * 指定の原因で新規<b>ConvertException</b>を構築します。
 	 *
 	 * @param cause 原因 (null 可)
 	 */
@@ -43,7 +43,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * 新規 <b>ConvertException</b> を構築します。
+	 * 新規<b>ConvertException</b>を構築します。
 	 *
 	 * @param sourceType 変換元型
 	 * @param source 変換元オブジェクト (null 可)
@@ -53,7 +53,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * 新規 <b>ConvertException</b> を構築します。
+	 * 新規<b>ConvertException</b>を構築します。
 	 *
 	 * @param sourceType 変換元型
 	 * @param source 変換元オブジェクト (null 可)
@@ -64,7 +64,7 @@ public class ConvertException extends RuntimeException {
 	}
 
 	/**
-	 * 新規 <b>ConvertException</b> を構築します。
+	 * 新規<b>ConvertException</b>を構築します。
 	 *
 	 * @param sourceType 変換元型
 	 * @param source 変換元オブジェクト (null 可)
@@ -96,7 +96,7 @@ public class ConvertException extends RuntimeException {
 	/**
 	 * 変換元オブジェクトを返します。
 	 *
-	 * @return 変換元オブジェクト (null 有)
+	 * @return 変換元オブジェクト(null有)
 	 */
 	public Object sourceObject() {
 		return null;
@@ -105,7 +105,7 @@ public class ConvertException extends RuntimeException {
 	/**
 	 * 変換先オブジェクトを返します。
 	 *
-	 * @return 変換先オブジェクト (null 有)
+	 * @return 変換先オブジェクト(null有)
 	 */
 	public Object destinObject() {
 		return null;

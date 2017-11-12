@@ -3,16 +3,13 @@
 
 package org.lightsleep;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.Objects;
 
 import org.lightsleep.connection.ConnectionSupplier;
-import org.lightsleep.helper.Resource;
-import org.lightsleep.logger.Logger;
-import org.lightsleep.logger.LoggerFactory;
+import org.lightsleep.connection.ConnectionWrapper;
 
 /**
  * A functional interface to execute transactions.
@@ -53,35 +50,40 @@ import org.lightsleep.logger.LoggerFactory;
  */
 @FunctionalInterface
 public interface Transaction {
-	// The logger
-	static final Logger logger = LoggerFactory.getLogger(Transaction.class);
-
-	// Class resources
-	static final Resource resource = new Resource(Transaction.class);
-	static final String messageGet      = resource.getString("messageGet");
-	static final String messageClose    = resource.getString("messageClose");
-	static final String messageStart    = resource.getString("messageStart");
-	static final String messageEnd      = resource.getString("messageEnd");
-	static final String messageCommit   = resource.getString("messageCommit");
-	static final String messageRollback = resource.getString("messageRollback");
+// 2.1.0
+//	// The logger
+//	static final Logger logger = LoggerFactory.getLogger(Transaction.class);
+//
+//	// Class resources
+//	static final Resource resource = new Resource(Transaction.class);
+//	static final String messageGet      = resource.getString("messageGet");
+//	static final String messageClose    = resource.getString("messageClose");
+//	static final String messageStart    = resource.getString("messageStart");
+//	static final String messageEnd      = resource.getString("messageEnd");
+//	static final String messageCommit   = resource.getString("messageCommit");
+//	static final String messageRollback = resource.getString("messageRollback");
+////
 
 	/**
 	 * Describe the body of the transaction in this method.
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 *
 	 * @throws Exception if an error occurred
 	 */
-	void executeBody(Connection connection) throws Exception;
+// 2.1.0
+//	void executeBody(Connection connection) throws Exception;
+	void executeBody(ConnectionWrapper connection) throws Exception;
+////
 
 	/**
 	 * Executes a transaction in the following order.
 	 *
 	 * <ol>
-	 *   <li>Gets a database connection by calling <b>Sql.getConnectionSupplier().get()</b>.</li>
+	 *   <li>Gets a connection wrapper by calling <b>Sql.getConnectionSupplier().get()</b>.</li>
 	 *   <li>Calls <b>transaction.executeBody</b> method.</li>
 	 *   <li>Commits the transaction.</li>
-	 *   <li>Closes the database connection.</li>
+	 *   <li>Closes the connection wrapper.</li>
 	 * </ol>
 	 *
 	 * <p>
@@ -100,7 +102,9 @@ public interface Transaction {
 	static void execute(Transaction transaction) {
 	// 2.0.0
 	//	execute(Sql.getConnectionSupplier(), transaction);
-		execute(Sql.getConnectionSupplier(), Objects.requireNonNull(transaction, "transaction"));
+	// 2.1.0
+	//	execute(Sql.getConnectionSupplier(), Objects.requireNonNull(transaction, "transaction"));
+		execute(ConnectionSupplier.find(), transaction);
 	////
 	}
 
@@ -108,10 +112,10 @@ public interface Transaction {
 	 * Executes a transaction in the following order.
 	 *
 	 * <ol>
-	 *   <li>Gets a database connection by calling <b>connectionSupplier.get()</b>.</li>
+	 *   <li>Gets a connection wrapper by calling <b>connectionSupplier.get()</b>.</li>
 	 *   <li>Calls <b>transaction.executeBody</b> method.</li>
 	 *   <li>Commits the transaction.</li>
-	 *   <li>Closes the database connection.</li>
+	 *   <li>Closes the connection wrapper.</li>
 	 * </ol>
 	 *
 	 * <p>
@@ -134,7 +138,11 @@ public interface Transaction {
 		Objects.requireNonNull(connectionSupplier, "connectionSupplier");
 		Objects.requireNonNull(transaction, "transaction");
 
-		Connection connection = null;
+	// 2.1.0
+	//	Connection connection = null;
+		String logHeader = connectionSupplier.toString() + ": ";
+		ConnectionWrapper connection = null;
+	////
 		boolean committed = false;
 		try {
 			// Gets a connection
@@ -142,20 +150,30 @@ public interface Transaction {
 			connection = connectionSupplier.get();
 			long afterGetTime = System.nanoTime(); // The time after connectionSupplier.get
 
-			if (logger.isDebugEnabled()) {
+			if (Sql.logger.isDebugEnabled()) {
 				double time = (afterGetTime - beforeGetTime) / 1_000_000.0;
 				DecimalFormat timeFormat = new DecimalFormat();
 				timeFormat.setMinimumFractionDigits(0);
 				timeFormat.setMaximumFractionDigits(3);
-				logger.debug(
-					Sql.getDatabase().getClass().getSimpleName()
-					+ "/" + connectionSupplier.getClass().getSimpleName()
-					+ ": " + MessageFormat.format(messageGet, timeFormat.format(time))
-				);
+			// 2.1.0
+			//	logger.debug(
+			//		Sql.getDatabase().getClass().getSimpleName()
+			//		+ "/" + connectionSupplier.getClass().getSimpleName()
+			//		+ ": " + MessageFormat.format(messageGet, timeFormat.format(time))
+			//	);
+				Sql.logger.debug(logHeader + MessageFormat.format(Sql.messageGet, timeFormat.format(time)));
+			////
+
+			// 2.1.0
+			// Logging of the transaction start
+				Sql.logger.debug(logHeader + Sql.messageStart);
+			////
 			}
 
-			// Logging of the transaction start
-			logger.debug(() -> Sql.getDatabase().getClass().getSimpleName() + ": " + messageStart);
+		// 2.1.0
+		//	// Logging of the transaction start
+		//	logger.debug(() -> Sql.getDatabase().getClass().getSimpleName() + ": " + messageStart);
+		////
 
 			// Execute the transaction body
 			transaction.executeBody(connection);
@@ -165,30 +183,30 @@ public interface Transaction {
 			committed = true;
 
 			//  Logging of the transaction end
-			logger.debug(messageEnd);
+			Sql.logger.debug(Sql.messageEnd);
 
 			// Closes the connection
 			long beforeCloseTime = System.nanoTime(); // The time before connectionSupplier.get
 			connection.close();
 			long afterCloseTime = System.nanoTime(); // The time after connectionSupplier.get
 
-			if (logger.isDebugEnabled()) {
+			if (Sql.logger.isDebugEnabled()) {
 				double time = (afterCloseTime - beforeCloseTime) / 1_000_000.0;
 				DecimalFormat timeFormat = new DecimalFormat();
 				timeFormat.setMinimumFractionDigits(0);
 				timeFormat.setMaximumFractionDigits(3);
-				logger.debug(
-					Sql.getDatabase().getClass().getSimpleName()
-				// 1.5.0
-				//	+ "/" + Sql.getConnectionSupplier().getClass().getSimpleName()
-					+ "/" + connectionSupplier.getClass().getSimpleName()
-				////
-					+ ": " + MessageFormat.format(messageClose, timeFormat.format(time))
-				);
+			// 2.1.0
+			//	logger.debug(
+			//		Sql.getDatabase().getClass().getSimpleName()
+			//		+ "/" + connectionSupplier.getClass().getSimpleName()
+			//		+ ": " + MessageFormat.format(messageClose, timeFormat.format(time))
+			//	);
+				Sql.logger.debug(logHeader + MessageFormat.format(Sql.messageClose, timeFormat.format(time)));
+			////
 			}
 		}
 		catch (Throwable e) {
-			logger.error(e.toString(), e);
+			Sql.logger.error(e.toString(), e);
 			if (connection != null) {
 				if (!committed) {
 					try {
@@ -196,10 +214,14 @@ public interface Transaction {
 						rollback(connection);
 
 						//  Logging of the transaction end
-						logger.debug(() -> Sql.getDatabase().getClass().getSimpleName() + ": " + messageEnd);
+					// 2.1.0
+					//	logger.debug(() -> Sql.getDatabase().getClass().getSimpleName() + ": " + messageEnd);
+						if (Sql.logger.isDebugEnabled())
+							Sql.logger.debug(logHeader + Sql.messageEnd);
+					////
 					}
 					catch (Throwable e2) {
-						logger.error(e2.toString(), e2);
+						Sql.logger.error(e2.toString(), e2);
 					}
 				}
 
@@ -208,7 +230,7 @@ public interface Transaction {
 					connection.close();
 				}
 				catch (Throwable e2) {
-					logger.error(e2.toString(), e2);
+					Sql.logger.error(e2.toString(), e2);
 				}
 			}
 
@@ -222,14 +244,18 @@ public interface Transaction {
 	/**
 	 * If the connection is not auto-commit, commits the transaction.
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 *
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
-	static void commit(Connection connection) {
+// 2.1.0
+//	static void commit(Connection connection) {
+	static void commit(ConnectionWrapper connection) {
+////
 	// 2.0.0
 		Objects.requireNonNull(connection, "connection");
 	////
+
 		try {
 			if (!connection.getAutoCommit()) {
 				// Is not not auto-commit
@@ -237,12 +263,16 @@ public interface Transaction {
 				connection.commit();
 				long afterExecTime = System.nanoTime(); // The time after execution
 
-				if (logger.isDebugEnabled()) {
+				if (Sql.logger.isDebugEnabled()) {
 					double time = (afterExecTime - beforeExecTime) / 1_000_000.0;
 					DecimalFormat timeFormat = new DecimalFormat();
 					timeFormat.setMinimumFractionDigits(0);
 					timeFormat.setMaximumFractionDigits(3);
-					logger.debug(Sql.getDatabase().getClass().getSimpleName() + ": " + MessageFormat.format(messageCommit, timeFormat.format(time)));
+				// 2.1.0
+				//	logger.debug(Sql.getDatabase().getClass().getSimpleName() + ": " + MessageFormat.format(messageCommit, timeFormat.format(time)));
+					Sql.logger.debug(connection.getDatabase().getClass().getSimpleName()
+						+ ": " + MessageFormat.format(Sql.messageCommit, timeFormat.format(time)));
+				////
 				}
 			}
 		}
@@ -254,11 +284,14 @@ public interface Transaction {
 	/**
 	 * If the connection is not auto-commit, rollbacks the transaction.
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 *
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
-	static void rollback(Connection connection) {
+// 2.1.0
+//	static void rollback(Connection connection) {
+	static void rollback(ConnectionWrapper connection) {
+////
 	// 2.0.0
 		Objects.requireNonNull(connection, "connection");
 	////
@@ -269,12 +302,16 @@ public interface Transaction {
 				connection.rollback();
 				long afterExecTime = System.nanoTime(); // The time after execution
 
-				if (logger.isDebugEnabled()) {
+				if (Sql.logger.isDebugEnabled()) {
 					double time = (afterExecTime - beforeExecTime) / 1_000_000.0;
 					DecimalFormat timeFormat = new DecimalFormat();
 					timeFormat.setMinimumFractionDigits(0);
 					timeFormat.setMaximumFractionDigits(3);
-					logger.debug(Sql.getDatabase().getClass().getSimpleName() + ": " + MessageFormat.format(messageRollback, timeFormat.format(time)));
+				// 2.1.0
+				//	logger.debug(Sql.getDatabase().getClass().getSimpleName() + ": " + MessageFormat.format(messageRollback, timeFormat.format(time)));
+					Sql.logger.debug(connection.getDatabase().getClass().getSimpleName()
+						+ ": " + MessageFormat.format(Sql.messageRollback, timeFormat.format(time)));
+				////
 				}
 			}
 		}

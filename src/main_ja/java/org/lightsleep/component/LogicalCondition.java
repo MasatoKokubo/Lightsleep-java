@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
- * <b>And</b> および <b>Or</b> の抽象スーパークラスです。
+ * <b>And</b>および<b>Or</b>の抽象スーパークラスです。
  *
  * @since 1.0.0
  * @author Masato Kokubo
@@ -39,12 +40,12 @@ public abstract class LogicalCondition implements Condition {
 	}
 
 	/**
-	 * 条件ストリームの各条件からなる <b>LogicalCondition</b> を構築します。
+	 * 条件ストリームの各条件からなる<b>LogicalCondition</b>を構築します。
 	 *
 	 * @param operator 論理演算子
 	 * @param conditionStream 条件ストリーム
 	 *
-	 * @throws NullPointerException <b>operator</b>, <b>conditionStream</b> または <b>conditionStream</b> の要素が null の場合
+	 * @throws NullPointerException <b>operator</b>, <b>conditionStream</b>または<b>conditionStream</b>の要素がnullの場合
 	 */
 	public LogicalCondition(Operator operator, Stream<Condition> conditionStream) {
 	}
@@ -69,9 +70,9 @@ public abstract class LogicalCondition implements Condition {
 	/**
 	 * この条件の構成要素を最適化して返します。<br>
 	 * 具体的には、
-	 * <b>conditions.isEmpty()</b> なら<b>Condition.EMPTY</b>、
-	 * <b>conditions.size() == 1</b> なら<b>conditions.get(0)</b>、
-	 * そうでなければ <b>this</b> を返します。
+	 * <b>conditions.isEmpty()</b>なら<b>Condition.EMPTY</b>、
+	 * <b>conditions.size() == 1</b>なら<b>conditions.get(0)</b>、
+	 * そうでなければ<b>this</b>を返します。
 	 *
 	 * @return この条件の構成要素を最適化した条件
 	 *
@@ -85,7 +86,7 @@ public abstract class LogicalCondition implements Condition {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
 }

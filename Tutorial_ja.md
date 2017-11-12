@@ -1,13 +1,15 @@
-Lightsleep / チュートリアル
+Lightsleep チュートリアル
 ===========
+
+[[English]](Tutorial.md)
 
 テーブルの行を取得してコンソールに出力する簡単なプログラムを作成してみます。
 
 #### 1. テーブルの準備
 
-MySQL, Oracle, PostgreSQL, SQLite または SQL Server のいずれかのデータベースに Contact テーブルを作成し、サンプルデータを挿入します。
+DB2, MySQL, Oracle, PostgreSQL, SQLiteまたはSQL ServerのいずれかのデータベースにContactテーブルを作成し、サンプルデータを挿入します。
 
-以下の SQL のいずれかを実行してテーブルを作成します。
+以下のSQLのいずれかを実行してテーブルを作成します。
 
 ```sql:ddl_db2.sql
 -- for DB2
@@ -81,7 +83,7 @@ CREATE TABLE Contact (
 );
 ```
 
-以下の SQL を実行してテーブルにデータを挿入します。
+以下のSQLを実行してテーブルにデータを挿入します。
 
 ```sql:sample.sql
 DELETE FROM Contact;
@@ -91,9 +93,9 @@ INSERT INTO Contact VALUES (3, 'Third' , 'Example', DATE'1993-03-03');
 INSERT INTO Contact VALUES (4, 'Fourth', 'Example', DATE'1994-04-04');
 ````
 
-#### 2. エンティティ・クラスの作成
+#### 2. エンティティ･クラスの作成
 
-Contact テーブルから取得した行を保持するためのエンティティ・クラスを作成します。
+Contactテーブルから取得した行を保持するためのエンティティ･クラスを作成します。
 
 ```java:Contact.java
 package org.lightsleep.tutorial.entity;
@@ -103,7 +105,7 @@ import java.sql.Date;
 import org.lightsleep.entity.*;
 
 /**
- * Contact エンティティ
+ * Contactエンティティ
  */
 public class Contact {
     /** ID */
@@ -121,67 +123,48 @@ public class Contact {
 }
 ```
 
-#### 3. プロパティ・ファイルの準備
+#### 3. プロパティ･ファイルの準備
 
-下記の lightsleep.properties を作成します。
-url, user および password の値は、使用するデータベース環境に合わせて変更してください。
+下記の`lightsleep.properties`ファイルを作成しクラス･パスのいずれかにおいてください。`url`, `user`および`password`の値は、使用するデータベース環境に合わせて変更してください。
 
 ```properties:lightsleep.properties
 # for DB2
-Logger             = Std$Out$Info
-Database           = DB2
-ConnectionSupplier = Jdbc
-url                = jdbc:db2://<DB Server>:50000/<データベース>
-user               = <ユーザー名>
-password           = <パスワード>
+url      = jdbc:db2://<データベース･サーバー>:50000/<データベース>
+user     = <ユーザー名>
+password = <パスワード>
 ```
 
 ```properties:lightsleep.properties
 # for MySQL
-Logger             = Std$Out$Info
-Database           = MySQL
-ConnectionSupplier = Jdbc
-url                = jdbc:mysql://<DB Server>/<データベース>
-user               = <ユーザー名>
-password           = <パスワード>
+url      = jdbc:mysql://<DB Server>/<データベース>
+user     = <ユーザー名>
+password = <パスワード>
 ```
 
 ```properties:lightsleep.properties
 # for Oracle
-Logger             = Std$Out$Info
-Database           = Oracle
-ConnectionSupplier = Jdbc
-url                = jdbc:oracle:thin:@<DB Server>:1521:<SID>
-user               = <ユーザー名>
-password           = <パスワード>
+url      = jdbc:oracle:thin:@<DB Server>:1521:<SID>
+user     = <ユーザー名>
+password = <パスワード>
 ```
 
 ```properties:lightsleep.properties
 # for PostgreSQL
-Logger             = Std$Out$Info
-Database           = PostgreSQL
-ConnectionSupplier = Jdbc
-url                = jdbc:postgresql://<DB Server>/<データベース>
-user               = <ユーザー名>
-password           = <パスワード>
+url      = jdbc:postgresql://<DB Server>/<データベース>
+user     = <ユーザー名>
+password = <パスワード>
 ```
 
 ```properties:lightsleep.properties
 # for SQLite
-Logger             = Std$Out$Info
-Database           = SQLite
-ConnectionSupplier = Jdbc
-url                = jdbc:sqlite:<Installed Directory>/<データベース>
+url = jdbc:sqlite:<インストールしたディレクトリ>/<データベース>
 ```
 
 ```properties:lightsleep.properties
 # for SQL Server
-Logger             = Std$Out$Info
-Database           = SQLServer
-ConnectionSupplier = Jdbc
-url                = jdbc:sqlserver://<DB Server>;Database=<データベース>
-user               = <ユーザー名>
-password           = <パスワード>
+url      = jdbc:sqlserver://<DB Server>;Database=<データベース>
+user     = <ユーザー名>
+password = <パスワード>
 ```
 
 #### 4. データの取得

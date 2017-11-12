@@ -28,7 +28,7 @@ public interface Condition extends SqlComponent {
 	 * @param arguments 条件式に埋め込む引数配列
 	 * @return 条件式
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
+	 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
 	 *
 	 * @see Expression#Expression(String, Object...)
 	 */
@@ -54,12 +54,12 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
 	 * @param <SE> サブクエリの対象テーブルに対応するエンティティの型
-	 * @param content サブクエリの SELECT 文より左部分の式の文字列内容
-	 * @param outerSql 外側の Sql オブジェクト
-	 * @param subSql サブクエリ用の Sql オブジェクト
+	 * @param content サブクエリのSELECT 文より左部分の式の文字列内容
+	 * @param outerSql 外側のSqlオブジェクト
+	 * @param subSql サブクエリ用のSqlオブジェクト
 	 * @return サブクエリ条件
 	 *
-	 * @throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が null の場合
+	 * @throws NullPointerException <b>content</b>, <b>outerSql</b>または<b>subSql</b>がnullの場合
 	 *
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
@@ -80,12 +80,12 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * (この条件 AND 指定の条件) を返します。
+	 * (この条件 AND 指定の条件)を返します。
 	 *
 	 * @param condition 条件
 	 * @return この条件 AND 指定の条件
 	 *
-	 * @throws NullPointerException <b>condition</b> が null の場合
+	 * @throws NullPointerException <b>condition</b>がnullの場合
 	 *
 	 * @see And#And(Condition...)
 	 * @see LogicalCondition#optimized()
@@ -95,14 +95,14 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * (この条件 AND 指定の条件) を返します。
+	 * (この条件 AND 指定の条件)を返します。
 	 *
 	 * @param content 条件式の文字列内容
 	 * @param arguments 条件式に埋め込む引数配列
 	 *
 	 * @return この条件 AND 指定の条件
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
+	 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
 	 *
 	 * @see And#And(Condition...)
 	 * @see Expression#Expression(String, Object...)
@@ -113,16 +113,16 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * (この条件 AND 指定の条件) を返します。
+	 * (この条件 AND 指定の条件)を返します。
 	 *
 	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
 	 * @param <SE> サブクエリの対象テーブルに対応するエンティティの型
-	 * @param content サブクエリの SELECT 文より左部分の式の文字列内容
-	 * @param outerSql 外側の Sql オブジェクト
-	 * @param subSql サブクエリ用の Sql オブジェクト
+	 * @param content サブクエリのSELECT 文より左部分の式の文字列内容
+	 * @param outerSql 外側のSqlオブジェクト
+	 * @param subSql サブクエリ用のSqlオブジェクト
 	 * @return この条件 AND 指定の条件
 	 *
-	 * @throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が null の場合
+	 * @throws NullPointerException <b>content</b>, <b>outerSql</b>または<b>subSql</b>がnullの場合
 	 *
 	 * @see And#And(Condition...)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
@@ -134,12 +134,12 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * (この条件 OR 指定の条件) を返します。
+	 * (この条件 OR 指定の条件)を返します。
 	 *
 	 * @param condition 条件
 	 * @return この条件 OR 指定の条件
 	 *
-	 * @throws NullPointerException <b>condition</b> が null の場合
+	 * @throws NullPointerException <b>condition</b>がnullの場合
 	 *
 	 * @see Or#Or(Condition...)
 	 * @see LogicalCondition#optimized()
@@ -149,13 +149,13 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * (この条件 OR 指定の条件) を返します。
+	 * (この条件 OR 指定の条件)を返します。
 	 *
 	 * @param content 条件式の文字列内容
 	 * @param arguments 条件式に埋め込む引数配列
 	 * @return この条件 OR 指定の条件
 	 *
-	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
+	 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
 	 *
 	 * @see Or#Or(Condition...)
 	 * @see Expression#Expression(String, Object...)
@@ -166,16 +166,16 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * (この条件 OR 指定の条件) を返します。
+	 * (この条件 OR 指定の条件)を返します。
 	 *
 	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
 	 * @param <SE> サブクエリの対象テーブルに対応するエンティティの型
-	 * @param content サブクエリの SELECT 文より左部分の式の文字列内容
-	 * @param outerSql 外側の Sql オブジェクト
-	 * @param subSql サブクエリ用の Sql オブジェクト
+	 * @param content サブクエリのSELECT 文より左部分の式の文字列内容
+	 * @param outerSql 外側のSqlオブジェクト
+	 * @param subSql サブクエリ用のSqlオブジェクト
 	 * @return この条件 OR 指定の条件
 	 *
-	 * @throws NullPointerException <b>content</b>, <b>outerSql</b> または <b>subSql</b> が null の場合
+	 * @throws NullPointerException <b>content</b>, <b>outerSql</b>または<b>subSql</b>がnullの場合
 	 *
 	 * @see Or#Or(Condition...)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
@@ -187,12 +187,12 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * <b>new And(conditions)</b> を最適化した条件を返します。
+	 * <b>new And(conditions)</b>を最適化した条件を返します。
 	 *
 	 * @param conditions 条件のストリーム
-	 * @return <b>new And(conditions)</b> を最適化した条件
+	 * @return <b>new And(conditions)</b>を最適化した条件
 	 *
-	 * @throws NullPointerException <b>conditions</b> か <b>conditions</b> の要素のいずれかが null の場合
+	 * @throws NullPointerException <b>conditions</b>か<b>conditions</b>の要素のいずれかがnullの場合
 	 *
 	 * @since 1.8.8
 	 *
@@ -204,12 +204,12 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * <b>new And(conditions)</b> を最適化した条件を返します。
+	 * <b>new And(conditions)</b>を最適化した条件を返します。
 	 *
 	 * @param conditions 条件のコレクション
-	 * @return <b>new And(conditions)</b> を最適化した条件
+	 * @return <b>new And(conditions)</b>を最適化した条件
 	 *
-	 * @throws NullPointerException <b>conditions</b> か <b>conditions</b> の要素のいずれかが null の場合
+	 * @throws NullPointerException <b>conditions</b>か<b>conditions</b>の要素のいずれかがnullの場合
 	 *
 	 * @since 1.8.8
 	 *
@@ -221,12 +221,12 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * <b>new And(conditions)</b> を最適化した条件を返します。
+	 * <b>new And(conditions)</b>を最適化した条件を返します。
 	 *
 	 * @param conditions 条件の配列
-	 * @return <b>new And(conditions)</b> を最適化した条件
+	 * @return <b>new And(conditions)</b>を最適化した条件
 	 *
-	 * @throws NullPointerException <b>conditions</b> か <b>conditions</b> の要素のいずれかが null の場合
+	 * @throws NullPointerException <b>conditions</b>か<b>conditions</b>の要素のいずれかがnullの場合
 	 *
 	 * @since 1.8.8
 	 *
@@ -238,12 +238,12 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * <b>new Or(conditions)</b> を最適化した条件を返します。
+	 * <b>new Or(conditions)</b>を最適化した条件を返します。
 	 *
 	 * @param conditions 条件のストリーム
-	 * @return <b>new Or(conditions)</b> を最適化した条件
+	 * @return <b>new Or(conditions)</b>を最適化した条件
 	 *
-	 * @throws NullPointerException <b>conditions</b> か <b>conditions</b> の要素のいずれかが null の場合
+	 * @throws NullPointerException <b>conditions</b>か<b>conditions</b>の要素のいずれかがnullの場合
 	 *
 	 * @since 1.8.8
 	 *
@@ -255,12 +255,12 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * <b>new Or(conditions)</b> を最適化した条件を返します。
+	 * <b>new Or(conditions)</b>を最適化した条件を返します。
 	 *
 	 * @param conditions 条件のコレクション
-	 * @return <b>new Or(conditions)</b> を最適化した条件
+	 * @return <b>new Or(conditions)</b>を最適化した条件
 	 *
-	 * @throws NullPointerException <b>conditions</b> か <b>conditions</b> の要素のいずれかが null の場合
+	 * @throws NullPointerException <b>conditions</b>か<b>conditions</b>の要素のいずれかがnullの場合
 	 *
 	 * @since 1.8.8
 	 *
@@ -272,12 +272,12 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
-	 * <b>new Or(conditions)</b> を最適化した条件を返します。
+	 * <b>new Or(conditions)</b>を最適化した条件を返します。
 	 *
 	 * @param conditions 条件の配列
-	 * @return <b>new Or(conditions)</b> を最適化した条件
+	 * @return <b>new Or(conditions)</b>を最適化した条件
 	 *
-	 * @throws NullPointerException <b>conditions</b> か <b>conditions</b> の要素のいずれかが null の場合
+	 * @throws NullPointerException <b>conditions</b>か<b>conditions</b>の要素のいずれかがnullの場合
 	 *
 	 * @since 1.8.8
 	 *

@@ -3,11 +3,11 @@
 
 package org.lightsleep.test.entity;
 
-import java.sql.Connection;
 import java.util.Optional;
 
 import org.lightsleep.Sql;
 import org.lightsleep.Transaction;
+import org.lightsleep.connection.ConnectionWrapper;
 import org.lightsleep.database.SQLite;
 import org.lightsleep.entity.Insert;
 import org.lightsleep.entity.Key;
@@ -30,13 +30,19 @@ public class Numbering {
 	 * @param entityClass the entity class
 	 * @return a new Identifier
 	 */
-	public static synchronized <E extends Common> int getNewId(Connection conn, Class<E> entityClass) {
+// 2.1.0
+//	public static synchronized <E extends Common> int getNewId(Connection conn, Class<E> entityClass) {
+	public static synchronized <E extends Common> int getNewId(ConnectionWrapper conn, Class<E> entityClass) {
+////
 		EntityInfo<E> entityInfo = Sql.getEntityInfo(entityClass);
 		String tableName = entityInfo.tableName();
 
 		Optional<Numbering> numberingOpt = new Sql<>(Numbering.class)
 			.where("{tableName}={}", tableName)
-			.doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)
+		// 2.1.0
+		//	.doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)
+			.doIf(!(conn.getDatabase() instanceof SQLite), Sql::forUpdate)
+		////
 			.connection(conn)
 			.select();
 

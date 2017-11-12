@@ -9,9 +9,10 @@ import java.util.function.Consumer;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
+import org.lightsleep.helper.Resource;
 
 /**
- * Gets database connections using
+ * Gets connection wrappers using
  * <a href="http://commons.apache.org/proper/commons-dbcp/" target="Apache">Apache Commons DBCP 2</a>.
  * That refer to the following properties of lightsleep.properties file.
  *
@@ -39,38 +40,90 @@ import org.apache.commons.dbcp2.BasicDataSourceFactory;
 public class Dbcp extends AbstractConnectionSupplier {
 	/**
 	 * Constructs a new <b>Dbcp</b>.
-	 * Use values specified in the lightsleep.properties
-	 * file as the connection information.
+	 *
+	 * <p>
+	 * Uses values specified in the lightsleep.properties file as the connection information.
+	 * </p>
 	 */
 	public Dbcp() {
+	// 2.1.0
+		this(Resource.getGlobal().getProperties(), props -> {});
+	////
 	}
 
 	/**
 	 * Constructs a new <b>Dbcp</b>.
-	 * Use values specified in the lightsleep.properties
-	 * file as the connection information.
+	 *
+	 * <p>
+	 * Uses values specified in the lightsleep.properties file as the connection information.
+	 * </p>
 	 *
 	 * @param modifier a consumer to modify the properties
 	 *
 	 * @since 1.5.0
 	 */
 	public Dbcp(Consumer<Properties> modifier) {
-		super(modifier);
+	// 2.1.0
+	//	super(modifier);
+		this(Resource.getGlobal().getProperties(), modifier);
+	////
+	}
+
+	/**
+	 * Constructs a new <b>Dbcp</b>.
+	 *
+	 * @param properties the properties with connection information
+	 *
+	 * @since 2.1.0
+	 */
+	public Dbcp(Properties properties) {
+		this(properties, props -> {});
+	}
+
+	/**
+	 * Constructs a new <b>Dbcp</b>.
+	 *
+	 * @param properties the properties with connection information
+	 * @param modifier a consumer to modify the properties
+	 *
+	 * @since 2.1.0
+	 */
+	private Dbcp(Properties properties, Consumer<Properties> modifier) {
+		super(properties, modifier.andThen(props -> {
+			// username <- user
+			String user = props.getProperty("user");
+			String username = props.getProperty("username");
+			if (user != null && username == null) {
+				props.setProperty("username", user);
+				logger.info("Dbcp.<init>: properties.username <- properties.user: '" + user + "'");
+			}
+		}));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected DataSource getDataSource() {
+// 2.1.0
+//	protected DataSource getDataSource() {
+	public DataSource getDataSource() {
+////
 		try {
 			DataSource dataSource = BasicDataSourceFactory.createDataSource(properties);
-			logger.debug(() -> "Dbcp.getDataSource: dataSource = " + dataSource);
+		// 2.1.0
+		//	logger.debug(() -> "Dbcp.getDataSource: dataSource = " + dataSource);
+		////
 			return dataSource;
 		}
+		catch (RuntimeException e) {throw e;}
 		catch (Exception e) {
-			logger.error("Dbcp.getDataSource:", e);
+		// 2.1.0
+		//	logger.error("Dbcp.getDataSource:", e);
+			throw new RuntimeException("properties: " + properties, e);
+		////
 		}
-		return null;
+	// 2.1.0
+	//	return null;
+	////
 	}
 }

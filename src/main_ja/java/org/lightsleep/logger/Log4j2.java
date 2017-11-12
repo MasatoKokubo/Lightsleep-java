@@ -14,11 +14,11 @@ import java.util.function.Supplier;
  */
 public class Log4j2 implements Logger {
 	/**
-	 * 指定の名前で <b>Logger</b> を構築します。
+	 * 指定の名前で<b>Logger</b>を構築します。
 	 *
 	 * @param name 名前
 	 *
-	 * @throws NullPointerException <b>name</b> が null の場合
+	 * @throws NullPointerException <b>name</b>がnullの場合
 	 */
 	public Log4j2(String name) {
 	}

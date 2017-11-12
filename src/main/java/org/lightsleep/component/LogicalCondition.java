@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
  * The abstract superclass of <b>And</b> and <b>Or</b>.
@@ -105,13 +106,20 @@ public abstract class LogicalCondition implements Condition {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+// 2.1.0
+//	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
+////
 		return String.join(operator.sql(),
 			conditions.stream()
 				.map(condition ->
 					operator == Operator.AND && condition instanceof Or
-					? '(' + condition.toString(sql, parameters) + ')'
-					: condition.toString(sql, parameters)
+				// 2.1.0
+				//	? '(' + condition.toString(sql, parameters) + ')'
+				//	: condition.toString(sql, parameters)
+					? '(' + condition.toString(database, sql, parameters) + ')'
+					: condition.toString(database, sql, parameters)
+				////
 				)
 				.toArray(String[]::new)
 		);

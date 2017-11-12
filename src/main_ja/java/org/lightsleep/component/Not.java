@@ -6,6 +6,7 @@ package org.lightsleep.component;
 import java.util.List;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
  * 否定条件を構成します。
@@ -17,11 +18,11 @@ public class Not implements Condition {
 	private Condition condition;
 
 	/**
-	 * Not を構築します。
+	 * Notを構築します。
 	 *
 	 * @param condition 否定対象の条件
 	 *
-	 * @throws NullPointerException <b>condition</b> が null の場合
+	 * @throws NullPointerException <b>condition</b>がnullの場合
 	 */
 	public Not( Condition condition) {
 	}
@@ -44,9 +45,9 @@ public class Not implements Condition {
 	}
 
 	/**
-	 * 否定対象の条件が <b>Not</b> であれば否定対象の条件、そうでなければ <b>this</b> を返します。
+	 * 否定対象の条件が<b>Not</b>であれば否定対象の条件、そうでなければ<b>this</b>を返します。
 	 *
-	 * @return 否定対象の条件または <b>this</b>
+	 * @return 否定対象の条件または<b>this</b>
 	 *
 	 * @since 1.8.8
 	 */
@@ -59,7 +60,7 @@ public class Not implements Condition {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
 }

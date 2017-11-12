@@ -6,25 +6,26 @@ package org.lightsleep.component;
 import java.util.List;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
- * SQL の ORDER BY  を構成します。
+ * SQLのORDER BYを構成します。
  *
  * @since 1.0
  * @author Masato Kokubo
  */
 public class OrderBy implements SqlComponent, Cloneable {
 	/**
-	 * OrderBy の構成要素です。
+	 * OrderByの構成要素です。
 	 */
 	public static class Element extends Expression {
 		/**
-		 * 	Element を構築します。
+		 * Elementを構築します。
 		 *
 		 * @param content 式の文字列内容
 		 * @param arguments 式に埋め込む引数配列
 		 *
-		 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
+		 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
 		 */
 		public Element(String content, Object... arguments) {
 			super(content, arguments);
@@ -52,7 +53,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public <E> String toString(Sql<E> sql, List<Object> parameters) {
+		public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
 			return null;
 		}
 
@@ -78,7 +79,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 	}
 
 	/**
-	 * 空の OrderBy を構築します。
+	 * 空の OrderByを構築します。
 	 */
 	public OrderBy() {
 	}
@@ -90,7 +91,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 	 *
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>element</b> が null の場合
+	 * @throws NullPointerException <b>element</b>がnullの場合
 	 */
 	public OrderBy add(Element element) {
 		return null;
@@ -139,7 +140,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
 

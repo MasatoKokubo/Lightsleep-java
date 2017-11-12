@@ -21,13 +21,13 @@ import spock.lang.*
 @Unroll
 class SqlSpec extends Specification {
 	static databases = [
-		Standard  .instance(),
-		DB2       .instance(),
-		MySQL     .instance(),
-		Oracle    .instance(),
-		PostgreSQL.instance(),
-		SQLite    .instance(),
-		SQLServer .instance()
+		Standard  .instance,
+		DB2       .instance,
+		MySQL     .instance,
+		Oracle    .instance,
+		PostgreSQL.instance,
+		SQLite    .instance,
+		SQLServer .instance
 	]
 
 	static class TestDatabase implements Database {
@@ -39,48 +39,6 @@ class SqlSpec extends Specification {
 		@Override public <E> String deleteSql(Sql<E> sql, List<Object> parameters) {return ''}
 		@Override public Map<String, TypeConverter<?, ?>> typeConverterMap() {return null}
 		@Override public <T> T convert(Object value, Class<T> type) {return null}
-	}
-
-	// Sql.getDatabase()
-	// Sql.setDatabase(Database)
-	def "SqlSpec getDatabase setDatabase"() {
-	/**/DebugTrace.enter()
-		setup:
-			def beforeDatabase = Sql.database
-			def database = new TestDatabase()
-
-		when: Sql.database = database
-		then: Sql.database == database
-
-		when: Sql.database = null
-		then: thrown NullPointerException
-
-		cleanup:
-			Sql.database = beforeDatabase
-	/**/DebugTrace.leave()
-	}
-
-	static class TestConnectionSupplier implements ConnectionSupplier {
-		@Override public Connection get() {return null}
-	}
-
-	// Sql.getConnectionSupplier()
-	// Sql.setConnectionSupplier(ConnectionSupplier)
-	def "SqlSpec getConnectionSupplier setConnectionSupplier"() {
-	/**/DebugTrace.enter()
-		setup:
-			def beforeConnectionSupplier = Sql.connectionSupplier
-			def connectionSupplier = new TestConnectionSupplier()
-
-		when: Sql.connectionSupplier = connectionSupplier
-		then: Sql.connectionSupplier == connectionSupplier
-
-		when: Sql.connectionSupplier = null
-		then: thrown NullPointerException
-
-		cleanup:
-			Sql.setConnectionSupplier(beforeConnectionSupplier)
-	/**/DebugTrace.leave()
 	}
 
 	// Sql.getEntityInfo(Class<E>)
@@ -308,7 +266,7 @@ class SqlSpec extends Specification {
 
 		// SELECT SQL {propertyName}
 		when:
-			selectSql = Standard.instance().selectSql(
+			selectSql = Standard.instance.selectSql(
 				new Sql<>(Contact).expression("name.first", "'['||{name.first}||']'"),
 				[])
 		/**/DebugTrace.print('selectSql', selectSql)
@@ -318,7 +276,7 @@ class SqlSpec extends Specification {
 
 		// SELECT SQL (with table alias) {propertyName}
 		when:
-			selectSql = Standard.instance().selectSql(
+			selectSql = Standard.instance.selectSql(
 				new Sql<>(Contact, "C").expression("name.first", "'['||{name.first}||']'"),
 				[])
 		/**/DebugTrace.print('selectSql', selectSql)
@@ -328,7 +286,7 @@ class SqlSpec extends Specification {
 
 		// SELECT SQL (with table alias) {A.propertyName}
 		when:
-			selectSql = Standard.instance().selectSql(
+			selectSql = Standard.instance.selectSql(
 				new Sql<>(Contact, "C").expression("C.name.last", "'['||{C.name.last}||']'"),
 				[])
 		/**/DebugTrace.print('selectSql', selectSql)
@@ -341,7 +299,7 @@ class SqlSpec extends Specification {
 			Contact contact = new Contact()
 			contact.name.last = "Apple"
 			contact.name.first = "Yukari"
-			insertSql = Standard.instance().insertSql(
+			insertSql = Standard.instance.insertSql(
 				new Sql<>(Contact)
 					.setEntity(contact)
 					.expression("name.first", "'['||{#name.first}||']'"),
@@ -353,7 +311,7 @@ class SqlSpec extends Specification {
 
 		// INSERT SQL (with table alias) {#propertyName}
 		when:
-			insertSql = Standard.instance().insertSql(
+			insertSql = Standard.instance.insertSql(
 				new Sql<>(Contact, "C")
 					.setEntity(contact)
 					.expression("name.last", "'['||{#name.last}||']'"),
@@ -367,7 +325,7 @@ class SqlSpec extends Specification {
 		when:
 			contact.name.last = "Orange"
 			contact.name.first = "Harumi"
-			updateSql = Standard.instance().updateSql(
+			updateSql = Standard.instance.updateSql(
 				new Sql<>(Contact)
 					.setEntity(contact)
 					.expression("name.first", "'['||{#name.first}||']'"),
@@ -379,7 +337,7 @@ class SqlSpec extends Specification {
 
 		// UPDATE SQL (with table alias) {#propertyName}
 		when:
-			updateSql = Standard.instance().updateSql(
+			updateSql = Standard.instance.updateSql(
 				new Sql<>(Contact, "C")
 					.setEntity(contact)
 					.expression("name.last", "'['||{#name.last}||']'"),

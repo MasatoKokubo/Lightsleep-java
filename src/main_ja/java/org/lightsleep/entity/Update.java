@@ -6,9 +6,9 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * UPDATE SQL で、フィールド値の代わりに使用される式を示します。
+ * UPDATE SQLで、フィールド値の代わりに使用される式を示します。
  * 
- * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleTitle"><span>使用例/Java</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}Update("{updateCount}+1")</b>
  *   public int updateCount;
@@ -16,7 +16,7 @@ import java.lang.annotation.*;
  *   public Timestamp updatedTime;
  * </pre></div>
  *
- * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleTitle"><span>使用例/Groovy</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}Update('{updateCount}+1')</b>
  *   int updateCount
@@ -24,7 +24,7 @@ import java.lang.annotation.*;
  *   Timestamp updatedTime
  * </pre></div>
  *
- * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleTitle"><span>生成されるSQL</span></div>
  * <div class="exampleCode"><pre>
  * UPDATE ..., <b>updateCount=updateCount+1</b>, <b>updatedTime=CURRENT_TIMESTAMP</b> WHERE ...
  * </pre></div>

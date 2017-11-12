@@ -1,4 +1,4 @@
 /**
-	Classes that are used in the inter-library logging.
-*/
+ * Classes that output logs inside this library using various logging libraries.
+ */
 package org.lightsleep.logger;

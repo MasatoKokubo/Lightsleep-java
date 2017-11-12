@@ -9,6 +9,7 @@ import java.util.ArrayList
 import org.debugtrace.DebugTrace
 import org.lightsleep.*
 import org.lightsleep.component.EntityCondition
+import org.lightsleep.database.Standard
 import org.lightsleep.entity.*
 
 import spock.lang.*
@@ -136,9 +137,9 @@ class NonSelectInsertUpdateSpec extends Specification {
 
 		when:
 			def createdSql =
-				type == 'Select' ? Sql.database.selectSql(sql, []) :
-				type == 'Insert' ? Sql.database.insertSql(sql, []) :
-				type == 'Update' ? Sql.database.updateSql(sql, []) : ''
+				type == 'Select' ? Standard.instance.selectSql(sql, []) :
+				type == 'Insert' ? Standard.instance.insertSql(sql, []) :
+				type == 'Update' ? Standard.instance.updateSql(sql, []) : ''
 		/**/DebugTrace.print('createdSql', createdSql)
 
 		then:

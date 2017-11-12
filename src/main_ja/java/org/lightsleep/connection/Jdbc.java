@@ -3,26 +3,26 @@
 
 package org.lightsleep.connection;
 
-import java.util.Properties;
-import java.util.function.Consumer;
 import javax.sql.DataSource;
 
+import org.lightsleep.helper.Resource;
+
 /**
- * <b>JdbcConnection</b> は、<b>java.sql.DriverManager</b> クラスから直接
- * データベース・コネクションを取得する場合に使用します。<br>
- * lightsleep.properties ファイルの以下のプロパティを参照します。<br>
+ * <b>JdbcConnection</b>は、<b>java.sql.DriverManager</b>クラスから直接
+ * コネクション･ラッパーを取得する場合に使用します。<br>
+ * lightsleep.propertiesファイルの以下のプロパティを参照します。<br>
  *
  * <div class="blankline">&nbsp;</div>
  *
  * <table class="additional">
- *   <caption><span>lightsleep.properties の参照</span></caption>
+ *   <caption><span>lightsleep.propertiesの参照</span></caption>
  *   <tr><th>プロパティ名</th><th>内 容</th></tr>
  *   <tr><td>url     </td><td>接続するデータベースの URL</td></tr>
  *   <tr><td>user    </td><td>データベースに接続する時のユーザー名</td></tr>
  *   <tr><td>password</td><td>データベースに接続する時のパスワード</td></tr>
  *   <tr>
  *     <td><i>その他のプロパティ名</i></td>
- *     <td><b>DriverManager</b> からデータベース・コネクションを取得する時に使用するその他のプロパティ</td>
+ *     <td><b>DriverManager</b>からコネクション･ラッパーを取得する時に使用するその他のプロパティ</td>
  *   </tr>
  * </table>
  *
@@ -31,18 +31,21 @@ import javax.sql.DataSource;
  */
 public class Jdbc extends AbstractConnectionSupplier {
 	/**
-	 * <b>Jdbc</b> を構築します。<br>
-	 * lightsleep.properties
-	 * ファイルで指定された値を設定情報として使用します。
+	 * <b>Jdbc</b>を構築します。
+	 *
+	 * <p>
+	 * lightsleep.propertiesファイルで指定された値を設定情報として使用します。
+	 * </p>
 	 */
 	public Jdbc() {
+		super(Resource.getGlobal().getProperties(), modifier -> {});
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected DataSource getDataSource() {
+	public DataSource getDataSource() {
 		return null;
 	}
 }

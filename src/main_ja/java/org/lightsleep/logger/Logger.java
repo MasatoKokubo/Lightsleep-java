@@ -13,14 +13,14 @@ import java.util.function.Supplier;
  */
 public interface Logger {
 	/**
-	 * trace レベルでメッセージをログに出力します。
+	 * traceレベルでメッセージをログに出力します。
 	 *
 	 * @param message メッセージ
 	 */
 	void trace(String message);
 
 	/**
-	 * trace レベルでエラーをログに出力します。
+	 * traceレベルでエラーをログに出力します。
 	 *
 	 * @param message メッセージ
 	 * @param t 例外
@@ -28,14 +28,14 @@ public interface Logger {
 	void trace(String message, Throwable t);
 
 	/**
-	 * debug ログレベルでメッセージをログに出力します。
+	 * debugレベルでメッセージをログに出力します。
 	 *
 	 * @param message メッセージ
 	 */
 	void debug(String message);
 
 	/**
-	 * debug レベルでエラーをログに出力します。
+	 * debugレベルでエラーをログに出力します。
 	 *
 	 * @param message メッセージ
 	 * @param t 例外
@@ -43,14 +43,14 @@ public interface Logger {
 	void debug(String message, Throwable t);
 
 	/**
-	 * info レベルでメッセージをログに出力します。
+	 * infoレベルでメッセージをログに出力します。
 	 *
 	 * @param message メッセージ
 	 */
 	void info(String message);
 
 	/**
-	 * info レベルでエラーをログに出力します。
+	 * infoレベルでエラーをログに出力します。
 	 *
 	 * @param message メッセージ
 	 * @param t 例外
@@ -58,14 +58,14 @@ public interface Logger {
 	void info(String message, Throwable t);
 
 	/**
-	 * warn レベルでメッセージをログに出力します。
+	 * warnレベルでメッセージをログに出力します。
 	 *
 	 * @param message メッセージ
 	 */
 	void warn(String message);
 
 	/**
-	 * warn レベルでエラーをログに出力します。
+	 * warnレベルでエラーをログに出力します。
 	 *
 	 * @param message メッセージ
 	 * @param t 例外
@@ -73,14 +73,14 @@ public interface Logger {
 	void warn(String message, Throwable t);
 
 	/**
-	 * error レベルでメッセージをログに出力します。
+	 * errorレベルでメッセージをログに出力します。
 	 *
 	 * @param message メッセージ
 	 */
 	void error(String message);
 
 	/**
-	 * error レベルでエラーをログに出力します。
+	 * errorレベルでエラーをログに出力します。
 	 *
 	 * @param message メッセージ
 	 * @param t 例外
@@ -88,14 +88,14 @@ public interface Logger {
 	void error(String message, Throwable t);
 
 	/**
-	 * fatal レベルでメッセージをログに出力します。
+	 * fatalレベルでメッセージをログに出力します。
 	 *
 	 * @param message メッセージ
 	 */
 	void fatal(String message);
 
 	/**
-	 * fatal レベルでエラーをログに出力します。
+	 * fatalレベルでエラーをログに出力します。
 	 *
 	 * @param message メッセージ
 	 * @param t 例外
@@ -103,86 +103,86 @@ public interface Logger {
 	void fatal(String message, Throwable t);
 
 	/**
-	 * trace レベルでメッセージをログに出力します。
+	 * traceレベルでメッセージをログに出力します。
 	 *
 	 * @param messageSupplier メッセージサプライアー
 	 */
 	void trace(Supplier<String> messageSupplier);
 
 	/**
-	 * debug レベルでメッセージをログに出力します。
+	 * debugレベルでメッセージをログに出力します。
 	 *
 	 * @param messageSupplier メッセージサプライアー
 	 */
 	void debug(Supplier<String> messageSupplier);
 
 	/**
-	 * info レベルでメッセージをログに出力します。
+	 * infoレベルでメッセージをログに出力します。
 	 *
 	 * @param messageSupplier メッセージサプライアー
 	 */
 	void info(Supplier<String> messageSupplier);
 
 	/**
-	 * warn レベルでメッセージをログに出力します。
+	 * warnレベルでメッセージをログに出力します。
 	 *
 	 * @param messageSupplier メッセージサプライアー
 	 */
 	void warn(Supplier<String> messageSupplier);
 
 	/**
-	 * error レベルでメッセージをログに出力します。
+	 * errorレベルでメッセージをログに出力します。
 	 *
 	 * @param messageSupplier メッセージサプライアー
 	 */
 	void error(Supplier<String> messageSupplier);
 
 	/**
-	 * fatal レベルでメッセージをログに出力します。
+	 * fatalレベルでメッセージをログに出力します。
 	 *
 	 * @param messageSupplier メッセージサプライアー
 	 */
 	void fatal(Supplier<String> messageSupplier);
 
 	/**
-	 * trace レベルのログ出力が有効かどうかを返します。
+	 * traceレベルのログ出力が有効かどうかを返します。
 	 *
-	 * @return ログ出力が有効な場合 <b>true</b>、そうでなければ <b>false</b>
+	 * @return ログ出力が有効なら<b>true</b>、そうでなければ<b>false</b>
 	 */
 	boolean isTraceEnabled();
 
 	/**
-	 * debug レベルのログ出力が有効かどうかを返します。
+	 * debugレベルのログ出力が有効かどうかを返します。
 	 *
-	 * @return ログ出力が有効な場合 <b>true</b>、そうでなければ <b>false</b>
+	 * @return ログ出力が有効なら<b>true</b>、そうでなければ<b>false</b>
 	 */
 	boolean isDebugEnabled();
 
 	/**
-	 * info レベルのログ出力が有効かどうかを返します。
+	 * infoレベルのログ出力が有効かどうかを返します。
 	 *
-	 * @return ログ出力が有効な場合 <b>true</b>、そうでなければ <b>false</b>
+	 * @return ログ出力が有効なら<b>true</b>、そうでなければ<b>false</b>
 	 */
 	boolean isInfoEnabled();
 
 	/**
-	 * warn レベルのログ出力が有効かどうかを返します。
+	 * warnレベルのログ出力が有効かどうかを返します。
 	 *
-	 * @return ログ出力が有効な場合 <b>true</b>、そうでなければ <b>false</b>
+	 * @return ログ出力が有効なら<b>true</b>、そうでなければ<b>false</b>
 	 */
 	boolean isWarnEnabled();
 
 	/**
-	 * error レベルのログ出力が有効かどうかを返します。
+	 * errorレベルのログ出力が有効かどうかを返します。
 	 *
-	 * @return ログ出力が有効な場合 <b>true</b>、そうでなければ <b>false</b>
+	 * @return ログ出力が有効なら<b>true</b>、そうでなければ<b>false</b>
 	 */
 	boolean isErrorEnabled();
 
 	/**
-	 * fatal レベルのログ出力が有効かどうかを返します。
+	 * fatalレベルのログ出力が有効かどうかを返します。
 	 *
-	 * @return ログ出力が有効な場合 <b>true</b>、そうでなければ <b>false</b>
+	 * @return ログ出力が有効なら<b>true</b>、そうでなければ<b>false</b>
 	 */
 	boolean isFatalEnabled();
 }

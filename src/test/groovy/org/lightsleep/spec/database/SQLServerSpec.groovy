@@ -13,7 +13,7 @@ import spock.lang.*
 // SQLServerSpec
 @Unroll
 class SQLServerSpec extends Specification {
-	@Shared map = SQLServer.instance().typeConverterMap()
+	@Shared map = SQLServer.instance.typeConverterMap()
 
 	// -> SqlString
 	def "SQLServerSpec -> SqlString"() {

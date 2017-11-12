@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  */
 public class SLF4J implements Logger {
 	/**
-	 * 指定の名前で <b>Logger</b> を構築します。
+	 * 指定の名前で <b>Logger</b>を構築します。
 	 *
 	 * @param name 名前
 	 *

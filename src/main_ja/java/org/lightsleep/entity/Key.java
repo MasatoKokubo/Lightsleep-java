@@ -6,9 +6,9 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * フィールドに関連するカラムがプライマリー・キーの一部である事を示します。
+ * フィールドに関連するカラムがプライマリー･キーの一部である事を示します。
  *
- * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleTitle"><span>使用例/Java</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}Key</b>
  *   public int contactId;
@@ -16,7 +16,7 @@ import java.lang.annotation.*;
  *   public short childIndex;
  * </pre></div>
  *
- * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleTitle"><span>使用例/Groovy</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}Key</b>
  *   int contactId
@@ -24,7 +24,7 @@ import java.lang.annotation.*;
  *   short childIndex
  * </pre></div>
  *
- * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleTitle"><span>生成されるSQL</span></div>
  * <div class="exampleCode"><pre>
  * UPDATE ... WHERE <b>contactId=100 AND childIndex=1</b>
  * </pre></div>
@@ -39,7 +39,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 public @interface Key {
 	/**
-	 * @return フィールドに関連するカラムがキーの一部であれば true、そうでなければ false
+	 * @return フィールドに関連するカラムがキーの一部であれば<b>true</b>、そうでなければ<b>false</b>
 	 * @since 2.0.0
 	 */
 	boolean value() default true;

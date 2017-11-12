@@ -6,6 +6,7 @@ package org.lightsleep.component;
 import java.util.List;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
  * An interface of SQL components.
@@ -28,11 +29,15 @@ public interface SqlComponent {
 	 *
 	 * @param <E> the type of the entity
 	 * @param sql the <b>Sql</b> object
+	 * @param database the database handler
 	 * @param parameters a list of parameters
 	 *
 	 * @return a SQL string representation
 	 *
 	 * @throws NullPointerException if <b>sql</b> or <b>parameters</b> is null
 	 */
-	<E> String toString(Sql<E> sql, List<Object> parameters);
+// 2.1.0
+//	<E> String toString(Sql<E> sql, List<Object> parameters);
+	<E> String toString(Database database, Sql<E> sql, List<Object> parameters);
+////
 }

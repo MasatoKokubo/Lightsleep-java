@@ -22,7 +22,7 @@ class SubqueryConditionSpec extends Specification {
 				new Sql<>(Address, "A").where("{A.postCode}={}", "1234567"))
 		then: !condition.empty
 
-		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == "EXISTS (SELECT * FROM Address A WHERE A.postCode='1234567')"
 
 	/**/DebugTrace.leave()
@@ -35,7 +35,7 @@ class SubqueryConditionSpec extends Specification {
 				new Sql<>(Address, "A").where("{A.postCode}={}", "1234567"))
 		then: !condition.empty
 
-		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == "EXISTS (SELECT * FROM Address A WHERE A.postCode='1234567')"
 
 	/**/DebugTrace.leave()
@@ -48,7 +48,7 @@ class SubqueryConditionSpec extends Specification {
 				new Sql<>(Address, "A").where("{A.postCode}={}", "1234567"))
 		then: !condition.empty
 
-		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == "EXISTS (SELECT * FROM Address A WHERE A.postCode='1234567')"
 
 	/**/DebugTrace.leave()

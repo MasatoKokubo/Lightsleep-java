@@ -1,0 +1,112 @@
+Lightsleep リリース･ノート
+===========
+
+[[English]](ReleaseNotes.md)
+
+<div id="TOC"></div>
+
+### 目次
+
+- [バージョン2.1.0](#ReleaseNotes2.1.0)
+- [バージョン2.0.0](#ReleaseNotes2.0.0)
+
+<div id="ReleaseNotes2.1.0"></div>
+
+### バージョン2.1.0
+
+バージョン番号はマイナー･リリースですが、**仕様変更があります**。
+
+1. `lightsleep.properties`ファイルに、複数のJDBC URLの定義を**可能**にしました。
+
+1. JDBC URLに対応するデータベース･ハンドラ･クラス**は自動的に判断**されるようになりました。これに伴い`lightsleep.properties`ファイルの`Database`プロパティを**無効**にしました。**(仕様変更)**
+
+1. 以下のメソッド/コンストラクタを**追加**しました。
+    - Sqlクラス
+        - public ConnectionWrapper getConnection()
+
+    - org.lightsleep.connection.ConnectionSupplierインタフェース
+        - Database getDatabase()
+        - DataSource getDataSource()
+        - String getUrl()
+        - static ConnectionSupplier of(String supplierName, Properties properties)
+        - static ConnectionSupplier find(String... urlWords)
+
+    - org.lightsleep.connection.AbstractConnectionSupplier抽象クラス
+        - protected AbstractConnectionSupplier(Properties properties, Consumer<Properties> modifier)
+        - @Override public Database getDatabase()
+        - @Override public String getUrl()
+        - @Override public String toString()
+
+    - org.lightsleep.database.Databaseインタフェース
+        - static Database getInstance(String jdbcUrl)
+
+    - org.lightsleep.helper.Resourceクラス
+        - public static Resource getGlobal()
+
+1. `org.lightsleep.Sql`クラスの以下のメソッドを**削除**しました。**(仕様変更)**
+    - public static Database getDatabase()
+    - public static void setDatabase(Database database)
+    - public static ConnectionSupplier getConnectionSupplier()
+    - public static void setConnectionSupplier(ConnectionSupplier supplier)
+
+1. `org.lightsleep.connection.ConnectionWrapper`クラスを追加し、各メソッドの引数の型を`java.sql.Connection`から`ConnectionWrapper`に**変更**しました。**(仕様変更)**
+
+1. `org.lightsleep.connection`パッケージの各クラスに`Properties properties`を引数とするコンストラクタを**追加**しました。
+
+1. `org.lightsleep.database.anchor`パッケージと`db2`, `mysql`, `oracle`, `postgresql`, `sqlite`, `sqlserver`クラスを**追加**しました。これらのクラスは、JDBC URLから対応するデータベース･ハンドラ･クラスを見つける際に使用されます。
+
+1. `org.lightsleep.database`パッケージの各クラスの`instance()`メソッドを**非推奨**にし、`instance`静的変数を**追加**しました。
+
+[【目次へ】](#TOC)
+
+<div id="ReleaseNotes2.0.0"></div>
+
+### バージョン2.0.0
+
+1. `org.lightsleep.Sql`クラスの型パラメータとは異なるエンティティ型でSELECT SQLの結果を取得する以下のメソッドを**追加**しました。
+    - public <R> Optional<R> selectAs(Class<R> resultClass)
+    - public <R> void selectAs(Class<R> resultClass, Consumer<? super R> consumer)
+
+1. `org.lightsleep.Sql`クラスの`Connection`引数を持つメソッドを**非推奨**にし、`Connection`引数がない以下のメソッドを**追加**しました。
+    - public void select(Consumer<? super E> consumer)
+    - public <JE1> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1)
+    - public <JE1, JE2> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)
+    - public <JE1, JE2, JE3> void select(Consumer<? super  E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)
+    - public <JE1, JE2, JE3, JE4> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)
+    - public Optional<E> select()
+    - public int selectCount()
+    - public int insert(E entity)
+    - public int insert(Iterable<? extends E> entities)
+    - public int update(E entity)
+    - public int update(Iterable<? extends E> entities)
+    - public int delete()
+    - public int delete(E entity)
+    - public int delete(Iterable<? extends E> entities)
+
+1. `org.lightsleep.Sql`クラスに以下のメソッドを**追加**しました。
+    - public Sql<E> connection(Connection connection)
+    - public <R> Sql<E> setColumns(Class<R> resultClass)
+    - public Sql<E> doAlways(Consumer<Sql<E>> action)
+
+1. `org.lightsleep.Sql`クラスが`Cloneable`インタフェースを**実装**するようにしました。
+
+1. `org.lightsleep.Sql`クラスの`where`メソッドの引数の仕様を**変更**しました。**(仕様変更)**
+    ```
+    public Sql<E> where(E entity)
+        ↓
+    public <K> Sql<E> where(K entity)
+    ```
+
+1. `Table`アノテーション･クラスに付与されていた`@Inherited`を**削除**しました。**(仕様変更)**
+
+1. `Key`, `NonColumn`, `NonInsert`, `NonSelect`, `NonUpdate`アノテーション･クラスに`value`プロパティを**追加**しました。
+
+1. `NonColumnProperty`, `NonInsertProperty`, `NonSelectProperty`, `NonUpdateProperty`アノテーション･クラスに`property`プロパティを**追加**し、`value`プロパティの仕様を**変更**しました。**(仕様変更)**
+
+1. `org.lightsleep.component.Expression`クラスの`toString`において、内容文字列の`{}`と引数の数が不一致の際にスローする例外を`IllegalArgumentException`から`MissingArgumentsException`(新規追加)に**変更**にしました。**(仕様変更)**
+
+1. `org.lightsleep.helper.Accessor`クラスの`getField`, `getValue`, `setValue`メソッドでスローする例外を`IllegalArgumentException`から`MissingPropertyException`(新規追加)に**変更**にしました。**(仕様変更)**
+
+[【目次へ】](#TOC)
+
+<div style="text-align:center; margin-top:20px"><i>&copy; 2016 Masato Kokubo</i></div>

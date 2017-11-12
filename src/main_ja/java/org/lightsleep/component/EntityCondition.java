@@ -6,9 +6,10 @@ package org.lightsleep.component;
 import java.util.List;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
- * エンティティのプライマリー・キーの値を使用して条件を構成します。
+ * エンティティのプライマリー･キーの値を使用して条件を構成します。
  *
  * @param <E> エンティティの型
  *
@@ -17,11 +18,11 @@ import org.lightsleep.Sql;
  */
 public class EntityCondition<E> implements Condition {
 	/**
-	 * EntityCondition を構築します。
+	 * EntityConditionを構築します。
 	 *
 	 * @param entity エンティティ
 	 *
-	 * @throws NullPointerException <b>entity</b> が null の場合
+	 * @throws NullPointerException <b>entity</b>がnullの場合
 	 */
 	public EntityCondition(E entity) {
 	}
@@ -38,7 +39,7 @@ public class EntityCondition<E> implements Condition {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <T> String toString(Sql<T> sql, List<Object> parameters) {
+	public <T> String toString(Database database, Sql<T> sql, List<Object> parameters) {
 		return null;
 	}
 }

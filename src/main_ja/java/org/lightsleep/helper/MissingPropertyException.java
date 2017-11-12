@@ -12,9 +12,9 @@ package org.lightsleep.helper;
 @SuppressWarnings("serial")
 public class MissingPropertyException extends RuntimeException {
 	/**
-	 * 指定の詳細メッセージで新規 <b>MissingPropertyException</b> を構築します。
+	 * 指定の詳細メッセージで新規<b>MissingPropertyException</b>を構築します。
 	 *
-	 * @param message the detail message
+	 * @param message 詳細メッセージ
 	 *
 	 * @since 2.0.0
 	 */

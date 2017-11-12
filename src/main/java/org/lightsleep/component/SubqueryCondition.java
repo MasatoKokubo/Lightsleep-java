@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
  * Configure a condition to use a subquery.
@@ -51,12 +52,22 @@ public class SubqueryCondition<SE> implements Condition {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+// 2.1.0
+//	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
+		Objects.requireNonNull(database, "database");
+////
 		StringBuilder buff = new StringBuilder();
 
-		buff.append(expression.toString(sql, parameters));
+	// 2.1.0
+	//	buff.append(expression.toString(sql, parameters));
+		buff.append(expression.toString(database, sql, parameters));
+	////
 		buff.append(" (")
-			.append(Sql.getDatabase().subSelectSql(subSql, () -> "*", parameters))
+		// 2.1.0
+		//	.append(Sql.getDatabase().subSelectSql(subSql, () -> "*", parameters))
+			.append(database.subSelectSql(subSql, () -> "*", parameters))
+		////
 			.append(')');
 		return buff.toString();
 	}

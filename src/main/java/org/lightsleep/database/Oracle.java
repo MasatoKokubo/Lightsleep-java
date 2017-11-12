@@ -43,14 +43,28 @@ import org.lightsleep.helper.TypeConverter;
  * @see org.lightsleep.database.Standard
  */
 public class Oracle extends Standard {
-	// The Oracle instance
-	private static final Database instance = new Oracle();
+	/**
+	 * The only instance of this class
+	 *
+	 * @since 2.1.0
+	 */
+// 2.1.0
+//	private static final Database instance = new Oracle();
+	public static final Oracle instance = new Oracle();
+////
 
 	/**
-	 * Returns the Oracle instance.
+	 * Returns the only instance of this class.
 	 *
-	 * @return the Oracle instance
+	 * <p>
+	 * @deprecated As of release 2.1.0, instead use {@link #instance}
+	 * </p>
+	 *
+	 * @return the only instance of this class
 	 */
+// 2.1.0
+	@Deprecated
+////
 	public static Database instance() {
 		return instance;
 	}

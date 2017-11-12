@@ -11,17 +11,17 @@ import java.lang.annotation.*;
  * <p>
  * このアノテーションは、スーパークラスで定義されているフィールドに対して指定する場合に使用します。
  * 指定された内容はサブクラスにも影響しますが、サブクラスでの指定が優先されます。
- * <b>value=false</b> を指定すると、スーパークラスでの指定が打ち消されます。
+ * <b>value=false</b>を指定すると、スーパークラスでの指定が打ち消されます。
  * </p>
  *
- * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleTitle"><span>使用例/Java</span></div>
  * <div class="exampleCode"><pre>
  * <b>{@literal @}NonColumnProperty(property="phones")</b>
  * <b>{@literal @}NonColumnProperty(property="addresses")</b>
  *  public class PersonComposite {
  * </pre></div>
  *
- * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleTitle"><span>使用例/Groovy</span></div>
  * <div class="exampleCode"><pre>
  * <b>{@literal @}NonColumnProperties([</b>
  *   <b>{@literal @}NonColumnProperty(property='phones'),</b>
@@ -46,6 +46,6 @@ public @interface NonColumnProperty {
 	 */
 	String property();
 
-	/** @return フィールドがどのカラムにも関連しないなら true、そうでなければ false */
-	boolean value();
+	/** @return フィールドがどのカラムにも関連しない場合は<b>true</b>、そうでなければ<b>false</b> */
+	boolean value() default true;
 }

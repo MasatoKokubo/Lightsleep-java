@@ -1,4 +1,4 @@
 /**
-	Helper classes that are used in this library.
-*/
+ * Helper classes used inside this library.
+ */
 package org.lightsleep.helper;

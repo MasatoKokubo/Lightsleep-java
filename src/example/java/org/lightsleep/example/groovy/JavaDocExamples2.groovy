@@ -9,10 +9,10 @@ import java.util.Optional
 
 import org.debugtrace.DebugTrace
 import org.lightsleep.*
-import org.lightsleep.component.Condition
-import org.lightsleep.database.SQLite
-import org.lightsleep.entity.ColumnProperties
-import org.lightsleep.entity.ColumnProperty
+import org.lightsleep.component.*
+import org.lightsleep.connection.*
+import org.lightsleep.database.*
+import org.lightsleep.entity.*
 import org.lightsleep.example.Common
 import org.lightsleep.example.groovy.entity2.*
 //import org.lightsleep.example.groovy.entity3.*
@@ -22,45 +22,46 @@ import org.lightsleep.example.groovy.entity2.*
  */
 public class JavaDocExamples2 extends Common {
 	public static void main(String[] args) {
+		def examples = new JavaDocExamples2()
 		try {
-			init1()
-			init2()
-			transaction()
-			sql()
-			sql_columns1()
-			sql_columns2()
-			sql_expression()
-			sql_innerJoin()
-			sql_leftJoin()
-			sql_rightJoin()
-			sql_where1()
-			sql_where2()
-			sql_where3()
-			sql_where4()
-			sql_and()
-			sql_or()
-			sql_orderBy()
-			sql_asc()
-			sql_desc()
-			sql_limit()
-			sql_offset()
-			sql_doIf()
-			sql_select1()
-			sql_selectAs1()
-			sql_select2()
-			sql_select3()
-			sql_select4()
-			sql_select5()
-			sql_select6()
-			sql_selectAs2()
-			sql_selectCount()
-			sql_insert1()
-			sql_insert2()
-			sql_update1()
-			sql_update2()
-			sql_delete1()
-			sql_delete2()
-			sql_delete3()
+			examples.init1()
+			examples.init2()
+			examples.transaction()
+			examples.sql()
+			examples.sql_columns1()
+			examples.sql_columns2()
+			examples.sql_expression()
+			examples.sql_innerJoin()
+			examples.sql_leftJoin()
+			examples.sql_rightJoin()
+			examples.sql_where1()
+			examples.sql_where2()
+			examples.sql_where3()
+			examples.sql_where4()
+			examples.sql_and()
+			examples.sql_or()
+			examples.sql_orderBy()
+			examples.sql_asc()
+			examples.sql_desc()
+			examples.sql_limit()
+			examples.sql_offset()
+			examples.sql_doIf()
+			examples.sql_select1()
+			examples.sql_selectAs1()
+			examples.sql_select2()
+			examples.sql_select3()
+			examples.sql_select4()
+			examples.sql_select5()
+			examples.sql_select6()
+			examples.sql_selectAs2()
+			examples.sql_selectCount()
+			examples.sql_insert1()
+			examples.sql_insert2()
+			examples.sql_update1()
+			examples.sql_update2()
+			examples.sql_delete1()
+			examples.sql_delete2()
+			examples.sql_delete3()
 		}
 		catch (Exception e) {
 			e.printStackTrace()
@@ -68,18 +69,16 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// Transaction
-	static void transaction() {
+	void transaction() {
 	/**/DebugTrace.enter()
 
  Transaction.execute {
-     def personOpt = new Sql<>(Person)
+     def personOpt = new Sql<>(Person).connection(it)
          .where('{id} = {}', 1)
-         .connection(it)
          .select()
      personOpt.ifPresent {Person person ->
          person.setBirthday(2017, 1, 1)
-         new Sql<>(Person)
-             .connection(it)
+         new Sql<>(Person).connection(it)
              .update(person)
      }
  }
@@ -88,14 +87,13 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// Sql
-	static void sql() {
+	void sql() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .where('{name.last} = {}', 'Apple')
-         .connection(it)
          .select({persons << it})
  }
 
@@ -103,15 +101,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// columns 1
-	static void sql_columns1() {
+	void sql_columns1() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .columns('name.last', 'name.first')
          .where('{name.last} = {}', 'Apple')
-         .connection(it)
          .select({persons << it})
  }
 
@@ -119,16 +116,15 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// columns 2
-	static void sql_columns2() {
+	void sql_columns2() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  List<Person.Phone> phones = []
  Transaction.execute {
-     new Sql<>(Person, 'C')
+     new Sql<>(Person, 'C').connection(it)
          .innerJoin(Person.Phone, 'P', '{P.personId} = {C.id}')
          .columns('C.id', 'P.*')
-         .connection(it)
          .<Person.Phone>select({persons << it}, {phones << it})
  }
 
@@ -136,15 +132,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// expression
-	static void sql_expression() {
+	void sql_expression() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .expression('name.first', "'['||{name.first}||']'")
          .where('{name.last} = {}', 'Orange')
-         .connection(it)
          .select({persons << it})
  }
 
@@ -152,15 +147,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// innerJoin
-	static void sql_innerJoin() {
+	void sql_innerJoin() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  List<Person.Phone> phones = []
  Transaction.execute {
-     new Sql<>(Person, 'C')
+     new Sql<>(Person, 'C').connection(it)
          .innerJoin(Person.Phone, 'P', '{P.personId} = {C.id}')
-         .connection(it)
          .<Person.Phone>select({persons << it}, {phones << it})
  }
 
@@ -168,15 +162,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// leftJoin
-	static void sql_leftJoin() {
+	void sql_leftJoin() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  List<Person.Phone> phones = []
  Transaction.execute {
-     new Sql<>(Person, 'C')
+     new Sql<>(Person, 'C').connection(it)
          .leftJoin(Person.Phone, 'P', '{P.personId} = {C.id}')
-         .connection(it)
          .<Person.Phone>select({persons << it}, {phones << it})
  }
 
@@ -184,15 +177,15 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// rightJoin
-	static void sql_rightJoin() {
+	void sql_rightJoin() {
+		if (ConnectionSupplier.find().database instanceof SQLite) return // SQLite dose not support RIGHT JOIN
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  List<Person.Phone> phones = []
  Transaction.execute {
-     new Sql<>(Person, 'C')
+     new Sql<>(Person, 'C').connection(it)
          .rightJoin(Person.Phone, 'P', '{P.personId} = {C.id}')
-         .connection(it)
          .<Person.Phone>select({persons << it}, {phones << it})
  }
 
@@ -200,14 +193,13 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// where 1
-	static void sql_where1() {
+	void sql_where1() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .where('{birthday} IS NULL')
-         .connection(it)
          .select({persons << it})
  }
 
@@ -215,15 +207,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// where 2
-	static void sql_where2() {
+	void sql_where2() {
 	/**/DebugTrace.enter()
 
  int id = 1
  Person person
  Transaction.execute {
-     person = new Sql<>(Person)
+     person = new Sql<>(Person).connection(it)
          .where('{id} = {}', id)
-         .connection(it)
          .select().orElse(null)
  }
 
@@ -231,15 +222,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// where 3
-	static void sql_where3() {
+	void sql_where3() {
 	/**/DebugTrace.enter()
 
  Person person
  Transaction.execute {
      Person key = new Person()
-     person = new Sql<>(Person)
+     person = new Sql<>(Person).connection(it)
          .where(new PersonKey(2))
-         .connection(it)
          .select().orElse(null)
  }
 
@@ -247,18 +237,17 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// where 4
-	static void sql_where4() {
+	void sql_where4() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person, 'C')
+     new Sql<>(Person, 'C').connection(it)
          .where('EXISTS',
               new Sql<>(Person.Phone, 'P')
                   .where('{P.personId} = {C.id}')
                   .and('{P.content} LIKE {}', '0800001%')
          )
-         .connection(it)
          .select({persons << it})
  }
 
@@ -266,15 +255,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// and
-	static void sql_and() {
+	void sql_and() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .where('{name.last} = {}', 'Apple')
          .and('{name.first} = {}', 'Akiyo')
-         .connection(it)
          .select({persons << it})
  }
 
@@ -282,15 +270,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// or
-	static void sql_or() {
+	void sql_or() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .where('{name.last} = {}', 'Apple')
          .or('{name.last} = {}', 'Orange')
-         .connection(it)
          .select({persons << it})
  }
 
@@ -298,15 +285,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// orderBy
-	static void sql_orderBy() {
+	void sql_orderBy() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .orderBy('{name.last}')
          .orderBy('{name.first}')
-         .connection(it)
          .select({persons << it})
  }
 
@@ -314,14 +300,13 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// asc
-	static void sql_asc() {
+	void sql_asc() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .orderBy('{id}').asc()
-         .connection(it)
          .select({persons << it})
  }
 
@@ -329,14 +314,13 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// desc
-	static void sql_desc() {
+	void sql_desc() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .orderBy('{id}').desc()
-         .connection(it)
          .select({persons << it})
  }
 
@@ -344,14 +328,13 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// limit
-	static void sql_limit() {
+	void sql_limit() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .limit(5)
-         .connection(it)
          .select({persons << it})
  }
 
@@ -359,14 +342,13 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// offset
-	static void sql_offset() {
+	void sql_offset() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
+     new Sql<>(Person).connection(it)
          .limit(5).offset(5)
-         .connection(it)
          .select({persons << it})
  }
 
@@ -374,14 +356,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// doIf
-	static void sql_doIf() {
+	void sql_doIf() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person, 'C')
-         .doIf(!(Sql.database instanceof SQLite)) {it.forUpdate}
-         .connection(it)
+     def isSQLite = it.database instanceof SQLite
+     new Sql<>(Person, 'C').connection(it)
+         .doIf(!isSQLite) {it.forUpdate} // SQLite dose not support FOR UPDATE
          .select({persons << it})
  }
 
@@ -389,13 +371,12 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// select 1
-	static void sql_select1() {
+	void sql_select1() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  Transaction.execute {
-     new Sql<>(Person)
-         .connection(it)
+     new Sql<>(Person).connection(it)
          .select({persons << it})
  }
 
@@ -415,8 +396,7 @@ public class JavaDocExamples2 extends Common {
 
  List<PersonName> personNames = []
  Transaction.execute {
-     new Sql<>(Person)
-         .connection(it)
+     new Sql<>(Person).connection(it)
          .selectAs(PersonName, {personNames << it})
  }
 
@@ -425,15 +405,14 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// select 2
-	static void sql_select2() {
+	void sql_select2() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  List<Person.Phone>   phones = []
  Transaction.execute {
-     new Sql<>(Person, 'C')
+     new Sql<>(Person, 'C').connection(it)
          .innerJoin(Person.Phone, 'P', '{P.personId} = {C.id}')
-         .connection(it)
          .select({persons << it}, {phones << it})
  }
 
@@ -441,17 +420,16 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// select 3
-	static void sql_select3() {
+	void sql_select3() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
  List<Person.Phone>   phones = []
  List<Person.Email>   emails = []
  Transaction.execute {
-     new Sql<>(Person, 'C')
+     new Sql<>(Person, 'C').connection(it)
          .innerJoin(Person.Phone, 'P', '{P.personId} = {C.id}')
          .innerJoin(Person.Email, 'E', '{E.personId} = {C.id}')
-         .connection(it)
          .select({persons << it}, {phones << it}, {emails << it})
  }
 
@@ -459,7 +437,7 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// select 4
-	static void sql_select4() {
+	void sql_select4() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
@@ -467,11 +445,10 @@ public class JavaDocExamples2 extends Common {
  List<Person.Email>   emails = []
  List<Person.Address> addresses = []
  Transaction.execute {
-     new Sql<>(Person, 'C')
+     new Sql<>(Person, 'C').connection(it)
          .innerJoin(Person.Phone  , 'P', '{P.personId} = {C.id}')
          .innerJoin(Person.Email  , 'E', '{E.personId} = {C.id}')
          .innerJoin(Person.Address, 'A', '{A.personId} = {C.id}')
-         .connection(it)
          .select(
              {persons << it}, {phones << it}, {emails << it}, {addresses << it})
  }
@@ -480,7 +457,7 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// select 5
-	static void sql_select5() {
+	void sql_select5() {
 	/**/DebugTrace.enter()
 
  List<Person> persons = []
@@ -489,12 +466,11 @@ public class JavaDocExamples2 extends Common {
  List<Person.Address> addresses = []
  List<Person.Url>     urls = []
  Transaction.execute {
-     new Sql<>(Person, 'C')
+     new Sql<>(Person, 'C').connection(it)
          .innerJoin(Person.Phone  , 'P', '{P.personId} = {C.id}')
          .innerJoin(Person.Email  , 'E', '{E.personId} = {C.id}')
          .innerJoin(Person.Address, 'A', '{A.personId} = {C.id}')
          .innerJoin(Person.Url    , 'U', '{U.personId} = {C.id}')
-         .connection(it)
          .select(
              {persons << it}, {phones << it}, {emails << it},
              {addresses << it}, {urls << it})
@@ -504,14 +480,13 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// select 6
-	static void sql_select6() {
+	void sql_select6() {
 	/**/DebugTrace.enter()
 
  Person.Ex person
  Transaction.execute {
-     person = new Sql<>(Person.Ex.targetClass)
+     person = new Sql<>(Person.Ex.targetClass(it.database)).connection(it)
          .where('{id} = {}', 1)
-         .connection(it)
          .select().orElse(null)
  }
 
@@ -520,14 +495,13 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// select As 2
-	static void sql_selectAs2() {
+	void sql_selectAs2() {
 	/**/DebugTrace.enter()
 
  PersonName personName
  Transaction.execute {
-     personName = new Sql<>(Person)
+     personName = new Sql<>(Person).connection(it)
          .where('{id}={}', 1)
-         .connection(it)
          .selectAs(PersonName).orElse(null)
  }
 
@@ -536,13 +510,12 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// selectCount
-	static void sql_selectCount() {
+	void sql_selectCount() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Person)
-         .connection(it)
+     count = new Sql<>(Person).connection(it)
          .selectCount()
  }
 
@@ -550,19 +523,18 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// insert 1
-	static void sql_insert1() {
+	void sql_insert1() {
 	/**/DebugTrace.enter()
 
 		Transaction.execute {
-			new Sql<>(Person).where('{id} = {}', 6)
-			.connection(it)
-			.delete()
+			new Sql<>(Person).connection(it)
+				.where('{id} = {}', 6)
+				.delete()
 		}
 
  int count
  Transaction.execute {
-     count = new Sql<>(Person)
-         .connection(it)
+     count = new Sql<>(Person).connection(it)
          .insert(new Person(6, 'Setoka', 'Orange', 2001, 2, 1))
  }
 
@@ -570,19 +542,18 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// insert 2
-	static void sql_insert2() {
+	void sql_insert2() {
 	/**/DebugTrace.enter()
 
 		Transaction.execute {
-			new Sql<>(Person).where('{id} IN {}', [7, 8, 9])
-			.connection(it)
-			.delete()
+			new Sql<>(Person).connection(it)
+				.where('{id} IN {}', [7, 8, 9])
+				.delete()
 		}
 
  int count
  Transaction.execute {
-     count = new Sql<>(Person)
-         .connection(it)
+     count = new Sql<>(Person).connection(it)
          .insert([
              new Person(7, 'Harumi', 'Orange', 2001, 2, 2),
              new Person(8, 'Mihaya', 'Orange', 2001, 2, 3),
@@ -594,13 +565,12 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// update 1
-	static void sql_update1() {
+	void sql_update1() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Person)
-         .connection(it)
+     count = new Sql<>(Person).connection(it)
          .update(new Person(6, 'Setoka', 'Orange', 2017, 2, 1))
  }
 
@@ -608,13 +578,12 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// update 2
-	static void sql_update2() {
+	void sql_update2() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Person)
-         .connection(it)
+     count = new Sql<>(Person).connection(it)
          .update([
              new Person(7, 'Harumi', 'Orange', 2017, 2, 2),
              new Person(8, 'Mihaya', 'Orange', 2017, 2, 3),
@@ -626,14 +595,13 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// delete 1
-	static void sql_delete1() {
+	void sql_delete1() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Person)
+     count = new Sql<>(Person).connection(it)
          .where(Condition.ALL)
-         .connection(it)
          .delete()
  }
 
@@ -641,19 +609,17 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// delete 2
-	static void sql_delete2() {
+	void sql_delete2() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Person)
-         .connection(it)
+     count = new Sql<>(Person).connection(it)
          .delete(new Person(6))
  }
 
 		Transaction.execute {
-			count = new Sql<>(Person)
-				.connection(it)
+			count = new Sql<>(Person).connection(it)
 				.insert(new Person(6, 'Setoka', 'Orange', 2001, 2, 1))
 		}
 
@@ -661,21 +627,19 @@ public class JavaDocExamples2 extends Common {
 	}
 
 	// delete 3
-	static void sql_delete3() {
+	void sql_delete3() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Person)
-         .connection(it)
+     count = new Sql<>(Person).connection(it)
          .delete([new Person(7), new Person(8), new Person(9)])
  }
 
 	/**/DebugTrace.print('count', count)
 
 	Transaction.execute {
-		new Sql<>(Person)
-			.connection(it)
+		new Sql<>(Person).connection(it)
 			.insert([
 				new Person(7, 'Harumi', 'Orange', 2001, 2, 2),
 				new Person(8, 'Mihaya', 'Orange', 2001, 2, 3),

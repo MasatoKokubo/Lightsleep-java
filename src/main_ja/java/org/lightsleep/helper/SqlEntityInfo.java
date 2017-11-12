@@ -30,7 +30,7 @@ public interface SqlEntityInfo<E> {
 	EntityInfo<E> entityInfo();
 
 	/**
-	 * <b>Expression</b> クラスで参照されるエンティティを返します。
+	 * <b>Expression</b>クラスで参照されるエンティティを返します。
 	 *
 	 * @return エンティティ
 	 */
@@ -38,9 +38,9 @@ public interface SqlEntityInfo<E> {
 
 	/**
 	 * エンティティ情報が持っているすべてのカラム情報から作成される
-	 * <b>SqlColumnInfo</b> のストリームを返します。
+	 * <b>SqlColumnInfo</b>のストリームを返します。
 	 *
-	 * @return SqlColumnInfo のストリーム
+	 * @return SqlColumnInfoのストリーム
 	 */
 	default Stream<SqlColumnInfo> sqlColumnInfoStream() {
 		return null;
@@ -48,10 +48,10 @@ public interface SqlEntityInfo<E> {
 
 	/**
 	 * 指定された名前コレクションのいずれかにマッチするカラム情報から作成される
-	 * <b>SqlColumnInfo</b> のストリームを返します。
+	 * <b>SqlColumnInfo</b>のストリームを返します。
 	 *
 	 * @param names 名前コレクション
-	 * @return SqlColumnInfo のストリーム
+	 * @return SqlColumnInfoのストリーム
 	 */
 	default Stream<SqlColumnInfo> selectedSqlColumnInfoStream(Collection<String> names) {
 		return null;

@@ -6,7 +6,7 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * <b>NonSelectProperty</b> アノテーションの配列を示します。
+ * <b>NonSelectProperty</b>アノテーションの配列を示します。
  *
  * @since 1.3.0
  * @author Masato Kokubo
@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface NonSelectProperties {
-	/** @return <b>NonSelectProperty</b> アノテーションの配列 */
+	/** @return <b>NonSelectProperty</b>アノテーションの配列 */
 	NonSelectProperty[] value();
 }

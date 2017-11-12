@@ -6,6 +6,7 @@ package org.lightsleep.component;
 import java.util.List;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
  * サブクエリを使用する条件を構成します。
@@ -17,14 +18,14 @@ import org.lightsleep.Sql;
  */
 public class SubqueryCondition<SE> implements Condition {
 	/**
-	 * <b>SubqueryCondition</b> を構築します。
+	 * <b>SubqueryCondition</b>を構築します。
 	 *
 	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
 	 * @param expression サブクエリの SELECT 文の左部分の式
-	 * @param outerSql 外側の Sql オブジェクト
-	 * @param subSql サブクエリ用の <b>Sql</b> オブジェクト
+	 * @param outerSql 外側の Sqlオブジェクト
+	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
 	 *
-	 * @throws NullPointerException <b>expression</b>, <b>outerSql</b> または <b>subSql</b> が null の場合
+	 * @throws NullPointerException <b>expression</b>, <b>outerSql</b>または<b>subSql</b>がnullの場合
 	 */
 	public <E> SubqueryCondition(Expression expression, Sql<E> outerSql, Sql<SE> subSql) {
 	}
@@ -41,7 +42,7 @@ public class SubqueryCondition<SE> implements Condition {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
 }

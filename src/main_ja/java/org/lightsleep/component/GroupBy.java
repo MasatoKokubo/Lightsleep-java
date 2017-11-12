@@ -6,35 +6,36 @@ package org.lightsleep.component;
 import java.util.List;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
- * SQL の GROUP BY  を構成します。
+ * SQLのGROUP BYを構成します。
  *
  * @since 1.0
  * @author Masato Kokubo
  */
 public class GroupBy implements SqlComponent, Cloneable {
 	/**
-	 * 空の GroupBy を構築します。
+	 * 空のGroupByを構築します。
 	 */
 	public GroupBy() {
 	}
 
 	/**
-	 * GroupBy の構成要素を追加します。
+	 * GroupByの構成要素を追加します。
 	 *
 	 * @param expression 追加する構成要素
 	 *
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>expression</b> が null の場合
+	 * @throws NullPointerException <b>expression</b>がnullの場合
 	 */
 	public GroupBy add(Expression expression) {
 		return null;
 	}
 
 	/**
-	 * GroupBy の構成要素を追加します。
+	 * GroupByの構成要素を追加します。
 	 *
 	 * @param content 式の内容
 	 * @param arguments 式の引数
@@ -49,7 +50,7 @@ public class GroupBy implements SqlComponent, Cloneable {
 	}
 
 	/**
-	 * GroupBy の構成要素のリストを返します。
+	 * GroupByの構成要素のリストを返します。
 	 *
 	 * @return 構成要素のリスト
 	 */
@@ -69,7 +70,7 @@ public class GroupBy implements SqlComponent, Cloneable {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
 		return  null;
 	}
 

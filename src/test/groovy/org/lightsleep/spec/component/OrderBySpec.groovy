@@ -18,7 +18,7 @@ class OrderBySpec extends Specification {
 
 		expect:
 			new OrderBy().empty
-			new OrderBy().toString(new Sql<>(Contact), new ArrayList<Object>()) == ''
+			new OrderBy().toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>()) == ''
 
 	/**/DebugTrace.leave()
 	}
@@ -28,7 +28,7 @@ class OrderBySpec extends Specification {
 
 		setup:
 			def orderBy = new OrderBy().add(new OrderBy.Element('A'))
-			def string = orderBy.toString(new Sql<>(Contact), new ArrayList<Object>())
+			def string = orderBy.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('orderBy', orderBy)
 		/**/DebugTrace.print('string', string)
 
@@ -46,7 +46,7 @@ class OrderBySpec extends Specification {
 			def orderBy = new OrderBy()
 				.add(new OrderBy.Element('A').asc())
 				.add(new OrderBy.Element('B').desc())
-			def string = orderBy.toString(new Sql<>(Contact), new ArrayList<Object>())
+			def string = orderBy.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('orderBy', orderBy)
 		/**/DebugTrace.print('string', string)
 
@@ -64,7 +64,7 @@ class OrderBySpec extends Specification {
 			def orderBy = new OrderBy()
 				.add(new OrderBy.Element('A')).desc()
 				.add(new OrderBy.Element('B')).asc()
-			def string = orderBy.toString(new Sql<>(Contact), new ArrayList<Object>())
+			def string = orderBy.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('orderBy', orderBy)
 		/**/DebugTrace.print('string', string)
 

@@ -13,7 +13,7 @@ import spock.lang.*
 // MySQLSpec
 @Unroll
 class MySQLSpec extends Specification {
-	@Shared map = MySQL.instance().typeConverterMap()
+	@Shared map = MySQL.instance.typeConverterMap()
 
 	// -> SqlString
 	def "MySQLSpec -> SqlString"() {

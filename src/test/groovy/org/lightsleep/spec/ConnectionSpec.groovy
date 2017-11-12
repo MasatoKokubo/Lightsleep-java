@@ -12,22 +12,23 @@ import org.lightsleep.*
 import org.lightsleep.component.*
 import org.lightsleep.connection.*
 import org.lightsleep.database.*
+import org.lightsleep.helper.Resource
 import org.lightsleep.test.entity.*
 
 import spock.lang.*
 
 // ConnectionSpec
 @Unroll
-class ConnectionSpec extends Specification {
-	static final int THREAD_COUNT         =   50
-	static final long SLEEP_TIME1         =   10 // ms
-	static final long SLEEP_TIME2         = 1000 // ms
-	static final int THREAD_COUNT_SQLITE  =   10
-	static final long SLEEP_TIME1_SQLITE  = 2000 // ms
-	static final long SLEEP_TIME2_SQLITE  =    1 // ms
+public class ConnectionSpec extends SpecCommon {
+	private static final int THREAD_COUNT         =   50
+	private static final long SLEEP_TIME1         =   10 // ms
+	private static final long SLEEP_TIME2         = 1000 // ms
+	private static final int THREAD_COUNT_SQLITE  =   10
+	private static final long SLEEP_TIME1_SQLITE  = 2000 // ms
+	private static final long SLEEP_TIME2_SQLITE  =    1 // ms
 
 	// The map of isolation levels
-	static isolationLevelsMap = [
+	private static isolationLevelsMap = [
 		(Connection.TRANSACTION_NONE            ): 'none',
 		(Connection.TRANSACTION_READ_COMMITTED  ): 'read-committed',
 		(Connection.TRANSACTION_READ_UNCOMMITTED): 'read-uncommitted',
@@ -35,52 +36,19 @@ class ConnectionSpec extends Specification {
 		(Connection.TRANSACTION_SERIALIZABLE    ): 'serializable'
 	] as Map
 
-	static databaseName = 'test'
-
-	static modifier = {Properties proprties ->
-		proprties['url'    ] = proprties['url'    ] + databaseName
-		proprties['jdbcUrl'] = proprties['jdbcUrl'] + databaseName
+	def setup() {
+		deleteAllTables()
 	}
 
-	static connectionSupplierMap = [
-		(C3p0    ): new C3p0    (modifier),
-		(Dbcp    ): new Dbcp    (modifier),
-		(HikariCP): new HikariCP(modifier),
-		(Jdbc    ): new Jdbc    (modifier),
-		(TomcatCP): new TomcatCP(modifier)
-	] as Map
-
-	static def defaultConnectionSupplier = connectionSupplierMap[Jdbc]
-
-	static ConnectionSupplier getConnectionSupplier(Class<? extends ConnectionSupplier> connectionSupplierClass) {
-		return connectionSupplierMap.get(connectionSupplierClass)
-	}
-
-	/**
-	 * Deletes test data.
-	 */
-	def setupSpec() {
-		Sql.connectionSupplier = defaultConnectionSupplier
-
-		Transaction.execute {
-			new Sql<>(Contact ).where(Condition.ALL).delete(it)
-			new Sql<>(Address).where(Condition.ALL).delete(it)
-			new Sql<>(Phone  ).where(Condition.ALL).delete(it)
-		}
-	}
-
-	def "ConnectionSpec #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	def "ConnectionSpec #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-			def connectionSupplier = getConnectionSupplier(connectionSupplierClass)
-
-			// Makes test data.
-		/**/DebugTrace.print('Makes test data.')
+			// Make test data.
+		/**/DebugTrace.print('Make test data.')
 			def contacts = InsertUpdateDeleteSpec.makeTestData(null, 0, THREAD_COUNT)
 
-			def isSQLite = Sql.getDatabase() instanceof SQLite
+			def isSQLite = connectionSupplier.database instanceof SQLite
 		/**/DebugTrace.print('isSQLite', isSQLite)
 
 			Thread[] threads = new Thread[isSQLite ? THREAD_COUNT_SQLITE : THREAD_COUNT]
@@ -99,7 +67,7 @@ class ConnectionSpec extends Specification {
 							++count
 						/**/DebugTrace.print(index2 + ': start: connection count', count)
 
-							if (Sql.database instanceof SQLServer) {
+							if (it.database instanceof SQLServer) {
 								def beforeTransactionIsolation = it.transactionIsolation
 								it.transactionIsolation = Connection.TRANSACTION_READ_UNCOMMITTED
 								def afterTransactionIsolation = it.transactionIsolation
@@ -112,9 +80,9 @@ class ConnectionSpec extends Specification {
 								)
 							}
 
-							new Sql<>(ContactComposite).insert(it, contact)
+							new Sql<>(ContactComposite).connection(it).insert(contact)
 
-							ContactComposite contact2 = new Sql<>(ContactComposite).where(contact).select(it).orElse(null)
+							ContactComposite contact2 = new Sql<>(ContactComposite).connection(it).where(contact).select().orElse(null)
 							try {
 								Thread.sleep(isSQLite ? SLEEP_TIME2_SQLITE : SLEEP_TIME2)
 							}
@@ -136,7 +104,7 @@ class ConnectionSpec extends Specification {
 				Thread.sleep(isSQLite ? SLEEP_TIME1_SQLITE : SLEEP_TIME1)
 			}
 
-			// Waits for all threads to finish.
+			// Wait for all threads to finish.
 			for (def index = 0; index < threads.length; ++index)
 				threads[index].join()
 
@@ -146,7 +114,6 @@ class ConnectionSpec extends Specification {
 	/**/DebugTrace.leave()
 
 		where:
-			connectionSupplierClass << [C3p0, Dbcp, HikariCP, TomcatCP]
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 }

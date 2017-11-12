@@ -5,17 +5,35 @@ package org.lightsleep.example;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.lightsleep.Sql;
 import org.lightsleep.Transaction;
 import org.lightsleep.component.*;
+import org.lightsleep.connection.C3p0;
+import org.lightsleep.connection.ConnectionSupplier;
+import org.lightsleep.connection.Dbcp;
+import org.lightsleep.connection.HikariCP;
+import org.lightsleep.connection.Jdbc;
+import org.lightsleep.connection.TomcatCP;
 import org.lightsleep.example.java.entity.*;
-
+import org.lightsleep.helper.Resource;
+import org.lightsleep.logger.LoggerFactory;
 
 // Common
 public class Common {
+	static {
+		System.getProperties().setProperty("lightsleep.resource", "example/lightsleep");
+	}
+
+	public Common () {
+		LoggerFactory.getLogger(Common.class).info(getClass().getName());
+
+	}
+
 	// init1
-	protected static void init1() {
+	protected void init1() {
 		Transaction.execute(conn -> {
 			new Sql<>(Contact.class).where(Condition.ALL).connection(conn).delete();
 			new Sql<>(Phone  .class).where(Condition.ALL).connection(conn).delete();
@@ -26,7 +44,7 @@ public class Common {
 	}
 
 	// init2
-	protected static void init2() {
+	protected void init2() {
 		List<Contact> persons  = new ArrayList<>();
 		List<Phone>   phones    = new ArrayList<>();
 		List<Address> addresses = new ArrayList<>();

@@ -6,9 +6,9 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * INSERT SQL で、フィールド値の代わりに使用される式を示します。
+ * INSERT SQLで、フィールド値の代わりに使用される式を示します。
  *
- * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleTitle"><span>使用例/Java</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}Insert("CURRENT_TIMESTAMP")</b>
  *   public Timestamp createdTime;
@@ -16,7 +16,7 @@ import java.lang.annotation.*;
  *   public Timestamp updatedTime;
  * </pre></div>
  *
- * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleTitle"><span>使用例/Groovy</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}Insert('CURRENT_TIMESTAMP')</b>
  *   Timestamp createdTime
@@ -24,7 +24,7 @@ import java.lang.annotation.*;
  *   Timestamp updatedTime
  * </pre></div>
  *
- * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleTitle"><span>生成されるSQL</span></div>
  * <div class="exampleCode"><pre>
  * INSERT INTO ... (..., <b>createdTime</b>, <b>updatedTime</b>) VALUES (..., <b>CURRENT_TIMESTAMP</b>, <b>CURRENT_TIMESTAMP</b>)
  * </pre></div>

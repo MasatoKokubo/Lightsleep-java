@@ -1,4 +1,4 @@
 /**
-	Classes to create SQLs for some database management systems.
-*/
+ * Classes for generating SQL for various DBMSs.
+ */
 package org.lightsleep.database;

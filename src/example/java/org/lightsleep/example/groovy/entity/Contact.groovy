@@ -6,8 +6,7 @@ package org.lightsleep.example.groovy.entity
 import java.sql.Date
 import java.sql.Timestamp
 import java.util.Calendar
-
-import org.lightsleep.Sql
+import org.lightsleep.database.Database
 import org.lightsleep.entity.Column
 import org.lightsleep.entity.Insert
 import org.lightsleep.entity.Key
@@ -94,10 +93,10 @@ class Contact extends ContactKey {
 		@SelectProperty(property='fullName', expression="{firstName}+' '+{lastName}")
 		static class SQLServer extends Ex {}
 
-		static Class<? extends Ex> getTargetClass() {
+		static Class<? extends Ex> targetClass(Database database) {
 			try {
 				return (Class<? extends Ex>)Class.forName(
-					Ex.name + '$' + Sql.database.getClass().simpleName)
+					Ex.name + '$' + database.getClass().simpleName)
 			}
 			catch (ClassNotFoundException e) {
 				throw new RuntimeException(e)

@@ -5,6 +5,7 @@ package org.lightsleep.database;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.lightsleep.Sql;
@@ -113,4 +114,43 @@ public interface Database {
 	 * @return a converted object
 	 */
 	 <T> T convert(Object value, Class<T> type);
+
+	/**
+	 * Returns a database handler related to <b>jdbcUrl</b>.
+	 *
+	 * @param jdbcUrl a jdbc url
+	 * @return the database handler related to the jdbc url
+	 *
+	 * @throws IllegalArgumentException if <b>jdbcUrl</b> does not contain a string that can identify a <b>Database</b> class
+	 *
+	 * @since 2.1.0
+	 */
+	@SuppressWarnings("unchecked")
+	static Database getInstance(String jdbcUrl) {
+		Objects.requireNonNull(jdbcUrl, "jdbcUrl");
+		String[] words = jdbcUrl.split(":");
+		for (String word : words) {
+			if (word.equals("jdbc")) continue;
+			if (!word.matches("[a-z0-9]+")) continue;
+
+			Class<? extends Database> anchorClass;
+			try {
+				String anchorClassName = Database.class.getPackage().getName() + ".anchor." + word;
+				anchorClass = (Class<? extends Database>)Class.forName(anchorClassName);
+			} catch (ClassNotFoundException e) {
+				continue;
+			}
+
+			try {
+				Class<? extends Database> databaseClass = (Class<? extends Database>)anchorClass.getSuperclass();
+				Database database = (Database)databaseClass.getField("instance").get(null);
+				return database;
+
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		throw new IllegalArgumentException(jdbcUrl);
+	}
 }

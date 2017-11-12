@@ -9,6 +9,7 @@ import java.util.ArrayList
 import org.debugtrace.DebugTrace
 import org.lightsleep.*
 import org.lightsleep.component.EntityCondition
+import org.lightsleep.database.Standard
 import org.lightsleep.entity.*
 
 import spock.lang.*
@@ -88,10 +89,10 @@ class KeyTableSpec extends Specification {
 
 		when:
 			def createdSql =
-				method == 'select' ? Sql.database.selectSql(sql, []) :
-				method == 'insert' ? Sql.database.insertSql(sql, []) :
-				method == 'update' ? Sql.database.updateSql(sql, []) :
-				method == 'delete' ? Sql.database.deleteSql(sql, []) : ''
+				method == 'select' ? Standard.instance.selectSql(sql, []) :
+				method == 'insert' ? Standard.instance.insertSql(sql, []) :
+				method == 'update' ? Standard.instance.updateSql(sql, []) :
+				method == 'delete' ? Standard.instance.deleteSql(sql, []) : ''
 		/**/DebugTrace.print('createdSql', createdSql)
 
 		then:

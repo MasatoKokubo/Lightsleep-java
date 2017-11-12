@@ -12,21 +12,21 @@ import org.lightsleep.Sql;
 
 /**
  * <a href="https://www.sqlite.org/index.html" target="SQLite">SQLite</a>
- * 用のデータベース・ハンドラーです。<br>
+ * 用のデータベース･ハンドラです。<br>
  *
- * スーパークラスで追加された <b>TypeConverter</b> オブジェクトに以下を追加するか置き換えます。<br>
+ * スーパークラスで追加された<b>TypeConverter</b>オブジェクトに以下を追加するか置き換えます。<br>
  * <br>
  *
  * <table class="additional">
- *   <caption><span>追加される TypeConverter オブジェクト</span></caption>
+ *   <caption><span>追加されるTypeConverterオブジェクト</span></caption>
  *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
  *   <tr><td>Boolean       </td><td rowspan="7">SqlString</td><td>false ➔ <code>0</code><br>true ➔ <code>1</code></td></tr>
- *   <tr><td>String        </td><td><code>'...'</code><br>長い文字列の場合は <code>?</code> <i>(SQLパラメータ)</i></td></tr>
+ *   <tr><td>String        </td><td><code>'...'</code><br>長い文字列の場合は<code>?</code><i>(SQLパラメータ)</i></td></tr>
  *   <tr><td>java.util.Date</td><td rowspan="2"><code>'yyyy-MM-dd'</code></td></tr>
  *   <tr><td>java.sql.Date </td></tr>
  *   <tr><td>Time          </td><td><code>'HH:mm:ss'</code></td></tr>
  *   <tr><td>Timestamp     </td><td><code>'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
- *   <tr><td>byte[]        </td><td><code>?</code> <i>(SQLパラメータ)</i></td></tr>
+ *   <tr><td>byte[]        </td><td><code>?</code><i>(SQLパラメータ)</i></td></tr>
  * </table>
  *
  * @since 1.7.0
@@ -36,16 +36,30 @@ import org.lightsleep.Sql;
  */
 public class SQLite extends Standard {
 	/**
-	 * <b>SQLite</b> オブジェクトを返します。
+	 * このクラスの唯一のインスタンス
 	 *
-	 * @return SQLite オブジェクト
+	 * @since 2.1.0
 	 */
+	public static final SQLite instance = new SQLite();
+
+	/**
+	 * このクラスの唯一のインスタンスを返します。
+	 *
+	 * <p>
+	 * @deprecated リリース 2.1.0 より。代わりに{@link #instance}を使用してください。
+	 * </p>
+	 *
+	 * @return このクラスの唯一のインスタンス
+	 */
+// 2.1.0
+	@Deprecated
+////
 	public static Database instance() {
 		return null;
 	}
 
 	/**
-	 * <b>SQLite</b> を構築します。
+	 * <b>SQLite</b>を構築します。
 	 */
 	protected SQLite() {
 	}

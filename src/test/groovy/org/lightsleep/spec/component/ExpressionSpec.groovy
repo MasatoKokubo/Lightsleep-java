@@ -20,12 +20,12 @@ import spock.lang.*
 @Unroll
 class ExpressionSpec extends Specification {
 	static databases = [
-		Standard  .instance(),
-		MySQL     .instance(),
-		Oracle    .instance(),
-		PostgreSQL.instance(),
-		SQLite    .instance(),
-		SQLServer .instance()
+		Standard  .instance,
+		MySQL     .instance,
+		Oracle    .instance,
+		PostgreSQL.instance,
+		SQLite    .instance,
+		SQLServer .instance
 	]
 
 	@Shared TimeZone timeZone
@@ -48,7 +48,7 @@ class ExpressionSpec extends Specification {
 			expression.arguments().length == 4
 			!expression.isEmpty()
 
-		when: def string = expression.toString(new Sql<>(Contact), new ArrayList<Object>())
+		when: def string = expression.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == '{}, 1, 2, 3, NULL'
 
 	/**/DebugTrace.leave()
@@ -59,7 +59,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression("{}, {}, {}, {}", 1.1, 1.2, 1.3)
-			expression.toString(new Sql<>(Contact), new ArrayList<Object>())
+			expression.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 
 		then:
 			def e = thrown MissingArgumentsException
@@ -75,7 +75,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression("{}, {}", 1.1, 1.2, 1.3)
-				expression.toString(new Sql<>(Contact), new ArrayList<Object>())
+				expression.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 
 		then:
 			def e = thrown MissingArgumentsException
@@ -91,7 +91,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression('{}', "AA'BB''CC")
-			def string = expression.toString(new Sql<>(Contact), new ArrayList<Object>())
+			def string = expression.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
 		then:
@@ -102,28 +102,20 @@ class ExpressionSpec extends Specification {
 
 	def "ExpressionSpec Date argument - #databaseName"(Database database, String databaseName) {
 	/**/DebugTrace.enter()
-		setup:
-			def beforeDatabase = Sql.database
-			Sql.database = database
-
 		when:
 			def expression = new Expression('{}', new Date(1 * 86400_000))
-			def string = expression.toString(new Sql<>(Contact), new ArrayList<Object>())
+			def string = expression.toString(database, new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
 		then:
-			if (Sql.database instanceof SQLite)
+			if (database instanceof SQLite)
 				assert string == "'1970-01-02'"
 
-			else if (Sql.database instanceof SQLServer)
+			else if (database instanceof SQLServer)
 				assert string == "CAST('1970-01-02' AS DATE)"
 
 			else
 				assert string == "DATE'1970-01-02'"
-
-		cleanup:
-			Sql.database = beforeDatabase ?: Standard.instance()
-
 	/**/DebugTrace.leave()
 		where:
 			database << databases
@@ -132,30 +124,23 @@ class ExpressionSpec extends Specification {
 
 	def "ExpressionSpec Time argument - #databaseName"(Database database, String databaseName) {
 	/**/DebugTrace.enter()
-		setup:
-			def beforeDatabase = Sql.database
-			Sql.database = database
-
 		when:
 			def expression = new Expression('{}', new Time(1 * 3600_000 + 2 * 60_000 + 3 * 1000))
-			def string = expression.toString(new Sql<>(Contact), new ArrayList<Object>())
+			def string = expression.toString(database, new Sql<>(Contact), new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
 		then:
-			if (Sql.database instanceof Oracle)
+			if (database instanceof Oracle)
 				assert string == "TO_TIMESTAMP('1970-01-01 01:02:03','YYYY-MM-DD HH24:MI:SS.FF3')"
 
-			else if (Sql.database instanceof SQLite)
+			else if (database instanceof SQLite)
 				assert string == "'01:02:03'"
 
-			else if (Sql.database instanceof SQLServer)
+			else if (database instanceof SQLServer)
 				assert string == "CAST('01:02:03' AS TIME)"
 
 			else
 				assert string == "TIME'01:02:03'"
-
-		cleanup:
-			Sql.database = beforeDatabase ?: Standard.instance()
 
 	/**/DebugTrace.leave()
 		where:
@@ -166,27 +151,20 @@ class ExpressionSpec extends Specification {
 //	def "ExpressionSpec Timestamp argument - #databaseName"(Database database, String databaseName) {
 //	/**/DebugTrace.enter()
 //
-//		setup:
-//			def beforeDatabase = Sql.database
-//			Sql.database = database
-//
 //		when:
 //			def expression = new Expression('{}', new Timestamp(1 * 86400_000 + 23 * 3600_000 + 58 * 60_000 + 59 * 1000))
-//			def string = expression.toString(new Sql<>(Contact), new ArrayList<Object>())
+//			def string = expression.toString(database, new Sql<>(Contact), new ArrayList<Object>())
 //		/**/DebugTrace.print('string', string)
 //
 //		then:
-//			if (Sql.database instanceof SQLite)
+//			if (database instanceof SQLite)
 //				assert string == "'1970-01-02 23:58:59.000'"
 //
-//			else if (Sql.database instanceof SQLServer)
+//			else if (database instanceof SQLServer)
 //				assert string == "CAST('1970-01-02 23:58:59.0' AS DATETIME2)"
 //
 //			else
 //				assert string == "TIMESTAMP'1970-01-02 23:58:59.000'"
-//
-//		cleanup:
-//			Sql.database = beforeDatabase ?: Standard.instance()
 //
 //	/**/DebugTrace.leave()
 //		where:
@@ -205,7 +183,7 @@ class ExpressionSpec extends Specification {
 			sql.setEntity(contact)
 
 			def expression = new Expression(" {#name.first}||' '||{ # name . last } ")
-			def string = expression.toString(sql, new ArrayList<Object>())
+			def string = expression.toString(Standard.instance, sql, new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
 		then: string == " 'Akane'||' '||'Apple' "
@@ -221,7 +199,7 @@ class ExpressionSpec extends Specification {
 			contact.name.last = "La'st"
 			def sql = new Sql<>(Contact).setEntity(contact)
 			def expression = new Expression("{ name.last } = { # name.last }")
-			def string = expression.toString(sql, new ArrayList<Object>())
+			def string = expression.toString(Standard.instance, sql, new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
 		then: string == "lastName = 'La''st'"
@@ -234,7 +212,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression('{C.name.last}')
-			def string = expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
+			def string = expression.toString(Standard.instance, new Sql<>(Contact, 'C'), new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
 		then: string == 'C.lastName'
@@ -247,7 +225,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression('{C_name.last}')
-			def string = expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
+			def string = expression.toString(Standard.instance, new Sql<>(Contact, 'C'), new ArrayList<Object>())
 		/**/DebugTrace.print('string', string)
 
 		then: string == 'C_lastName'
@@ -255,29 +233,24 @@ class ExpressionSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
-
 	@Ignore // Groovy converts byte[] to Byte[] when passing to variable length argument methods.
 	def "ExpressionSpec byte[] argument - #databaseName"(Database database, String databaseName) {
 	/**/DebugTrace.enter()
-		setup:
-			def beforeDatabase = Sql.database
-			Sql.database = database
-
 		when:
 			def bytes = (Object)(byte[])[1, 2, 3]
 		/**/DebugTrace.print('bytes', bytes)
 			def expression = new Expression('{}', bytes)
 			def paramerters = new ArrayList<Object>()
-			def string = expression.toString(new Sql<>(Contact), paramerters)
+			def string = expression.toString(database, new Sql<>(Contact), paramerters)
 		/**/DebugTrace.print('string', string)
 		/**/DebugTrace.print('paramerters', paramerters)
 
 		then:
-			if (Sql.database instanceof Standard || Sql.database instanceof MySQL) {
+			if (database instanceof Standard || database instanceof MySQL) {
 				assert string == "X'010203'"
 				assert paramerters.size() == 0
 
-			} else if (Sql.database instanceof PostgreSQL) {
+			} else if (database instanceof PostgreSQL) {
 				assert string == "E'\\\\x010203'"
 				assert paramerters.size() == 0
 
@@ -285,9 +258,6 @@ class ExpressionSpec extends Specification {
 				assert string == "?"
 				assert paramerters.size() == 1
 			}
-
-		cleanup:
-			Sql.database = beforeDatabase ?: Standard.instance()
 
 	/**/DebugTrace.leave()
 		where:
@@ -330,7 +300,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression('{P.name.last}')
-			expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
+			expression.toString(Standard.instance, new Sql<>(Contact, 'C'), new ArrayList<Object>())
 
 		then:
 			def e = thrown MissingPropertyException
@@ -348,7 +318,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression("{P_name.last}")
-			expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
+			expression.toString(Standard.instance, new Sql<>(Contact, 'C'), new ArrayList<Object>())
 
 		then:
 			def e = thrown MissingPropertyException
@@ -365,7 +335,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression("{last}")
-			expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
+			expression.toString(Standard.instance, new Sql<>(Contact, 'C'), new ArrayList<Object>())
 
 		then:
 			def e = thrown MissingPropertyException
@@ -381,7 +351,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression("{C.last}")
-			expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
+			expression.toString(Standard.instance, new Sql<>(Contact, 'C'), new ArrayList<Object>())
 
 		then:
 			def e = thrown MissingPropertyException
@@ -398,7 +368,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression("{C_last}")
-			expression.toString(new Sql<>(Contact, 'C'), new ArrayList<Object>())
+			expression.toString(Standard.instance, new Sql<>(Contact, 'C'), new ArrayList<Object>())
 
 		then:
 			def e = thrown MissingPropertyException
@@ -433,7 +403,7 @@ class ExpressionSpec extends Specification {
 
 		when:
 			def expression = new Expression("{name.last} = {#name.last}")
-			expression.toString(new Sql<>(Contact), new ArrayList<Object>())
+			expression.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 
 		then: thrown NullPointerException
 

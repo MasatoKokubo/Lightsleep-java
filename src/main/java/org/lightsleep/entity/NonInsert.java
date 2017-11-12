@@ -33,11 +33,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonInsert {
-// 2.0.0
 	/**
 	 * @return true if the column related the field is not used in INSERT SQL, false otherwise
 	 * @since 2.0.0
 	 */
 	boolean value() default true;
-////
 }

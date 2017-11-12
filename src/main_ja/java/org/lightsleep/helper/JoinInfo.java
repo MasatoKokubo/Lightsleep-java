@@ -31,9 +31,9 @@ public class JoinInfo<JE> implements SqlEntityInfo<JE> {
 		}
 
 		/**
-		 * SQL 文字列を返します。
+		 * SQL文字列を返します。
 		 *
-		 * @return SQL 文字列
+		 * @return SQL文字列
 		 */
 		public String sql() {
 			return null;
@@ -41,14 +41,14 @@ public class JoinInfo<JE> implements SqlEntityInfo<JE> {
 	}
 
 	/**
-	 * <b>JoinInfo</b> を構築します。
+	 * <b>JoinInfo</b>を構築します。
 	 *
 	 * @param joinType 結合タイプ
 	 * @param entityInfo 結合テーブルに対応するエンティティ情報
 	 * @param tableAlias 結合テーブルの別名
 	 * @param on 結合条件
 	 *
-	 * @throws NullPointerException <b>joinType</b>, <b>entityInfo</b>, <b>tableAlias</b> または <b>on</b> が null の場合
+	 * @throws NullPointerException <b>joinType</b>, <b>entityInfo</b>, <b>tableAlias</b> または <b>on</b>がnullの場合
 	 */
 	public JoinInfo(JoinType joinType, EntityInfo<JE> entityInfo, String tableAlias, Condition on) {
 	}

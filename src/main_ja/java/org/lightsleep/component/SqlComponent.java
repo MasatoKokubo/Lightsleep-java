@@ -6,9 +6,10 @@ package org.lightsleep.component;
 import java.util.List;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
- * SQL の構成要素のインタフェースです。
+ * SQLの構成要素のインタフェースです。
  *
  * @since 1.0.0
  * @author Masato Kokubo
@@ -17,21 +18,22 @@ public interface SqlComponent {
 	/**
 	 * この構成要素が空かどうかを返します。
 	 *
-	 * @return 空なら <b>true</b>、そうでなければ <b>false</b>
+	 * @return 空であれば<b>true</b>、そうでなければ<b>false</b>
 	 */
 	boolean isEmpty();
 
 	/**
-	 * このオブジェクトの SQL 文字列表現を返します。<br>
-	 * 文字列生成時にパラメータ文字 (<b>?</b>) を使用した場合は、
-	 * パラメータ・オブジェクトをパラメータ・リストに追加します。
+	 * このオブジェクトのSQL文字列表現を返します。<br>
+	 * 文字列生成時にパラメータ文字(<b>?</b>)を使用した場合は、
+	 * パラメータ･オブジェクトをパラメータ･リストに追加します。
 	 *
 	 * @param <E> エンティティの型
-	 * @param sql <b>Sql</b> オブジェクト
-	 * @param parameters パラメータ・リスト
-	 * @return SQL 文字列
+	 * @param sql <b>Sql</b>オブジェクト
+	 * @param database データベース･ハンドラ
+	 * @param parameters パラメータ･リスト
+	 * @return SQL文字列
 	 *
-	 * @throws NullPointerException <b>sql</b> または <b>parameters</b> が null の場合
+	 * @throws NullPointerException <b>sql</b>または<b>parameters</b>がnullの場合
 	 */
-	<E> String toString(Sql<E> sql, List<Object> parameters);
+	<E> String toString(Database database, Sql<E> sql, List<Object> parameters);
 }

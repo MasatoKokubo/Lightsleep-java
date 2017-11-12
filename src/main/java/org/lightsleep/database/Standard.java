@@ -101,20 +101,32 @@ public class Standard implements Database {
 	private static final String messageSelectSqlWithoutColumns = resource.getString("messageSelectSqlWithoutColumns");
 
 	/**
-	 * The maximum length of string literal when creates SQL.<br>
+	 * Maximum length of string literal when generates SQL.
+	 *
+	 * <p>
 	 * If the string literal exceeds this length, it generated as SQL parameters (?).<br>
 	 * The value of <b>maxStringLiteralLength</b> of lightsleep.properties has been set.
 	 * (if undefined, 128)
+	 * </p>
 	 */
-	public static final int maxStringLiteralLength = Resource.globalResource.getInt("maxStringLiteralLength", 128);
+// 2.1.0
+//	public static final int maxStringLiteralLength = Resource.getGlobal().getInt("maxStringLiteralLength", 128);
+	public final int maxStringLiteralLength = Resource.getGlobal().getInt("maxStringLiteralLength", 128);
+////
 
 	/**
-	 * The maximum length of binary literal when creates SQL.<br>
+	 * Maximum length of binary literal when generates SQL.
+	 *
+	 * <p>
 	 * If the binary literal exceeds this length, it generated as SQL parameters (?).<br>
 	 * The value of <b>maxBinaryLiteralLength</b> of lightsleep.properties has been set.
 	 * (if undefined, 128)
+	 * </p>
 	 */
-	public static final int maxBinaryLiteralLength = Resource.globalResource.getInt("maxBinaryLiteralLength", 128);
+// 2.1.0
+//	public static final int maxBinaryLiteralLength = Resource.getGlobal().getInt("maxBinaryLiteralLength", 128);
+	public final int maxBinaryLiteralLength = Resource.getGlobal().getInt("maxBinaryLiteralLength", 128);
+////
 
 	/**
 	 * <b>TypeConverter</b> object to convert
@@ -123,14 +135,28 @@ public class Standard implements Database {
 	protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"));
 
-	// The Standard instance
-	private static final Database instance = new Standard();
+	/**
+	 * The only instance of this class
+	 *
+	 * @since 2.1.0
+	 */
+// 2.1.0
+//	private static final Database instance = new Standard();
+	public static final Standard instance = new Standard();
+////
 
 	/**
-	 * Returns the <b>Standard</b> instance.
+	 * Returns the only instance of this class.
 	 *
-	 * @return the <b>Standard</b> instance
+	 * <p>
+	 * @deprecated As of release 2.1.0, instead use {@link #instance}
+	 * </p>
+	 *
+	 * @return the only instance of this class
 	 */
+// 2.1.0
+	@Deprecated
+////
 	public static Database instance() {
 		return instance;
 	}
@@ -630,7 +656,10 @@ public class Standard implements Database {
 
 					} else {
 						// First expression
-						buff.append(expression.toString(sql, parameters));
+					// 2.1.0
+					//	buff.append(expression.toString(sql, parameters));
+						buff.append(expression.toString(this, sql, parameters));
+					////
 
 						// column alias
 						buff.append(" AS ").append(columnAlias);
@@ -823,7 +852,10 @@ public class Standard implements Database {
 
 			// ON ...
 			if (!joinInfo.on().isEmpty())
-				buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
+			// 2.1.0
+			//	buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
+				buff.append(" ON ").append(joinInfo.on().toString(this, sql, parameters));
+			////
 		});
 	}
 
@@ -867,7 +899,10 @@ public class Standard implements Database {
 					expression = new Expression("{#" + propertyName + "}");
 
 				buff.append(delimiter[0])
-					.append(expression.toString(sql, parameters));
+				// 2.1.0
+				//	.append(expression.toString(sql, parameters));
+					.append(expression.toString(this, sql, parameters));
+				////
 				delimiter[0] = ", ";
 			});
 		buff.append(")");
@@ -907,7 +942,10 @@ public class Standard implements Database {
 				buff.append(delimiter[0])
 					.append(columnName)
 					.append("=")
-					.append(expression.toString(sql, parameters));
+				// 2.1.0
+				//	.append(expression.toString(sql, parameters));
+					.append(expression.toString(this, sql, parameters));
+				////
 				delimiter[0] = ", ";
 			});
 	}
@@ -924,7 +962,10 @@ public class Standard implements Database {
 	 */
 	protected <E> void appendWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (sql.getWhere() != Condition.ALL)
-			buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
+		// 2.1.0
+		//	buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
+			buff.append(" WHERE ").append(sql.getWhere().toString(this, sql, parameters));
+		////
 	}
 
 	/**
@@ -939,7 +980,10 @@ public class Standard implements Database {
 	 */
 	protected <E> void appendGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (!sql.getGroupBy().isEmpty())
-			buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
+		// 2.1.0
+		//	buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
+			buff.append(' ').append(sql.getGroupBy().toString(this, sql, parameters));
+		////
 	}
 
 	/**
@@ -954,7 +998,10 @@ public class Standard implements Database {
 	 */
 	protected <E> void appendHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (!sql.getHaving().isEmpty())
-			buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
+		// 2.1.0
+		//	buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
+			buff.append(" HAVING ").append(sql.getHaving().toString(this, sql, parameters));
+		////
 	}
 
 	/**
@@ -969,7 +1016,10 @@ public class Standard implements Database {
 	 */
 	protected <E> void appendOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (!sql.getOrderBy().isEmpty())
-			buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+		// 2.1.0
+		//	buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
+			buff.append(' ').append(sql.getOrderBy().toString(this, sql, parameters));
+		////
 	}
 
 	/**

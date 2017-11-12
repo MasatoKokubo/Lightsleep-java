@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.debugtrace.DebugTrace;
 import org.lightsleep.*;
 import org.lightsleep.component.Condition;
+import org.lightsleep.connection.ConnectionSupplier;
 import org.lightsleep.database.SQLite;
 import org.lightsleep.example.Common;
 import org.lightsleep.example.java.entity.*;
@@ -20,45 +21,46 @@ import org.lightsleep.example.java.entity.*;
  */
 public class JavaDocExamples extends Common {
 	public static void main(String[] args) {
+		JavaDocExamples examples = new JavaDocExamples();
 		try {
-			init1();
-			init2();
-			transaction();
-			sql();
-			sql_columns1();
-			sql_columns2();
-			sql_expression();
-			sql_innerJoin();
-			sql_leftJoin();
-			sql_rightJoin();
-			sql_where1();
-			sql_where2();
-			sql_where3();
-			sql_where4();
-			sql_and();
-			sql_or();
-			sql_orderBy();
-			sql_asc();
-			sql_desc();
-			sql_limit();
-			sql_offset();
-			sql_doIf();
-			sql_select1();
-			sql_selectAs1();
-			sql_select2();
-			sql_select3();
-			sql_select4();
-			sql_select5();
-			sql_select6();
-			sql_selectAs2();
-			sql_selectCount();
-			sql_insert1();
-			sql_insert2();
-			sql_update1();
-			sql_update2();
-			sql_delete1();
-			sql_delete2();
-			sql_delete3();
+			examples.init1();
+			examples.init2();
+			examples.transaction();
+			examples.sql();
+			examples.sql_columns1();
+			examples.sql_columns2();
+			examples.sql_expression();
+			examples.sql_innerJoin();
+			examples.sql_leftJoin();
+			examples.sql_rightJoin();
+			examples.sql_where1();
+			examples.sql_where2();
+			examples.sql_where3();
+			examples.sql_where4();
+			examples.sql_and();
+			examples.sql_or();
+			examples.sql_orderBy();
+			examples.sql_asc();
+			examples.sql_desc();
+			examples.sql_limit();
+			examples.sql_offset();
+			examples.sql_doIf();
+			examples.sql_select1();
+			examples.sql_selectAs1();
+			examples.sql_select2();
+			examples.sql_select3();
+			examples.sql_select4();
+			examples.sql_select5();
+			examples.sql_select6();
+			examples.sql_selectAs2();
+			examples.sql_selectCount();
+			examples.sql_insert1();
+			examples.sql_insert2();
+			examples.sql_update1();
+			examples.sql_update2();
+			examples.sql_delete1();
+			examples.sql_delete2();
+			examples.sql_delete3();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -66,18 +68,16 @@ public class JavaDocExamples extends Common {
 	}
 
 	// Transaction
-	private static void transaction() {
+	private void transaction() {
 	/**/DebugTrace.enter();
 
  Transaction.execute(conn -> {
-     Optional<Contact> contactOpt = new Sql<>(Contact.class)
+     Optional<Contact> contactOpt = new Sql<>(Contact.class).connection(conn)
          .where("{id}={}", 1)
-         .connection(conn)
          .select();
      contactOpt.ifPresent(contact -> {
          contact.setBirthday(2017, 1, 1);
-         new Sql<>(Contact.class)
-         	.connection(conn)
+         new Sql<>(Contact.class).connection(conn)
             .update(contact);
      });
  });
@@ -86,14 +86,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// Sql
-	private static void sql() {
+	private void sql() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .where("{lastName}={}", "Apple")
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -101,15 +100,14 @@ public class JavaDocExamples extends Common {
 	}
 
 	// columns 1
-	private static void sql_columns1() {
+	private void sql_columns1() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .columns("lastName", "firstName")
          .where("{lastName}={}", "Apple")
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -117,16 +115,15 @@ public class JavaDocExamples extends Common {
 	}
 
 	// columns 2
-	private static void sql_columns2() {
+	private void sql_columns2() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  List<Phone> phones = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class, "C")
+     new Sql<>(Contact.class, "C").connection(conn)
          .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
          .columns("C.id", "P.*")
-         .connection(conn)
          .<Phone>select(contacts::add, phones::add);
  });
 
@@ -134,15 +131,14 @@ public class JavaDocExamples extends Common {
 	}
 
 	// expression
-	private static void sql_expression() {
+	private void sql_expression() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .expression("firstName", "'['||{firstName}||']'")
          .where("{lastName}={}", "Orange")
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -150,15 +146,14 @@ public class JavaDocExamples extends Common {
 	}
 
 	// innerJoin
-	private static void sql_innerJoin() {
+	private void sql_innerJoin() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  List<Phone> phones = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class, "C")
+     new Sql<>(Contact.class, "C").connection(conn)
          .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
-         .connection(conn)
          .<Phone>select(contacts::add, phones::add);
  });
 
@@ -166,15 +161,14 @@ public class JavaDocExamples extends Common {
 	}
 
 	// leftJoin
-	private static void sql_leftJoin() {
+	private void sql_leftJoin() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  List<Phone> phones = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class, "C")
+     new Sql<>(Contact.class, "C").connection(conn)
          .leftJoin(Phone.class, "P", "{P.contactId}={C.id}")
-         .connection(conn)
          .<Phone>select(contacts::add, phones::add);
  });
 
@@ -182,16 +176,15 @@ public class JavaDocExamples extends Common {
 	}
 
 	// rightJoin
-	private static void sql_rightJoin() {
-		if (Sql.getDatabase() instanceof SQLite) return; // SQLite
+	private void sql_rightJoin() {
+		if (ConnectionSupplier.find().getDatabase() instanceof SQLite) return; // SQLite dose not support RIGHT JOIN
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  List<Phone> phones = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class, "C")
+     new Sql<>(Contact.class, "C").connection(conn)
          .rightJoin(Phone.class, "P", "{P.contactId}={C.id}")
-         .connection(conn)
          .<Phone>select(contacts::add, phones::add);
  });
 
@@ -199,61 +192,60 @@ public class JavaDocExamples extends Common {
 	}
 
 	// where 1
-	private static void sql_where1() {
+	private void sql_where1() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .where("{birthday} IS NULL")
-         .connection(conn).select(contacts::add);
+         .select(contacts::add);
  });
 
 	/**/DebugTrace.leave();
 	}
 
 	// where 2
-	private static void sql_where2() {
+	private void sql_where2() {
 	/**/DebugTrace.enter();
 
  int id = 1;
  Contact[] contact = new Contact[1];
  Transaction.execute(conn -> {
-     contact[0] = new Sql<>(Contact.class)
+     contact[0] = new Sql<>(Contact.class).connection(conn)
          .where("{id}={}", id)
-         .connection(conn).select().orElse(null);
+         .select().orElse(null);
  });
 
 	/**/DebugTrace.leave();
 	}
 
 	// where 3
-	private static void sql_where3() {
+	private void sql_where3() {
 	/**/DebugTrace.enter();
 
  Contact[] contact = new Contact[1];
  Transaction.execute(conn -> {
-     contact[0] = new Sql<>(Contact.class)
+     contact[0] = new Sql<>(Contact.class).connection(conn)
          .where(new ContactKey(2))
-         .connection(conn).select().orElse(null);
+         .select().orElse(null);
  });
 
 	/**/DebugTrace.leave();
 	}
 
 	// where 4
-	private static void sql_where4() {
+	private void sql_where4() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class, "C")
+     new Sql<>(Contact.class, "C").connection(conn)
          .where("EXISTS",
               new Sql<>(Phone.class, "P")
                   .where("{P.contactId}={C.id}")
                   .and("{P.content} LIKE {}", "0800001%")
          )
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -261,15 +253,14 @@ public class JavaDocExamples extends Common {
 	}
 
 	// and
-	private static void sql_and() {
+	private void sql_and() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .where("{lastName}={}", "Apple")
          .and("{firstName}={}", "Akiyo")
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -277,15 +268,14 @@ public class JavaDocExamples extends Common {
 	}
 
 	// or
-	private static void sql_or() {
+	private void sql_or() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .where("{lastName}={}", "Apple")
          .or("{lastName}={}", "Orange")
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -293,15 +283,14 @@ public class JavaDocExamples extends Common {
 	}
 
 	// orderBy
-	private static void sql_orderBy() {
+	private void sql_orderBy() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .orderBy("{lastName}")
          .orderBy("{firstName}")
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -309,14 +298,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// asc
-	private static void sql_asc() {
+	private void sql_asc() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .orderBy("{id}").asc()
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -324,14 +312,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// desc
-	private static void sql_desc() {
+	private void sql_desc() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .orderBy("{id}").desc()
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -339,14 +326,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// limit
-	private static void sql_limit() {
+	private void sql_limit() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .limit(5)
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -354,14 +340,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// offset
-	private static void sql_offset() {
+	private void sql_offset() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
+     new Sql<>(Contact.class).connection(conn)
          .limit(5).offset(5)
-         .connection(conn)
          .select(contacts::add);
  });
 
@@ -369,14 +354,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// doIf
-	private static void sql_doIf() {
+	private void sql_doIf() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class, "C")
-         .doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate)
-         .connection(conn)
+     new Sql<>(Contact.class, "C").connection(conn)
+         .doIf(!(conn.getDatabase() instanceof SQLite), Sql::forUpdate) // SQLite dose not support FOR UPDATE
          .select(contacts::add);
  });
 
@@ -384,13 +368,12 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 1
-	private static void sql_select1() {
+	private void sql_select1() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
-         .connection(conn)
+     new Sql<>(Contact.class).connection(conn)
          .select(contacts::add);
  });
 
@@ -402,13 +385,12 @@ public class JavaDocExamples extends Common {
      public String firstName;
      public String lastName;
  }
-	private static void sql_selectAs1() {
+	private void sql_selectAs1() {
 	/**/DebugTrace.enter();
 
  List<ContactName> contactNames = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class)
-         .connection(conn)
+     new Sql<>(Contact.class).connection(conn)
          .selectAs(ContactName.class, contactNames::add);
  });
 
@@ -417,15 +399,14 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 2
-	private static void sql_select2() {
+	private void sql_select2() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  List<Phone>   phones = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class, "C")
+     new Sql<>(Contact.class, "C").connection(conn)
          .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
-         .connection(conn)
          .<Phone>select(contacts::add, phones::add);
  });
 
@@ -433,17 +414,16 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 3
-	private static void sql_select3() {
+	private void sql_select3() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
  List<Phone>   phones = new ArrayList<>();
  List<Email>   emails = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class, "C")
+     new Sql<>(Contact.class, "C").connection(conn)
          .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
          .innerJoin(Email.class, "E", "{E.contactId}={C.id}")
-         .connection(conn)
          .<Phone, Email>select(contacts::add, phones::add, emails::add);
  });
 
@@ -451,7 +431,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 4
-	private static void sql_select4() {
+	private void sql_select4() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
@@ -459,11 +439,10 @@ public class JavaDocExamples extends Common {
  List<Email>   emails = new ArrayList<>();
  List<Address> addresses = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class, "C")
+     new Sql<>(Contact.class, "C").connection(conn)
          .innerJoin(  Phone.class, "P", "{P.contactId}={C.id}")
          .innerJoin(  Email.class, "E", "{E.contactId}={C.id}")
          .innerJoin(Address.class, "A", "{A.contactId}={C.id}")
-         .connection(conn)
          .<Phone, Email, Address>select(
              contacts::add, phones::add, emails::add, addresses::add);
  });
@@ -472,7 +451,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 5
-	private static void sql_select5() {
+	private void sql_select5() {
 	/**/DebugTrace.enter();
 
  List<Contact> contacts = new ArrayList<>();
@@ -481,12 +460,11 @@ public class JavaDocExamples extends Common {
  List<Address> addresses = new ArrayList<>();
  List<Url>     urls = new ArrayList<>();
  Transaction.execute(conn -> {
-     new Sql<>(Contact.class, "C")
+     new Sql<>(Contact.class, "C").connection(conn)
          .innerJoin(  Phone.class, "P", "{P.contactId}={C.id}")
          .innerJoin(  Email.class, "E", "{E.contactId}={C.id}")
          .innerJoin(Address.class, "A", "{A.contactId}={C.id}")
          .innerJoin(    Url.class, "U", "{U.contactId}={C.id}")
-         .connection(conn)
          .<Phone, Email, Address, Url>select(
              contacts::add, phones::add, emails::add,
              addresses::add, urls::add);
@@ -496,14 +474,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 6
-	private static void sql_select6() {
+	private void sql_select6() {
 	/**/DebugTrace.enter();
 
  Contact.Ex[] contact = new Contact.Ex[1];
  Transaction.execute(conn -> {
-     contact[0] = new Sql<>(Contact.Ex.targetClass())
+     contact[0] = new Sql<>(Contact.Ex.targetClass(conn.getDatabase())).connection(conn)
          .where("{id}={}", 1)
-         .connection(conn)
          .select().orElse(null);
  });
 
@@ -512,14 +489,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select As 2
-	private static void sql_selectAs2() {
+	private void sql_selectAs2() {
 	/**/DebugTrace.enter();
 
  ContactName[] contactName = new ContactName[1];
  Transaction.execute(conn -> {
-     contactName[0] = new Sql<>(Contact.class)
+     contactName[0] = new Sql<>(Contact.class).connection(conn)
          .where("{id}={}", 1)
-         .connection(conn)
          .selectAs(ContactName.class).orElse(null);
  });
 
@@ -528,13 +504,12 @@ public class JavaDocExamples extends Common {
 	}
 
 	// selectCount
-	private static void sql_selectCount() {
+	private void sql_selectCount() {
 	/**/DebugTrace.enter();
 
  int[] count = new int[1];
  Transaction.execute(conn -> {
-     count[0] = new Sql<>(Contact.class)
-         .connection(conn)
+     count[0] = new Sql<>(Contact.class).connection(conn)
          .selectCount();
  });
 
@@ -542,19 +517,18 @@ public class JavaDocExamples extends Common {
 	}
 
 	// insert 1
-	private static void sql_insert1() {
+	private void sql_insert1() {
 	/**/DebugTrace.enter();
 
 		Transaction.execute(conn -> {
-			new Sql<>(Contact.class).where("{id}={}", 6)
-				.connection(conn)
+			new Sql<>(Contact.class).connection(conn)
+				.where("{id}={}", 6)
                 .delete();
 		});
 
  int[] count = new int[1];
  Transaction.execute(conn -> {
-     count[0] = new Sql<>(Contact.class)
-         .connection(conn)
+     count[0] = new Sql<>(Contact.class).connection(conn)
          .insert(new Contact(6, "Setoka", "Orange", 2001, 2, 1));
  });
 
@@ -562,19 +536,18 @@ public class JavaDocExamples extends Common {
 	}
 
 	// insert 2
-	private static void sql_insert2() {
+	private void sql_insert2() {
 	/**/DebugTrace.enter();
 
 		Transaction.execute(conn -> {
-			new Sql<>(Contact.class)
+			new Sql<>(Contact.class).connection(conn)
 				.where("{id} IN {}", Arrays.asList(7, 8, 9))
-				.connection(conn).delete();
+				.delete();
 		});
 
  int[] count = new int[1];
  Transaction.execute(conn -> {
-     count[0] = new Sql<>(Contact.class)
-         .connection(conn)
+     count[0] = new Sql<>(Contact.class).connection(conn)
          .insert(Arrays.asList(
              new Contact(7, "Harumi", "Orange", 2001, 2, 2),
              new Contact(8, "Mihaya", "Orange", 2001, 2, 3),
@@ -586,13 +559,12 @@ public class JavaDocExamples extends Common {
 	}
 
 	// update 1
-	private static void sql_update1() {
+	private void sql_update1() {
 	/**/DebugTrace.enter();
 
  int[] count = new int[1];
  Transaction.execute(conn -> {
-     count[0] = new Sql<>(Contact.class)
-         .connection(conn)
+     count[0] = new Sql<>(Contact.class).connection(conn)
          .update(new Contact(6, "Setoka", "Orange", 2017, 2, 1));
  });
 
@@ -600,13 +572,12 @@ public class JavaDocExamples extends Common {
 	}
 
 	// update 2
-	private static void sql_update2() {
+	private void sql_update2() {
 	/**/DebugTrace.enter();
 
  int[] count = new int[1];
  Transaction.execute(conn -> {
-     count[0] = new Sql<>(Contact.class)
-         .connection(conn)
+     count[0] = new Sql<>(Contact.class).connection(conn)
          .update(Arrays.asList(
              new Contact(7, "Harumi", "Orange", 2017, 2, 2),
              new Contact(8, "Mihaya", "Orange", 2017, 2, 3),
@@ -618,14 +589,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// delete 1
-	private static void sql_delete1() {
+	private void sql_delete1() {
 	/**/DebugTrace.enter();
 
  int[] count = new int[1];
  Transaction.execute(conn -> {
-     count[0] = new Sql<>(Contact.class)
+     count[0] = new Sql<>(Contact.class).connection(conn)
          .where(Condition.ALL)
-         .connection(conn)
          .delete();
  });
 
@@ -633,19 +603,17 @@ public class JavaDocExamples extends Common {
 	}
 
 	// delete 2
-	private static void sql_delete2() {
+	private void sql_delete2() {
 	/**/DebugTrace.enter();
 
  int[] count = new int[1];
  Transaction.execute(conn -> {
-     count[0] = new Sql<>(Contact.class)
-         .connection(conn)
+     count[0] = new Sql<>(Contact.class).connection(conn)
          .delete(new Contact(6));
  });
 
 		Transaction.execute(conn -> {
-			count[0] = new Sql<>(Contact.class)
-				.connection(conn)
+			count[0] = new Sql<>(Contact.class).connection(conn)
 				.insert(new Contact(6, "Setoka", "Orange", 2001, 2, 1));
 		});
 
@@ -653,19 +621,17 @@ public class JavaDocExamples extends Common {
 	}
 
 	// delete 3
-	private static void sql_delete3() {
+	private void sql_delete3() {
 	/**/DebugTrace.enter();
 
  int[] count = new int[1];
  Transaction.execute(conn -> {
-     count[0] = new Sql<>(Contact.class)
-         .connection(conn)
+     count[0] = new Sql<>(Contact.class).connection(conn)
          .delete(Arrays.asList(new Contact(7), new Contact(8), new Contact(9)));
  });
 
 	Transaction.execute(conn -> {
-		new Sql<>(Contact.class)
-			.connection(conn)
+		new Sql<>(Contact.class).connection(conn)
 			.insert(Arrays.asList(
 				new Contact(7, "Harumi", "Orange", 2001, 2, 2),
 				new Contact(8, "Mihaya", "Orange", 2001, 2, 3),

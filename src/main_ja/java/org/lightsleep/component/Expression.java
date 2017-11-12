@@ -6,6 +6,7 @@ package org.lightsleep.component;
 import java.util.List;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 import org.lightsleep.helper.MissingPropertyException;
 
 /**
@@ -20,12 +21,12 @@ public class Expression implements Condition {
 	public static final Expression EMPTY = null;
 
 	/**
-	 * Expression を構築します。
+	 * Expressionを構築します。
 	 *
 	 * @param content 式の文字列内容
 	 * @param arguments 式に埋め込む引数配列
 	 *	 *
-	 * @throws NullPointerException <b>content</b> または <b>arguments</b> が null の場合
+	 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
 	 */
 	public Expression(String content, Object... arguments) {
 	}
@@ -67,7 +68,7 @@ public class Expression implements Condition {
 	 *   </tr>
 	 *   <tr>
 	 *     <td>{}</td>
-	 *     <td>コンストラクタの引数の <b>arguments</b> の要素</td>
+	 *     <td>コンストラクタの引数の<b>arguments</b>の要素</td>
 	 *   </tr>
 	 *   <tr>
 	 *     <td>{<i>プロパティ名</i>}</td>
@@ -91,7 +92,7 @@ public class Expression implements Condition {
 	 * @throws MissingPropertyException 式に存在しないプロパティが参照された場合
 	 */
 	@Override
-	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
 		return null;
 	}
 

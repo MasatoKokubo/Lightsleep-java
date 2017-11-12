@@ -16,11 +16,11 @@ import java.util.List;
  */
 public class Accessor<T> {
 	/**
-	 * <b>Accessor</b> を構築します。
+	 * <b>Accessor</b>を構築します。
 	 *
 	 * @param objectClass アクセス対象のオブジェクトのクラス
 	 *
-	 * @throws NullPointerException <b>objectClass</b> が null の場合
+	 * @throws NullPointerException <b>objectClass</b>がnullの場合
 	 */
 	public Accessor(Class<T> objectClass) {
 	}
@@ -58,24 +58,24 @@ public class Accessor<T> {
 	}
 
 	/**
-	 * <b>propertyName</b> で指定されるフィールドの <b>Field</b> オブジェクトを返します。
+	 * <b>propertyName</b>で指定されるフィールドの<b>Field</b>オブジェクトを返します。
 	 *
 	 * @param propertyName フィールドのプロパティ名
 	 * @return Field オブジェクト
 	 *
-	 * @throws MissingPropertyException <b>propertyName</b> で指定されるフィールドが存在しない場合
+	 * @throws MissingPropertyException <b>propertyName</b>で指定されるフィールドが存在しない場合
 	 */
 	public Field getField(String propertyName) {
 		return null;
 	}
 
 	/**
-	 * <b>propertyName</b> で指定されるフィールドの型を返します。
+	 * <b>propertyName</b>で指定されるフィールドの型を返します。
 	 *
 	 * @param propertyName フィールドのプロパティ名
 	 * @return フィールドの型
 	 *
-	 * @throws MissingPropertyException <b>propertyName</b> で指定されるフィールドが存在しない場合
+	 * @throws MissingPropertyException <b>propertyName</b>で指定されるフィールドが存在しない場合
 	 */
 	public Class<?> getType(String propertyName) {
 		return null;
@@ -83,9 +83,9 @@ public class Accessor<T> {
 
 	/**
 	 * 指定のオブジェクトのフィールドの値を返します。<br>
-	 * <b>public</b> フィールドの場合は、直接値を取得しますが、
-	 * 非<b>public</b> フィールドの場合は、<b>public</b> な取得メソッドを使用します。<br>
-	 * フィールド名が <b>foo</b> の場合、取得メソッドは、以下のいずれかです。<br>
+	 * <b>public</b>フィールドの場合は、直接値を取得しますが、
+	 * 非<b>public</b>フィールドの場合は、<b>public</b>な取得メソッドを使用します。<br>
+	 * フィールド名が<b>foo</b> の場合、取得メソッドは、以下のいずれかです。<br>
 	 * <ul>
 	 *   <li><b>foo()   </b></li>
 	 *   <li><b>getFoo()</b></li>
@@ -94,11 +94,11 @@ public class Accessor<T> {
 	 *
 	 * @param object 対象のオブジェクト
 	 * @param propertyName フィールドのプロパティ名
-	 * @return フィールドから取得した値 (null 有)
+	 * @return フィールドから取得した値(null有)
 	 *
-	 * @throws NullPointerException <b>object</b> が null の場合
-	 * @throws MissingPropertyException <b>propertyName</b> で指定されるフィールドの取得メソッドが存在しない場合
-	 * @throws RuntimeException <b>IllegalAccessException</b> または <b>InvocationTargetException</b> がスローされた場合
+	 * @throws NullPointerException <b>object</b>がnullの場合
+	 * @throws MissingPropertyException <b>propertyName</b>で指定されるフィールドの取得メソッドが存在しない場合
+	 * @throws RuntimeException <b>IllegalAccessException</b>または<b>InvocationTargetException</b>がスローされた場合
 	 */
 	public Object getValue(T object, String propertyName) {
 		return null;
@@ -106,9 +106,9 @@ public class Accessor<T> {
 
 	/**
 	 * 指定のオブジェクトのフィールドに値を設定します。<br>
-	 * <b>public</b> フィールドの場合は、直接値を設定しますが、
-	 * 非<b>public</b> フィールドの場合は、<b>public</b> な設定メソッドを使用します。<br>
-	 * フィールド名が <b>foo</b> の場合、設定メソッドは、以下のいずれかです。<br>
+	 * <b>public</b>フィールドの場合は、直接値を設定しますが、
+	 * 非<b>public</b>フィールドの場合は、<b>public</b>な設定メソッドを使用します。<br>
+	 * フィールド名が<b>foo</b> の場合、設定メソッドは、以下のいずれかです。<br>
 	 * <ul>
 	 *   <li><b>foo()   </b></li>
 	 *   <li><b>setFoo()</b></li>
@@ -116,11 +116,11 @@ public class Accessor<T> {
 	 *
 	 * @param object 対象のオブジェクト
 	 * @param propertyName フィールドのプロパティ名
-	 * @param value フィールドに設定する値 (null 可)
+	 * @param value フィールドに設定する値(null可)
 	 *
-	 * @throws NullPointerException <b>object</b> が null の場合	 *
-	 * @throws MissingPropertyException <b>propertyName</b> で指定されるフィールドの設定メソッドが存在しない場合
-	 * @throws RuntimeException <b>IllegalAccessException</b> または <b>InvocationTargetException</b> がスローされた場合
+	 * @throws NullPointerException <b>object</b>がnullの場合
+	 * @throws MissingPropertyException <b>propertyName</b>で指定されるフィールドの設定メソッドが存在しない場合
+	 * @throws RuntimeException <b>IllegalAccessException</b>または<b>InvocationTargetException</b>がスローされた場合
 	 */
 	public void setValue(T object, String propertyName, Object value) {
 	}

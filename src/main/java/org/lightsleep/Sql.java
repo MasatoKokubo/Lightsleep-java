@@ -4,7 +4,6 @@
 package org.lightsleep;
 
 import java.io.Reader;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,10 +30,7 @@ import org.lightsleep.component.Expression;
 import org.lightsleep.component.GroupBy;
 import org.lightsleep.component.OrderBy;
 import org.lightsleep.component.SubqueryCondition;
-import org.lightsleep.connection.ConnectionSupplier;
-import org.lightsleep.connection.Jdbc;
-import org.lightsleep.database.Database;
-import org.lightsleep.database.Standard;
+import org.lightsleep.connection.ConnectionWrapper;
 import org.lightsleep.entity.Composite;
 import org.lightsleep.entity.PostLoad;
 import org.lightsleep.entity.PreInsert;
@@ -97,24 +93,38 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	public static final int FOREVER = Integer.MAX_VALUE;
 
 	// The logger
-	private static final Logger logger = LoggerFactory.getLogger(Sql.class);
+	protected static final Logger logger = LoggerFactory.getLogger(Sql.class);
 
-	// The version resource
-	private static final String version =
-		new Resource(Sql.class.getPackage().getName() + ".lightsleep-version").getString("version");
+// 2.1.0
+//	// The version resource
+//	private static final String version =
+//		new Resource(Sql.class.getPackage().getName() + ".lightsleep-version").getString("version");
+////
 
 	// Class resources
 	private static final Resource resource = new Resource(Sql.class);
-	private static final String messageDatabaseHandler            = resource.getString("messageDatabaseHandler");
-	private static final String messageDatabaseHandlerNotFound    = resource.getString("messageDatabaseHandlerNotFound");
-	private static final String messageConnectionSupplier         = resource.getString("messageConnectionSupplier");
-	private static final String messageConnectionSupplierNotFound = resource.getString("messageConnectionSupplierNotFound");
-	private static final String messageNoWhereCondition           = resource.getString("messageNoWhereCondition");
-// 2.0.0
-	private static final String messageNoConnection               = resource.getString("messageNoConnection");
+// 2.1.0
+//	private static final String messageDatabaseHandler            = resource.getString("messageDatabaseHandler");
+//	private static final String messageDatabaseHandlerNotFound    = resource.getString("messageDatabaseHandlerNotFound");
+//	private static final String messageConnectionSupplier         = resource.getString("messageConnectionSupplier");
+//	private static final String messageConnectionSupplierNotFound = resource.getString("messageConnectionSupplierNotFound");
 ////
-	private static final String messageRows                       = resource.getString("messageRows");
-	private static final String messageRowsSelect                 = resource.getString("messageRowsSelect");
+	private static final String messageNoWhereCondition = resource.getString("messageNoWhereCondition");
+// 2.0.0
+	private static final String messageNoConnection     = resource.getString("messageNoConnection");
+////
+	private static final String messageRows             = resource.getString("messageRows");
+	private static final String messageRowsSelect       = resource.getString("messageRowsSelect");
+// 2.1.0
+	private static final String messageRowsSelect1      = resource.getString("messageRowsSelect1");
+
+	protected static final String messageGet      = resource.getString("messageGet");
+	protected static final String messageClose    = resource.getString("messageClose");
+	protected static final String messageStart    = resource.getString("messageStart");
+	protected static final String messageEnd      = resource.getString("messageEnd");
+	protected static final String messageCommit   = resource.getString("messageCommit");
+	protected static final String messageRollback = resource.getString("messageRollback");
+////
 
 	// The entity information map
 // 2.0.0
@@ -122,12 +132,17 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	private static final Map<Class<?>, EntityInfo<?>> entityInfoMap = new ConcurrentHashMap<>();
 ////
 
-	// The database handler
-	private static Database database;
+// 2.1.0
+//	// The database handler
+//	private static Database database;
+//
+//	// The connection supplier
+//	private static ConnectionSupplier connectionSupplier;
+////
 
-	// The connection supplier
-	private static ConnectionSupplier connectionSupplier;
-
+// 2.1.0
+	private static int sqlNo;
+////
 
 	// The entity information
 // 2.0.0
@@ -183,8 +198,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	// The WAIT time (sec)
 	private int waitTime = FOREVER;
 
-	// The database connection @since 2.0.0
-	private transient Connection connection;
+	// The connection wrapper @since 2.0.0
+// 2.1.0
+//	private transient Connection connection;
+	private transient ConnectionWrapper connection;
+////
 
 	// The generated SQL @since 1.5.0
 // 2.0.0
@@ -192,105 +210,107 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	private transient String generatedSql;
 ////
 
-	static {
-		logger.info("Lightsleep " + version + " / logger: " + LoggerFactory.loggerClass.getName());
-	}
-
-	/**
-	 * Returns the current database handler.
-	 *
-	 * @return database the database handler
-	 *
-	 * @see #setDatabase(Database)
-	 */
-	public static Database getDatabase() {
-		return database;
-	}
-
-	/**
-	 * Sets the current database handler.
-	 *
-	 * @param database a database handler
-	 *
-	 * @throws NullPointerException if <b>database</b> is null
-	 *
-	 * @see #getDatabase()
-	 */
-	public static void setDatabase(Database database) {
-		Sql.database = Objects.requireNonNull(database, "database");
-		logger.info(() -> MessageFormat.format(messageDatabaseHandler, Sql.database.getClass().getName()));
-	}
-
-	// Initialize the database handler
-	static {
-		String databaseName = Resource.globalResource.getString(Database.class.getSimpleName(), Standard.class.getSimpleName());
-		if (databaseName.indexOf('.') < 0)
-			databaseName = Database.class.getPackage().getName() + '.' + databaseName;
-
-		Class<? extends Database> databaseClass;
-		try {
-			databaseClass = (Class<? extends Database>)Class.forName(databaseName);
-		}
-		catch (ClassNotFoundException e) {
-			logger.error(MessageFormat.format(messageDatabaseHandlerNotFound, databaseName), e);
-			databaseClass = Standard.class;
-		}
-
-		try {
-			setDatabase((Database)databaseClass.getMethod("instance").invoke(null));
-		}
-		catch (Exception e) {
-			logger.error(e.toString(), e);
-		}
-	}
-
-	/**
-	 * Returns the current database connection supplier.
-	 *
-	 * @return the database connection supplier
-	 *
-	 * @see #setConnectionSupplier(ConnectionSupplier)
-	 */
-	public static ConnectionSupplier getConnectionSupplier() {
-		return connectionSupplier;
-	}
-
-	/**
-	 * Sets the current database connection supplier.
-	 *
-	 * @param supplier a connection supplier
-	 *
-	 * @throws NullPointerException if <b>supplier</b> is null
-	 *
-	 * @see #getConnectionSupplier()
-	 */
-	public static void setConnectionSupplier(ConnectionSupplier supplier) {
-		connectionSupplier = Objects.requireNonNull(supplier, "supplier");
-		logger.info(() -> MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getName()));
-	}
-
-	// Initialize the database connection supplier
-	static {
-		String supplierName = Resource.globalResource.getString(ConnectionSupplier.class.getSimpleName(), Jdbc.class.getSimpleName());
-		if (supplierName.indexOf('.') < 0)
-			supplierName = ConnectionSupplier.class.getPackage().getName() + '.' + supplierName;
-
-		Class<? extends ConnectionSupplier> supplierClass;
-		try {
-			supplierClass = (Class<? extends ConnectionSupplier>)Class.forName(supplierName);
-		}
-		catch (ClassNotFoundException e) {
-			logger.error(MessageFormat.format(messageConnectionSupplierNotFound, supplierName), e);
-			supplierClass = Jdbc.class;
-		}
-
-		try {
-			setConnectionSupplier(supplierClass.getConstructor().newInstance());
-		}
-		catch (Exception e) {
-			logger.error(e.toString(), e);
-		}
-	}
+// 2.1.0
+//	static {
+//		logger.info("Lightsleep " + version + " / logger: " + LoggerFactory.loggerClass.getName());
+//	}
+//
+//	/**
+//	 * Returns the current database handler.
+//	 *
+//	 * @return database the database handler
+//	 *
+//	 * @see #setDatabase(Database)
+//	 */
+//	public static Database getDatabase() {
+//		return database;
+//	}
+//
+//	/**
+//	 * Sets the current database handler.
+//	 *
+//	 * @param database a database handler
+//	 *
+//	 * @throws NullPointerException if <b>database</b> is null
+//	 *
+//	 * @see #getDatabase()
+//	 */
+//	public static void setDatabase(Database database) {
+//		Standard.instance = Objects.requireNonNull(database, "database");
+//		logger.info(() -> MessageFormat.format(messageDatabaseHandler, Standard.instance.getClass().getName()));
+//	}
+//
+//	// Initialize the database handler
+//	static {
+//		String databaseName = Resource.globalResource.getString(Database.class.getSimpleName(), Standard.class.getSimpleName());
+//		if (databaseName.indexOf('.') < 0)
+//			databaseName = Database.class.getPackage().getName() + '.' + databaseName;
+//
+//		Class<? extends Database> databaseClass;
+//		try {
+//			databaseClass = (Class<? extends Database>)Class.forName(databaseName);
+//		}
+//		catch (ClassNotFoundException e) {
+//			logger.error(MessageFormat.format(messageDatabaseHandlerNotFound, databaseName), e);
+//			databaseClass = Standard.class;
+//		}
+//
+//		try {
+//			setDatabase((Database)databaseClass.getMethod("instance").invoke(null));
+//		}
+//		catch (Exception e) {
+//			logger.error(e.toString(), e);
+//		}
+//	}
+//
+//	/**
+//	 * Returns the current connection wrapper supplier.
+//	 *
+//	 * @return the connection wrapper supplier
+//	 *
+//	 * @see #setConnectionSupplier(ConnectionSupplier)
+//	 */
+//	public static ConnectionSupplier getConnectionSupplier() {
+//		return connectionSupplier;
+//	}
+//
+//	/**
+//	 * Sets the current connection wrapper supplier.
+//	 *
+//	 * @param supplier a connection supplier
+//	 *
+//	 * @throws NullPointerException if <b>supplier</b> is null
+//	 *
+//	 * @see #getConnectionSupplier()
+//	 */
+//	public static void setConnectionSupplier(ConnectionSupplier supplier) {
+//		connectionSupplier = Objects.requireNonNull(supplier, "supplier");
+//		logger.info(() -> MessageFormat.format(messageConnectionSupplier, connectionSupplier.getClass().getName()));
+//	}
+//
+//	// Initialize the connection wrapper supplier
+//	static {
+//		String supplierName = Resource.getGlobal().getString(ConnectionSupplier.class.getSimpleName(), Jdbc.class.getSimpleName());
+//		if (supplierName.indexOf('.') < 0)
+//			supplierName = ConnectionSupplier.class.getPackage().getName() + '.' + supplierName;
+//
+//		Class<? extends ConnectionSupplier> supplierClass;
+//		try {
+//			supplierClass = (Class<? extends ConnectionSupplier>)Class.forName(supplierName);
+//		}
+//		catch (ClassNotFoundException e) {
+//			logger.error(MessageFormat.format(messageConnectionSupplierNotFound, supplierName), e);
+//			supplierClass = Jdbc.class;
+//		}
+//
+//		try {
+//			setConnectionSupplier(supplierClass.getConstructor().newInstance());
+//		}
+//		catch (Exception e) {
+//			logger.error(e.toString(), e);
+//		}
+//	}
+////
 
 	/**
 	 * Returns the entity information related to the specified entity class.
@@ -1110,7 +1130,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 
 	/**
 	 * Adds the condition using <b>AND</b> to the condition of the <b>HAVING</b> clause
-	 * if after you call <b>having</b> method, 
+	 * if after you invoke <b>having</b> method, 
 	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
 	 * @param condition a condition
@@ -1132,7 +1152,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 
 	/**
 	 * Adds a <b>Expression</b> condition using <b>AND</b> to the condition of the <b>HAVING</b> clause
-	 * if after you call <b>having</b> method, 
+	 * if after you invoke <b>having</b> method, 
 	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
 	 * <div class="exampleTitle"><span>Java Example</span></div>
@@ -1174,7 +1194,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 
 	/**
 	 * Adds a <b>SubqueryCondition</b> using <b>AND</b> to the condition of the <b>HAVING</b> clause
-	 * if after you call <b>having</b> method, 
+	 * if after you invoke <b>having</b> method, 
 	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
 	 * @param <SE> the type of the entity related to the subquery
@@ -1194,7 +1214,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 
 	/**
 	 * Adds the condition using <b>OR</b> to the condition of the <b>HAVING</b> clause
-	 * if after you call <b>having</b> method, 
+	 * if after you invoke <b>having</b> method, 
 	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
 	 * @param condition a condition
@@ -1216,7 +1236,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 
 	/**
 	 * Adds a <b>Expression</b> condition using <b>OR</b> to the condition of the <b>HAVING</b> clause
-	 * if after you call <b>having</b> method, 
+	 * if after you invoke <b>having</b> method, 
 	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
 	 * <div class="exampleTitle"><span>Java Example</span></div>
@@ -1257,7 +1277,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 
 	/**
 	 * Adds a <b>SubqueryCondition</b> using <b>OR</b> to the condition of the <b>HAVING</b> clause
-	 * if after you call <b>having</b> method, 
+	 * if after you invoke <b>having</b> method, 
 	 * to the condition of the <b>WHERE</b> clause otherwise.
 	 *
 	 * @param <SE> the type of the entity related to the subquery
@@ -1728,7 +1748,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the database connection used by select, insert, update and delete methods.
+	 * Specifies the connection wrapper used by select, insert, update and delete methods.
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
@@ -1736,14 +1756,30 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * (select, insert, update and delete) added in version 2.0.0.
 	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @return this object
 	 *
 	 * @since 2.0.0
+	 * @see #getConnection()
 	 */
-	public Sql<E> connection(Connection connection) {
+// 2.1.0
+//	public Sql<E> connection(Connection connection) {
+	public Sql<E> connection(ConnectionWrapper connection) {
+////
 		this.connection = Objects.requireNonNull(connection, "connection");
 		return this;
+	}
+
+	/**
+	 * Returns the connection wrapper.
+	 *
+	 * @return the connection wrapper
+	 *
+	 * @since 2.1.0
+	 * @see #connection(ConnectionWrapper)
+	 */
+	public ConnectionWrapper getConnection() {
+		return connection;
 	}
 
 	/**
@@ -1865,11 +1901,13 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes a SELECT SQL that joins no tables.
 	 *
+	 * <p>
 	 * @deprecated As of release 2.0.0,
-	 * instead use {@link #connection(Connection)}
+	 * instead use {@link #connection(ConnectionWrapper)}
 	 * and {@link #select(Consumer)}
+	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param consumer a consumer of the entities created from the <b>ResultSet</b>
 	 *
 	 * @throws NullPointerException if <b>connection</b> or <b>consumer</b> is null
@@ -1877,7 +1915,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public void select(Connection connection, Consumer<? super E> consumer) {
+// 2.1.0
+//	public void select(Connection connection, Consumer<? super E> consumer) {
+	public void select(ConnectionWrapper connection, Consumer<? super E> consumer) {
+////
 	// 2.0.0
 	//	if (where.isEmpty())
 	//		where = Condition.ALL;
@@ -1928,7 +1969,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param consumer a consumer of the entities created from the <b>ResultSet</b>
@@ -1979,7 +2020,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param <R> the type of <b>resultClass</b>
@@ -2016,7 +2057,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		generatedSql = getDatabase().selectSql(sql, parameters);
+	// 2.1.0
+	//	generatedSql = getDatabase().selectSql(sql, parameters);
+		generatedSql = connection.getDatabase().selectSql(sql, parameters);
+	////
 
 		SqlEntityInfo<R> sqlEntityInfo = resultClass == sql.entityInfo.entityClass()
 			? (SqlEntityInfo<R>) sql
@@ -2064,12 +2108,14 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes a SELECT SQL that joins one table.
 	 *
+	 * <p>
 	 * @deprecated As of release 2.0.0,
-	 * instead use {@link #connection(Connection)}
+	 * instead use {@link #connection(ConnectionWrapper)}
 	 * and {@link #select(Consumer, Consumer)}
+	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the joined table
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
 	 * @param consumer1 a consumer of the entities related to the joined table created from the <b>ResultSet</b>
 	 *
@@ -2079,7 +2125,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public <JE1> void select(Connection connection,
+// 2.1.0
+//	public <JE1> void select(Connection connection,
+	public <JE1> void select(ConnectionWrapper connection,
+////
 		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1) {
 	// 2.0.0
@@ -2145,7 +2194,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the joined table
@@ -2178,7 +2227,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		generatedSql = getDatabase().selectSql(sql, parameters);
+	// 2.1.0
+	//	generatedSql = getDatabase().selectSql(sql, parameters);
+		generatedSql = connection.getDatabase().selectSql(sql, parameters);
+	////
 
 		sql.executeQuery(generatedSql, parameters,
 			sql.getRowConsumer(sql, consumer)
@@ -2189,13 +2241,15 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes a SELECT SQL that joins two tables.
 	 *
+	 * <p>
 	 * @deprecated As of release 2.0.0,
-	 * instead use {@link #connection(Connection)}
+	 * instead use {@link #connection(ConnectionWrapper)}
 	 * and {@link #select(Consumer, Consumer, Consumer)}
+	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the 1st joined table
 	 * @param <JE2> the type of the entity related to the 2nd joined table
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
 	 * @param consumer1 a consumer of the entities related to the 1st joined table created from the <b>ResultSet</b>
 	 * @param consumer2 a consumer of the entities related to the 2nd joined table created from the <b>ResultSet</b>
@@ -2206,7 +2260,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public <JE1, JE2> void select(Connection connection,
+// 2.1.0
+//	public <JE1, JE2> void select(Connection connection,
+	public <JE1, JE2> void select(ConnectionWrapper connection,
+////
 		Consumer<? super  E > consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2) {
@@ -2280,7 +2337,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the 1st joined table
@@ -2297,7 +2354,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @since 2.0.0
 	 */
 	public <JE1, JE2> void select(
-		Consumer<? super  E > consumer,
+		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2) {
 		if (joinInfos.size() < 2) throw new IllegalStateException("joinInfos.size < 2");
@@ -2317,7 +2374,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		generatedSql = getDatabase().selectSql(sql, parameters);
+	// 2.1.0
+	//	generatedSql = getDatabase().selectSql(sql, parameters);
+		generatedSql = connection.getDatabase().selectSql(sql, parameters);
+	////
 
 		sql.executeQuery(generatedSql, parameters,
 			sql.getRowConsumer(sql, consumer)
@@ -2329,14 +2389,16 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes a SELECT SQL that joins three tables.
 	 *
+	 * <p>
 	 * @deprecated As of release 2.0.0,
-	 * instead use {@link #connection(Connection)}
+	 * instead use {@link #connection(ConnectionWrapper)}
 	 * and {@link #select(Consumer, Consumer, Consumer, Consumer)}
+	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the 1st joined table
 	 * @param <JE2> the type of the entity related to the 2nd joined table
 	 * @param <JE3> the type of the entity related to the 3rd joined table
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
 	 * @param consumer1 a consumer of the entities related to the 1st joined table created from the <b>ResultSet</b>
 	 * @param consumer2 a consumer of the entities related to the 2nd joined table created from the <b>ResultSet</b>
@@ -2348,8 +2410,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public <JE1, JE2, JE3> void select(Connection connection,
-		Consumer<? super  E > consumer,
+// 2.1.0
+//	public <JE1, JE2, JE3> void select(Connection connection,
+	public <JE1, JE2, JE3> void select(ConnectionWrapper connection,
+////
+		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2,
 		Consumer<? super JE3> consumer3) {
@@ -2432,7 +2497,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the 1st joined table
@@ -2451,7 +2516,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @since 2.0.0
 	 */
 	public <JE1, JE2, JE3> void select(
-		Consumer<? super  E > consumer,
+		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2,
 		Consumer<? super JE3> consumer3) {
@@ -2473,7 +2538,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		generatedSql = getDatabase().selectSql(sql, parameters);
+	// 2.1.0
+	//	generatedSql = getDatabase().selectSql(sql, parameters);
+		generatedSql = connection.getDatabase().selectSql(sql, parameters);
+	////
 
 		sql.executeQuery(generatedSql, parameters,
 			sql.getRowConsumer(sql, consumer)
@@ -2486,15 +2554,17 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes a SELECT SQL that joins four tables.
 	 *
+	 * <p>
 	 * @deprecated As of release 2.0.0,
-	 * instead use {@link #connection(Connection)}
+	 * instead use {@link #connection(ConnectionWrapper)}
 	 * and {@link #select(Consumer, Consumer, Consumer, Consumer, Consumer)}
+	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the 1st joined table
 	 * @param <JE2> the type of the entity related to the 2nd joined table
 	 * @param <JE3> the type of the entity related to the 3rd joined table
 	 * @param <JE4> the type of the entity related to the 4th joined table
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
 	 * @param consumer1 a consumer of the entities related to the 1st join table created from the <b>ResultSet</b>
 	 * @param consumer2 a consumer of the entities related to the 2nd join table created from the <b>ResultSet</b>
@@ -2507,8 +2577,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public <JE1, JE2, JE3, JE4> void select(Connection connection,
-		Consumer<? super  E > consumer,
+// 2.1.0
+//	public <JE1, JE2, JE3, JE4> void select(Connection connection,
+	public <JE1, JE2, JE3, JE4> void select(ConnectionWrapper connection,
+////
+		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2,
 		Consumer<? super JE3> consumer3,
@@ -2601,7 +2674,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param <JE1> the type of the entity related to the 1st joined table
@@ -2646,7 +2719,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		generatedSql = getDatabase().selectSql(sql, parameters);
+	// 2.1.0
+	//	generatedSql = getDatabase().selectSql(sql, parameters);
+		generatedSql = connection.getDatabase().selectSql(sql, parameters);
+	////
 
 		sql.executeQuery(generatedSql, parameters,
 			sql.getRowConsumer(sql, consumer)
@@ -2661,9 +2737,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * Generates and executes a SELECT SQL
 	 * and returns an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise.
 	 *
-	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #select()}
+	 * <p>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(ConnectionWrapper)} and {@link #select()}
+	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @return an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise
 	 *
 	 * @throws NullPointerException if <b>connection</b> is null
@@ -2672,7 +2750,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws ManyRowsException if more than one row searched
 	 */
 	@Deprecated
-	public Optional<E> select(Connection connection) {
+// 2.1.0
+//	public Optional<E> select(Connection connection) {
+	public Optional<E> select(ConnectionWrapper connection) {
+////
 	// 2.0.0
 	//	List<E> entities = new ArrayList<>();
 	//	select(connection, entity -> {
@@ -2714,7 +2795,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @return an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise
@@ -2758,7 +2839,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param <R> the type of <b>resultClass</b>
@@ -2786,16 +2867,21 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes a SELECT COUNT(*) SQL and returns the result.
 	 *
-	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #selectCount()}
+	 * <p>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(ConnectionWrapper)} and {@link #selectCount()}
+	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @return the number of selected rows
 	 *
 	 * @throws NullPointerException if <b>connection</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public int selectCount(Connection connection) {
+// 2.1.0
+//	public int selectCount(Connection connection) {
+	public int selectCount(ConnectionWrapper connection) {
+////
 	// 2.0.0
 	//	if (where.isEmpty())
 	//		where = Condition.ALL;
@@ -2841,7 +2927,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @return the number of selected rows
@@ -2859,7 +2945,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		String sqlString = getDatabase().subSelectSql(sql, () -> "COUNT(*)", parameters);
+	// 2.1.0
+	//	String sqlString = getDatabase().subSelectSql(sql, () -> "COUNT(*)", parameters);
+		String sqlString = connection.getDatabase().subSelectSql(sql, () -> "COUNT(*)", parameters);
+	////
 
 		int[] count = new int[1];
 		executeQuery(sqlString, parameters, resultSet -> {
@@ -2874,9 +2963,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes an INSERT SQL.
 	 *
-	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #insert(Object)}
+	 * <p>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(ConnectionWrapper)} and {@link #insert(Object)}
+	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param entity the entity to be inserted
 	 * @return the number of rows inserted
 	 *
@@ -2884,7 +2975,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public int insert(Connection connection, E entity) {
+// 2.1.0
+//	public int insert(Connection connection, E entity) {
+	public int insert(ConnectionWrapper connection, E entity) {
+////
 	// 2.0.0
 	//	Objects.requireNonNull(entity, "entity");
 	//
@@ -2937,7 +3031,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param entity the entity to be inserted
@@ -2965,7 +3059,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		sql.entity = entity;
 
 		List<Object> parameters = new ArrayList<>();
-		generatedSql = getDatabase().insertSql(sql, parameters);
+	// 2.1.0
+	//	generatedSql = getDatabase().insertSql(sql, parameters);
+		generatedSql = connection.getDatabase().insertSql(sql, parameters);
+	////
 		count += sql.executeUpdate(generatedSql, parameters);
 
 		// after INSERT
@@ -2978,9 +3075,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes INSERT SQLs for each element of entities.
 	 *
-	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #insert(Iterable)}
+	 * <p>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(ConnectionWrapper)} and {@link #insert(Iterable)}
+	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the number of rows inserted
 	 *
@@ -2988,7 +3087,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public int insert(Connection connection, Iterable<? extends E> entities) {
+// 2.1.0
+//	public int insert(Connection connection, Iterable<? extends E> entities) {
+	public int insert(ConnectionWrapper connection, Iterable<? extends E> entities) {
+////
 	// 2.0.0
 	//	Objects.requireNonNull(entities, "entities");
 	//
@@ -3033,7 +3135,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param entities an <b>Iterable</b> of entities
@@ -3054,9 +3156,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes an UPDATE SQL.
 	 *
-	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #update(Object)}
+	 * <p>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(ConnectionWrapper)} and {@link #update(Object)}
+	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param entity the entity to be updated
 	 * @return the number of rows updated
 	 *
@@ -3064,7 +3168,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public int update(Connection connection, E entity) {
+// 2.1.0
+//	public int update(Connection connection, E entity) {
+	public int update(ConnectionWrapper connection, E entity) {
+////
 	// 2.0.0
 	//	Objects.requireNonNull(entity, "entity");
 	//
@@ -3119,7 +3226,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param entity the entity to be updated
@@ -3144,7 +3251,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		generatedSql = getDatabase().updateSql(sql, parameters);
+	// 2.1.0
+	//	generatedSql = getDatabase().updateSql(sql, parameters);
+		generatedSql = connection.getDatabase().updateSql(sql, parameters);
+	////
 		int count = sql.executeUpdate(generatedSql, parameters);
 
 		// after UPDATE
@@ -3157,9 +3267,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes UPDATE SQLs for each element of <b>entities</b>.
 	 *
-	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #update(Iterable)}
+	 * <p>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(ConnectionWrapper)} and {@link #update(Iterable)}
+	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the number of rows updated
 	 *
@@ -3167,7 +3279,9 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public int update(Connection connection, Iterable<? extends E> entities) {
+// 2.1.0
+	public int update(ConnectionWrapper connection, Iterable<? extends E> entities) {
+////
 	// 2.0.0
 	//	Objects.requireNonNull(entities, "entities");
 	//
@@ -3220,7 +3334,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param entities an <b>Iterable</b> of entities
@@ -3248,16 +3362,21 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes a DELETE SQL.
 	 *
-	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #delete()}
+	 * <p>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(ConnectionWrapper)} and {@link #delete()}
+	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @return the number of rows deleted
 	 *
 	 * @throws NullPointerException if <b>connection</b> is null
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public int delete(Connection connection) {
+// 2.1.0
+//	public int delete(Connection connection) {
+	public int delete(ConnectionWrapper connection) {
+////
 	// 2.0.0
 	//	if (where.isEmpty()) {
 	//		logger.warn(messageNoWhereCondition);
@@ -3305,7 +3424,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @return the number of rows deleted
@@ -3321,16 +3440,21 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		}
 
 		List<Object> parameters = new ArrayList<>();
-		String sqlString = getDatabase().deleteSql(this, parameters);
+	// 2.1.0
+	//	String sqlString = getDatabase().deleteSql(this, parameters);
+		String sqlString = connection.getDatabase().deleteSql(this, parameters);
+	////
 		return executeUpdate(sqlString, parameters);
 	}
 
 	/**
 	 * Generates and executes a DELETE SQL.
 	 *
-	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #delete(Object)}
+	 * <p>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(ConnectionWrapper)} and {@link #delete(Object)}
+	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param entity the entity to be deleted
 	 * @return the number of rows deleted
 	 *
@@ -3338,7 +3462,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public int delete(Connection connection, E entity) {
+// 2.1.0
+//	public int delete(Connection connection, E entity) {
+	public int delete(ConnectionWrapper connection, E entity) {
+////
 	// 2.0.0
 	//	Objects.requireNonNull(entity, "entity");
 	//
@@ -3383,7 +3510,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param entity the entity to be deleted
@@ -3399,7 +3526,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		sql.where = Condition.of(Objects.requireNonNull(entity, "entity"));
 
 		List<Object> parameters = new ArrayList<>();
-		generatedSql = getDatabase().deleteSql(sql, parameters);
+	// 2.1.0
+	//	generatedSql = getDatabase().deleteSql(sql, parameters);
+		generatedSql = connection.getDatabase().deleteSql(sql, parameters);
+	////
 		int count = sql.executeUpdate(generatedSql, parameters);
 
 		// after DELETE
@@ -3412,9 +3542,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Generates and executes DELETE SQLs for each element of entities.
 	 *
-	 * @deprecated As of release 2.0.0, instead use {@link #connection(Connection)} and {@link #delete(Iterable)}
+	 * <p>
+	 * @deprecated As of release 2.0.0, instead use {@link #connection(ConnectionWrapper)} and {@link #delete(Iterable)}
+	 * </p>
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the number of rows deleted
 	 *
@@ -3422,7 +3554,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 */
 	@Deprecated
-	public int delete(Connection connection, Iterable<? extends E> entities) {
+// 2.1.0
+//	public int delete(Connection connection, Iterable<? extends E> entities) {
+	public int delete(ConnectionWrapper connection, Iterable<? extends E> entities) {
+////
 	// 2.0.0
 	//	Objects.requireNonNull(entities, "entities");
 	//
@@ -3459,7 +3594,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * <p>
 	 * <span class="simpleTagLabel">Caution:</span>
-	 * Call {@link #connection(Connection)} method to specify the database connection before calling this method.
+	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
 	 * @param entities an <b>Iterable</b> of entities
@@ -3488,7 +3623,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Returns a row consumer.
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param sqlEntityInfo the <b>SqlEntityInfo</b> object
 	 * @param consumer the consumer
 	 *
@@ -3518,7 +3653,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 							// Gets a value and convert type to store
 							Object value = resultSet.getObject(columnAlias);
 							Class<?> type = accessor.getType(columnInfo.propertyName());
-							Object convertedValue = getDatabase().convert(value, Utils.toClassType(type));
+						// 2.1.0
+						//	Object convertedValue = getDatabase().convert(value, Utils.toClassType(type));
+							Object convertedValue = connection.getDatabase().convert(value, Utils.toClassType(type));
+						////
 							entityInfo.accessor().setValue(entity, columnInfo.propertyName(), convertedValue);
 						}
 						catch (SQLException e) {throw new RuntimeSQLException(e);}
@@ -3543,7 +3681,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Executes the SELECT SQL.
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param sql the SQL
 	 * @param parameters the parameters of SQL
 	 * @param consumer the consumer for the <b>ResultSet</b> object
@@ -3559,7 +3697,13 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		Objects.requireNonNull(consumer, "consumer");
 		if (connection == null) throw new IllegalStateException(messageNoConnection);
 
-		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
+	// 2.1.0
+	//	logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
+		int sqlNo = Sql.sqlNo++;
+		if (logger.isInfoEnabled())
+			logger.info('#' + Integer.toUnsignedString(sqlNo) + ' '
+				+ connection.getDatabase().getClass().getSimpleName() + ": "  + sql);
+	////
 
 		// Prepares SQL
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -3585,7 +3729,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 			//  for offset
 			int rowOffset = getOffset();
 			int rowLimit = getLimit();
-			if (rowOffset > 0 && !getDatabase().supportsOffsetLimit()) {
+		// 2.1.0
+		//	if (rowOffset > 0 && !getDatabase().supportsOffsetLimit()) {
+			if (rowOffset > 0 && !connection.getDatabase().supportsOffsetLimit()) {
+		////
 				//  Offset value was specified and cannot create SQL using 'OFFSET'
 				if (resultSetType == ResultSet.TYPE_FORWARD_ONLY) {
 					//  Skip rows for offset value
@@ -3593,11 +3740,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 						if (!resultSet.next())
 							break;
 					}
-					logger.debug(() -> "resultSet.next() * " + rowOffset);
+					logger.debug(() -> "  resultSet.next() * " + rowOffset);
 				} else {
 					// Specifies absolute row offset
 					boolean absoluteResult = resultSet.absolute(rowOffset);
-					logger.debug(() -> "resultSet.absolute(" + rowOffset + ")=" + absoluteResult);
+					logger.debug(() -> "  resultSet.absolute(" + rowOffset + ")=" + absoluteResult);
 				}
 			}
 
@@ -3617,11 +3764,21 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 			if (logger.isInfoEnabled()) {
 				double execTime = (execTimeAfter - execTimeBefore) / 1_000_000.0;
 				double getTime  = (getTimeAfter  - getTimeBefore ) / 1_000_000.0;
-				double averageGetTime = rowCount == 0 ? getTime : getTime / rowCount;
-				logger.info(MessageFormat.format(messageRowsSelect, rowCount,
-					timeFormat.format(execTime), timeFormat.format(getTime), timeFormat.format(averageGetTime)
-				));
-				logger.info(""); // Line feed of log
+			// 2.1.0
+			//	double averageGetTime = rowCount == 0 ? getTime : getTime / rowCount;
+			//	logger.info(MessageFormat.format(messageRowsSelect, rowCount,
+			//			timeFormat.format(execTime), timeFormat.format(getTime), timeFormat.format(averageGetTime)));
+				if (rowCount <= 1)
+					logger.info("#" + Integer.toUnsignedString(sqlNo) + ' '
+						+ MessageFormat.format(messageRowsSelect1, rowCount,
+							timeFormat.format(execTime), timeFormat.format(getTime)));
+				else {
+					double averageGetTime = rowCount == 0 ? getTime : getTime / rowCount;
+					logger.info("#" + Integer.toUnsignedString(sqlNo) + ' '
+						+ MessageFormat.format(messageRowsSelect, rowCount,
+							timeFormat.format(execTime), timeFormat.format(getTime), timeFormat.format(averageGetTime)));
+				}
+			////
 			}
 		}
 		catch (SQLException e) {throw new RuntimeSQLException(e);}
@@ -3630,7 +3787,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * Executes the SQL which is INSERT, UPDATE or DELETE SQL.
 	 *
-	 * @param connection the database connection
+	 * @param connection the connection wrapper
 	 * @param sql the SQL
 	 * @param parameters the parameters of SQL
 	 *
@@ -3644,7 +3801,13 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		Objects.requireNonNull(parameters, "parameters");
 		if (connection == null) throw new IllegalStateException(messageNoConnection);
 
-		logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
+	// 2.1.0
+	//	logger.info(() -> getDatabase().getClass().getSimpleName() + ": " + sql);
+		int sqlNo = Sql.sqlNo++;
+		if (logger.isInfoEnabled())
+			logger.info('#' + Integer.toUnsignedString(sqlNo) + ' '
+				+ connection.getDatabase().getClass().getSimpleName() + ": " + sql);
+	////
 
 		// Prepares SQL
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -3668,8 +3831,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 			// Logging for the results
 			if (logger.isInfoEnabled()) {
 				double execTime = (execTimeAfter - execTimeBefore) / 1_000_000.0;
-				logger.info(MessageFormat.format(messageRows, rowCount, timeFormat.format(execTime)));
-				logger.info(""); // Line feed of log
+			// 2.1.0
+			//	logger.info("  " + MessageFormat.format(messageRows, rowCount, timeFormat.format(execTime)));
+				logger.info("#" + Integer.toUnsignedString(sqlNo) + ' '
+					+ MessageFormat.format(messageRows, rowCount, timeFormat.format(execTime)));
+			////
 			}
 
 			return rowCount;

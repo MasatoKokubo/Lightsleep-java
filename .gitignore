@@ -18,3 +18,7 @@ build_back.gradle
 *.gradle_
 Notes.txt
 *.groovy_
+*.properties_
+*.xml_
+*.log
+*.bat_

@@ -31,7 +31,7 @@ class NotSpec extends Specification {
 		when: def condition = Condition.of('A = B').not()
 		then: !condition.empty
 
-		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == 'NOT(A = B)'
 
 	/**/DebugTrace.leave()
@@ -43,7 +43,7 @@ class NotSpec extends Specification {
 		when: def condition = Condition.of('A = B').not().not()
 		then: !condition.empty
 
-		when: def string = condition.toString(new Sql<>(Contact), new ArrayList<Object>())
+		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == 'A = B'
 
 	/**/DebugTrace.leave()

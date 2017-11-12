@@ -13,8 +13,10 @@ import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
+import org.lightsleep.helper.Resource;
+
 /**
- * Gets database connections using the
+ * Gets connection wrappers using the
  * <b>DriverManager</b> class.<br>
  * That refer to the following properties of lightsleep.properties file.
  *
@@ -38,30 +40,54 @@ import javax.sql.DataSource;
 public class Jdbc extends AbstractConnectionSupplier {
 	/**
 	 * Constructs a new <b>Jdbc</b>.
-	 * Use values specified in the lightsleep.properties
-	 * file as the connection information.
+	 *
+	 * <p>
+	 * Uses values specified in the lightsleep.properties file as the connection information.
+	 * </p>
 	 */
 	public Jdbc() {
+	// 2.1.0
+		super(Resource.getGlobal().getProperties(), props -> {});
+	////
 	}
 
 	/**
 	 * Constructs a new <b>Jdbc</b>.
-	 * Use values specified in the lightsleep.properties
-	 * file as the connection information.
+	 *
+	 * <p>
+	 * Uses values specified in the lightsleep.properties file as the connection information.
+	 * </p>
 	 *
 	 * @param modifier a consumer to modify the properties
 	 *
 	 * @since 1.5.0
 	 */
 	public Jdbc(Consumer<Properties> modifier) {
-		super(modifier);
+	// 2.1.0
+	//	super(modifier);
+		super(Resource.getGlobal().getProperties(), modifier);
+	////
+	}
+
+	/**
+	 * Constructs a new <b>Jdbc</b>.
+	 *
+	 * @param properties the properties with connection information
+	 *
+	 * @since 2.1.0
+	 */
+	public Jdbc(Properties properties) {
+		super(properties, props -> {});
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected DataSource getDataSource() {
+// 2.1.0
+//	protected DataSource getDataSource() {
+	public DataSource getDataSource() {
+////
 		return new DataSource() {
 			@Override
 			public PrintWriter getLogWriter() throws SQLException {
@@ -100,7 +126,7 @@ public class Jdbc extends AbstractConnectionSupplier {
 			public Connection getConnection() throws SQLException {
 				String url = properties.getProperty("url");
 				if (url == null)
-					logger.error("Jdbc.<init>: property url == null");
+					logger.error("Jdbc.getDataSource: property url == null");
 
 				Connection connection = DriverManager.getConnection(url, properties);
 				connection.setAutoCommit(false);

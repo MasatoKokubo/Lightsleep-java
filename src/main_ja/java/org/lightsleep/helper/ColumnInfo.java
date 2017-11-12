@@ -13,18 +13,18 @@ import org.lightsleep.component.Expression;
  */
 public class ColumnInfo {
 	/**
-	 * <b>ColumnInfo</b> を構築します。
+	 * <b>ColumnInfo</b>を構築します。
 	 *
 	 * @param entityInfo エンティティ情報
 	 * @param propertyName プロパティ名
 	 * @param columnName カラム名
 	 * @param columnType カラムの型 (null 可)
-	 * @param isKey 関連するカラムがキーの一部であれば <b>true</b>、そうでなければ <b>false</b>
-	 * @param selectExpression SELECT SQL を作成する時に使用する式 (式を使用しない場合は、null)
-	 * @param insertExpression INSERT SQL を作成する時に使用する式 (式を使用しない場合は、null)
-	 * @param updateExpression UPDATE SQL を作成する時に使用する式 (式を使用しない場合は、null)
+	 * @param isKey 関連するカラムがキーの一部であれば<b>true</b>、そうでなければ<b>false</b>
+	 * @param selectExpression SELECT SQLを作成する時に使用する式(式を使用しない場合は、null)
+	 * @param insertExpression INSERT SQLを作成する時に使用する式(式を使用しない場合は、null)
+	 * @param updateExpression UPDATE SQLを作成する時に使用する式(式を使用しない場合は、null)
 	 *	 *
-	 * @throws NullPointerException <b>entityInfo</b>, <b>propertyName</b> または <b>columnName</b> が null の場合
+	 * @throws NullPointerException <b>entityInfo</b>, <b>propertyName</b> または <b>columnName</b>がnullの場合
 	 */
 	public ColumnInfo(
 		EntityInfo<?> entityInfo, String propertyName, String columnName, Class<?> columnType, boolean isKey,
@@ -72,74 +72,74 @@ public class ColumnInfo {
 	/**
 	 * 関連するカラムがキーの一部かどうかを返します。
 	 *
-	 * @return 関連するカラムがキーの一部であれば <b>true</b>、そうでなければ <b>false</b>
+	 * @return 関連するカラムがキーの一部であれば<b>true</b>、そうでなければ<b>false</b>
 	 */
 	public boolean isKey() {
 		return false;
 	}
 
 	/**
-	 * 関連するカラムが SELECT SQL で使用されるかどうかを返します。
+	 * 関連するカラムがSELECT SQLで使用されるかどうかを返します。
 	 *
-	 * @return 関連するカラムが SELECT SQL で使用される場合 <b>true</b>、そうでなければ <b>false</b>
+	 * @return 関連するカラムがSELECT SQLで使用されるなら<b>true</b>、そうでなければ<b>false</b>
 	 */
 	public boolean selectable() {
 		return false;
 	}
 
 	/**
-	 * 関連するカラムが INSERT SQL で使用されるかどうかを返します。
+	 * 関連するカラムがINSERT SQLで使用されるかどうかを返します。
 	 *
-	 * @return 関連するカラムが INSERT SQL で使用される場合 <b>true</b>、そうでなければ <b>false</b>
+	 * @return 関連するカラムがINSERT SQLで使用されるなら<b>true</b>、そうでなければ<b>false</b>
 	 */
 	public boolean insertable() {
 		return false;
 	}
 
 	/**
-	 * 関連するカラムが UPDATE SQL で使用されるかどうかを返します。
+	 * 関連するカラムがUPDATE SQLで使用されるかどうかを返します。
 	 *
-	 * @return 関連するカラムが UPDATE SQL で使用される場合 <b>true</b>、そうでなければ <b>false</b>
+	 * @return 関連するカラムがUPDATE SQLで使用されるなら<b>true</b>、そうでなければ<b>false</b>
 	 */
 	public boolean updatable() {
 		return false;
 	}
 
 	/**
-	 * SELECT SQL を作成する時に使用する式を返します。
+	 * SELECT SQLを作成する時に使用する式を返します。
 	 *
-	 * @return SELECT SQL を作成する時に使用する式 (式を使用しない場合は、null)
+	 * @return SELECT SQLを作成する時に使用する式(式を使用しない場合は、null)
 	 */
 	public Expression selectExpression() {
 		return null;
 	}
 
 	/**
-	 * INSERT SQL を作成する時に使用する式を返します。
+	 * INSERT SQLを作成する時に使用する式を返します。
 	 *
-	 * @return INSERT SQL を作成する時に使用する式 (式を使用しない場合は、null)
+	 * @return INSERT SQLを作成する時に使用する式(式を使用しない場合は、null)
 	 */
 	public Expression insertExpression() {
 		return null;
 	}
 
 	/**
-	 * UPDATE SQL を作成する時に使用する式を返します。
+	 * UPDATE SQLを作成する時に使用する式を返します。
 	 *
-	 * @return UPDATE SQL を作成する時に使用する式 (式を使用しない場合は、null)
+	 * @return UPDATE SQLを作成する時に使用する式(式を使用しない場合は、null)
 	 */
 	public Expression updateExpression() {
 		return null;
 	}
 
 	/**
-	 * <b>tableAlias</b> が空文字列でなければ、<b>tableAlias + '.' +  <i>プロパティ名</i></b> を返します。
+	 * <b>tableAlias</b>が空文字列でなければ、<b>tableAlias + '.' +  <i>プロパティ名</i></b>を返します。
 	 * 空文字列の場合は、単にプロパティ名を返します。
 	 *
 	 * @param tableAlias テーブル別名
 	 * @return テーブル別名付きのプロパティ名
 	 *
-	 * @throws NullPointerException <b>tableAlias</b> が null の場合
+	 * @throws NullPointerException <b>tableAlias</b>がnullの場合
 	 *
 	 * @since 1.8.2
 	 */
@@ -148,26 +148,26 @@ public class ColumnInfo {
 	}
 
 	/**
-	 * <b>tableAlias</b> が空文字列でなければ、<b>tableAlias + '.' +  <i>カラム名</i></b> を返します。
+	 * <b>tableAlias</b>が空文字列でなければ、<b>tableAlias + '.' +  <i>カラム名</i></b>を返します。
 	 * 空文字列の場合は、単にカラム名を返します。
 	 *
 	 * @param tableAlias テーブル別名
 	 * @return テーブル別名付きのカラム名
 	 *
-	 * @throws NullPointerException <b>tableAlias</b> が null の場合
+	 * @throws NullPointerException <b>tableAlias</b>がnullの場合
 	 */
 	public String getColumnName(String tableAlias) {
 		return null;
 	}
 
 	/**
-	 * <b>tableAlias</b> が空文字列でなければ、<b>tableAlias + '_' + <i>カラム名</i></b> を返します。
+	 * <b>tableAlias</b>が空文字列でなければ、<b>tableAlias + '_' + <i>カラム名</i></b>を返します。
 	 * 空文字列の場合は、単にカラム名を返します。
 	 *
 	 * @param tableAlias テーブル別名
 	 * @return カラム別名
 	 *
-	 * @throws NullPointerException <b>tableAlias</b> が null の場合
+	 * @throws NullPointerException <b>tableAlias</b>がnullの場合
 	 */
 	public String getColumnAlias(String tableAlias) {
 		return null;

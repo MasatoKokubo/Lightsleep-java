@@ -3,11 +3,11 @@
 
 package org.lightsleep.test.entity;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lightsleep.Sql;
+import org.lightsleep.connection.ConnectionWrapper;
 import org.lightsleep.entity.Composite;
 import org.lightsleep.entity.NonColumn;
 import org.lightsleep.entity.Table;
@@ -29,7 +29,10 @@ public class SaleComposite extends Sale implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void postSelect(Connection conn) {
+// 2.1.0
+//	public void postSelect(Connection conn) {
+	public void postSelect(ConnectionWrapper conn) {
+////
 		new Sql<>(SaleItem.class).connection(conn)
 			.where("{saleId} = {}", id)
 			.orderBy("{itemIndex}")
@@ -40,7 +43,10 @@ public class SaleComposite extends Sale implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postInsert(Connection conn) {
+// 2.1.0
+//	public int postInsert(Connection conn) {
+	public int postInsert(ConnectionWrapper conn) {
+////
 		for (int index = 0; index < items.size(); ++index) {
 			SaleItem item = items.get(index);
 			item.saleId    = id;
@@ -53,7 +59,10 @@ public class SaleComposite extends Sale implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postUpdate(Connection conn) {
+// 2.1.0
+//	public int postUpdate(Connection conn) {
+	public int postUpdate(ConnectionWrapper conn) {
+////
 		return new Sql<>(SaleItem.class).connection(conn).update(items);
 	}
 
@@ -61,7 +70,10 @@ public class SaleComposite extends Sale implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postDelete(Connection conn) {
+// 2.1.0
+//	public int postDelete(Connection conn) {
+	public int postDelete(ConnectionWrapper conn) {
+////
 		return new Sql<>(SaleItem.class).connection(conn).delete(items);
 	}
 }

@@ -18,7 +18,7 @@ package org.lightsleep.logger;
  * 指定がない場合は、<b>StdOut</b> が選択されます。<br>
  * <br>
  *
- * <b>Jdk</b>, <b>Log4j</b>, <b>Log4j2</b> および <b>SLF4J</b>
+ * <b>Jdk</b>, <b>Log4j</b>, <b>Log4j2</b>および<b>SLF4J</b>
  * のログレベルは、次の表のようにマッピングされます。<br>
  *
  * <table class="additional">

@@ -9,12 +9,14 @@ import java.util.function.Consumer;
 
 import javax.sql.DataSource;
 
+import org.lightsleep.helper.Resource;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.util.PropertyElf;
 
 /**
- * Gets database connections using
+ * Gets connection wrappers using
  * <a href="http://brettwooldridge.github.io/HikariCP/" target="HikariCP">HikariCP JDBC Connection Pool</a>.
  * That refer to the following properties of lightsleep.properties file.
  *
@@ -42,47 +44,112 @@ import com.zaxxer.hikari.util.PropertyElf;
 public class HikariCP extends AbstractConnectionSupplier {
 	/**
 	 * Constructs a new <b>HikariCP</b>.
-	 * Use values specified in the lightsleep.properties file as the connection information.
+	 *
+	 * <p>
+	 * Uses values specified in the lightsleep.properties file as the connection information.
+	 * </p>
 	 */
 	public HikariCP() {
+	// 2.1.0
+		this(Resource.getGlobal().getProperties(), props -> {});
+	////
 	}
 
 	/**
 	 * Constructs a new <b>HikariCP</b>.
-	 * Use values specified in the lightsleep.properties file as the connection information.
+	 *
+	 * <p>
+	 * Uses values specified in the lightsleep.properties file as the connection information.
+	 * </p>
 	 *
 	 * @param modifier a consumer to modify the properties
 	 *
 	 * @since 1.5.0
 	 */
 	public HikariCP(Consumer<Properties> modifier) {
-		super(modifier);
+	// 2.1.0
+	//	super(modifier);
+		this(Resource.getGlobal().getProperties(), modifier);
+	////
+	}
+
+	/**
+	 * Constructs a new <b>HikariCP</b>.
+	 *
+	 * @param properties the properties with connection information
+	 *
+	 * @since 2.1.0
+	 */
+	public HikariCP(Properties properties) {
+		this(properties, props -> {});
+	}
+
+	/**
+	 * Constructs a new <b>HikariCP</b>.
+	 *
+	 * @param properties the properties with connection information
+	 * @param modifier a consumer to modify the properties
+	 *
+	 * @since 2.1.0
+	 */
+	private HikariCP(Properties properties, Consumer<Properties> modifier) {
+		super(properties, modifier.andThen(props -> {
+			// jdbcUrl <- url
+			String url = props.getProperty("url");
+			String jdbcUrl = props.getProperty("jdbcUrl");
+			if (url != null && jdbcUrl == null) {
+				props.setProperty("jdbcUrl", url);
+				logger.info("HikariCP.<init>: properties.jdbcUrl <- properties.url: '" + url + "'");
+			} else if (url == null && jdbcUrl != null) {
+				props.setProperty("url", jdbcUrl);
+				logger.info("HikariCP.<init>: properties.url <- properties.jdbcUrl: '" + jdbcUrl + "'");
+			}
+
+			// username <- user
+			String user = props.getProperty("user");
+			String username = props.getProperty("username");
+			if (user != null && username == null) {
+				props.setProperty("username", user);
+				logger.info("HikariCP.<init>: properties.username <- properties.user: '" + user + "'");
+			}
+		}));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected DataSource getDataSource() {
+// 2.1.0
+//	protected DataSource getDataSource() {
+	public DataSource getDataSource() {
+////
+		Properties properties2 = new Properties();
 		try {
 			// Gets HikariCP properties to the properties2.
 			Set<String> propertyNames = PropertyElf.getPropertyNames(HikariConfig.class);
-			Properties properties2 = new Properties();
 			propertyNames
 				.forEach(propertyName -> {
 					if (properties.containsKey(propertyName))
 						properties2.put(propertyName, properties.get(propertyName));
 				});
-			logger.debug(() -> "HikariCP.getDataSource: properties2: " + properties2);
+			logger.debug(() -> "HikariCP.getDataSource: properties: " + properties2);
 
 			HikariConfig config = new HikariConfig(properties2);
 			DataSource dataSource = new HikariDataSource(config);
-			logger.debug(() -> "HikariCP.getDataSource: dataSource = " + dataSource);
+		// 2.1.0
+		//	logger.debug(() -> "HikariCP.getDataSource: dataSource = " + dataSource);
+		////
 			return dataSource;
 		}
+		catch (RuntimeException e) {throw e;}
 		catch (Exception e) {
-			logger.error("HikariCP.getDataSource: " + e, e);
+		// 2.1.0
+		//	logger.error("HikariCP.getDataSource: " + e, e);
+			throw new RuntimeException("properties: " + properties2, e);
+		////
 		}
-		return null;
+	// 2.1.0
+	//	return null;
+	////
 	}
 }

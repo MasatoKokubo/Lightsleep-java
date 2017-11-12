@@ -144,15 +144,13 @@ public class Accessor<T> {
 			.collect(Collectors.toList());
 
 		if (logger.isDebugEnabled()) {
+			String logHeader = objectClass.getName() + '.';
 			logger.debug("");
 			for (int index = 0; index < propertyNames.size(); ++index)
-				logger.debug("<init>: propertyNames." + index + ": " + objectClass.getName() + " / " + propertyNames.get(index));
+				logger.debug(logHeader + "propertyNames." + index + ": " + objectClass.getName() + " / " + propertyNames.get(index));
 
-			logger.debug("");
 			for (int index = 0; index < valuePropertyNames.size(); ++index)
-				logger.debug("<init>: valuePropertyNames." + index + ": " + objectClass.getName() + " / " + valuePropertyNames.get(index));
-
-			logger.debug("");
+				logger.debug(logHeader + "valuePropertyNames." + index + ": " + objectClass.getName() + " / " + valuePropertyNames.get(index));
 		}
 	}
 

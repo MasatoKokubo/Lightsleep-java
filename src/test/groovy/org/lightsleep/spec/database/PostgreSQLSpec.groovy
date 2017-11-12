@@ -13,7 +13,7 @@ import spock.lang.*
 // PostgreSQLSpec
 @Unroll
 class PostgreSQLSpec extends Specification {
-	@Shared map = PostgreSQL.instance().typeConverterMap()
+	@Shared map = PostgreSQL.instance.typeConverterMap()
 
 	// -> SqlString
 	def "PostgreSQLSpec -> SqlString"() {

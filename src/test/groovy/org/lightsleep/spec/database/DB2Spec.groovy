@@ -13,7 +13,7 @@ import spock.lang.*
 // DB2Spec
 @Unroll
 class DB2Spec extends Specification {
-	@Shared map = DB2.instance().typeConverterMap()
+	@Shared map = DB2.instance.typeConverterMap()
 
 	// -> SqlString
 	def "DB2Spec -> SqlString"() {

@@ -23,12 +23,6 @@ import java.util.Objects;
  * @author Masato Kokubo
  */
 public class Utils {
-	// Class resources
-	private static final int maxLogStringLength    = Resource.globalResource.getInt("maxLogStringLength"   , 200);
-	private static final int maxLogByteArrayLength = Resource.globalResource.getInt("maxLogByteArrayLength", 200);
-	private static final int maxLogArrayLength     = Resource.globalResource.getInt("maxLogArrayLength"    , 100);
-	private static final int maxLogMapSize         = Resource.globalResource.getInt("maxLogMapSize"        , 100);
-
 	// A map to convert the primitive type to class type
 	private static final Map<Class<?>, Class<?>> toClassMap = new LinkedHashMap<>();
 	static {
@@ -54,6 +48,28 @@ public class Utils {
 		toPrimitiveMap.put(Float    .class, float  .class);
 		toPrimitiveMap.put(Double   .class, double .class);
 	}
+
+	// Class resources
+// 2.1.0
+//	private static final int maxLogStringLength    = Resource.getGlobal().getInt("maxLogStringLength"   , 200);
+//	private static final int maxLogByteArrayLength = Resource.getGlobal().getInt("maxLogByteArrayLength", 200);
+//	private static final int maxLogArrayLength     = Resource.getGlobal().getInt("maxLogArrayLength"    , 100);
+//	private static final int maxLogMapSize         = Resource.getGlobal().getInt("maxLogMapSize"        , 100);
+	private static int maxLogStringLength;
+	private static int maxLogByteArrayLength;
+	private static int maxLogArrayLength;
+	private static int maxLogMapSize;
+	static {
+		initClass();
+	}
+
+	private static void initClass() {
+		maxLogStringLength    = Resource.getGlobal().getInt("maxLogStringLength"   , 200);
+		maxLogByteArrayLength = Resource.getGlobal().getInt("maxLogByteArrayLength", 200);
+		maxLogArrayLength     = Resource.getGlobal().getInt("maxLogArrayLength"    , 100);
+		maxLogMapSize         = Resource.getGlobal().getInt("maxLogMapSize"        , 100);
+	}
+////
 
 	/**
 	 * Converts the primitive type to the related class type.
@@ -90,7 +106,7 @@ public class Utils {
 		} else {
 			className = clazz.getName();
 
-			// 最後の . より右
+			// right from the last period
 			className = className.substring(className.lastIndexOf('.') + 1);
 		}
 
@@ -544,7 +560,6 @@ public class Utils {
 		return buff;
 	}
 
-	// #0014
 	/**
 	 * Returns annotations of the target class and its super class without Object class.
 	 *

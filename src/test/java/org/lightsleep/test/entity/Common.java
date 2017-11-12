@@ -3,9 +3,9 @@
 
 package org.lightsleep.test.entity;
 
-import java.sql.Connection;
 import java.sql.Timestamp;
 
+import org.lightsleep.connection.ConnectionWrapper;
 import org.lightsleep.entity.*;
 
 /**
@@ -35,7 +35,10 @@ public abstract class Common implements PreInsert {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int preInsert(Connection conn) {
+// 2.1.0
+//	public int preInsert(Connection conn) {
+	public int preInsert(ConnectionWrapper conn) {
+////
 		id = Numbering.getNewId(conn, getClass());
 		return 0;
 	}

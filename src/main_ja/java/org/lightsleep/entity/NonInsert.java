@@ -6,9 +6,9 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * フィールドに関連するカラムが INSERT SQL で使用されない事を示します。
+ * フィールドに関連するカラムがINSERT SQLで使用されない事を示します。
  *
- * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleTitle"><span>使用例/Java</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}NonInsert</b>
  *   public Timestamp createdTime;
@@ -16,7 +16,7 @@ import java.lang.annotation.*;
  *   public Timestamp updatedTime;
  * </pre></div>
  *
- * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleTitle"><span>使用例/Groovy</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}NonInsert</b>
  *   Timestamp createdTime
@@ -33,4 +33,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonInsert {
+	/**
+	 * @return フィールドに関連するカラムがINSERT SQLで使用されないなら<b>true</b>、そうでなければ<b>false</b>
+	 * @since 2.0.0
+	 */
+	boolean value() default true;
 }

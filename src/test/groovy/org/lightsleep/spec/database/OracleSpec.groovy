@@ -13,7 +13,7 @@ import spock.lang.*
 // OracleSpec
 @Unroll
 class OracleSpec extends Specification {
-	@Shared map = Oracle.instance().typeConverterMap()
+	@Shared map = Oracle.instance.typeConverterMap()
 
 	// -> SqlString
 	def "OracleSpec -> SqlString"() {

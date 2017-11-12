@@ -6,23 +6,23 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * SELECT SQL で、 のカラム名の代わりに使用される式を示します。
+ * SELECT SQLで、カラム名の代わりに使用される式を示します。
  *
- * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleTitle"><span>使用例/Java</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}Select("{firstName}||' '||{lastName}")</b>
  *  {@literal @}NonInsert{@literal @}NonUpdate
  *   public String fullName;
  * </pre></div>
  *
- * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleTitle"><span>使用例/Groovy</span></div>
  * <div class="exampleCode"><pre>
  *  <b>{@literal @}Select("{firstName}||' '||{lastName}")</b>
  *  {@literal @}NonInsert{@literal @}NonUpdate
  *   String fullName
  * </pre></div>
  *
- * <div class="exampleTitle"><span>生成される SQL</span></div>
+ * <div class="exampleTitle"><span>生成されるSQL</span></div>
  * <div class="exampleCode"><pre>
  * SELECT ..., <b>firstName||' '||lastName AS fullName</b>, ...
  * </pre></div>

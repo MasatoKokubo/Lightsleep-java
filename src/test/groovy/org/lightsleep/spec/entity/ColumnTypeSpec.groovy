@@ -19,17 +19,14 @@ import spock.lang.*
 // @since 2.0.0
 @Unroll
 class ColumnTypeSpec extends Specification {
-	@Shared Database beforeDatabase = Sql.database
 	@Shared def beforeTimeZone = TimeZone.getDefault()
 
 	def setupSpec() {
-		Sql.database = Standard.instance()
 		TimeZone.setDefault(TimeZone.getTimeZone("GMT0"))
 	}
 
 	def cleanupSpec() {
 		TimeZone.setDefault(beforeTimeZone)
-		Sql.database = beforeDatabase
 	}
 
 	@ColumnTypeProperties([
@@ -111,9 +108,10 @@ class ColumnTypeSpec extends Specification {
 
 		when:
 			def createdSql =
-				method == 'select' ? Sql.database.selectSql(sql, []) :
-				method == 'insert' ? Sql.database.insertSql(sql, []) :
-				method == 'update' ? Sql.database.updateSql(sql, []) : ''
+				method == 'select' ? Standard.instance.selectSql(sql, []) :
+				method == 'insert' ? Standard.instance.insertSql(sql, []) :
+				method == 'update' ? Standard.instance.updateSql(sql, []) : ''
+			////
 		/**/DebugTrace.print("createdSql", createdSql)
 
 		then:

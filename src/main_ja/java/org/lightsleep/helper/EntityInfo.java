@@ -15,11 +15,11 @@ import java.util.List;
  */
 public class EntityInfo<E> {
 	/**
-	 * <b>EntityInfo</b> オブジェクトを構築します。
+	 * <b>EntityInfo</b>オブジェクトを構築します。
 	 *
 	 * @param entityClass エンティティクラス
 	 *
-	 * @throws NullPointerException <b>entityClass</b> が null の場合
+	 * @throws NullPointerException <b>entityClass</b>がnullの場合
 	 */
 	public EntityInfo(Class<E> entityClass) {
 	}
@@ -57,7 +57,7 @@ public class EntityInfo<E> {
 	 * @param propertyName プロパティ名
 	 * @return カラム情報
 	 *
-	 * @throws NullPointerException <b>propertyName</b> が null の場合	 *
+	 * @throws NullPointerException <b>propertyName</b>がnullの場合	 *
 	 * @throws IllegalArgumentException プロパティ名に関連するカラム情報が見つからない場合
 	 */
 	public ColumnInfo getColumnInfo(String propertyName) {

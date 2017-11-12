@@ -6,6 +6,7 @@ package org.lightsleep.spec.component
 import org.debugtrace.DebugTrace
 import org.lightsleep.*
 import org.lightsleep.component.*
+import org.lightsleep.database.*
 import org.lightsleep.entity.*
 import spock.lang.*
 
@@ -57,8 +58,8 @@ class ConditionSpec extends Specification {
 			def condition2 = condition1.not()
 
 		then:
-			condition1.toString(sql, []) == 'A'
-			condition2.toString(sql, []) == 'NOT(A)'
+			condition1.toString(Standard.instance, sql, []) == 'A'
+			condition2.toString(Standard.instance, sql, []) == 'NOT(A)'
 	}
 
 	def "ConditionSpec and"() {
@@ -94,11 +95,11 @@ class ConditionSpec extends Specification {
 			def condition5 = condition2.or(condition4)
 
 		then:
-			condition1.toString(sql, []) == 'A'
-			condition2.toString(sql, []) == 'A AND B'
-			condition3.toString(sql, []) == 'C'
-			condition4.toString(sql, []) == 'C AND D'
-			condition5.toString(sql, []) == 'A AND B OR C AND D'
+			condition1.toString(Standard.instance, sql, []) == 'A'
+			condition2.toString(Standard.instance, sql, []) == 'A AND B'
+			condition3.toString(Standard.instance, sql, []) == 'C'
+			condition4.toString(Standard.instance, sql, []) == 'C AND D'
+			condition5.toString(Standard.instance, sql, []) == 'A AND B OR C AND D'
 	}
 
 	def "ConditionSpec or"() {
@@ -134,10 +135,10 @@ class ConditionSpec extends Specification {
 			def condition5 = condition2.and(condition4)
 
 		then:
-			condition1.toString(sql, []) == 'A'
-			condition2.toString(sql, []) == 'A OR B'
-			condition3.toString(sql, []) == 'C'
-			condition4.toString(sql, []) == 'C OR D'
-			condition5.toString(sql, []) == '(A OR B) AND (C OR D)'
+			condition1.toString(Standard.instance, sql, []) == 'A'
+			condition2.toString(Standard.instance, sql, []) == 'A OR B'
+			condition3.toString(Standard.instance, sql, []) == 'C'
+			condition4.toString(Standard.instance, sql, []) == 'C OR D'
+			condition5.toString(Standard.instance, sql, []) == '(A OR B) AND (C OR D)'
 	}
 }

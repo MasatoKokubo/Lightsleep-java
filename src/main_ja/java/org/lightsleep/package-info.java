@@ -1,4 +1,4 @@
 /**
- * Lightsleep の主要なクラスがあります。
+ * 主に使用するクラスがあります。
  */
 package org.lightsleep;

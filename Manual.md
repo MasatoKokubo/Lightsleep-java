@@ -1,7 +1,7 @@
-Lightsleep 2.x.x / Manual
+Lightsleep 2.1.0 / Manual
 ===========
 
-This document is a manual of Lightsleep that is an O/R (Object-Relational) mapping library.
+[[Japanese]](Manual_ja.md)
 
 <div id="TOC"></div>
 
@@ -10,27 +10,27 @@ This document is a manual of Lightsleep that is an O/R (Object-Relational) mappi
 1. [Package](#Package)
 1. [Create entity classes](#EntityClass)
     1. [Annotations to be used in entity classes](#Entity-Annotation)
-        1. [@Table](#Entity-Table)
-        1. [@Key](#Entity-Key)
-        1. [@Column](#Entity-Column)
-        1. [@ColumnType](#Entity-ColumnType)
-        1. [@NonColumn](#Entity-NonColumn)
-        1. [@NonSelect](#Entity-NonSelect)
-        1. [@NonInsert](#Entity-NonInsert)
-        1. [@NonUpdate](#Entity-NonUpdate)
-        1. [@Select](#Entity-Select)
-        1. [@Insert](#Entity-Insert)
-        1. [@Update](#Entity-Update)
-        1. [@KeyProperty, @ColumnProperty, ... and @UpdateProperty](#Entity-XxxxxProperty)
+        1. [`@Table`](#Entity-Table)
+        1. [`@Key]`(#Entity-Key)
+        1. [`@Column`](#Entity-Column)
+        1. [`@ColumnType`](#Entity-ColumnType)
+        1. [`@NonColumn`](#Entity-NonColumn)
+        1. [`@NonSelect`](#Entity-NonSelect)
+        1. [`@NonInsert`](#Entity-NonInsert)
+        1. [`@NonUpdate`](#Entity-NonUpdate)
+        1. [`@Select`](#Entity-Select)
+        1. [`@Insert`](#Entity-Insert)
+        1. [`@Update`](#Entity-Update)
+        1. [`@KeyProperty`, `@ColumnProperty`, ... and `@UpdateProperty`](#Entity-XxxxxProperty)
     1. [Interfaces implemented by entity classes](#Entity-Interface)
-        1. [PreInsert Interface](#Entity-PreInsert)
-        1. [Composite Interface](#Entity-Composite)
-        1. [PreStore Interface](#Entity-PreStore)
-        1. [PostLoad Interface](#Entity-PostLoad)
-1. [Definition of lightsleep.properties](#lightsleep-properties)
-    1. [Specifying a logging library class](#Logger)
-    1. [Specifying a database handler class](#Database)
-    1. [Specifying a connection supplier class](#ConnectionSupplier)
+        1. [`PreInsert` Interface](#Entity-PreInsert)
+        1. [`Composite` Interface](#Entity-Composite)
+        1. [`PreStore` Interface](#Entity-PreStore)
+        1. [`PostLoad` Interface](#Entity-PostLoad)
+1. [Definition of `lightsleep.properties` file](#lightsleep-properties)
+    1. [Logging library class](#Logger)
+    1. [Database handler class](#Database)
+    1. [Connection supplier class](#ConnectionSupplier)
 1. [Transaction](#Transaction)
 1. [Execution of SQL](#ExecuteSQL)
     1. [SELECT](#ExecuteSQL-select)
@@ -71,22 +71,23 @@ This document is a manual of Lightsleep that is an O/R (Object-Relational) mappi
 
 Has the following packages.
 
-|Packages|Classes|
+|Packages|Contained classes and interfaces|
 |:--|:--|
-|org.lightsleep           |Main classes|
-|org.lightsleep.component |Classes for creating SQL components|
-|org.lightsleep.connection|Class for supplying connection|
-|org.lightsleep.database  |Database handler classes|
-|org.lightsleep.entity    |Annotation classes and interfaces to use when creating entity classes|
-|org.lightsleep.helper    |Helper classes mainly used internally|
-|org.lightsleep.logger    |Classes for using various log libraries|
+|org.lightsleep                |Classes you use primarily|
+|org.lightsleep.component      |Classes you use to create SQL components such as conditions and expressions|
+|org.lightsleep.connection     |Classes that supply connection wrapper classes to this library using various connection pool libraries|
+|org.lightsleep.database       |Classes for generating SQL for various DBMSs|
+|org.lightsleep.database.anchor|Classes used in mapping words contained in JDBC URLs to classes in the *org.lightsleep.database* package|
+|org.lightsleep.entity         |Annotation classes and interfaces you use when creating entity classes|
+|org.lightsleep.helper         |Helper classes used inside this library|
+|org.lightsleep.logger         |Classes that output logs inside this library using various logging libraries|
 
 <div id="EntityClass"></div>
 
 [[To TOC]](#TOC)
 
 ### 2. Create entity classes
-Entity classes are for storing data retrieved with SELECT SQL, create them for each database table.
+Create corresponding entity classes for each table in the database.
 
 <div id="Entity-Annotation"></div>
 
@@ -352,7 +353,7 @@ If this annotation is specified, the value of the field is not used.
 // Groovy Example
     @Update('{updateCount}+1')
     int updateCount
-    @Update("CURRENT_TIMESTAMP")
+    @Update('CURRENT_TIMESTAMP')
     Timestamp updatedTime
 ```
 
@@ -399,7 +400,7 @@ public abstract class Common implements PreInsert {
         ...
 
     @Override
-    public int preInsert(Connection conn) {
+    public int preInsert(ConnectionWrapper conn) {
         id = Numbering.getNewId(conn, getClass());
         return 0;
     }
@@ -423,7 +424,7 @@ public class ContactComposite extends Contact implements Composite {
     public final List<Phone> phones = new ArrayList<>();
 
     @Override
-    public void postSelect(Connection conn) {
+    public void postSelect(ConnectionWrapper conn) {
         if (id != 0) {
             new Sql<>(Phone.class).connection(conn)
                 .where("{contactId}={}", id)
@@ -433,7 +434,7 @@ public class ContactComposite extends Contact implements Composite {
     }
 
     @Override
-    public int postInsert(Connection conn) {
+    public int postInsert(ConnectionWrapper conn) {
         phones.forEach(phone -> phone.contactId = id);
         int count = new Sql<>(Phone.class).connection(conn)
                 .insert(phones);
@@ -441,7 +442,7 @@ public class ContactComposite extends Contact implements Composite {
     }
 
     @Override
-    public int postUpdate(Connection conn) {
+    public int postUpdate(ConnectionWrapper conn) {
         List<Integer> phoneIds = phones.stream()
             .map(phone -> phone.id)
             .filter(id -> id != 0)
@@ -471,7 +472,7 @@ public class ContactComposite extends Contact implements Composite {
     }
  
     @Override
-    public int postDelete(Connection conn) {
+    public int postDelete(ConnectionWrapper conn) {
         int count = new Sql<>(Phone.class).connection(conn)
             .where("{contactId}={}", id)
             .delete(conn);
@@ -517,34 +518,105 @@ public class Contact implements PreStore, PostLoad {
 
 ### 3. Definition of lightsleep.properties
 
-Lightsleep.properties is a properties file referenced by Lightsleep and define the following contents.
+Lightsleep.properties is a properties file referenced by Lightsleep and you can specify the following contents.  
+*(The `Database` property up to version 2.0.0 has been removed in version 2.1.0, the database handler is automatically determined from the corresponding JDBC URL.)*
 
-|Property Name|What to specify|
-|:--|:--|
-|[Logger            ](#Logger            )|The class corresponding to the logging library that Lightsleep uses for log output.|
-|[Database          ](#Database          )|The database handler class corresponding to the DBMS to be used.|
-|[ConnectionSupplier](#ConnectionSupplier)|The class corresponding to the connection supplier (Connection pool library etc.).|
+|Property Name|Content|Default Value|
+|:------------|:------|:------------|
+|[Logger            ](#Logger            )|Logging class|`Std$Out$Info`|
+|[ConnectionSupplier](#ConnectionSupplier)|Connection Supplier class|`Jdbc`|
+| url                                     |JDBC URL|None|
+| urls                                    |JDBC URLs|None|
+| maxStringLiteralLength                  |Maximum length of string literals when generates SQL|128|
+| maxBinaryLiteralLength                  |Maximum length of binary literals when generates SQL|128|
+| maxLogStringLength                      |Maximum length of string values output to log|200|
+| maxLogByteArrayLength                   |Maximum number of elements of byte arrays output to log|200|
+| maxLogArrayLength                       |Maximum number of elements of arrays output to log|100|
+| maxLogMapSize                           |Maximum number of elements of maps output to log|100|
 
+Place the `lightsleep.properties` file in one of the class paths. Or you can specify the file path with the system property `lightsleep.resource`. *(java -Dlightsleep.resource=...)*  
 In addition to the above define the properties used by the connection pool library.
 
 Example of lightsleep.properties:
 
 ```properties:lightsleep.properties
-Logger             = Log4j2
-Database           = PostgreSQL
+Logger      = Log4j2
 ConnectionSupplier = Dbcp
-url                = jdbc:postgresql://postgresqlserver/example
-username           = example
-password           = _example_
-initialSize        = 10
-maxTotal           = 100
+url         = jdbc:postgresql://postgresqlserver/example
+username    = example
+password    = _example_
+initialSize = 10
+maxTotal    = 100
+```
+
+You can specify multiple JDBC URLs in the `urls` property separated by commas. *(since 2.1.0)*  
+If you define a property with more than one line, append a backslash (`\`) to the end of the line other than the last line.  
+If you specify `urls`, the specification of `url` will be invalid.
+
+```properties:lightsleep.properties
+# Case of specifying multiple JDBC URLs
+Logger      = Log4j2
+ConnectionSupplier = Dbcp
+urls        = jdbc:postgresql://postgresqlserver/example1,\
+              jdbc:postgresql://postgresqlserver/example2
+user        = example
+password    = _example_
+initialSize = 10
+maxTotal    = 100
+```
+
+You can specify a different DBMS URL for each JDBC URL. If the user and password are different for each JDBC URL, specify them in the URL.
+
+```properties:lightsleep.properties
+# Case of using multiple DBMS (specifying user and password in URL)
+Logger = Log4j2
+ConnectionSupplier = Dbcp
+urls = \
+    jdbc:db2://db2-11:50000/example:user=example;password=_example_;,\
+    jdbc:mysql://mysql57/example?user=example&password=_example_,\
+    jdbc:oracle:thin:example/_example_@oracle121:1521:example,\
+    jdbc:postgresql://postgresql101/example?user=example&password=_example_,\
+    jdbc:sqlite:C:/sqlite/example,\
+    jdbc:sqlserver://sqlserver13;database=example;user=example;password=_example_,\
+
+initialSize = 10
+maxTotal    = 100
+```
+
+To specify a connection supplier for each URL, write it within `[]` at the head of the URL. *(since 2.1.0)*  
+The specification of this form takes precedence over the specification of `ConnectionSupplier` property.  
+You can specify the `username` and `jdbcUrl` property with the `user` and `url` property, but specify properties other than those with the property name specific to the connection pool library.
+
+```properties:lightsleep.properties
+# Case of specifying a connection supplier for each URL
+Logger = Log4j2
+urls = \
+    [  Jdbc  ]jdbc:db2://db2-11:50000/example:user=example;password=_example_;,\
+    [  C3p0  ]jdbc:mysql://mysql57/example?user=example&password=_example_,\
+    [  Dbcp  ]jdbc:oracle:thin:example/_example_@oracle121:1521:example,\
+    [HikariCP]jdbc:postgresql://postgresql101/example?user=example&password=_example_,\
+    [TomcatCP]jdbc:sqlite:C:/sqlite/example,\
+    [  Jdbc  ]jdbc:sqlserver://sqlserver13;database=example;user=example;password=_example_,\
+
+# Dbcp, HikariCP, TomcatCP
+initialSize = 10
+
+# Dbcp
+maxTotal    = 10
+
+# TomcatCP
+maxActive   = 10
+
+# HikariCP
+minimumIdle     = 10
+maximumPoolSize = 10
 ```
 
 <div id="Logger"></div>
 
 [[To TOC]](#TOC) [[To Properties List]](#lightsleep-properties)
 
-#### 3-1. Specifying a logging library class
+#### 3-1. Logging library class
 
 Select the value of the `Logger` property from the following.
 
@@ -567,37 +639,36 @@ Select the value of the `Logger` property from the following.
 |`Std$Err$Error`|*(same as above)*|error|*(nothing)*|
 |`Std$Err$Fatal`|*(same as above)*|fatal|*(nothing)*|
 
-If not specified, `Std$Out$Info` is selected.
+If you do not specify it, `Std$Out$Info` is selected.
 
 <div id="Database"></div>
 
 [[To TOC]](#TOC) [[To Properties List]](#lightsleep-properties)
 
-#### 3-2. Specifying a database handler class
+#### 3-2. Database handler class
 
-Select the value of the `Database` property from the following.
+The database handler class is automatically selected from the contents of the JDBC URL specified in the `url` or `urls` property. *(since 2.1.0)*
 
-If you are using a DBMS other than the above, specify `Standard` or nothing.
-However, in that case, DBMS specific functions can not be used.
+|Word included in JDBC URL|Selected class|Corresponding DBMS|
+|:--|:--|:--|
+|db2       |DB2       |<a href="https://www.ibm.com/us-en/marketplace/db2-express-c" target="_blank">DB2</a>|
+|mysql     |MySQL     |<a href="https://www.mysql.com/" target="_blank">MySQL</a>|
+|oracle    |Oracle    |<a href="https://www.oracle.com/database/index.html" target="_blank">Oracle Database</a>|
+|postgresql|PostgreSQL|<a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a>|
+|sqlite    |SQLite    |<a href="https://sqlite.org/index.html" target="_blank">SQLite</a>|
+|sqlserver |SQLServer |<a href="https://www.microsoft.com/ja-jp/sql-server/sql-server-2016" target="_blank">Microsoft SQL Server</a>|
 
-|Value|DBMS|
-|:--|:--|
-|DB2 *(since 1.9.0)*|<a href="https://www.ibm.com/us-en/marketplace/db2-express-c" target="_blank">DB2</a>|
-|MySQL     |<a href="https://www.mysql.com/" target="_blank">MySQL</a>|
-|Oracle    |<a href="https://www.oracle.com/database/index.html" target="_blank">Oracle Database</a>|
-|PostgreSQL|<a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a>|
-|SQLite    |<a href="https://sqlite.org/index.html" target="_blank">SQLite</a>|
-|SQLServer |<a href="https://www.microsoft.com/ja-jp/sql-server/sql-server-2016" target="_blank">Microsoft SQL Server</a>|
+If the JDBC URL does not contain any of the words above, `Standard` class is selected.
 
 <div id="ConnectionSupplier"></div>
 
 [[To TOC]](#TOC) [[To Properties List]](#lightsleep-properties)
 
-#### 3-3. Specifying a connection supplier class
+#### 3-3. Connection supplier class
 
 Select the value of the `ConnectionSupplier` property from the following.
 
-|Value|Connection Supplier etc.|
+|Value|Corresponding connection pool libraries|
 |:--|:--|
 |C3p0    |<a href="http://www.mchange.com/projects/c3p0/" target="_blank">c3p0</a>|
 |Dbcp    |<a href="https://commons.apache.org/proper/commons-dbcp/" target="_blank">Apache Commons DBCP</a>|
@@ -612,17 +683,17 @@ Below the ConnectionSupplier (from `url`) in definition examples of lightsleep.p
 ```properties:lightsleep.properties
 # lightsleep.properties / Jdbc
 ConnectionSupplier = Jdbc
-url                = jdbc:db2://db2-11:50000/example
-user               = example
-password           = _example_
+url      = jdbc:db2://db2-11:50000/example
+user     = example
+password = _example_
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / C3p0
 ConnectionSupplier = C3p0
-url                = jdbc:mysql://mysql57/example
-user               = example
-password           = _example_
+url      = jdbc:mysql://mysql57/example
+user     = example
+password = _example_
 ```
 
 ```properties:c3p0.properties
@@ -635,37 +706,47 @@ c3p0.maxPoolSize     = 30
 ```properties:lightsleep.properties
 # lightsleep.properties / Dbcp
 ConnectionSupplier = Dbcp
-url                = jdbc:oracle:thin:@oracle121:1521:example
-username           = example
-password           = _example_
-initialSize        = 20
-maxTotal           = 30
+url         = jdbc:oracle:thin:@oracle121:1521:example
+user        = example
+  or
+username    = example
+password    = _example_
+initialSize = 20
+maxTotal    = 30
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / HikariCP
 ConnectionSupplier = HikariCP
-jdbcUrl            = jdbc:postgresql://postgres96/example
-username           = example
-password           = _example_
-minimumIdle        = 10
-maximumPoolSize    = 30
+url             = jdbc:postgresql://postgres96/example
+  or
+jdbcUrl         = jdbc:postgresql://postgres96/example
+user            = example
+  or
+username        = example
+password        = _example_
+minimumIdle     = 10
+maximumPoolSize = 30
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / TomcatCP
 ConnectionSupplier = TomcatCP
-url                = jdbc:sqlserver://sqlserver13;database=example
-username           = example
-password           = _example_
-initialSize        = 20
-maxActive          = 30
+url         = jdbc:sqlserver://sqlserver13;database=example
+user        = example
+  or
+username    = example
+password    = _example_
+initialSize = 20
+maxActive   = 30
 ```
 
 ```properties:lightsleep.properties
 # lightsleep.properties / Jndi
 ConnectionSupplier = Jndi
 dataSource         = jdbc/example
+  or
+dataSource         = example
 ```
 
 <div id="Transaction"></div>
@@ -675,13 +756,12 @@ dataSource         = jdbc/example
 ### 4. Transaction
 Execution of `Transaction.execute` method is equivalent to the execution of a transaction.
 Define contents of the transaction by the argument `transaction` as a lambda expression.
-The lambda expression is equivalent to the contents of `Transaction.executeBody` method and the argument of this method is a `Connection`.
+The lambda expression is equivalent to the contents of `Transaction.executeBody` method and the argument of this method is a `ConnectionWrapper`.
 
 ```java:Java
 // Java Example
 Contact contact = new Contact(1, "Akane", "Apple");
 
-// An example of transaction
 Transaction.execute(conn -> {
     // Start of transaction
     new Sql<>(Contact.class).connection(conn)
@@ -695,8 +775,41 @@ Transaction.execute(conn -> {
 // Groovy Example
 def contact = new Contact(1, 'Akane', 'Apple')
 
-// An example of transaction
 Transaction.execute {
+    // Start of transaction
+    new Sql<>(Contact).connection(it)
+        .insert(contact)
+    ...
+    // End of transaction
+}
+```
+
+If you define multiple JDBC URLs in `lightsleep.properties`, you need to specify which URL to execute the transaction.
+The `ConnectionSupplier.find` method searches for a JDBC URL that contains all of the string array of arguments.
+An exception will be thrown if more than one is found or if it can not be found.
+
+```java:Java
+// Java Example
+public static final ConnectionSupplier supplier1 = ConnectionSupplier.find("example1");
+    ・・・
+Contact contact = new Contact(1, "Akane", "Apple");
+
+Transaction.execute(supplier1, conn -> {
+    // Start of transaction
+    new Sql<>(Contact.class).connection(conn)
+        .insert(contact);
+   ...
+    // End of transaction
+});
+```
+
+```groovy:Groovy
+// Groovy Example
+static final supplier1 = ConnectionSupplier.find('example1')
+    ・・・
+def contact = new Contact(1, 'Akane', 'Apple')
+
+Transaction.execute(supplier1) {
     // Start of transaction
     new Sql<>(Contact).connection(it)
         .insert(contact)

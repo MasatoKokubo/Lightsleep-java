@@ -7,7 +7,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 import org.lightsleep.entity.Column;
 import org.lightsleep.entity.ColumnProperty;
 import org.lightsleep.entity.ColumnType;
@@ -107,10 +107,10 @@ public class Person extends PersonKey {
 		public static class SQLServer extends Person {}
 
 		@SuppressWarnings("unchecked")
-		public static Class<? extends Ex> targetClass() {
+		public static Class<? extends Ex> targetClass(Database database) {
 			try {
 				return (Class<? extends Ex>)Class.forName(
-					Ex.class.getName() + '$' + Sql.getDatabase().getClass().getSimpleName());
+					Ex.class.getName() + '$' + database.getClass().getSimpleName());
 			}
 			catch (ClassNotFoundException e) {
 				throw new RuntimeException(e);

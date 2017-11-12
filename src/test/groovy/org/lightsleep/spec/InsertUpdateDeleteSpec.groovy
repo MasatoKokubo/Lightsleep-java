@@ -18,30 +18,9 @@ import spock.lang.*
 
 // InsertUpdateDeleteSpec
 @Unroll
-class InsertUpdateDeleteSpec extends Specification {
-	static connectionSupplierClasses = [
-		C3p0,
-		Dbcp,
-		HikariCP,
-		TomcatCP,
-		Jdbc
-	]
-
-	@Shared connectionSupplier
-
-	/**
-	 * Deletes test data.
-	 */
-	def setupSpec() {
-	/**/DebugTrace.enter()
-		connectionSupplier = ConnectionSpec.getConnectionSupplier(Jdbc)
-
-		Transaction.execute(connectionSupplier) {
-			new Sql<>(Contact).where(Condition.ALL).delete(it)
-			new Sql<>(Address).where(Condition.ALL).delete(it)
-			new Sql<>(Phone  ).where(Condition.ALL).delete(it)
-		}
-	/**/DebugTrace.leave()
+class InsertUpdateDeleteSpec extends SpecCommon {
+	def setup() {
+		deleteAllTables()
 	}
 
 	/**
@@ -51,66 +30,57 @@ class InsertUpdateDeleteSpec extends Specification {
 	 *   Sql.delete(Connection it, E entity)
 	 * Normal case
 	*/
-	def "InsertUpdateDeleteSpec insert update delete - 1 row - #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	def "InsertUpdateDeleteSpec insert update delete - 1 row - #connectionSupplier"(
+		ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-		def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
-
+	/**/DebugTrace.print('connectionSupplier.class', connectionSupplier.getClass().name)
+	/**/DebugTrace.print('1 connectionSupplier', connectionSupplier.toString())
 		setup:
-			// Deletes rows of previous test.
-			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact).where(Condition.ALL).delete(it)
-				new Sql<>(Phone  ).where(Condition.ALL).delete(it)
-				new Sql<>(Address).where(Condition.ALL).delete(it)
-			}
-
 			ContactComposite contact2 = null
 
 		when:
-			// Makes test data.
+			// Make test data.
 			def contacts = makeTestData(null, 1, 1)
 			def contact = contacts.get(0)
 
-			// Inserts a row and gets a row.
+			// Insert a row and gets a row.
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).insert(it, contact)
-				contact2 = new Sql<>(ContactComposite).where(contact).select(it).orElse(null)
+				new Sql<>(ContactComposite).connection(it).insert(contact)
+				contact2 = new Sql<>(ContactComposite).connection(it).where(contact).select().orElse(null)
 			}
 
 		then:
-			// Confirms insert result
+			// Confirm inserted result
 			assertTestData(contact2, contact, 0, 0)
 
 		when:
-			// Updates test data.
+			// Update test data.
 			makeTestData(contacts, 2, -1)
 
-			// Updates a row and gets a row.
+			// Update a row and gets a row.
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).update(it, contact)
-				contact2 = new Sql<>(ContactComposite).where(contact).select(it).orElse(null)
+				new Sql<>(ContactComposite).connection(it).update(contact)
+				contact2 = new Sql<>(ContactComposite).connection(it).where(contact).select().orElse(null)
 			}
 
 		then:
-			// Confirms update result.
+			// Confirm update result.
 			assertTestData(contact2, contact, 1, 1)
 
 		when:
 			// Deletes a row and tries to get a row.
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).delete(it, contact)
-				contact2 = new Sql<>(ContactComposite).where(contact).select(it).orElse(null)
+				new Sql<>(ContactComposite).connection(it).delete(contact)
+				contact2 = new Sql<>(ContactComposite).connection(it).where(contact).select().orElse(null)
 			}
 
 		then:
-			// Confirms delete result.
+			// Confirm delete result.
 			assert contact2 == null
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
 	/**
@@ -120,78 +90,68 @@ class InsertUpdateDeleteSpec extends Specification {
 	 *   Sql.delete(Connection it, Collection<? extends E> entities)
 	 * Normal case
 	 */
-	def "InsertUpdateDeleteSpec insert update delete - multiple rows - #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	def "InsertUpdateDeleteSpec insert update delete - multiple rows - #connectionSupplier"(
+		ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-			ConnectionSupplier connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
-
-			// Deletes rows of previous test.
-			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact).where(Condition.ALL).delete(it)
-				new Sql<>(Phone  ).where(Condition.ALL).delete(it)
-				new Sql<>(Address).where(Condition.ALL).delete(it)
-			}
-
 			List<ContactComposite> contacts2 = new ArrayList<>()
 
 		when:
-			// Makes test data.
+			// Make test data.
 			List<ContactComposite> contacts = makeTestData(null, 1, 4)
 
-			// Inserts rows and gets rows.
+			// Insert rows and gets rows.
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).insert(it, contacts)
+				new Sql<>(ContactComposite).connection(it).insert(contacts)
 
-				new Sql<>(ContactComposite)
+				new Sql<>(ContactComposite).connection(it)
 					.where('{name.last} LIKE {}', 'Last%')
 					.orderBy('{id}')
-					.select(it, {contacts2 << it})
+					.select({contacts2 << it})
 			}
 
 		then:
-			// Confirms insert result
+			// Confirm inserted result
 			assertTestData(contacts2, contacts, 0, 0)
 
 		when:
-			// Updates test data.
+			// Update test data.
 			makeTestData(contacts, 5, -1)
 
-			// Updates rows and gets rows.
+			// Update rows and gets rows.
 			contacts2.clear()
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).update(it, contacts)
+				new Sql<>(ContactComposite).connection(it).update(contacts)
 
-				new Sql<>(ContactComposite)
+				new Sql<>(ContactComposite).connection(it)
 					.where('{name.last} LIKE {}', 'Last%')
 					.orderBy('{id}')
-					.select(it, {contacts2 << it})
+					.select({contacts2 << it})
 			}
 
 		then:
-			// Confirms update result.
+			// Confirm update result.
 			assertTestData(contacts2, contacts, 1, 1)
 
 		when:
-			// Updates rows at a time and gets rows.
+			// Update rows at a time and gets rows.
 			contacts.get(0).name.first = 'FirstXXX'
 			contacts2.clear()
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite)
+				new Sql<>(ContactComposite).connection(it)
 					.columns('name.first', 'updateCount', 'updated')
 					.where(Condition.ALL)
-					.update(it, contacts.get(0))
+					.update(contacts.get(0))
 
-				new Sql<>(ContactComposite)
+				new Sql<>(ContactComposite).connection(it)
 					.where('{name.last} LIKE {}', 'Last%')
 					.orderBy('{id}')
-					.select(it, {contacts2 << it})
+					.select({contacts2 << it})
 			}
 
 		then:
-			// Confirms update result.
+			// Confirm update result.
 			contacts.forEach {it.name.first = 'FirstXXX'}
 			assertTestData(contacts2, contacts, 2, 1)
 
@@ -199,21 +159,20 @@ class InsertUpdateDeleteSpec extends Specification {
 			// Deletes rows.
 			contacts2.clear()
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).delete(it, contacts)
-				new Sql<>(ContactComposite)
+				new Sql<>(ContactComposite).connection(it).delete(contacts)
+				new Sql<>(ContactComposite).connection(it)
 					.where('{name.last} LIKE {}', 'Last%')
 					.orderBy('{id}')
-					.select(it, {contacts2 << it})
+					.select({contacts2 << it})
 			}
 
 		then:
-			// Confirms delete result.
+			// Confirm delete result.
 			assert contacts2.size() == 0
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
 	/**
@@ -222,115 +181,104 @@ class InsertUpdateDeleteSpec extends Specification {
 	 *   Sql.delete(Connection it)
 	 * Normal case
 	 */
-	def "InsertUpdateDeleteSpec update delete - with condition - #connectionSupplierName"(
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
-		if (Sql.getDatabase() instanceof DB2) return
-		if (Sql.getDatabase() instanceof Oracle) return
-		if (Sql.getDatabase() instanceof PostgreSQL) return
-		if (Sql.getDatabase() instanceof SQLite) return
+	def "InsertUpdateDeleteSpec update delete - with condition - #connectionSupplier"(
+		ConnectionSupplier connectionSupplier) {
+		if (connectionSupplier.database instanceof DB2) return
+		if (connectionSupplier.database instanceof Oracle) return
+		if (connectionSupplier.database instanceof PostgreSQL) return
+		if (connectionSupplier.database instanceof SQLite) return
 	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-			ConnectionSupplier connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
-
-			// Deletes rows of previous test.
-			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact).where(Condition.ALL).delete(it)
-				new Sql<>(Phone  ).where(Condition.ALL).delete(it)
-				new Sql<>(Address).where(Condition.ALL).delete(it)
-			}
-
 			List<ContactComposite> contacts2 = new ArrayList<>()
 
 		when:
-			// Makes test data.
+			// Make test data.
 			List<ContactComposite> contacts = makeTestData(null, 1, 10)
 
-			// Inserts rows and gets rows.
+			// Insert rows and gets rows.
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).insert(it, contacts)
+				new Sql<>(ContactComposite).connection(it).insert(contacts)
 
-				new Sql<>(ContactComposite)
+				new Sql<>(ContactComposite).connection(it)
 					.where('{name.last} LIKE {}', 'Last%')
 					.orderBy('{id}')
-					.select(it, {contacts2 << it})
+					.select({contacts2 << it})
 			}
 
 		then:
-			// Confirms insert result
+			// Confirm inserted result
 			assertTestData(contacts2, contacts, 0, 0)
 
 		when:
-			// Updates rows and gets test data.
+			// Update rows and gets test data.
 			List<ContactComposite> contacts3 = new ArrayList<>()
 			Transaction.execute(connectionSupplier) {
 				Contact contact = new Contact()
 				contact.name.first = '_First_'
-				new Sql<>(Contact, 'C')
+				new Sql<>(Contact, 'C').connection(it)
 					.innerJoin(Phone, 'P', '{P.contactId} = {C.id}')
 					.where('{P.phoneNumber} = {}', '09000000010')
 					.columns('name.first')
-					.doIf(Sql.database instanceof MySQL) {
+					.doIf(it.database instanceof MySQL) {
 						// MySQL
 						it.expression('name.first', "CONCAT('<',{name.first},'>')")
 					}
-					.doIf(Sql.database instanceof SQLServer) {
+					.doIf(it.database instanceof SQLServer) {
 						// SQLServer
 						it.expression('name.first', "'<'+{name.first}+'>'")
 					}
-					.update(it, contact)
+					.update(contact)
 
-				new Sql<>(ContactComposite)
+				new Sql<>(ContactComposite).connection(it)
 					.where('{name.first} LIKE {}', '<First%>')
 					.orderBy('{id}')
-					.select(it, {contacts3 << it})
+					.select({contacts3 << it})
 			}
 
 		then:
-			// Confirms update result.
+			// Confirm update result.
 			contacts3.size() == 1
 
 		when:
 			// Deletes rows and gets test data.
 			List<ContactComposite> contacts4 = new ArrayList<>()
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact, 'C')
+				new Sql<>(Contact, 'C').connection(it)
 					.innerJoin(Phone, 'P', '{P.contactId} = {C.id}')
 					.where('{P.phoneNumber} = {}', '09000000020')
-					.delete(it)
+					.delete()
 
-				new Sql<>(ContactComposite)
+				new Sql<>(ContactComposite).connection(it)
 					.orderBy('{id}')
-					.select(it, {contacts4 << it})
+					.select({contacts4 << it})
 			}
 
 		then:
-			// Confirms delete result.
+			// Confirm delete result.
 			contacts4.size() == contacts.size() - 1
 
 		when:
 			// Deletes rows and gets test data.
 			List<ContactComposite> contacts5 = new ArrayList<>()
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact)
+				new Sql<>(Contact).connection(it)
 					.innerJoin(Phone, 'P', '{P.contactId} = Contact.{id}')
 					.where('{P.phoneNumber} = {}', '09000000030')
-					.delete(it)
+					.delete()
 
-				new Sql<>(ContactComposite)
+				new Sql<>(ContactComposite).connection(it)
 					.orderBy('{id}')
-					.select(it, {contacts5 << it})
+					.select({contacts5 << it})
 			}
 
 		then:
-			// Confirms delete result.
+			// Confirm delete result.
 			assert contacts5.size() == contacts4.size() - 1
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
 	/**
@@ -355,32 +303,31 @@ class InsertUpdateDeleteSpec extends Specification {
 	 */
 	def "InsertUpdateDeleteSpec insert update delete - exception"() {
 	/**/DebugTrace.enter()
-
 		// insert
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).insert(it, (ContactComposite)null)
+				new Sql<>(ContactComposite).connection(it).insert((ContactComposite)null)
 			}
 		then: thrown NullPointerException
 
 		// insert
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).insert(it, (Iterable<ContactComposite>)null)
+				new Sql<>(ContactComposite).connection(it).insert((Iterable<ContactComposite>)null)
 			}
 		then: thrown NullPointerException
 
 		// update
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).update(it, (ContactComposite)null)
+				new Sql<>(ContactComposite).connection(it).update((ContactComposite)null)
 			}
 		then: thrown NullPointerException
 
 		// update
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).update(it, (Iterable<ContactComposite>)null)
+				new Sql<>(ContactComposite).connection(it).update((Iterable<ContactComposite>)null)
 			}
 		then: thrown NullPointerException
 
@@ -388,73 +335,64 @@ class InsertUpdateDeleteSpec extends Specification {
 		when:
 			def count = -1
 			Transaction.execute(connectionSupplier) {
-				count = new Sql<>(ContactComposite).delete(it)
+				count = new Sql<>(ContactComposite).connection(it).delete()
 			}
 		then: count == 0
 
 		// delete
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).delete(it, (ContactComposite)null)
+				new Sql<>(ContactComposite).connection(it).delete((ContactComposite)null)
 			}
 		then: thrown NullPointerException
 
 		// delete
 		when:
 			Transaction.execute(connectionSupplier) {
-				new Sql<>(ContactComposite).delete(it, (Iterable<ContactComposite>)null)
+				new Sql<>(ContactComposite).connection(it).delete((Iterable<ContactComposite>)null)
 			}
 		then: thrown NullPointerException
 
 	/**/DebugTrace.leave()
 	}
 
-
-	def "InsertUpdateDeleteSpec optimistic lock #connectionSupplierName" (
-		Class<? extends ConnectionSupplier> connectionSupplierClass, String connectionSupplierName) {
+	def "InsertUpdateDeleteSpec optimistic lock #connectionSupplier" (
+		ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplierClass', connectionSupplierClass)
-
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
 		setup:
-			def connectionSupplier = ConnectionSpec.getConnectionSupplier(connectionSupplierClass)
-
-			// Deletes rows of previous test.
-			Transaction.execute(connectionSupplier) {
-				new Sql<>(Contact).where(Condition.ALL).delete(it)
-			}
-
 			// Insert
 			Calendar calendar = Calendar.getInstance()
 			def contact1 = new Contact()
-			contact1.name.last  = "Apple"
+			contact1.name.last = "Apple"
 			contact1.name.first = "Akane"
 			calendar.set(2001, 1-1, 1, 0, 0, 0)
 			contact1.birthday = new Date(calendar.timeInMillis)
 
 			Transaction.execute(connectionSupplier) {
-				def count = new Sql<>(Contact).insert(it, contact1)
+				def count = new Sql<>(Contact).connection(it).insert(contact1)
 				assert count == 1
 			}
 
 			// Update
 			Contact contact2 = null
 			Transaction.execute(connectionSupplier) {
-				contact2 = new Sql<>(Contact).where(contact1).select(it).orElse(null)
+				contact2 = new Sql<>(Contact).connection(it).where(contact1).select().orElse(null)
 				assert contact2 != null
 
 				calendar.set(2001, 1-1, 2, 0, 0, 0)
 				contact2.birthday = new Date(calendar.timeInMillis)
-				def count = new Sql<>(Contact).update(it, contact2)
+				def count = new Sql<>(Contact).connection(it).update(contact2)
 				assert count == 1
 			}
 
 		when:
 			Contact contact1t = null
 			Transaction.execute(connectionSupplier) {
-				contact1t = new Sql<>(Contact)
+				contact1t = new Sql<>(Contact).connection(it)
 					.where(contact1)
-					.doIf(!(Sql.database instanceof SQLite)) {Sql sql -> sql.forUpdate()}
-					.select(it).orElse(null)
+					.doIf(!(it.database instanceof SQLite)) {Sql sql -> sql.forUpdate()}
+					.select().orElse(null)
 				if (contact1t == null)
 					throw new DeletedException()
 				if (contact1.updateCount != contact1t.updateCount)
@@ -467,8 +405,7 @@ class InsertUpdateDeleteSpec extends Specification {
 
 	/**/DebugTrace.leave()
 		where:
-			connectionSupplierClass << connectionSupplierClasses
-			connectionSupplierName = connectionSupplierClass.simpleName
+			connectionSupplier << connectionSuppliers
 	}
 
 	/**
@@ -518,7 +455,7 @@ class InsertUpdateDeleteSpec extends Specification {
 	 */
 	static void assertTestData(ContactComposite after, ContactComposite before, int updateCount1, int updateCount2) {
 		assert after.id                  == before.id
-		assert after.name.last         == before.name.last
+		assert after.name.last           == before.name.last
 		assert after.name.first          == before.name.first
 		assert after.birthday            == before.birthday
 		assert after.updateCount         == updateCount1
@@ -549,5 +486,4 @@ class InsertUpdateDeleteSpec extends Specification {
 
 		(0..<afters.size()).each {assertTestData(afters[it], befores[it], updateCount1, updateCount2)}
 	}
-
 }

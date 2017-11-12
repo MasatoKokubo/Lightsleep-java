@@ -18,7 +18,7 @@ import spock.lang.*
 // StandardSpec
 @Unroll
 class StandardSpec extends Specification {
-	@Shared map = Standard.instance().typeConverterMap()
+	@Shared map = Standard.instance.typeConverterMap()
 
 	@Shared    BIG_BYTE_MIN  = new BigDecimal(   Byte.MIN_VALUE)
 	@Shared    BIG_BYTE_MAX  = new BigDecimal(   Byte.MAX_VALUE)
@@ -368,9 +368,9 @@ class StandardSpec extends Specification {
 	def "StandardSpec long String -> SqlString"() {
 	/**/DebugTrace.enter()
 		when:
-		/**/DebugTrace.print('maxStringLiteralLength', Standard.maxStringLiteralLength)
-			def buff = new StringBuilder(Standard.maxStringLiteralLength + 1)
-			for (int index = 0; index < Standard.maxStringLiteralLength; ++index)
+		/**/DebugTrace.print('maxStringLiteralLength', Standard.instance.maxStringLiteralLength)
+			def buff = new StringBuilder(Standard.instance.maxStringLiteralLength + 1)
+			for (int index = 0; index < Standard.instance.maxStringLiteralLength; ++index)
 				buff.append((char)((char)'A' + (index % 26)))
 		/**/DebugTrace.print('buff', buff)
 
@@ -387,8 +387,8 @@ class StandardSpec extends Specification {
 	def "StandardSpec long byte[] -> SqlString"() {
 	/**/DebugTrace.enter()
 		when:
-		/**/DebugTrace.print('maxBinaryLiteralLength', Standard.maxBinaryLiteralLength)
-			def bytes = new byte[Standard.maxBinaryLiteralLength]
+		/**/DebugTrace.print('maxBinaryLiteralLength', Standard.instance.maxBinaryLiteralLength)
+			def bytes = new byte[Standard.instance.maxBinaryLiteralLength]
 			for (def index = 0; index < bytes.length; ++index)
 				bytes[index] = (byte)(index - 128)
 		/**/DebugTrace.print('bytes', bytes)
@@ -396,7 +396,7 @@ class StandardSpec extends Specification {
 		then: TypeConverter.convert(map, bytes, SqlString).toString().startsWith("X'8081828384858687")
 
 		when:
-			bytes = new byte[Standard.maxBinaryLiteralLength + 1]
+			bytes = new byte[Standard.instance.maxBinaryLiteralLength + 1]
 			for (def index = 0; index < bytes.length; ++index)
 				bytes[index] = (byte)(index - 128)
 		/**/DebugTrace.print('bytes', bytes)
@@ -408,10 +408,10 @@ class StandardSpec extends Specification {
 	// long String[] -> SqlString
 	def "StandardSpec long String[] -> SqlString"() {
 	/**/DebugTrace.enter()
-	/**/DebugTrace.print('maxStringLiteralLength', Standard.maxStringLiteralLength)
+	/**/DebugTrace.print('maxStringLiteralLength', Standard.instance.maxStringLiteralLength)
 		when:
-			def buff = new StringBuilder(Standard.maxStringLiteralLength + 1)
-			for (def index = 0; index < Standard.maxStringLiteralLength; ++index)
+			def buff = new StringBuilder(Standard.instance.maxStringLiteralLength + 1)
+			for (def index = 0; index < Standard.instance.maxStringLiteralLength; ++index)
 				buff.append((char)(('A' as char) + (index % 26)))
 			def strings = ['A', buff.toString(), 'B', buff.toString()] as String[]
 			def string = TypeConverter.convert(map, strings, SqlString).toString()
@@ -438,8 +438,8 @@ class StandardSpec extends Specification {
 	def "StandardSpec long byte[][] -> SqlString"() {
 	/**/DebugTrace.enter()
 		when:
-		/**/DebugTrace.print('maxStringLiteralLength', Standard.maxStringLiteralLength)
-			def bytes = new byte[Standard.maxBinaryLiteralLength]
+		/**/DebugTrace.print('maxStringLiteralLength', Standard.instance.maxStringLiteralLength)
+			def bytes = new byte[Standard.instance.maxBinaryLiteralLength]
 			for (def index = 0; index < bytes.length; ++index)
 				bytes[index] = (byte)(index - 128)
 			def bytesArray = [[(byte)0x80, (byte)0x7F] as byte[], bytes, [(byte)0x81, (byte)0x7E] as byte[], bytes] as byte[][]
@@ -452,7 +452,7 @@ class StandardSpec extends Specification {
 			string.endsWith("']")
 
 		when:
-			bytes = new byte[Standard.maxBinaryLiteralLength + 1]
+			bytes = new byte[Standard.instance.maxBinaryLiteralLength + 1]
 			for (def index = 0; index < bytes.length; ++index)
 				bytes[index] = (byte)(index - 128)
 			bytesArray = [[(byte)0x80, (byte)0x7F] as byte[], bytes, [(byte)0x81, (byte)0x7E] as byte[], bytes] as byte[][]

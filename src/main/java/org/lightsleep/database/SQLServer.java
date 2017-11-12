@@ -41,14 +41,28 @@ import org.lightsleep.helper.TypeConverter;
  * @see org.lightsleep.database.Standard
  */
 public class SQLServer extends Standard {
-	// The SQLServer instance
-	private static final Database instance = new SQLServer();
+	/**
+	 * The only instance of this class
+	 *
+	 * @since 2.1.0
+	 */
+// 2.1.0
+//	private static final Database instance = new SQLServer();
+	public static final SQLServer instance = new SQLServer();
+////
 
 	/**
-	 * Returns the <b>SQLServer</b> instance.
+	 * Returns the only instance of this class.
 	 *
-	 * @return the <b>SQLServer</b> instance
+	 * <p>
+	 * @deprecated As of release 2.1.0, instead use {@link #instance}
+	 * </p>
+	 *
+	 * @return the only instance of this class
 	 */
+// 2.1.0
+	@Deprecated
+////
 	public static Database instance() {
 		return instance;
 	}

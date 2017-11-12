@@ -3,15 +3,13 @@
 
 package org.lightsleep;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.lightsleep.connection.ConnectionSupplier;
+import org.lightsleep.connection.ConnectionWrapper;
 
 /**
  * トランザクションを実行するための関数型インターフェースです。
  * 
- * <div class="exampleTitle"><span>使用例 / Java</span></div>
+ * <div class="exampleTitle"><span>使用例/Java</span></div>
  * <div class="exampleCode"><pre>
  * Transaction.execute(conn -&gt; {
  *     Optional&lt;Contact&gt; contactOpt = new Sql&lt;&gt;(Contact.class)
@@ -27,7 +25,7 @@ import org.lightsleep.connection.ConnectionSupplier;
  * });
  * </pre></div>
  *
- * <div class="exampleTitle"><span>使用例 / Groovy</span></div>
+ * <div class="exampleTitle"><span>使用例/Groovy</span></div>
  * <div class="exampleCode"><pre>
  * Transaction.execute {
  *     def contactOpt = new Sql&lt;&gt;(Contact)
@@ -51,20 +49,20 @@ public interface Transaction {
 	/**
 	 * トランザクションの本体をこのメソッドに記述します。
 	 *
-	 * @param connection データベース・コネクション
+	 * @param connection コネクション･ラッパー
 	 *
-	 * @throws RuntimeSQLException データベースのアクセス中に <b>SQLException</b> がスローされた場合
+	 * @throws RuntimeSQLException データベースのアクセス中に<b>SQLException</b>がスローされた場合
 	 */
-	void executeBody(Connection connection);
+	void executeBody(ConnectionWrapper connection);
 
 	/**
 	 * 以下の順でトランザクションを実行します。
 	 *
 	 * <ol>
-	 *   <li><b>Sql.connectionSupplier().get()</b> をコールしてデータベース・コネクションを取得</li>
-	 *   <li><b>transaction.executeBody</b> メソッドを実行</li>
+	 *   <li><b>Sql.connectionSupplier().get()</b>をコールしてコネクション･ラッパーを取得</li>
+	 *   <li><b>transaction.executeBody</b>メソッドを実行</li>
 	 *   <li>トランザクションをコミット</li>
-	 *   <li>データベース・コネクションをクローズ</li>
+	 *   <li>コネクション･ラッパーをクローズ</li>
 	 * </ol>
 	 *
 	 * <p>
@@ -72,13 +70,13 @@ public interface Transaction {
 	 * </p>
 	 *
 	 * <p>
-	 * <b>transaction</b> にラムダ式でトランザクションの実体を記述してください。
+	 * <b>transaction</b>にラムダ式でトランザクションの実体を記述してください。
 	 * </p>
 	 *
-	 * @param transaction <b>Transaction</b> オブジェクト
+	 * @param transaction <b>Transaction</b>オブジェクト
 	 *
-	 * @throws NullPointerException <b>transaction</b> が null の場合
-	 * @throws RuntimeSQLException データベースのアクセス中に <b>SQLException</b> がスローされた場合
+	 * @throws NullPointerException <b>transaction</b>がnullの場合
+	 * @throws RuntimeSQLException データベースのアクセス中に<b>SQLException</b>がスローされた場合
 	 */
 	static void execute(Transaction transaction) {
 	}
@@ -87,10 +85,10 @@ public interface Transaction {
 	 * 以下の順でトランザクションを実行します。
 	 *
 	 * <ol>
-	 *   <li><b>connectionSupplier.get()</b> をコールしてデータベース・コネクションを取得</li>
-	 *   <li><b>transaction.executeBody</b> メソッドを実行</li>
+	 *   <li><b>connectionSupplier.get()</b>をコールしてコネクション･ラッパーを取得</li>
+	 *   <li><b>transaction.executeBody</b>メソッドを実行</li>
 	 *   <li>トランザクションをコミット</li>
-	 *   <li>データベース・コネクションをクローズ</li>
+	 *   <li>コネクション･ラッパーをクローズ</li>
 	 * </ol>
 	 *
 	 * <p>
@@ -98,14 +96,14 @@ public interface Transaction {
 	 * </p>
 	 *
 	 * <p>
-	 * <b>transaction</b> にラムダ式でトランザクションの実体を記述してください。
+	 * <b>transaction</b>にラムダ式でトランザクションの実体を記述してください。
 	 * </p>
 	 *
-	 * @param connectionSupplier <b>ConnectionSupplier</b> オブジェクト
-	 * @param transaction <b>Transaction</b> オブジェクト
+	 * @param connectionSupplier <b>ConnectionSupplier</b>オブジェクト
+	 * @param transaction <b>Transaction</b>オブジェクト
 	 *
-	 * @throws NullPointerException <b>connectionSupplier</b> または <b>transaction</b> が null の場合
-	 * @throws RuntimeSQLException データベースのアクセス中に <b>SQLException</b> がスローされた場合
+	 * @throws NullPointerException <b>connectionSupplier</b>または<b>transaction</b>がnullの場合
+	 * @throws RuntimeSQLException データベースのアクセス中に<b>SQLException</b>がスローされた場合
 	 *
 	 * @since 1.5.0
 	 */
@@ -115,20 +113,20 @@ public interface Transaction {
 	/**
 	 * コネクションが自動コミットでなければ、トランザクションをコミットします。
 	 *
-	 * @param connection データベース・コネクション
+	 * @param connection コネクション･ラッパー
 	 *
-	 * @throws RuntimeSQLException データベース・アクセス・エラーが発生した場合
+	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 */
-	static void commit(Connection connection) {
+	static void commit(ConnectionWrapper connection) {
 	}
 
 	/**
 	 * コネクションが自動コミットでなければ、トランザクションをロールバックします。
 	 *
-	 * @param connection データベース・コネクション
+	 * @param connection コネクション･ラッパー
 	 *
-	 * @throws RuntimeSQLException データベースのアクセス中に <b>SQLException</b> がスローされた場合
+	 * @throws RuntimeSQLException データベースのアクセス中に<b>SQLException</b>がスローされた場合
 	 */
-	static void rollback(Connection connection) {
+	static void rollback(ConnectionWrapper connection) {
 	}
 }

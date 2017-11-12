@@ -9,13 +9,13 @@ import javax.sql.DataSource;
 
 /**
  * <a href="http://commons.apache.org/proper/commons-dbcp/" target="Apache">Apache Commons DBCP 2</a>
- * を使用してデータベース・コネクションを取得します。
- * lightsleep.properties ファイルの以下のプロパティを参照します。<br>
+ * を使用してコネクション･ラッパーを取得します。
+ * lightsleep.propertiesファイルの以下のプロパティを参照します。<br>
  *
  * <div class="blankline">&nbsp;</div>
  *
  * <table class="additional">
- *   <caption><span>lightsleep.properties の参照</span></caption>
+ *   <caption><span>lightsleep.propertiesの参照</span></caption>
  *   <tr><th>プロパティ名</th><th>内 容</th></tr>
  *   <tr><td>url     </td><td>接続するデータベースの URL</td></tr>
  *   <tr><td>username</td><td>データベースに接続する時のユーザー名</td></tr>
@@ -35,30 +35,47 @@ import javax.sql.DataSource;
  */
 public class Dbcp extends AbstractConnectionSupplier {
 	/**
-	 * <b>Dbcp</b> を構築します。<br>
-	 * lightsleep.properties
-	 * ファイルで指定された値を設定情報として使用します。
+	 * <b>Dbcp</b>を構築します。
+	 *
+	 * <p>
+	 * lightsleep.propertiesファイルで指定された値をコネクション情報として使用します。
+	 * </p>
 	 */
 	public Dbcp() {
+		super(null, null);
 	}
 
 	/**
-	 * <b>Dbcp</b> を構築します。<br>
-	 * lightsleep.properties
-	 * ファイルで指定された値を設定情報として使用します。
+	 * <b>Dbcp</b>を構築します。
 	 *
-	 * @param modifier properties を変更するコンシューマー
+	 * <p>
+	 * lightsleep.propertiesファイルで指定された値をコネクション情報として使用します。
+	 * </p>
+	 *
+	 * @param modifier propertiesを変更するコンシューマー
 	 *
 	 * @since 1.5.0
 	 */
 	public Dbcp(Consumer<Properties> modifier) {
+		super(null, null);
+	}
+
+	/**
+	 * <b>Dbcp</b>を構築します。
+	 *
+	 * @param properties コネクション情報を含むプロパティ
+	 *
+	 * @since 2.1.0
+	 */
+	public Dbcp(Properties properties) {
+		super(null, null);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected DataSource getDataSource() {
+	public DataSource getDataSource() {
 		return null;
 	}
 }

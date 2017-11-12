@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 
 /**
  * Configure the negative condition.
@@ -59,7 +60,11 @@ public class Not implements Condition {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <E> String toString(Sql<E> sql, List<Object> parameters) {
-		return "NOT(" + condition.toString(sql, parameters) + ")";
+// 2.1.0
+//	public <E> String toString(Sql<E> sql, List<Object> parameters) {
+//		return "NOT(" + condition.toString(sql, parameters) + ")";
+	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
+		return "NOT(" + condition.toString(database, sql, parameters) + ")";
+////
 	}
 }

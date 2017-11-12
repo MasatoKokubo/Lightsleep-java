@@ -44,16 +44,24 @@ import org.lightsleep.helper.Resource;
 @SuppressWarnings("unchecked")
 public class LoggerFactory {
 	// The logger class
-	public static Class<? extends Logger> loggerClass;
+// 2.1.0
+//	public static Class<? extends Logger> loggerClass;
+	private static Class<? extends Logger> loggerClass;
+////
 
 	// The logger map
 	private static final Map<String, Logger> loggerMap = new LinkedHashMap<>();
 
 	static {
+// 2.1.0
+		initClass();
+	}
+	private static void initClass() {
+////
 		String loggerName = null;
 		Logger logger = null;
 
-		loggerName = Resource.globalResource.getString(Logger.class.getSimpleName(), null);
+		loggerName = Resource.getGlobal().getString(Logger.class.getSimpleName(), null);
 		if (loggerName != null) {
 			if (loggerName.indexOf('.') < 0)
 				loggerName = Logger.class.getPackage().getName() + '.' + loggerName;
@@ -77,26 +85,31 @@ public class LoggerFactory {
 				System.out.println(loggerClass.getName() + ": " + e.getMessage());
 			}
 		}
+
+	// 2.1.0
+		String version = new Resource("org.lightsleep.lightsleep-version").getString("version");
+		logger.info("Lightsleep " + version + " / logger: " + loggerClass.getName());
+	////
 	}
 
-	// 
+	// Returns the logger
 	private static Logger getLogger(Class<? extends Logger> loggerClass, String name) throws Exception {
 		Logger logger = loggerClass.getConstructor(String.class).newInstance(name);
 		return logger;
 	}
 
-	// 
+	// Returns the logger
 	private static Logger getLogger(Class<? extends Logger> loggerClass, Class<?> clazz) throws Exception {
 		Logger logger = getLogger(loggerClass, clazz.getName());
 		return logger;
 	}
 
 	/**
-	 * Returns a Logger of the specified name.
+	 * Returns the Logger of the specified name.
 	 *
 	 * @param name a name
 	 *
-	 * @return a logger
+	 * @return the logger
 	 */
 	public static Logger getLogger(String name) {
 		Logger logger = loggerMap.get(name);
@@ -113,11 +126,11 @@ public class LoggerFactory {
 	}
 
 	/**
-	 * Returns a Logger of the name of the specified class.
+	 * Returns the Logger of the name of the specified class.
 	 *
 	 * @param clazz a class 
 	 *
-	 * @return a logger
+	 * @return the logger
 	 */
 	public static Logger getLogger(Class<?> clazz) {
 		Logger logger = getLogger(clazz.getName());

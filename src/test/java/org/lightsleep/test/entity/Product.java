@@ -18,13 +18,13 @@ public class Product extends Common {
 			object -> Enum.valueOf(Size.class, object.trim())
 		);
 
-		TypeConverter.put(Standard  .instance().typeConverterMap(), typeConverter);
-		TypeConverter.put(DB2       .instance().typeConverterMap(), typeConverter); // 1.9.0
-		TypeConverter.put(MySQL     .instance().typeConverterMap(), typeConverter);
-		TypeConverter.put(Oracle    .instance().typeConverterMap(), typeConverter);
-		TypeConverter.put(PostgreSQL.instance().typeConverterMap(), typeConverter);
-		TypeConverter.put(SQLite    .instance().typeConverterMap(), typeConverter); // 1.7.0
-		TypeConverter.put(SQLServer .instance().typeConverterMap(), typeConverter);
+		TypeConverter.put(Standard  .instance.typeConverterMap(), typeConverter);
+		TypeConverter.put(DB2       .instance.typeConverterMap(), typeConverter); // 1.9.0
+		TypeConverter.put(MySQL     .instance.typeConverterMap(), typeConverter);
+		TypeConverter.put(Oracle    .instance.typeConverterMap(), typeConverter);
+		TypeConverter.put(PostgreSQL.instance.typeConverterMap(), typeConverter);
+		TypeConverter.put(SQLite    .instance.typeConverterMap(), typeConverter); // 1.7.0
+		TypeConverter.put(SQLServer .instance.typeConverterMap(), typeConverter);
 	}
 
 	/** Size enum */

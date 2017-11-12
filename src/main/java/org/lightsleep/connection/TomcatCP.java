@@ -9,9 +9,10 @@ import java.util.function.Consumer;
 import javax.sql.DataSource;
 
 import org.apache.tomcat.jdbc.pool.DataSourceFactory;
+import org.lightsleep.helper.Resource;
 
 /**
- * Gets database connections using
+ * Gets connection wrappers using
  * <a href="http://people.apache.org/~fhanik/jdbc-pool/jdbc-pool.html" target="Apache">Tomcat JDBC Connection Pool</a>.<br>
  * That refer to the following properties of lightsleep.properties file.
  *
@@ -39,38 +40,90 @@ import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 public class TomcatCP extends AbstractConnectionSupplier {
 	/**
 	 * Constructs a new <b>TomcatCP</b>.
-	 * Use values specified in the lightsleep.properties
-	 * file as the connection information.
+	 *
+	 * <p>
+	 * Uses values specified in the lightsleep.properties file as the connection information.
+	 * </p>
 	 */
 	public TomcatCP() {
+	// 2.1.0
+		this(Resource.getGlobal().getProperties(), props -> {});
+	////
 	}
 
 	/**
 	 * Constructs a new <b>TomcatCP</b>.
-	 * Use values specified in the lightsleep.properties
-	 * file as the connection information.
+	 *
+	 * <p>
+	 * Uses values specified in the lightsleep.properties file as the connection information.
+	 * </p>
 	 *
 	 * @param modifier a consumer to modify the properties
 	 *
 	 * @since 1.5.0
 	 */
 	public TomcatCP(Consumer<Properties> modifier) {
-		super(modifier);
+	// 2.1.0
+	//	super(modifier);
+		this(Resource.getGlobal().getProperties(), modifier);
+	////
+	}
+
+	/**
+	 * Constructs a new <b>TomcatCP</b>.
+	 *
+	 * @param properties the properties with connection information
+	 *
+	 * @since 2.1.0
+	 */
+	public TomcatCP(Properties properties) {
+		this(properties, props -> {});
+	}
+
+	/**
+	 * Constructs a new <b>TomcatCP</b>.
+	 *
+	 * @param properties the properties with connection information
+	 * @param modifier a consumer to modify the properties
+	 *
+	 * @since 2.1.0
+	 */
+	private TomcatCP(Properties properties, Consumer<Properties> modifier) {
+		super(properties, modifier.andThen(props -> {
+			// username <- user
+			String user = props.getProperty("user");
+			String username = props.getProperty("username");
+			if (user != null && username == null) {
+				props.setProperty("username", user);
+				logger.info("TomcatCP.<init>: properties.username <- properties.user: '" + user + "'");
+			}
+		}));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected DataSource getDataSource() {
+// 2.1.0
+//	protected DataSource getDataSource() {
+	public DataSource getDataSource() {
+////
 		try {
 			DataSource dataSource = new DataSourceFactory().createDataSource(properties);
-			logger.debug(() -> "TomcatCP.getDataSource: dataSource = " + dataSource);
+		// 2.1.0
+		//	logger.debug(() -> "TomcatCP.getDataSource: dataSource = " + dataSource);
+		////
 			return dataSource;
 		}
+		catch (RuntimeException e) {throw e;}
 		catch (Exception e) {
-			logger.error("TomcatCP.getDataSource: " + e, e);
+		// 2.1.0
+		//	logger.error("TomcatCP.getDataSource: " + e, e);
+			throw new RuntimeException("properties: " + properties, e);
+		////
 		}
-		return null;
+	// 2.1.0
+	//	return null;
+	////
 	}
 }

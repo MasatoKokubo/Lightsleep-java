@@ -7,7 +7,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-import org.lightsleep.Sql;
+import org.lightsleep.database.Database;
 import org.lightsleep.entity.Insert;
 import org.lightsleep.entity.NonInsert;
 import org.lightsleep.entity.NonUpdate;
@@ -93,10 +93,10 @@ public class Contact extends ContactKey {
 		public static class SQLServer extends Contact {}
 
 		@SuppressWarnings("unchecked")
-		public static Class<? extends Ex> targetClass() {
+		public static Class<? extends Ex> targetClass(Database database) {
 			try {
 				return (Class<? extends Ex>)Class.forName(
-					Ex.class.getName() + '$' + Sql.getDatabase().getClass().getSimpleName());
+					Ex.class.getName() + '$' + database.getClass().getSimpleName());
 			}
 			catch (ClassNotFoundException e) {
 				throw new RuntimeException(e);

@@ -9,8 +9,9 @@ import java.util.Optional
 
 import org.debugtrace.DebugTrace
 import org.lightsleep.*
-import org.lightsleep.component.Condition
-import org.lightsleep.database.SQLite
+import org.lightsleep.component.*
+import org.lightsleep.connection.*
+import org.lightsleep.database.*
 import org.lightsleep.example.Common
 import org.lightsleep.example.groovy.entity.*
 
@@ -19,45 +20,46 @@ import org.lightsleep.example.groovy.entity.*
  */
 public class JavaDocExamples extends Common {
 	public static void main(String[] args) {
+		def examples = new JavaDocExamples()
 		try {
-			init1()
-			init2()
-			transaction()
-			sql()
-			sql_columns1()
-			sql_columns2()
-			sql_expression()
-			sql_innerJoin()
-			sql_leftJoin()
-			sql_rightJoin()
-			sql_where1()
-			sql_where2()
-			sql_where3()
-			sql_where4()
-			sql_and()
-			sql_or()
-			sql_orderBy()
-			sql_asc()
-			sql_desc()
-			sql_limit()
-			sql_offset()
-			sql_doIf()
-			sql_select1()
-			sql_selectAs1()
-			sql_select2()
-			sql_select3()
-			sql_select4()
-			sql_select5()
-			sql_select6()
-			sql_selectAs2()
-			sql_selectCount()
-			sql_insert1()
-			sql_insert2()
-			sql_update1()
-			sql_update2()
-			sql_delete1()
-			sql_delete2()
-			sql_delete3()
+			examples.init1()
+			examples.init2()
+			examples.transaction()
+			examples.sql()
+			examples.sql_columns1()
+			examples.sql_columns2()
+			examples.sql_expression()
+			examples.sql_innerJoin()
+			examples.sql_leftJoin()
+			examples.sql_rightJoin()
+			examples.sql_where1()
+			examples.sql_where2()
+			examples.sql_where3()
+			examples.sql_where4()
+			examples.sql_and()
+			examples.sql_or()
+			examples.sql_orderBy()
+			examples.sql_asc()
+			examples.sql_desc()
+			examples.sql_limit()
+			examples.sql_offset()
+			examples.sql_doIf()
+			examples.sql_select1()
+			examples.sql_selectAs1()
+			examples.sql_select2()
+			examples.sql_select3()
+			examples.sql_select4()
+			examples.sql_select5()
+			examples.sql_select6()
+			examples.sql_selectAs2()
+			examples.sql_selectCount()
+			examples.sql_insert1()
+			examples.sql_insert2()
+			examples.sql_update1()
+			examples.sql_update2()
+			examples.sql_delete1()
+			examples.sql_delete2()
+			examples.sql_delete3()
 		}
 		catch (Exception e) {
 			e.printStackTrace()
@@ -65,7 +67,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// Transaction
-	static void transaction() {
+	void transaction() {
 	/**/DebugTrace.enter()
 
  Transaction.execute {
@@ -85,7 +87,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// Sql
-	static void sql() {
+	void sql() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -100,7 +102,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// columns 1
-	static void sql_columns1() {
+	void sql_columns1() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -116,7 +118,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// columns 2
-	static void sql_columns2() {
+	void sql_columns2() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -133,7 +135,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// expression
-	static void sql_expression() {
+	void sql_expression() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -149,7 +151,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// innerJoin
-	static void sql_innerJoin() {
+	void sql_innerJoin() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -165,7 +167,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// leftJoin
-	static void sql_leftJoin() {
+	void sql_leftJoin() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -181,7 +183,8 @@ public class JavaDocExamples extends Common {
 	}
 
 	// rightJoin
-	static void sql_rightJoin() {
+	void sql_rightJoin() {
+		if (ConnectionSupplier.find().database instanceof SQLite) return // SQLite dose not support RIGHT JOIN
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -197,7 +200,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// where 1
-	static void sql_where1() {
+	void sql_where1() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -212,7 +215,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// where 2
-	static void sql_where2() {
+	void sql_where2() {
 	/**/DebugTrace.enter()
 
  int id = 1
@@ -228,7 +231,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// where 3
-	static void sql_where3() {
+	void sql_where3() {
 	/**/DebugTrace.enter()
 
  Contact contact
@@ -244,7 +247,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// where 4
-	static void sql_where4() {
+	void sql_where4() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -263,7 +266,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// and
-	static void sql_and() {
+	void sql_and() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -279,7 +282,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// or
-	static void sql_or() {
+	void sql_or() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -295,7 +298,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// orderBy
-	static void sql_orderBy() {
+	void sql_orderBy() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -311,7 +314,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// asc
-	static void sql_asc() {
+	void sql_asc() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -326,7 +329,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// desc
-	static void sql_desc() {
+	void sql_desc() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -341,7 +344,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// limit
-	static void sql_limit() {
+	void sql_limit() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -356,7 +359,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// offset
-	static void sql_offset() {
+	void sql_offset() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -371,14 +374,15 @@ public class JavaDocExamples extends Common {
 	}
 
 	// doIf
-	static void sql_doIf() {
+	void sql_doIf() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
  Transaction.execute {
-     new Sql<>(Contact, 'C')
-         .doIf(!(Sql.database instanceof SQLite)) {it.forUpdate}
-         .connection(it)
+ /**/DebugTrace.print("it", it)
+     def isSQLite = it.database instanceof SQLite
+     new Sql<>(Contact, 'C').connection(it)
+         .doIf(!isSQLite) {it.forUpdate} // SQLite dose not support FOR UPDATE
          .select({contacts << it})
  }
 
@@ -386,13 +390,12 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 1
-	static void sql_select1() {
+	void sql_select1() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
  Transaction.execute {
-     new Sql<>(Contact)
-         .connection(it)
+     new Sql<>(Contact).connection(it)
          .select({contacts << it})
  }
 
@@ -408,8 +411,7 @@ public class JavaDocExamples extends Common {
 	/**/DebugTrace.enter();
  List<ContactName> contactNames = []
  Transaction.execute {
-     new Sql<>(Contact)
-         .connection(it)
+     new Sql<>(Contact).connection(it)
          .selectAs(ContactName, {contactNames << it})
  }
 
@@ -418,15 +420,14 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 2
-	static void sql_select2() {
+	void sql_select2() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
  List<Phone>   phones = []
  Transaction.execute {
-     new Sql<>(Contact, 'C')
+     new Sql<>(Contact, 'C').connection(it)
          .innerJoin(Phone, 'P', '{P.contactId} = {C.id}')
-         .connection(it)
          .select({contacts << it}, {phones << it})
  }
 
@@ -434,17 +435,16 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 3
-	static void sql_select3() {
+	void sql_select3() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
  List<Phone>   phones = []
  List<Email>   emails = []
  Transaction.execute {
-     new Sql<>(Contact, 'C')
+     new Sql<>(Contact, 'C').connection(it)
          .innerJoin(Phone, 'P', '{P.contactId} = {C.id}')
          .innerJoin(Email, 'E', '{E.contactId} = {C.id}')
-         .connection(it)
          .select({contacts << it}, {phones << it}, {emails << it})
  }
 
@@ -452,7 +452,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 4
-	static void sql_select4() {
+	void sql_select4() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -460,11 +460,10 @@ public class JavaDocExamples extends Common {
  List<Email>   emails = []
  List<Address> addresses = []
  Transaction.execute {
-     new Sql<>(Contact, 'C')
+     new Sql<>(Contact, 'C').connection(it)
          .innerJoin(Phone  , 'P', '{P.contactId} = {C.id}')
          .innerJoin(Email  , 'E', '{E.contactId} = {C.id}')
          .innerJoin(Address, 'A', '{A.contactId} = {C.id}')
-         .connection(it)
          .select(
              {contacts << it}, {phones << it}, {emails << it}, {addresses << it})
  }
@@ -473,7 +472,7 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 5
-	static void sql_select5() {
+	void sql_select5() {
 	/**/DebugTrace.enter()
 
  List<Contact> contacts = []
@@ -482,12 +481,11 @@ public class JavaDocExamples extends Common {
  List<Address> addresses = []
  List<Url>     urls = []
  Transaction.execute {
-     new Sql<>(Contact, 'C')
+     new Sql<>(Contact, 'C').connection(it)
          .innerJoin(Phone  , 'P', '{P.contactId} = {C.id}')
          .innerJoin(Email  , 'E', '{E.contactId} = {C.id}')
          .innerJoin(Address, 'A', '{A.contactId} = {C.id}')
          .innerJoin(Url    , 'U', '{U.contactId} = {C.id}')
-         .connection(it)
          .select(
              {contacts << it}, {phones << it}, {emails << it},
              {addresses << it}, {urls << it})
@@ -497,14 +495,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select 6
-	static void sql_select6() {
+	void sql_select6() {
 	/**/DebugTrace.enter()
 
  Contact.Ex contact
  Transaction.execute {
-     contact = new Sql<>(Contact.Ex.targetClass)
+     contact = new Sql<>(Contact.Ex.targetClass(it.database)).connection(it)
          .where('{id} = {}', 1)
-         .connection(it)
          .select().orElse(null)
  }
 
@@ -513,14 +510,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// select As 2
-	static void sql_selectAs2() {
+	void sql_selectAs2() {
 	/**/DebugTrace.enter()
 
  ContactName contactName
  Transaction.execute {
-     contactName = new Sql<>(Contact)
+     contactName = new Sql<>(Contact).connection(it)
          .where('{id}={}', 1)
-         .connection(it)
          .selectAs(ContactName).orElse(null)
  }
 
@@ -529,13 +525,12 @@ public class JavaDocExamples extends Common {
 	}
 
 	// selectCount
-	static void sql_selectCount() {
+	void sql_selectCount() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Contact)
-         .connection(it)
+     count = new Sql<>(Contact).connection(it)
          .selectCount()
  }
 
@@ -543,19 +538,18 @@ public class JavaDocExamples extends Common {
 	}
 
 	// insert 1
-	static void sql_insert1() {
+	void sql_insert1() {
 	/**/DebugTrace.enter()
 
 		Transaction.execute {
-			new Sql<>(Contact).where('{id} = {}', 6)
-			.connection(it)
+			new Sql<>(Contact).connection(it)
+			.where('{id} = {}', 6)
 			.delete()
 		}
 
  int count
  Transaction.execute {
-     count = new Sql<>(Contact)
-         .connection(it)
+     count = new Sql<>(Contact).connection(it)
          .insert(new Contact(6, 'Setoka', 'Orange', 2001, 2, 1))
  }
 
@@ -563,19 +557,18 @@ public class JavaDocExamples extends Common {
 	}
 
 	// insert 2
-	static void sql_insert2() {
+	void sql_insert2() {
 	/**/DebugTrace.enter()
 
 		Transaction.execute {
-			new Sql<>(Contact).where('{id} IN {}', [7, 8, 9])
-			.connection(it)
-			.delete()
+			new Sql<>(Contact).connection(it)
+				.where('{id} IN {}', [7, 8, 9])
+				.delete()
 		}
 
  int count
  Transaction.execute {
-     count = new Sql<>(Contact)
-         .connection(it)
+     count = new Sql<>(Contact).connection(it)
          .insert([
              new Contact(7, 'Harumi', 'Orange', 2001, 2, 2),
              new Contact(8, 'Mihaya', 'Orange', 2001, 2, 3),
@@ -587,13 +580,12 @@ public class JavaDocExamples extends Common {
 	}
 
 	// update 1
-	static void sql_update1() {
+	void sql_update1() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Contact)
-         .connection(it)
+     count = new Sql<>(Contact).connection(it)
          .update(new Contact(6, 'Setoka', 'Orange', 2017, 2, 1))
  }
 
@@ -601,13 +593,12 @@ public class JavaDocExamples extends Common {
 	}
 
 	// update 2
-	static void sql_update2() {
+	void sql_update2() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Contact)
-         .connection(it)
+     count = new Sql<>(Contact).connection(it)
          .update([
              new Contact(7, 'Harumi', 'Orange', 2017, 2, 2),
              new Contact(8, 'Mihaya', 'Orange', 2017, 2, 3),
@@ -619,14 +610,13 @@ public class JavaDocExamples extends Common {
 	}
 
 	// delete 1
-	static void sql_delete1() {
+	void sql_delete1() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Contact)
+     count = new Sql<>(Contact).connection(it)
          .where(Condition.ALL)
-         .connection(it)
          .delete()
  }
 
@@ -634,19 +624,17 @@ public class JavaDocExamples extends Common {
 	}
 
 	// delete 2
-	static void sql_delete2() {
+	void sql_delete2() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Contact)
-         .connection(it)
+     count = new Sql<>(Contact).connection(it)
          .delete(new Contact(6))
  }
 
 		Transaction.execute {
-			count = new Sql<>(Contact)
-				.connection(it)
+			count = new Sql<>(Contact).connection(it)
 				.insert(new Contact(6, 'Setoka', 'Orange', 2001, 2, 1))
 		}
 
@@ -654,21 +642,19 @@ public class JavaDocExamples extends Common {
 	}
 
 	// delete 3
-	static void sql_delete3() {
+	void sql_delete3() {
 	/**/DebugTrace.enter()
 
  int count
  Transaction.execute {
-     count = new Sql<>(Contact)
-         .connection(it)
+     count = new Sql<>(Contact).connection(it)
          .delete([new Contact(7), new Contact(8), new Contact(9)])
  }
 
 	/**/DebugTrace.print('count', count)
 
 	Transaction.execute {
-		new Sql<>(Contact)
-			.connection(it)
+		new Sql<>(Contact).connection(it)
 			.insert([
 				new Contact(7, 'Harumi', 'Orange', 2001, 2, 2),
 				new Contact(8, 'Mihaya', 'Orange', 2001, 2, 3),

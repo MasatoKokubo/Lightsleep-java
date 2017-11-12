@@ -32,30 +32,30 @@ import org.lightsleep.logger.LoggerFactory;
 public class Resource {
 	// A converter for string values
 	private static final Function<String, String> stringConverter = string -> {
-			if (string != null) {
-				StringBuilder buff = new StringBuilder(string.length());
-				boolean escape = false;
-				for (int index = 0; index < string.length(); ++index) {
-					char ch = string.charAt(index);
-					if (escape) {
-						if      (ch == 't' ) buff.append('\t'); // 09 HT
-						else if (ch == 'n' ) buff.append('\n'); // 0A LF
-						else if (ch == 'r' ) buff.append('\r'); // 0D CR
-						else if (ch == 's' ) buff.append(' ' ); // 20 SPACE
-						else if (ch == '\\') buff.append('\\');
-						else                 buff.append(ch);
-						escape = false;
-					} else {
-						if (ch == '\\')
-							escape = true;
-						else
-							buff.append(ch);
-					}
+		if (string != null) {
+			StringBuilder buff = new StringBuilder(string.length());
+			boolean escape = false;
+			for (int index = 0; index < string.length(); ++index) {
+				char ch = string.charAt(index);
+				if (escape) {
+					if      (ch == 't' ) buff.append('\t'); // 09 HT
+					else if (ch == 'n' ) buff.append('\n'); // 0A LF
+					else if (ch == 'r' ) buff.append('\r'); // 0D CR
+					else if (ch == 's' ) buff.append(' ' ); // 20 SPACE
+					else if (ch == '\\') buff.append('\\');
+					else                 buff.append(ch);
+					escape = false;
+				} else {
+					if (ch == '\\')
+						escape = true;
+					else
+						buff.append(ch);
 				}
-				string = buff.toString();
 			}
-			return string;
-		};
+			string = buff.toString();
+		}
+		return string;
+	};
 
 	// A ResourceBundle.Control
 	private static final ResourceBundle.Control control = new ResourceBundle.Control() {
@@ -82,8 +82,28 @@ public class Resource {
 //			resource = new Resource(Sql.class.getPackage().getName() + ".lightsleep");
 //		globalResource = resource;
 //	}
-	public static final Resource globalResource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
+// 2.1.0
+//	public static final Resource globalResource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
+	private static Resource global;
+	static {
+		initClass();
+	}
+
+	private static void initClass() {
+		global = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
+	}
 ////
+
+	/**
+	 * Returns the <b>Resource</b> created based on lightsleep.properties.
+	 *
+	 * @return the <b>Resource</b> created based on lightsleep.properties
+	 *
+	 * @since 2.1.0
+	 */
+	public static Resource getGlobal() {
+		return global;
+	}
 
 	// The base name
 	private final String baseName;
@@ -102,7 +122,7 @@ public class Resource {
 			resourceBundle = ResourceBundle.getBundle(baseName, control);
 		}
 		catch (MissingResourceException e) {
-			if (globalResource != null)
+			if (global != null)
 				LoggerFactory.getLogger(Resource.class).error(e.getMessage());
 		}
 	}

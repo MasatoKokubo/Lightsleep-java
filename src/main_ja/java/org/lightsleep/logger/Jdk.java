@@ -6,18 +6,18 @@ package org.lightsleep.logger;
 import java.util.function.Supplier;
 
 /**
- * <b>java.util.logging.Logger</b> を使用してログを出力します。
+ * <b>java.util.logging.Logger</b>を使用してログを出力します。
  *
  * @since 1.0.0
  * @author Masato Kokubo
  */
 public class Jdk implements Logger {
 	/**
-	 * 指定の名前で <b>Logger</b> を構築します。
+	 * 指定の名前で<b>Logger</b>を構築します。
 	 *
 	 * @param name 名前
 	 *
-	 * @throws NullPointerException <b>name</b> が null の場合
+	 * @throws NullPointerException <b>name</b>がnullの場合
 	 */
 	public Jdk(String name) {
 	}
