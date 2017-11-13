@@ -21,11 +21,12 @@ import spock.lang.*
 class ExpressionSpec extends Specification {
 	static databases = [
 		Standard  .instance,
+		DB2       .instance,
 		MySQL     .instance,
 		Oracle    .instance,
 		PostgreSQL.instance,
 		SQLite    .instance,
-		SQLServer .instance
+		SQLServer .instance,
 	]
 
 	@Shared TimeZone timeZone

@@ -27,7 +27,7 @@ class SqlSpec extends Specification {
 		Oracle    .instance,
 		PostgreSQL.instance,
 		SQLite    .instance,
-		SQLServer .instance
+		SQLServer .instance,
 	]
 
 	static class TestDatabase implements Database {
