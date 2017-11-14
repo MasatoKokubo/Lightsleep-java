@@ -791,7 +791,8 @@ An exception will be thrown if more than one is found or if it can not be found.
 ```java:Java
 // Java Example
 public static final ConnectionSupplier supplier1 = ConnectionSupplier.find("example1");
-    ・・・
+    ...
+
 Contact contact = new Contact(1, "Akane", "Apple");
 
 Transaction.execute(supplier1, conn -> {
@@ -806,7 +807,8 @@ Transaction.execute(supplier1, conn -> {
 ```groovy:Groovy
 // Groovy Example
 static final supplier1 = ConnectionSupplier.find('example1')
-    ・・・
+    ...
+
 def contact = new Contact(1, 'Akane', 'Apple')
 
 Transaction.execute(supplier1) {

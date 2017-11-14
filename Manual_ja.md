@@ -804,7 +804,8 @@ Transaction.execute {
 ```java:Java
 // Javaでの例
 public static final ConnectionSupplier supplier1 = ConnectionSupplier.find("example1");
-    ・・・
+    ...
+
 Contact contact = new Contact(1, "Akane", "Apple");
 
 Transaction.execute(supplier1, conn -> {
@@ -819,7 +820,8 @@ Transaction.execute(supplier1, conn -> {
 ```groovy:Groovy
 // Groovyでの例
 static final supplier1 = ConnectionSupplier.find('example1')
-    ・・・
+    ...
+
 def contact = new Contact(1, 'Akane', 'Apple')
 
 Transaction.execute(supplier1) {

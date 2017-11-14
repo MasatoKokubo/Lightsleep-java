@@ -8,11 +8,14 @@ It is not compatible with the Java Persistence API (JPA).
 
 ### Features
 
-- Has APIs using features added in Java 8 (functional interface and Optional class).
-- It is easy to understand intuitively because method names resemble reserved words in SQL.
-- It is easy to use for batch programs because there is no library dependent on Java runtime and JDBC driver.
-- No mapping definition file such as XML file is necessary.
-- Learning is relatively easy because it is not a large library.
+- It has API using features added in Java 8 (functional interface and Optional class).
+- It is easy to understand intuitively because method names when constructing SQL are the same as SQL reserved words.
+- It is applicable because J2EE is unnecessary: there is no library that depends on Java Runtime and JDBC driver other than.
+- It does not need a definition file for mapping tables and Java classes with XML files.
+- Learning is easy because the library is compact.
+- Connectable to various DBMS simultaneously. **(since 2.1.0)**
+- Various connection pool libraries can be used simultaneously. **(since 2.1.0)**
+- You can select from various logging libraries when outputting internal logs.
 
 ### Supported DBMS
 
