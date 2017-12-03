@@ -94,13 +94,15 @@ public class Jndi extends AbstractConnectionSupplier {
 			String url = props.getProperty("url");
 			String dataSource = props.getProperty("dataSource");
 			if (url != null && dataSource == null) {
-				if (url.startsWith(":")) {
-					int index = url.indexOf(':', 1);
-					if (index >= 1)
-						url = url.substring(index + 1);
-				}
+			// 2.1.1
+			//	if (url.startsWith(":")) {
+			//		int index = url.indexOf(':', 1);
+			//		if (index >= 1)
+			//			url = url.substring(index + 1);
+			//	}
+			////
 				props.setProperty("dataSource", url);
-				logger.info("Jndi.<init>: properties.dataSource <- '" + url + "'");
+				logger.info("Jndi.<init>: properties.dataSource <- \"" + url + '"');
 			}
 		}));
 	}
@@ -119,10 +121,10 @@ public class Jndi extends AbstractConnectionSupplier {
 		//	if (dataSourceName == null) {
 		//		// If the data source name is not specified, gets it from properties.
 		//		dataSourceName = Resource.globalResource.getString("dataSource");
-				String dataSourceName = properties.getProperty("dataSource");
+				String dataSourceName = jdbcProperties.getProperty("dataSource");
 		////
 				if (dataSourceName == null) {
-					logger.error("Jndi.getDataSource: property dataSource: " + dataSourceName);
+					logger.error("Jndi.getDataSource: jdbcProperties dataSource: " + dataSourceName);
 					return null;
 				}
 		// 2.1.0
@@ -140,18 +142,22 @@ public class Jndi extends AbstractConnectionSupplier {
 		// 2.1.0
 		//	String lookupStr = "java:/comp/env/" + dataSourceName;
 			lookupStr = dataSourceName.startsWith("jdbc/")
-				? "java:/comp/env/" + dataSourceName
-				: "java:/comp/env/jdbc/" + dataSourceName;
+			// 2.1.1
+			//	? "java:/comp/env/" + dataSourceName
+			//	: "java:/comp/env/jdbc/" + dataSourceName;
+				? "java:comp/env/" + dataSourceName
+				: "java:comp/env/jdbc/" + dataSourceName;
+			////
 	////
 			if (logger.isDebugEnabled())
-				logger.debug("Jndi.lookup: lookup string=" + lookupStr);
+				logger.debug("Jndi.lookup: \"" + lookupStr + '"');
 
 			// Do lookup
 			DataSource dataSource = (DataSource)initContext.lookup(lookupStr);
 			return dataSource;
 		}
 		catch (NamingException e) {
-			throw new RuntimeException("lookuped string: " + lookupStr, e);
+			throw new RuntimeException("looked up string: \"" + lookupStr + '"', e);
 		}
 	}
 }

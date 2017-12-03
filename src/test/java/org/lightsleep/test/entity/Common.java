@@ -10,6 +10,9 @@ import org.lightsleep.entity.*;
 
 /**
  * Common properties of entities.
+ *
+ * @since 1.0
+ * @author Masato Kokubo
  */
 public abstract class Common implements PreInsert {
 	/** Identifier */
@@ -35,10 +38,7 @@ public abstract class Common implements PreInsert {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public int preInsert(Connection conn) {
 	public int preInsert(ConnectionWrapper conn) {
-////
 		id = Numbering.getNewId(conn, getClass());
 		return 0;
 	}

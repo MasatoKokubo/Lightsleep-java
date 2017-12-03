@@ -7,8 +7,19 @@ Lightsleep リリース･ノート
 
 ### 目次
 
+- [バージョン2.1.1](#ReleaseNotes2.1.1)
 - [バージョン2.1.0](#ReleaseNotes2.1.0)
 - [バージョン2.0.0](#ReleaseNotes2.0.0)
+
+<div id="ReleaseNotes2.1.1"></div>
+
+### バージョン2.1.1
+
+1. バグ修正
+    - [修正済] コネクション･サプライヤが`Jndi`の場合に常に`Standardデータベース･ハンドラが選択される。
+
+1. その他
+    - ログメッセージの改善
 
 <div id="ReleaseNotes2.1.0"></div>
 

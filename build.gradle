@@ -1,6 +1,6 @@
 // (C) 2016 Masato Kokubo
 plugins {
-	id "com.jfrog.bintray" version "1.7.3"
+	id 'com.jfrog.bintray' version '1.8.0'
 }
 
 apply plugin: 'maven-publish'
@@ -18,8 +18,6 @@ repositories {
 }
 
 dependencies {
-	compileOnly     'org.debugtrace:debugtrace:2.+'
-	testCompile     'org.debugtrace:debugtrace:2.+'
 	compileOnly     'log4j:log4j:1.+'
 	testRuntimeOnly 'log4j:log4j:1.+'
 	compileOnly     'org.apache.logging.log4j:log4j-api:2.+'
@@ -36,9 +34,6 @@ dependencies {
 	compileOnly     'org.apache.tomcat:tomcat-jdbc:8.+'
 	testRuntimeOnly 'org.apache.tomcat:tomcat-jdbc:8.+'
 
-	testCompileOnly 'org.codehaus.groovy:groovy-all:2.4.+'
-	testCompileOnly 'org.spockframework:spock-core:1.1-groovy-2.4'
-
 	testRuntimeOnly 'com.ibm.db2.jcc:db2jcc4:10.+'
 	testRuntimeOnly 'mysql:mysql-connector-java:5.+'
 	compileOnly     'com.hynnet:oracle-driver-ojdbc:12.+'
@@ -46,13 +41,23 @@ dependencies {
 	testRuntimeOnly 'org.postgresql:postgresql:42.+'
 	testRuntimeOnly 'org.xerial:sqlite-jdbc:3.+'
 	testRuntimeOnly 'com.microsoft.sqlserver:mssql-jdbc:6.2.+'
+
+	testCompileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
+	testCompileOnly 'org.spockframework:spock-core:1.1-groovy-2.4'
+
+	testRuntimeOnly 'tomcat:naming-java:5.+'
+	testRuntimeOnly 'tomcat:naming-factory:5.+'
+	testRuntimeOnly 'tomcat:naming-resources:5.+'
+
+	compileOnly     'org.debugtrace:debugtrace:2.+'
+	testCompile     'org.debugtrace:debugtrace:2.+'
 }
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '2.1.0'
+version             = '2.1.1'
 
 sourceSets {
 	example {

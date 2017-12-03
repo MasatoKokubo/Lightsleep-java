@@ -35,9 +35,6 @@ import java.lang.annotation.*;
  * @author Masato Kokubo
  */
 @Documented
-// 2.0.0
-// @Inherited
-////
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Table {

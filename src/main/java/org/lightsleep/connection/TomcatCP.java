@@ -95,7 +95,7 @@ public class TomcatCP extends AbstractConnectionSupplier {
 			String username = props.getProperty("username");
 			if (user != null && username == null) {
 				props.setProperty("username", user);
-				logger.info("TomcatCP.<init>: properties.username <- properties.user: '" + user + "'");
+				logger.info("TomcatCP.<init>: properties.username <- properties.user: \"" + user + '"');
 			}
 		}));
 	}
@@ -109,7 +109,7 @@ public class TomcatCP extends AbstractConnectionSupplier {
 	public DataSource getDataSource() {
 ////
 		try {
-			DataSource dataSource = new DataSourceFactory().createDataSource(properties);
+			DataSource dataSource = new DataSourceFactory().createDataSource(jdbcProperties);
 		// 2.1.0
 		//	logger.debug(() -> "TomcatCP.getDataSource: dataSource = " + dataSource);
 		////
@@ -119,7 +119,7 @@ public class TomcatCP extends AbstractConnectionSupplier {
 		catch (Exception e) {
 		// 2.1.0
 		//	logger.error("TomcatCP.getDataSource: " + e, e);
-			throw new RuntimeException("properties: " + properties, e);
+			throw new RuntimeException("jdbcProperties: " + jdbcProperties, e);
 		////
 		}
 	// 2.1.0

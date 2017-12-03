@@ -44,11 +44,8 @@ public @interface NonColumnProperty {
 	 * @return the property name that specifies the field
 	 * @since 2.0.0
 	 */
-// 2.0.0
-//	String value();
 	String property();
 
 	/** @return true if the field not related to any column, false otherwise */
 	boolean value() default true;
-////
 }

@@ -44,11 +44,8 @@ public @interface NonInsertProperty {
 	 * @return the property name that specifies the field
 	 * @since 2.0.0
 	 */
-// 2.0.0
-//	String value();
 	String property();
 
 	/** @return true if the column related the field is not used in INSERT SQL, false otherwise */
 	boolean value() default true;
-////
 }

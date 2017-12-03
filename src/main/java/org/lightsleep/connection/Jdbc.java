@@ -124,11 +124,11 @@ public class Jdbc extends AbstractConnectionSupplier {
 
 			@Override
 			public Connection getConnection() throws SQLException {
-				String url = properties.getProperty("url");
+				String url = getUrl();
 				if (url == null)
-					logger.error("Jdbc.getDataSource: property url == null");
+					logger.error("Jdbc.getDataSource: jdbcProperties url == null");
 
-				Connection connection = DriverManager.getConnection(url, properties);
+				Connection connection = DriverManager.getConnection(url, jdbcProperties);
 				connection.setAutoCommit(false);
 				return connection;
 			}

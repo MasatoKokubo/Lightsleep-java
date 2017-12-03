@@ -413,11 +413,9 @@ public class TypeConverter<ST, DT> {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
-	// 2.0.0
 		Objects.requireNonNull(typeConverterMap, "typeConverterMap");
 		if (Objects.requireNonNull(destinType, "destinType").isPrimitive())
 			throw new IllegalArgumentException("destinType: " + destinType.getName() + "(primitive type)");
-	////
 
 		DT destin = null;
 		if (source == null) {

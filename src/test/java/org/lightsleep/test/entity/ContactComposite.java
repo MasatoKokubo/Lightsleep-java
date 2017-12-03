@@ -31,10 +31,7 @@ public class ContactComposite extends Contact implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public void postSelect(Connection conn) {
 	public void postSelect(ConnectionWrapper conn) {
-////
 		// Select and get the address
 		if (addressId != 0)
 			address = new Sql<>(Address.class).connection(conn)
@@ -53,10 +50,7 @@ public class ContactComposite extends Contact implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public int preInsert(Connection conn) {
 	public int preInsert(ConnectionWrapper conn) {
-////
 		super.preInsert(conn);
 
 		int count = 0;
@@ -73,10 +67,7 @@ public class ContactComposite extends Contact implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public int postInsert(Connection conn) {
 	public int postInsert(ConnectionWrapper conn) {
-////
 		int count = 0;
 
 		// Insert phones
@@ -91,10 +82,7 @@ public class ContactComposite extends Contact implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public int postUpdate(Connection conn) {
 	public int postUpdate(ConnectionWrapper conn) {
-////
 		int count = 0;
 
 		if (addressId != 0) {
@@ -147,10 +135,7 @@ public class ContactComposite extends Contact implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public int postDelete(Connection conn) {
 	public int postDelete(ConnectionWrapper conn) {
-////
 		int count = 0;
 
 		// Delete the address

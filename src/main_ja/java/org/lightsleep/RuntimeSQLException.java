@@ -20,4 +20,15 @@ public class RuntimeSQLException extends RuntimeException {
 	 */
 	public RuntimeSQLException(Throwable cause) {
 	}
+
+	/**
+	 * <b>RuntimeSQLException</b>を構築します。
+	 *
+	 * @param message 詳細メッセージ
+	 * @param cause 原因(不明の場合はnull)
+	 *
+	 * @since 2.1.1
+	 */
+	public RuntimeSQLException(String message, Throwable cause) {
+	}
 }

@@ -1,4 +1,4 @@
-Lightsleep 2.1.0 / Manual
+Lightsleep 2.1.1 / Manual
 ===========
 
 [[Japanese]](Manual_ja.md)
@@ -527,6 +527,8 @@ Lightsleep.properties is a properties file referenced by Lightsleep and you can 
 |[ConnectionSupplier](#ConnectionSupplier)|Connection Supplier class|`Jdbc`|
 | url                                     |JDBC URL|None|
 | urls                                    |JDBC URLs|None|
+| dataSource                              |Data source name when using `Jndi`|None|
+| dataSources                             |Data source names when using `Jndi`|None|
 | maxStringLiteralLength                  |Maximum length of string literals when generates SQL|128|
 | maxBinaryLiteralLength                  |Maximum length of binary literals when generates SQL|128|
 | maxLogStringLength                      |Maximum length of string values output to log|200|

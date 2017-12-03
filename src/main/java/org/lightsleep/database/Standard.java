@@ -665,7 +665,6 @@ public class Standard implements Database {
 						buff.append(" AS ").append(columnAlias);
 					}
 				});
-		// 2.0.0
 			if (buff.length() == 0)
 				throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
 					sql.entityClass().getName(),
@@ -673,7 +672,6 @@ public class Standard implements Database {
 						.map(name -> '"' + name + '"')
 						.collect(Collectors.joining(", ")) + ']'
 				));
-		////
 			return buff;
 		}, parameters);
 	}

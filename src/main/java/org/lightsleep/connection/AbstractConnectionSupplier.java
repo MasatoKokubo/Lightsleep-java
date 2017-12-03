@@ -4,7 +4,9 @@
 package org.lightsleep.connection;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,8 +34,10 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 // 2.1.0
 	// Class resources
 	private static final Resource resource = new Resource(AbstractConnectionSupplier.class);
-	protected static final String messageUrlNotFound       = resource.getString("messageUrlNotFound");
-	protected static final String messageMultipleUrlsFound = resource.getString("messageMultipleUrlsFound");
+	protected static final String messageUrlNotFound       = resource.getString("messageUrlNotFound"); // Used in ConnectionSupplier
+	protected static final String messageMultipleUrlsFound = resource.getString("messageMultipleUrlsFound"); // Used in ConnectionSupplier
+// 2.1.1
+	private static final String messageMultipleUrlsDefined = resource.getString("messageMultipleUrlsDefined");
 ////
 
 	/** The logger */
@@ -65,7 +69,7 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 		logger.debug(() -> "AbstractConnectionSupplier.initClass: supplierName: " + supplierName);
 
 		try {
-			// get a Properties from lightsleep.propeprties 
+			// get a Properties from lightsleep.propeprties
 			Properties properties = Resource.getGlobal().getProperties();
 			logger.debug(() -> "AbstractConnectionSupplier.initClass: raw properties: " + properties);
 
@@ -118,15 +122,17 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 						if (supplier == null) {
 							supplierProperties.put("url", url);
 							supplier = ConnectionSupplier.of(supplierName, supplierProperties);
-							logger.info("ConnectionSupplier.initClass: url: " + url);
+							logger.info("ConnectionSupplier.initClass: url: \"" + url + '"');
 						}
 						ConnectionSupplier beforeUrl = supplierMap.put(url, supplier);
 						if (beforeUrl != null)
-							// DOTO Use resource message
-							logger.warn("ConnectionSupplier.initClass: Multiple same urls are defined. url: '" + url + "'");
+						// 2.1.1
+						//	logger.warn("ConnectionSupplier.initClass: Multiple same urls are defined. url: \"" + url + '"');
+							logger.warn(MessageFormat.format(messageMultipleUrlsDefined, url));
+						////
 					}
 					catch (Exception e) {
-						logger.error("ConnectionSupplier.initClass: url: " + url + ", exception: " + e);
+						logger.error("ConnectionSupplier.initClass: url: \"" + url + "\", exception: " + e);
 					}
 				});
 		}
@@ -139,14 +145,17 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	/** The properties */
 // 2.1.0
 //	protected final Properties properties = Resource.globalResource.getProperties();
-	protected Properties properties;
+	protected Properties jdbcProperties;
 ////
 
 	// The data source
 	private DataSource dataSource;
 
 	// The database handler. @since 2.1.0
-	private Database database;
+// 2.1.1
+//	private Database database;
+	private Database database = Standard.instance;
+////
 
 // 2.1.0
 //	/**
@@ -184,24 +193,33 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 * @since 2.1.0
 	 */
 	protected AbstractConnectionSupplier(Properties properties, Consumer<Properties> modifier) {
-		this.properties = Objects.requireNonNull(properties);
-		properties.remove(Logger.class.getSimpleName());
-		properties.remove(Database.class.getSimpleName());
-		properties.remove(ConnectionSupplier.class.getSimpleName());
-		Objects.requireNonNull(modifier, "modifier").accept(properties);
+		jdbcProperties = Objects.requireNonNull(properties);
+		jdbcProperties.remove(Logger.class.getSimpleName());
+		jdbcProperties.remove(Database.class.getSimpleName());
+		jdbcProperties.remove(ConnectionSupplier.class.getSimpleName());
+		Objects.requireNonNull(modifier, "modifier").accept(jdbcProperties);
 
-		logger.debug(() -> getClass().getSimpleName() + ".<init>: modified properties: " + properties);
+		logger.debug(() -> getClass().getSimpleName() + ".<init>: jdbcProperties: " + jdbcProperties);
 
-		String url = properties.getProperty("url");
-		try {
-			database = Database.getInstance(url);
+	// 2.1.1
+		if (!(this instanceof Jndi)) {
+			// not Jndi
+	////
+			String url = jdbcProperties.getProperty("url");
+			try {
+				database = Database.getInstance(url);
+			}
+			catch (IllegalArgumentException e) {
+				logger.warn(e.toString());
+			// 2.1.1
+			//	database = Standard.instance;
+			////
+			}
+			logger.info(() -> getClass().getSimpleName()
+				+ ".<init>: url: \"" + url + "\", database handler: " + database.getClass().getSimpleName());
+	// 2.1.1
 		}
-		catch (IllegalArgumentException e) {
-			logger.warn(e.toString());
-			database = Standard.instance;
-		}
-		logger.info(() -> getClass().getSimpleName()
-			+ ".<init>: url: " + url + ", database handler: " + database.getClass().getSimpleName());
+	////
 	}
 
 // 2.1.0
@@ -226,15 +244,47 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	public ConnectionWrapper get() {
 ////
 		try {
+		// 2.1.1
+			boolean first = false;
+		////
 			if (dataSource == null) {
 				synchronized (this) {
 					if (dataSource == null) {
 						dataSource = getDataSource();
+					// 2.1.1
+						first = true;
+					////
 					}
 				}
 			}
 
 			Connection connection = dataSource.getConnection();
+		// 2.1.1
+			if (first) {
+				// first time and Jndi
+				DatabaseMetaData metaData = connection.getMetaData();
+
+				if (this instanceof Jndi) {
+					String url = metaData.getURL();
+					if (url != null) {
+						try {
+							database = Database.getInstance(url);
+						}
+						catch (IllegalArgumentException e) {
+							logger.warn(e.toString());
+						}
+						logger.info(() -> getClass().getSimpleName()
+							+ ".get: connection.metaData.url: \"" + url + "\", database handler: " + database.getClass().getSimpleName());
+					} else {
+						logger.warn(() -> getClass().getSimpleName() + ".get: connection.metaData.url: null");
+					}
+				}
+
+				if (logger.isInfoEnabled())
+					logger.info("DBMS: " + metaData.getDatabaseProductName() + ' ' + metaData.getDatabaseProductVersion());
+			}
+		////
+
 			boolean beforeAutoCommit = connection.getAutoCommit();
 			int transactionIsolation = connection.getTransactionIsolation();
 			connection.setAutoCommit(false);
@@ -253,7 +303,7 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 		////
 		}
 		catch (SQLException e) {
-			throw new RuntimeSQLException(e);
+			throw new RuntimeSQLException(getUrl(), e);
 		}
 	}
 
@@ -274,7 +324,7 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 */
 	@Override
 	public String getUrl() {
-		return properties.getProperty("url");
+		return jdbcProperties.getProperty("url");
 	}
 
 	/**

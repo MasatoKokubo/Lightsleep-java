@@ -170,10 +170,7 @@ public class Expression implements Condition {
 							// Replaces an argument
 							if (argIndex >= arguments.length) {
 								// Argument shortage
-							// 2.0.0
-							//	throw new IllegalArgumentException(MessageFormat.format(
 								throw new MissingArgumentsException(MessageFormat.format(
-							////
 									messageLessArguments, content, arguments.length));
 							}
 							value = arguments[argIndex++];
@@ -222,10 +219,7 @@ public class Expression implements Condition {
 		}
 
 		if (argIndex < arguments.length)
-		// 2.0.0
-		//	throw new IllegalArgumentException(MessageFormat.format(
 			throw new MissingArgumentsException(MessageFormat.format(
-		////
 				messageMoreArguments, content, arguments.length));
 
 		return buff.toString();
@@ -272,10 +266,6 @@ public class Expression implements Condition {
 		}
 
 		propertyNames = propertyNames.stream().map(name -> '"' + name + '"').collect(Collectors.toList());
-	// 2.0.0
-	//	throw new IllegalArgumentException(MessageFormat.format(
-	//		propertyNames.size() == 1 ? messagePropertyIsNotFound : messagePropertiesAreNotFound,
-	//		entityInfo.entityClass().getName(), String.join(", ", propertyNames)));
 		throw new MissingPropertyException(propertyNames.size() == 1
 			? MessageFormat.format(messageMissingProperty,
 				entityInfo.entityClass().getName(), propertyNames.get(0))

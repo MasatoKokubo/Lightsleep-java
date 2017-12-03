@@ -99,10 +99,10 @@ public class HikariCP extends AbstractConnectionSupplier {
 			String jdbcUrl = props.getProperty("jdbcUrl");
 			if (url != null && jdbcUrl == null) {
 				props.setProperty("jdbcUrl", url);
-				logger.info("HikariCP.<init>: properties.jdbcUrl <- properties.url: '" + url + "'");
+				logger.info("HikariCP.<init>: properties.jdbcUrl <- properties.url: \"" + url + '"');
 			} else if (url == null && jdbcUrl != null) {
 				props.setProperty("url", jdbcUrl);
-				logger.info("HikariCP.<init>: properties.url <- properties.jdbcUrl: '" + jdbcUrl + "'");
+				logger.info("HikariCP.<init>: properties.url <- properties.jdbcUrl: \"" + jdbcUrl + '"');
 			}
 
 			// username <- user
@@ -110,7 +110,7 @@ public class HikariCP extends AbstractConnectionSupplier {
 			String username = props.getProperty("username");
 			if (user != null && username == null) {
 				props.setProperty("username", user);
-				logger.info("HikariCP.<init>: properties.username <- properties.user: '" + user + "'");
+				logger.info("HikariCP.<init>: properties.username <- properties.user: \"" + user + '"');
 			}
 		}));
 	}
@@ -123,18 +123,18 @@ public class HikariCP extends AbstractConnectionSupplier {
 //	protected DataSource getDataSource() {
 	public DataSource getDataSource() {
 ////
-		Properties properties2 = new Properties();
+		Properties properties = new Properties();
 		try {
 			// Gets HikariCP properties to the properties2.
 			Set<String> propertyNames = PropertyElf.getPropertyNames(HikariConfig.class);
 			propertyNames
 				.forEach(propertyName -> {
-					if (properties.containsKey(propertyName))
-						properties2.put(propertyName, properties.get(propertyName));
+					if (jdbcProperties.containsKey(propertyName))
+						properties.put(propertyName, jdbcProperties.get(propertyName));
 				});
-			logger.debug(() -> "HikariCP.getDataSource: properties: " + properties2);
+			logger.debug(() -> "HikariCP.getDataSource: properties: " + properties);
 
-			HikariConfig config = new HikariConfig(properties2);
+			HikariConfig config = new HikariConfig(properties);
 			DataSource dataSource = new HikariDataSource(config);
 		// 2.1.0
 		//	logger.debug(() -> "HikariCP.getDataSource: dataSource = " + dataSource);
@@ -145,7 +145,7 @@ public class HikariCP extends AbstractConnectionSupplier {
 		catch (Exception e) {
 		// 2.1.0
 		//	logger.error("HikariCP.getDataSource: " + e, e);
-			throw new RuntimeException("properties: " + properties2, e);
+			throw new RuntimeException("properties: " + properties, e);
 		////
 		}
 	// 2.1.0

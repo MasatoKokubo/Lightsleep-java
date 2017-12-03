@@ -1,10 +1,10 @@
 <!-- logback.xml -->
 <configuration>
 	<appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>logs/logback.log</file>
+		<file>../logs/logback.log</file>
 		<append>false</append>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>logs/logback_%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>../logs/logback_%d{yyyy-MM-dd}.log</fileNamePattern>
 			<maxFileSize>16MB</maxFileSize>
 			<maxHistory>10</maxHistory>
 		</rollingPolicy>

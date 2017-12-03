@@ -49,11 +49,8 @@ public @interface KeyProperty {
 	 * @return the property name of the specified field
 	 * @since 2.0.0
 	 */
-// 2.0.0
-//	String value();
 	String property();
 
 	/** @return true if the column related to the field is part of the primary key, false otherwise */
 	boolean value() default true;
-////
 }

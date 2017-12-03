@@ -74,14 +74,6 @@ public class Resource {
 	};
 
 	/** The global <b>Resource</b> */
-// 2.0.0
-//	public static final Resource globalResource;
-//	static {
-//		Resource resource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
-//		if (resource == null)
-//			resource = new Resource(Sql.class.getPackage().getName() + ".lightsleep");
-//		globalResource = resource;
-//	}
 // 2.1.0
 //	public static final Resource globalResource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
 	private static Resource global;

@@ -95,7 +95,7 @@ public class Dbcp extends AbstractConnectionSupplier {
 			String username = props.getProperty("username");
 			if (user != null && username == null) {
 				props.setProperty("username", user);
-				logger.info("Dbcp.<init>: properties.username <- properties.user: '" + user + "'");
+				logger.info("Dbcp.<init>: properties.username <- properties.user: \"" + user + '"');
 			}
 		}));
 	}
@@ -109,7 +109,7 @@ public class Dbcp extends AbstractConnectionSupplier {
 	public DataSource getDataSource() {
 ////
 		try {
-			DataSource dataSource = BasicDataSourceFactory.createDataSource(properties);
+			DataSource dataSource = BasicDataSourceFactory.createDataSource(jdbcProperties);
 		// 2.1.0
 		//	logger.debug(() -> "Dbcp.getDataSource: dataSource = " + dataSource);
 		////
@@ -119,8 +119,7 @@ public class Dbcp extends AbstractConnectionSupplier {
 		catch (Exception e) {
 		// 2.1.0
 		//	logger.error("Dbcp.getDataSource:", e);
-			throw new RuntimeException("properties: " + properties, e);
-		////
+			throw new RuntimeException("jdbcProperties: " + jdbcProperties, e);
 		}
 	// 2.1.0
 	//	return null;

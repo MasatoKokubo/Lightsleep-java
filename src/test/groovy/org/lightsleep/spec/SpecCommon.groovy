@@ -25,7 +25,7 @@ public class SpecCommon extends Specification {
 
 	def setupSpec() {
 		def databaseResource = new Resource('Database')
-		def databaseKeyword = databaseResource.getString('Database').toLowerCase()
+		def databaseKeyword = databaseResource.getString('Database')
 
 		connectionSuppliers = [
 			Jdbc    .simpleName,

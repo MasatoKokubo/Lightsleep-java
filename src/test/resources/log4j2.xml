@@ -2,7 +2,7 @@
 <!-- log4j2.xml -->
 <Configuration status="warn">
 	<Appenders>
-		<RollingFile name="RollingFile" fileName="logs/log4j2.log" filePattern="logs/log4j2_%d{yyyyMMdd}-%i.log">
+		<RollingFile name="RollingFile" fileName="../logs/log4j2.log" filePattern="../logs/log4j2_%d{yyyyMMdd}-%i.log">
 			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %c: %msg%n"/>
 			<Policies>
 					<OnStartupTriggeringPolicy />

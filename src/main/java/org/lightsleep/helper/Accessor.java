@@ -44,12 +44,9 @@ public class Accessor<T> {
 
 	// Class Resources
 	private static final Resource resource = new Resource(Accessor.class);
-// 2.0.0
-//	private static final String messagePropertyIsNotFound       = resource.getString("messagePropertyIsNotFound");
 	private static final String messageMissingProperty          = resource.getString("messageMissingProperty");
 	private static final String messageMissingGetMethod         = resource.getString("messageMissingGetMethod");
 	private static final String messageMissingSetMethod         = resource.getString("messageMissingSetMethod");
-////
 	private static final String messagePropertyExceedsMaxNest   = resource.getString("messagePropertyExceedsMaxNest");
 	private static final String messageIntermediateObjectIsNull = resource.getString("messageIntermediateObjectIsNull");
 
@@ -120,16 +117,12 @@ public class Accessor<T> {
 
 		// @NonColumnProperty, @NonColumnProperties
 		List<NonColumnProperty> nonColumnProperties = Utils.getAnnotations(objectClass, NonColumnProperty.class);
-	// 2.0.0
-	//	if (nonColumnProperties != null)
-	//		nonColumnProperties.forEach(annotation -> nonColumnSet.add(annotation.value()));
 		nonColumnProperties.forEach(annotation -> {
 			if (annotation.value())
 				nonColumnSet.add(annotation.property());
 			else
 				nonColumnSet.remove(annotation.property());
 		});
-	////
 
 		putToMaps(objectClass, "", null, 0);
 
@@ -170,11 +163,8 @@ public class Accessor<T> {
 		Field[] fields = objectClass.getDeclaredFields();
 		for (Field field : fields) {
 			// @NonColumn
-		// 2.0.0
-		//	if (field.getAnnotation(NonColumn.class) != null) continue;
 			NonColumn nonColumn = field.getAnnotation(NonColumn.class);
 			if (nonColumn != null && nonColumn.value()) continue;
-		////
 
 			int modifier = field.getModifiers();
 			if (Modifier.isStatic(modifier)) continue; // static
@@ -416,12 +406,8 @@ public class Accessor<T> {
 		Field field = fieldMap.get(propertyName);
 		if (field == null)
 			// Not found
-		// 2.0.0
-		//	throw new IllegalArgumentException(
-		//		MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
 			throw new MissingPropertyException(
 				MessageFormat.format(messageMissingProperty, objectClass.getName(), propertyName));
-		////
 
 		return field;
 	}
@@ -463,12 +449,8 @@ public class Accessor<T> {
 		Function<T, Object> getter = getterMap.get(propertyName);
 		if (getter == null)
 			// Not found
-		// 2.0.0
-		//	throw new IllegalArgumentException(
-		//		MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
 			throw new MissingPropertyException(
 				MessageFormat.format(messageMissingGetMethod, objectClass.getName(), propertyName));
-		////
 
 		Object value = getter.apply(object);
 		return value;
@@ -498,12 +480,8 @@ public class Accessor<T> {
 		BiConsumer<T, Object> setter = setterMap.get(propertyName);
 		if (setter == null)
 			// Not found
-		// 2.0.0
-		//	throw new IllegalArgumentException(
-		//		MessageFormat.format(messagePropertyIsNotFound, objectClass.getName(), propertyName));
 			throw new MissingPropertyException(
 				MessageFormat.format(messageMissingSetMethod, objectClass.getName(), propertyName));
-		////
 
 		if (value == null) {
 			Field field = getField(propertyName);

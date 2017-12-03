@@ -1,4 +1,4 @@
-Lightsleep 2.1.0 マニュアル
+Lightsleep 2.1.1 マニュアル
 ===========
 
 [[English]](Manual.md)
@@ -539,6 +539,8 @@ lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイ�
 |[ConnectionSupplier](#ConnectionSupplier)|コネクション･サプライヤ･クラス|`Jdbc`|
 | url                                     |JDBC URL|なし|
 | urls                                    |JDBC URL(複数)|なし|
+| dataSource                              |`Jndi`を使用した場合のデータソース名|なし|
+| dataSources                             |`Jndi`を使用した場合のデータソース名(複数)|なし|
 | maxStringLiteralLength                  |SQLが生成される時の文字列リテラルの最大長|128|
 | maxBinaryLiteralLength                  |SQLが生成される時のバイナリ列リテラルの最大長|128|
 | maxLogStringLength                      |ログに出力する文字列値の最大長|200|

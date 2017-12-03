@@ -7,8 +7,19 @@ Lightsleep Release Notes
 
 ### Table of Contents
 
+- [version 2.1.1](#ReleaseNote2.1.1)
 - [version 2.1.0](#ReleaseNote2.1.0)
 - [version 2.0.0](#ReleaseNote2.0.0)
+
+<div id="ReleaseNote2.1.1"></div>
+
+### version 2.1.1
+
+1. Bug fix
+    - [Fixed] `Standard` database handler is always selected when connection supplier is `Jndi`.
+
+1. Other
+    - Improve log messages
 
 <div id="ReleaseNote2.1.0"></div>
 

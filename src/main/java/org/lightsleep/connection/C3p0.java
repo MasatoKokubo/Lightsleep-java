@@ -96,8 +96,7 @@ public class C3p0 extends AbstractConnectionSupplier {
 		// 2.1.0
 		//	DataSource unpooledDataSource = DataSources.unpooledDataSource(url, properties);
 		//	logger.debug(() -> "C3p0.getDataSource: unpooledDataSource = " + unpooledDataSource);
-			DataSource unpooledDataSource = DataSources.unpooledDataSource(properties.getProperty("url"), properties);
-		////
+			DataSource unpooledDataSource = DataSources.unpooledDataSource(jdbcProperties.getProperty("url"), jdbcProperties);
 			DataSource dataSource = DataSources.pooledDataSource(unpooledDataSource);
 		// 2.1.0
 		//	logger.debug(() -> "C3p0.getDataSource: dataSource = " + dataSource);
@@ -107,8 +106,7 @@ public class C3p0 extends AbstractConnectionSupplier {
 		catch (SQLException e) {
 		// 2.1.0
 		//	logger.error("C3p0.<init>: " + e, e);
-			throw new RuntimeException("properties: " + properties, e);
-		////
+			throw new RuntimeException("jdbcProperties: " + jdbcProperties, e);
 		}
 	// 2.1.0
 	//	return null;
