@@ -18,39 +18,40 @@ repositories {
 }
 
 dependencies {
-	compileOnly     'log4j:log4j:1.+'
-	testRuntimeOnly 'log4j:log4j:1.+'
-	compileOnly     'org.apache.logging.log4j:log4j-api:2.+'
-	testRuntimeOnly 'org.apache.logging.log4j:log4j-core:2.+'
-	compileOnly     'org.slf4j:slf4j-api:1.7.+'
-	testRuntimeOnly 'ch.qos.logback:logback-classic:1.+'
+	compileOnly        'log4j:log4j:1.+'
+	testRuntimeOnly    'log4j:log4j:1.+'
+	compileOnly        'org.apache.logging.log4j:log4j-api:2.+'
+	testRuntimeOnly    'org.apache.logging.log4j:log4j-core:2.+'
+	compileOnly        'org.slf4j:slf4j-api:1.7.+'
+	testRuntimeOnly    'ch.qos.logback:logback-classic:1.+'
 
-	compileOnly     'com.mchange:c3p0:0.+'
-	testRuntimeOnly 'com.mchange:c3p0:0.+'
-	compileOnly     'com.zaxxer:HikariCP:2.+'
-	testRuntimeOnly 'com.zaxxer:HikariCP:2.+'
-	compileOnly     'org.apache.commons:commons-dbcp2:2.+'
-	testRuntimeOnly 'org.apache.commons:commons-dbcp2:2.+'
-	compileOnly     'org.apache.tomcat:tomcat-jdbc:8.+'
-	testRuntimeOnly 'org.apache.tomcat:tomcat-jdbc:8.+'
+	compileOnly        'com.mchange:c3p0:0.+'
+	testRuntimeOnly    'com.mchange:c3p0:0.+'
+	compileOnly        'com.zaxxer:HikariCP:2.+'
+	testRuntimeOnly    'com.zaxxer:HikariCP:2.+'
+	compileOnly        'org.apache.commons:commons-dbcp2:2.+'
+	testRuntimeOnly    'org.apache.commons:commons-dbcp2:2.+'
+	compileOnly        'org.apache.tomcat:tomcat-jdbc:8.+'
+	testRuntimeOnly    'org.apache.tomcat:tomcat-jdbc:8.+'
 
-	testRuntimeOnly 'com.ibm.db2.jcc:db2jcc4:10.+'
-	testRuntimeOnly 'mysql:mysql-connector-java:5.+'
-	compileOnly     'com.hynnet:oracle-driver-ojdbc:12.+'
-	testCompile     'com.hynnet:oracle-driver-ojdbc:12.+'
-	testRuntimeOnly 'org.postgresql:postgresql:42.+'
-	testRuntimeOnly 'org.xerial:sqlite-jdbc:3.+'
-	testRuntimeOnly 'com.microsoft.sqlserver:mssql-jdbc:6.2.+'
+	testRuntimeOnly    'com.ibm.db2.jcc:db2jcc4:10.+'
+	testRuntimeOnly    'mysql:mysql-connector-java:5.+'
+	compileOnly        'com.hynnet:oracle-driver-ojdbc:12.+'
+	testCompile        'com.hynnet:oracle-driver-ojdbc:12.+'
+	testRuntimeOnly    'org.postgresql:postgresql:42.+'
+	testRuntimeOnly    'org.xerial:sqlite-jdbc:3.+'
+	testRuntimeOnly    'com.microsoft.sqlserver:mssql-jdbc:6.2.+'
 
-	testCompileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
-	testCompileOnly 'org.spockframework:spock-core:1.1-groovy-2.4'
+	testRuntimeOnly    'junit:junit:4.+'
+	testImplementation 'org.codehaus.groovy:groovy-all:2.4.12'
+	testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
 
-	testRuntimeOnly 'tomcat:naming-java:5.+'
-	testRuntimeOnly 'tomcat:naming-factory:5.+'
-	testRuntimeOnly 'tomcat:naming-resources:5.+'
+	testRuntimeOnly    'tomcat:naming-java:5.+'
+	testRuntimeOnly    'tomcat:naming-factory:5.+'
+	testRuntimeOnly    'tomcat:naming-resources:5.+'
 
-	compileOnly     'org.debugtrace:debugtrace:2.+'
-	testCompile     'org.debugtrace:debugtrace:2.+'
+	compileOnly        'org.debugtrace:debugtrace:2.+'
+	testCompile        'org.debugtrace:debugtrace:2.+'
 }
 
 sourceCompatibility = '1.8'
@@ -60,14 +61,6 @@ archivesBaseName    = 'lightsleep'
 version             = '2.1.1'
 
 sourceSets {
-	example {
-		java {
-			srcDir 'src/example/java'
-		}
-		resources {
-			srcDir 'src/example/resources'
-		}
-	}
 	main {
 		java {
 			srcDir 'src/main/java'
@@ -87,10 +80,21 @@ sourceSets {
 			srcDir 'src/test/resources'
 		}
 	}
+	example {
+		java {
+			srcDir 'src/example/java'
+		}
+		resources {
+			srcDir 'src/example/resources'
+		}
+		compileClasspath += main.output
+		runtimeClasspath += main.output
+		runtimeClasspath += sourceSets.test.runtimeClasspath
+	}
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.3.1'
+	gradleVersion = '4.4'
 }
 
 compileJava {
@@ -154,7 +158,6 @@ javadoc.doLast {
 task javadoc_ja(type:Javadoc) {
 	dependsOn = ['compileJava_ja']
 
-//	title               = "$project.name $version API \u4ED5\u69D8"
 	title               = "$project.name $version API Specification"
 	options.charSet     = javadoc.options.charSet
 	options.encoding    = javadoc.options.encoding
