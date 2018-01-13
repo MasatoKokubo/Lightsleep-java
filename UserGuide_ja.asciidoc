@@ -1,410 +1,538 @@
-Lightsleep 2.1.1 マニュアル
-===========
+= Lightsleep ユーザー･ガイド
 
-[[English]](Manual.md)
+link:UserGuide.asciidoc[English]
 
-<div id="TOC"></div>
+[[TOC_]]
+=== 目次
 
-### 目次
+1. <<Package,パッケージ>>
+2. <<EntityClass,エンティティ･クラスの作成>> +
+2-1. <<Entity-Annotation,エンティティ･クラスで使用するアノテーション>> +
+2-1-1. <<Entity-Table,@Table>> +
+2-1-2. <<Entity-Key,@Key>> +
+2-1-3. <<Entity-Column,@Column>> +
+2-1-4. <<Entity-ColumnType,@ColumnType>> +
+2-1-5. <<Entity-NonColumn,@NonColumn>> +
+2-1-6. <<Entity-NonSelect,@NonSelect>> +
+2-1-7. <<Entity-NonInsert,@NonInsert>> +
+2-1-8. <<Entity-NonUpdate,@NonUpdate>> +
+2-1-9. <<Entity-Select,@Select>> +
+2-1-10. <<Entity-Insert,@Insert>> +
+2-1-11. <<Entity-Update,@Update>> +
+2-1-12. <<Entity-XxxxxProperty,@KeyProperty, @ColumnProperty, ... @UpdateProperty>> +
+2-2. <<Entity-Interface,エンティティ･クラスで実装するインターフェース>> +
+2-2-1. <<Entity-PreInsert,PreInsertインターフェース>> +
+2-2-2. <<Entity-Composite,Compositeインターフェース>> +
+2-2-3. <<Entity-PreStore,PreStoreインターフェース>> +
+2-2-4. <<Entity-PostLoad,PostLoadインターフェース>> +
+3. <<lightsleep-properties,lightsleep.propertiesファイルの定義>> +
+3-1. <<Logger,ログ･ライブラリ･クラス>> +
+3-2. <<Database,データベース･ハンドラ･クラス>> +
+3-3. <<ConnectionSupplier,コネクション･サプライヤ･クラス>> +
+4. <<Transaction,トランザクション>> +
+5. <<ExecuteSQL,SQLの実行>> +
+5-1. <<ExecuteSQL-select,SELECT>> +
+5-1-1. <<ExecuteSQL-select-1-Expression,SELECT 1行/式条件>> +
+5-1-2. <<ExecuteSQL-select-Entity,SELECT 1行/エンティティ条件>> +
+5-1-3. <<ExecuteSQL-select-N-Expression,SELECT 複数行/式条件>> +
+5-1-4. <<ExecuteSQL-select-Subquery,SELECT サブクエリ条件>> +
+5-1-5. <<ExecuteSQL-select-Expression-and,SELECT 式条件/AND>> +
+5-1-6. <<ExecuteSQL-select-Expression-or,SELECT 式条件/OR>> +
+5-1-7. <<ExecuteSQL-select-Expression-andor,SELECT 式条件/SELECT 式条件/A AND B OR C AND D>> +
+5-1-8. <<ExecuteSQL-select-columns,SELECTカラムの選択>> +
+5-1-9. <<ExecuteSQL-select-groupBy-having,SELECT GROUP BY, HAVING>> +
+5-1-10. <<ExecuteSQL-select-orderBy-offset-limit,SELECT ORDER BY, OFFSET, LIMIT>> +
+5-1-11. <<ExecuteSQL-select-forUpdate,SELECT FOR UPDATE>> +
+5-1-12. <<ExecuteSQL-select-innerJoin,SELECT 内部結合>> +
+5-1-13. <<ExecuteSQL-select-leftJoin,SELECT 左外部結合>> +
+5-1-14. <<ExecuteSQL-select-rightJoin,SELECT 右外部結合>> +
+5-2. <<ExecuteSQL-insert,INSERT>> +
+5-2-1. <<ExecuteSQL-insert-1,INSERT 1行>> +
+5-2-2. <<ExecuteSQL-insert-N,INSERT 複数行>> +
+5-3. <<ExecuteSQL-update,UPDATE>> +
+5-3-1. <<ExecuteSQL-update-1,UPDATE 1行>> +
+5-3-2. <<ExecuteSQL-update-N,UPDATE 複数行>> +
+5-3-3. <<ExecuteSQL-update-Condition,UPDATE 指定条件, カラム選択>> +
+5-3-4. <<ExecuteSQL-update-all,UPDATE 全行>> +
+5-4. <<ExecuteSQL-delete,DELETE>> +
+5-4-1. <<ExecuteSQL-delete-1,DELETE 1行>> +
+5-4-2. <<ExecuteSQL-delete-N,DELETE 複数行>> +
+5-4-3. <<ExecuteSQL-delete-Condition,DELETE 指定条件>> +
+5-4-4. <<ExecuteSQL-delete-all,DELETE 全行>> +
+6. <<Expression,式の変換処理>> +
 
-1. [パッケージ](#Package)
-1. [エンティティ･クラスの作成](#EntityClass)
-    1. [エンティティ･クラスで使用するアノテーション](#Entity-Annotation)
-        1. [`@Table`](#Entity-Table)
-        1. [`@Key`](#Entity-Key)
-        1. [`@Column`](#Entity-Column)
-        1. [`@ColumnType`](#Entity-ColumnType)
-        1. [`@NonColumn`](#Entity-NonColumn)
-        1. [`@NonSelect`](#Entity-NonSelect)
-        1. [`@NonInsert`](#Entity-NonInsert)
-        1. [`@NonUpdate`](#Entity-NonUpdate)
-        1. [`@Select`](#Entity-Select)
-        1. [`@Insert`](#Entity-Insert)
-        1. [`@Update`](#Entity-Update)
-        1. [`@KeyProperty`, `@ColumnProperty`, ... `@UpdateProperty`](#Entity-XxxxxProperty)
-    1. [エンティティ･クラスで実装するインターフェース](#Entity-Interface)
-        1. [`PreInsert`インターフェース](#Entity-PreInsert)
-        1. [`Composite`インターフェース](#Entity-Composite)
-        1. [`PreStore`インターフェース](#Entity-PreStore)
-        1. [`PostLoad`インターフェース](#Entity-PostLoad)
-1. [`lightsleep.properties`ファイルの定義](#lightsleep-properties)
-    1. [ログ･ライブラリ･クラス](#Logger)
-    1. [データベース･ハンドラ･クラス](#Database)
-    1. [コネクション･サプライヤ･クラス](#ConnectionSupplier)
-1. [トランザクション](#Transaction)
-1. [SQLの実行](#ExecuteSQL)
-    1. [SELECT](#ExecuteSQL-select)
-        1. [SELECT 1行/式条件](#ExecuteSQL-select-1-Expression)
-        1. [SELECT 1行/エンティティ条件](#ExecuteSQL-select-Entity)
-        1. [SELECT 複数行/式条件](#ExecuteSQL-select-N-Expression)
-        1. [SELECT サブクエリ条件](#ExecuteSQL-select-Subquery)
-        1. [SELECT 式条件/AND](#ExecuteSQL-select-Expression-and)
-        1. [SELECT 式条件/OR](#ExecuteSQL-select-Expression-or)
-        1. [SELECT 式条件/SELECT 式条件/A AND B OR C AND D](#ExecuteSQL-select-Expression-andor)
-        1. [SELECTカラムの選択](#ExecuteSQL-select-columns)
-        1. [SELECT GROUP BY, HAVING](#ExecuteSQL-select-groupBy-having)
-        1. [SELECT ORDER BY, OFFSET, LIMIT](#ExecuteSQL-select-orderBy-offset-limit)
-        1. [SELECT FOR UPDATE](#ExecuteSQL-select-forUpdate)
-        1. [SELECT 内部結合](#ExecuteSQL-select-innerJoin)
-        1. [SELECT 左外部結合](#ExecuteSQL-select-leftJoin)
-        1. [SELECT 右外部結合](#ExecuteSQL-select-rightJoin)
-    1. [INSERT](#ExecuteSQL-insert)
-        1. [INSERT 1行](#ExecuteSQL-insert-1)
-        1. [INSERT 複数行](#ExecuteSQL-insert-N)
-    1. [UPDATE](#ExecuteSQL-update)
-        1. [UPDATE 1行](#ExecuteSQL-update-1)
-        1. [UPDATE 複数行](#ExecuteSQL-update-N)
-        1. [UPDATE 指定条件, カラム選択](#ExecuteSQL-update-Condition)
-        1. [UPDATE 全行](#ExecuteSQL-update-all)
-    1. [DELETE](#ExecuteSQL-delete)
-        1. [DELETE 1行](#ExecuteSQL-delete-1)
-        1. [DELETE 複数行](#ExecuteSQL-delete-N)
-        1. [DELETE 指定条件](#ExecuteSQL-delete-Condition)
-        1. [DELETE 全行](#ExecuteSQL-delete-all)
-1. [式の変換処理](#Expression)
+[[Package]]
 
-<div id="Package"></div>
+<<TOC_,目次へ>>
 
-[【目次へ】](#TOC)
-
-### 1. パッケージ
+=== 1. パッケージ
 
 以下のパッケージがあります。
 
-|パッケージ|含まれるクラス/インタフェース|
-|:--|:--|
-|org.lightsleep                |主に使用するクラス|
-|org.lightsleep.component      |条件や式などのSQLの構成要素を作成する際に使用するクラス|
-|org.lightsleep.connection     |各種コネクション･プール･ライブラリを利用してコネクション･ラッパー･クラスを供給するクラス|
-|org.lightsleep.database       |各種DBMS用のSQLを生成するクラス|
-|org.lightsleep.database.anchor|JDBC URLに含まれる文字列と*org.lightsleep.database*パッケージのクラスとの対応付けで使用されるクラス|
-|org.lightsleep.entity         |エンティティ･クラスを作成する際に使用するアノテーション･クラスおよびインタフェース|
-|org.lightsleep.helper         |ライブラリ内部で使用される補助的なクラス|
-|org.lightsleep.logger         |各種ロギング･ライブラリを利用してライブラリ内部のログを出力するクラス|
+.パッケージ一覧
+[options="header", width="80%"]
+|===
+|パッケージ|含まれるクラス/インタフェース
+|org.lightsleep                |主に使用するクラス
+|org.lightsleep.component      |条件や式などのSQLの構成要素を作成する際に使用するクラス
+|org.lightsleep.connection     |各種コネクション･プール･ライブラリを利用してコネクション･ラッパー･クラスを供給するクラス
+|org.lightsleep.database       |各種DBMS用のSQLを生成するクラス
+|org.lightsleep.database.anchor|JDBC URLに含まれる文字列と*org.lightsleep.database*パッケージのクラスとの対応付けで使用されるクラス
+|org.lightsleep.entity         |エンティティ･クラスを作成する際に使用するアノテーション･クラスおよびインタフェース
+|org.lightsleep.helper         |ライブラリ内部で使用される補助的なクラス
+|org.lightsleep.logger         |各種ロギング･ライブラリを利用してライブラリ内部のログを出力するクラス
+|===
 
-<div id="EntityClass"></div>
+[[EntityClass]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-### 2. エンティティ･クラスの作成
+=== 2. エンティティ･クラスの作成
 データベースのテーブル毎に対応するエンティティ･クラスを作成します。
 
-<div id="Entity-Annotation"></div>
+[[Entity-Annotation]]
 
-#### 2-1. エンティティ･クラスで使用するアノテーション
+==== 2-1. エンティティ･クラスで使用するアノテーション
 Lihgtsleepは、エンティティ･クラスまたはオブジェクトを引数とするメソッドでは自動的にテーブルとの関連付けを行いますが、エンティティ･クラスにアノテーションの付与が必要な場合があります。
 
 Lightsleepには、以下のアノテーションがあります。
 
-|アノテーション型|要素|示す内容|付与する対象|
-|:--|:--|:--|:--|
-|[`@Table`             ](#Entity-Table        )|String value                                   |関連するテーブル名    |クラス|
-|[`@Key`               ](#Entity-Key          )|boolean value (省略値: true)                   |プライマリ･キーに対応 |フィールド|
-|[`@Column`            ](#Entity-Column       )|String value                                   |関連するカラムの名前  |フィールド|
-|[`@ColumnType`        ](#Entity-ColumnType   )|Class<?> value                                 |関連するカラムの型    |フィールド|
-|[`@NonColumn`         ](#Entity-NonColumn    )|boolean value (省略値: true)                   |カラムに関連しない    |フィールド|
-|[`@NonSelect`         ](#Entity-NonSelect    )|boolean value (省略値: true)                   |SELECT SQLに使用しない|フィールド|
-|[`@NonInsert`         ](#Entity-NonInsert    )|boolean value (省略値: true)                   |INSERT SQLに使用しない|フィールド|
-|[`@NonUpdate`         ](#Entity-NonUpdate    )|boolean value (省略値: true)                   |UPDATE SQLに使用しない|フィールド|
-|[`@Select`            ](#Entity-Select       )|String value                                   |SELECT SQLで使用する式|フィールド|
-|[`@Insert`            ](#Entity-Insert       )|String value                                   |INSERT SQLで使用する式|フィールド|
-|[`@Update`            ](#Entity-Update       )|String value                                   |UPDATE SQLで使用する式|フィールド|
-|[`@KeyProperty`       ](#Entity-XxxxxProperty)|String property<br>boolean value (省略値: true)|プライマリ･キーに対応 |クラス|
-|[`@ColumnProperty`    ](#Entity-XxxxxProperty)|String property<br>String column               |関連するカラムの名前  |クラス|
-|[`@ColumnTypeProperty`](#Entity-XxxxxProperty)|String property<br>Class<?> type               |関連するカラムの型    |クラス|
-|[`@NonColumnProperty` ](#Entity-XxxxxProperty)|String property<br>boolean value (省略値: true)|カラムに関連しない    |クラス|
-|[`@NonSelectProperty` ](#Entity-XxxxxProperty)|String property<br>boolean value (省略値: true)|SELECT SQLに使用しない|クラス|
-|[`@NonInsertProperty` ](#Entity-XxxxxProperty)|String property<br>boolean value (省略値: true)|INSERT SQLに使用しない|クラス|
-|[`@NonUpdateProperty` ](#Entity-XxxxxProperty)|String property<br>boolean value (省略値: true)|UPDATE SQLに使用しない|クラス|
-|[`@SelectProperty`    ](#Entity-XxxxxProperty)|String property<br>String expression           |SELECT SQLで使用する式|クラス|
-|[`@InsertProperty`    ](#Entity-XxxxxProperty)|String property<br>String expression           |INSERT SQLで使用する式|クラス|
-|[`@UpdateProperty`    ](#Entity-XxxxxProperty)|String property<br>String expression           |UPDATE SQLで使用する式|クラス|
+.アノテーション一覧
+[options="header", width="100%"]
+|===
+|アノテーション型|要素|示す内容|付与する対象
+|<<Entity-Table,`@Table`>>
+|String value
+|関連するテーブル名
+|クラス
 
-<div id="Entity-Table"></div>
+|<<Entity-Key,`@Key`>>
+|`boolean value` (省略値: `true`)
+|プライマリ･キーに対応
+|フィールド
 
-[【目次へ】](#TOC) [【アノテーション一覧へ】](#Entity-Annotation)
+|<<Entity-Column,`@Column`>>
+|String value
+|関連するカラムの名前
+|フィールド
 
-##### 2-1-1. @Table
+|<<Entity-ColumnType,`@ColumnType`>>
+|Class<?> value
+|関連するカラムの型
+|フィールド
+
+|<<Entity-NonColumn,`@NonColumn`>>
+|`boolean value` (省略値: `true`)
+|カラムに関連しない
+|フィールド
+
+|<<Entity-NonSelect,`@NonSelect`>>
+|`boolean value` (省略値: `true`)
+|SELECT SQLに使用しない
+|フィールド
+
+|<<Entity-NonInsert,`@NonInsert`>>
+|`boolean value` (省略値: `true`)
+|INSERT SQLに使用しない
+|フィールド
+
+|<<Entity-NonUpdate,`@NonUpdate`>>
+|`boolean value` (省略値: `true`)
+|UPDATE SQLに使用しない
+|フィールド
+
+|<<Entity-Select,`@Select`>>
+|String value
+|SELECT SQLで使用する式
+|フィールド
+
+|<<Entity-Insert,`@Insert`>>
+|String value
+|INSERT SQLで使用する式
+|フィールド
+
+|<<Entity-Update,`@Update`>>
+|String value
+|UPDATE SQLで使用する式
+|フィールド
+
+|<<Entity-XxxxxProperty,`@KeyProperty`>>
+|`String property`, +
+`boolean value` (省略値: `true`)
+|プライマリ･キーに対応
+|クラス
+
+|<<Entity-XxxxxProperty,`@ColumnProperty`>>
+|`String property`, +
+String column
+|関連するカラムの名前
+|クラス
+
+|<<Entity-XxxxxProperty,`@ColumnTypeProperty`>>
+|`String property`, +
+`Class<?> type`
+|関連するカラムの型
+|クラス
+
+|<<Entity-XxxxxProperty,`@NonColumnProperty`>>
+|`String property`, +
+`boolean value` (省略値: `true`)
+|カラムに関連しない
+|クラス
+
+|<<Entity-XxxxxProperty,`@NonSelectProperty`>>
+|`String property`, +
+`boolean value` (省略値: `true`)
+|SELECT SQLに使用しない
+|クラス
+
+|<<Entity-XxxxxProperty,`@NonInsertProperty`>>
+|`String property`, +
+`boolean value` (省略値: `true`)
+|INSERT SQLに使用しない
+|クラス
+
+|<<Entity-XxxxxProperty,`@NonUpdateProperty`>>
+|`String property`, +
+`boolean value` (省略値: `true`)
+|UPDATE SQLに使用しない
+|クラス
+
+|<<Entity-XxxxxProperty,`@SelectProperty`>>
+|`String property`, +
+`String expression`
+|SELECT SQLで使用する式
+|クラス
+
+|<<Entity-XxxxxProperty,`@InsertProperty`>>
+|`String property`, +
+`String expression`
+|INSERT SQLで使用する式
+|クラス
+
+|<<Entity-XxxxxProperty,`@UpdateProperty`>>
+|`String property`, +
+`String expression`
+|UPDATE SQLで使用する式
+|クラス
+|===
+
+[[Entity-Table]]
+
+<<TOC_,目次へ>> +
+<<Entity-Annotation,アノテーション一覧へ>>
+
+===== 2-1-1. @Table
 クラスに関連するデータベース･テーブル名を示します。
 テーブル名がクラス名と同じであれば、このアノテーションを指定する必要はありません。
 
-```java:Java
+[source,java]
+.Java
+----
 import org.lightsleep.entity.*;
 
 @Table("Contact")
 public class Contact1 extends Contact {
    ...
 }
-```
+----
 
 `@Table("super")`を指定した場合は、スーパークラスのクラス名がテーブル名となります。
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 @Table("Contact")
 public class Person extends PersonBase {
 
     @Table("super")
      public static class Ex extends Person {
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 @Table('Contact')
 class Person extends PersonBase {
 
     @Table('super')
      static class Ex extends Person {
-```
+----
 
-<div id="Entity-Key"></div>
+[[Entity-Key]]
 
-##### 2-1-2. @Key
+===== 2-1-2. @Key
 フィールドに関連するカラムがプライマリー･キーの一部である事を示します。
 
-```java:Java
-// Javaでの例
-    @Key
-    public int contactId;
-    @Key
-    public short childIndex;
-```
+[source,java]
+.Java
+----
+@Key
+public int contactId;
+@Key
+public short childIndex;
+----
 
-```groovy:Groovy
-// Groovyでの例
-    @Key
-    int contactId
-    @Key
-    short childIndex
-```
+[source,groovy]
+.Groovy
+----
+@Key
+int contactId
+@Key
+short childIndex
+----
 
-<div id="Entity-Column"></div>
+[[Entity-Column]]
 
-##### 2-1-3. @Column
+===== 2-1-3. @Column
 フィールドに関連するデータベース･カラム名を示します。
 カラム名がフィールド名と同じであれば、このアノテーションを指定する必要がありません。
 
-```java:Java
-// Javaでの例
-    @Column("firstName")
-    public String first;
-    @Column("lastName")
-    public String last;
-```
+[source,java]
+.Java
+----
+@Column("firstName")
+public String first;
+@Column("lastName")
+public String last;
+----
 
-```groovy:Groovy
-// Groovyでの例
-    @Column('firstName')
-    String first
-    @Column('lastName')
-    String last
-```
+[source,groovy]
+.Groovy
+----
+@Column('firstName')
+String first
+@Column('lastName')
+String last
+----
 
-<div id="Entity-ColumnType"></div>
+[[Entity-ColumnType]]
 
-##### 2-1-4. @ColumnType
+===== 2-1-4. @ColumnType
 フィールドに関連するカラムの型を示します。
 フィールド型とカラム型が同種類の場合は、指定する必要がありません。
 フィールド型が日付型で、カラム型が数値型のように異なる場合に指定します。
 
-```java:Java
-// Javaでの例
-    @ColumnType(Long.class)
-    public Date birthday;
-```
+[source,java]
+.Java
+----
+@ColumnType(Long.class)
+public Date birthday;
+----
 
-```groovy:Groovy
-// Groovyでの例
-    @ColumnType(Long)
-    Date birthday
-```
+[source,groovy]
+.Groovy
+----
+@ColumnType(Long)
+Date birthday
+----
 
-<div id="Entity-NonColumn"></div>
+[[Entity-NonColumn]]
 
-[【目次へ】](#TOC) [【アノテーション一覧へ】](#Entity-Annotation)
+<<TOC_,目次へ>> +
+<<Entity-Annotation,アノテーション一覧へ>>
 
-##### 2-1-5. @NonColumn
+===== 2-1-5. @NonColumn
 フィールドがどのカラムにも関連しない事を示します。
 
-```java:Java
-// Javaでの例
-    @NonColumn
-    public List<Phone> phones;
-    @NonColumn
-    public List<Address> addresses;
-```
+[source,java]
+.Java
+----
+@NonColumn
+public List<Phone> phones;
+@NonColumn
+public List<Address> addresses;
+----
 
-```groovy:Groovy
-// Groovyでの例
-    @NonColumn
-    List<Phone> phones
-    @NonColumn
-    List<Address> addresses
-```
+[source,groovy]
+.Groovy
+----
+@NonColumn
+List<Phone> phones
+@NonColumn
+List<Address> addresses
+----
 
-<div id="Entity-NonSelect"></div>
+[[Entity-NonSelect]]
 
-##### 2-1-6. @NonSelect
+===== 2-1-6. @NonSelect
 フィールドに関連するカラムがSELECT SQLで使用されない事を示します。
 
-```java:Java
-// Javaでの例
-    @NonSelect
-    public Timestamp createdTime;
-    @NonSelect
-    public Timestamp updatedTime;
-```
+[source,java]
+.Java
+----
+@NonSelect
+public Timestamp createdTime;
+@NonSelect
+public Timestamp updatedTime;
+----
 
-```groovy:Groovy
-// Groovyでの例
-    @NonSelect
-    Timestamp createdTime
-    @NonSelect
-    Timestamp updatedTime
-```
+[source,groovy]
+.Groovy
+----
+@NonSelect
+Timestamp createdTime
+@NonSelect
+Timestamp updatedTime
+----
 
-<div id="Entity-NonInsert"></div>
+[[Entity-NonInsert]]
 
-##### 2-1-7. @NonInsert
+===== 2-1-7. @NonInsert
 フィールドに関連するカラムがINSERT SQLで使用されない事を示します。
 
-```java:Java
-// Javaでの例
-    @NonInsert
-    public Timestamp createdTime;
-    @NonInsert
-    public Timestamp updatedTime;
-```
+[source,java]
+.Java
+----
+@NonInsert
+public Timestamp createdTime;
+@NonInsert
+public Timestamp updatedTime;
+----
 
-```groovy:Groovy
-// Groovyでの例
-    @NonInsert
-    Timestamp createdTime
-    @NonInsert
-    Timestamp updatedTime
-```
+[source,groovy]
+.Groovy
+----
+@NonInsert
+Timestamp createdTime
+@NonInsert
+Timestamp updatedTime
+----
 
-<div id="Entity-NonUpdate"></div>
+[[Entity-NonUpdate]]
 
-##### 2-1-8. @NonUpdate
+===== 2-1-8. @NonUpdate
 フィールドに関連するカラムがUPDATE SQLで使用されない事を示します。
 
-```java:Java
-// Javaでの例
-    @NonUpdate
-    public Timestamp createdTime;
-```
+[source,java]
+.Java
+----
+@NonUpdate
+public Timestamp createdTime;
+----
 
-```groovy:Groovy
-// Groovyでの例
-    @NonUpdate
-    Timestamp createdTime
-```
+[source,groovy]
+.Groovy
+----
+@NonUpdate
+Timestamp createdTime
+----
 
-<div id="Entity-Select"></div>
+[[Entity-Select]]
 
-[【目次へ】](#TOC) [【アノテーション一覧へ】](#Entity-Annotation)
+<<TOC_,目次へ>> +
+<<Entity-Annotation,アノテーション一覧へ>>
 
-##### 2-1-9. @Select
+===== 2-1-9. @Select
 SELECT SQLのカラム名の代わりの式を指定します。
 
-```java:Java
-// Javaでの例
-    @Select("{firstName}||' '||{lastName}")
-    @NonInsert@NonUpdate
-    public String fullName;
-```
+[source,java]
+.Java
+----
+@Select("{firstName}||' '||{lastName}")
+@NonInsert@NonUpdate
+public String fullName;
+----
 
-```groovy:Groovy
-// Groovyでの例
-    @Select("{firstName}||' '||{lastName}")
-    @NonInsert@NonUpdate
-    String fullName
-```
+[source,groovy]
+.Groovy
+----
+@Select("{firstName}||' '||{lastName}")
+@NonInsert@NonUpdate
+String fullName
+----
 
-<div id="Entity-Insert"></div>
+[[Entity-Insert]]
 
-##### 2-1-10. @Insert
+===== 2-1-10. @Insert
 INSERT SQLの挿入値の式を示します。
 このアノテーションが指定された場合、フィールドの値は使用されません。
 
-```java:Java
-// Javaでの例
-    @Insert("CURRENT_TIMESTAMP")
-    public Timestamp createdTime;
-    @Insert("CURRENT_TIMESTAMP")
-    public Timestamp updatedTime;
-```
+[source,java]
+.Java
+----
+@Insert("CURRENT_TIMESTAMP")
+public Timestamp createdTime;
+@Insert("CURRENT_TIMESTAMP")
+public Timestamp updatedTime;
+----
 
-```groovy:Groovy
-// Groovyでの例
-    @Insert('CURRENT_TIMESTAMP')
-    Timestamp createdTime
-    @Insert('CURRENT_TIMESTAMP')
-    Timestamp updatedTime
-```
+[source,groovy]
+.Groovy
+----
+@Insert('CURRENT_TIMESTAMP')
+Timestamp createdTime
+@Insert('CURRENT_TIMESTAMP')
+Timestamp updatedTime
+----
 
-<div id="Entity-Update"></div>
+[[Entity-Update]]
 
-##### 2-1-11. @Update
+===== 2-1-11. @Update
 UPDATE SQLの更新値の式を示します。
 このアノテーションが指定された場合、フィールドの値は使用されません。
 
-```java:Java
-// Javaでの例
-    @Update("{updateCount}+1")
-    public int updateCount;
-    @Update("CURRENT_TIMESTAMP")
-    public Timestamp updatedTime;
-```
+[source,java]
+.Java
+----
+@Update("{updateCount}+1")
+public int updateCount;
+@Update("CURRENT_TIMESTAMP")
+public Timestamp updatedTime;
+----
 
-```groovy:Groovy
-// Groovyでの例
-    @Update('{updateCount}+1')
-    int updateCount
-    @Update('CURRENT_TIMESTAMP')
-    Timestamp updatedTime
-```
+[source,groovy]
+.Groovy
+----
+@Update('{updateCount}+1')
+int updateCount
+@Update('CURRENT_TIMESTAMP')
+Timestamp updatedTime
+----
 
-<div id="Entity-XxxxxProperty"></div>
+[[Entity-XxxxxProperty]]
 
-[【目次へ】](#TOC) [【アノテーション一覧へ】](#Entity-Annotation)
+<<TOC_,目次へ>> +
+<<Entity-Annotation,アノテーション一覧へ>>
 
-##### 2-1-12. @KeyProperty, @ColumnProperty, ... @UpdateProperty
+===== 2-1-12. @KeyProperty, @ColumnProperty, ... @UpdateProperty
 これらのアノテーションは、スーパークラスで定義されているフィールドに対して指定する場合に使用します。
 指定された内容はサブクラスにも影響しますが、サブクラスでの指定が優先されます。
 `value=false`, `column=""`, `type=Void.class`, `expression=""`を指定すると、スーパークラスでの指定が打ち消されます。
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 @KeyProperty(property="contactId")
 @KeyProperty(property="childIndex")
 public class Child extends ChildKey {
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 @KeyProperties([
     @KeyProperty(property='contactId'),
     @KeyProperty(property='childIndex')
 ])
 class Child extends ChildKey {
-```
+----
 
-<div id="Entity-Interface"></div>
+[[Entity-Interface]]
 
-### 2-2. エンティティ･クラスで実装するインターフェース
+=== 2-2. エンティティ･クラスで実装するインターフェース
 
-<div id="Entity-PreInsert"></div>
+[[Entity-PreInsert]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 2-2-1. PreInsertインターフェース
+==== 2-2-1. PreInsertインターフェース
 エンティティ･クラスがこのインターフェースを実装している場合、`Sql クラス`の`insert`メソッドで、INSERT SQL実行前に`preInsert`メソッドがコールされます。
 `preInsert`メソッドでは、プライマリー･キーの採番の実装等を行います。
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 public abstract class Common implements PreInsert {
     @Key
     public int id;
@@ -416,19 +544,20 @@ public abstract class Common implements PreInsert {
         return 0;
     }
 }
-```
+----
 
-<div id="Entity-Composite"></div>
+[[Entity-Composite]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 2-2-2. Compositeインターフェース
+==== 2-2-2. Compositeインターフェース
 エンティティ･クラスがこのインターフェースを実装している場合、`Sql`クラスの`select`, `insert`, `update`または`delete`メソッドで、各 SQLの実行後にエンティティ･クラスの`postSelect`, `postInsert`, `postUpdate` または`postDelete`メソッドがコールされます。
 ただし `update`, `delete`メソッドで、引数にエンティティがない場合は、コールされません。
 エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、内包するエンティティへの SQL 処理を連動して行う事ができるようになります。
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 @Table("super")
 public class ContactComposite extends Contact implements Composite {
     @NonColumn
@@ -481,7 +610,7 @@ public class ContactComposite extends Contact implements Composite {
 
         return count;
     }
- 
+ +
     @Override
     public int postDelete(ConnectionWrapper conn) {
         int count = new Sql<>(Phone.class).connection(conn)
@@ -489,21 +618,23 @@ public class ContactComposite extends Contact implements Composite {
             .delete(conn);
         return count;
     }
-```
+----
 
-<div id="Entity-PreStore"></div>
+[[Entity-PreStore]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 2-2-3. PreStoreインターフェース
+==== 2-2-3. PreStoreインターフェース
 エンティティ･クラスがこのインターフェースを実装している場合、`Sql`クラスの`insert`および`update`メソッドで、各SQLが実行される前にエンティティ･クラスの`preStore`メソッドがコールされます。
 
-<div id="Entity-PostLoad"></div>
+[[Entity-PostLoad]]
 
-#### 2-2-4. PostLoadインターフェース
+==== 2-2-4. PostLoadインターフェース
 エンティティ･クラスがこのインターフェースを実装している場合、`Sql`クラスの`select`メソッドでSELECT SQLが実行されエンティティにデータベースから取得した値が設定された後にエンティティ･クラスの`postLoad`メソッドがコールされます。
 
-```java:Java
+[source,java]
+.Java
+----
 import org.lightsleep.entity.*;
 
 public class Contact implements PreStore, PostLoad {
@@ -522,38 +653,43 @@ public class Contact implements PreStore, PostLoad {
         phones.clear();
         Arrays.stream(phones_).forEach(phones::add);
     }
-```
+----
 
-<div id="lightsleep-properties"></div>
+[[lightsleep-properties]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-### 3. lightsleep.propertiesの定義
+[[lightsleep-properties]]
+=== 3. lightsleep.propertiesの定義
 
-lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイルで、以下の内容を指定できます。  
-*(バージョン2.0.0まで存在した`Database`プロパティは、バージョン2.1.0で削除しました。データベース･ハンドラは、JDBC URLから自動的に決定されます。)*
+lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイルで、以下の内容を指定できます。 +
+*(バージョン2.0.0まで存在した`Database`プロパティは、バージョン2.1.0で削除されました。データベース･ハンドラは、JDBC URLから自動的に決定されます。)*
 
-|プロパティ名|指定する内容|デフォルト値|
-|:-----------|:-----------|:-----------|
-|[Logger            ](#Logger            )|ログ出力クラス|`Std$Out$Info`|
-|[ConnectionSupplier](#ConnectionSupplier)|コネクション･サプライヤ･クラス|`Jdbc`|
-| url                                     |JDBC URL|なし|
-| urls                                    |JDBC URL(複数)|なし|
-| dataSource                              |`Jndi`を使用した場合のデータソース名|なし|
-| dataSources                             |`Jndi`を使用した場合のデータソース名(複数)|なし|
-| maxStringLiteralLength                  |SQLが生成される時の文字列リテラルの最大長|128|
-| maxBinaryLiteralLength                  |SQLが生成される時のバイナリ列リテラルの最大長|128|
-| maxLogStringLength                      |ログに出力する文字列値の最大長|200|
-| maxLogByteArrayLength                   |ログに出力するバイト配列の最大要素数|200|
-| maxLogArrayLength                       |ログに出力する配列の最大要素数|100|
-| maxLogMapSize                           |ログに出力するマップの最大要素数|100|
+[options="header", width="80%"]
+|===
+|プロパティ名|指定する内容|デフォルト値
+|`<<Logger,Logger>>`            |ログ出力クラス|`Std$Out$Info`
+|`<<ConnectionSupplier,ConnectionSupplier>>`|コネクション･サプライヤ･クラス|`Jdbc`
+|`url`                                      |JDBC URL|なし
+|`urls`                                     |JDBC URL(複数)|なし
+|`dataSource`                               |`Jndi`を使用した場合のデータソース名|なし
+|`dataSources`                              |`Jndi`を使用した場合のデータソース名(複数)|なし
+|`maxStringLiteralLength`                   |SQLが生成される時の文字列リテラルの最大長|128
+|`maxBinaryLiteralLength`                   |SQLが生成される時のバイナリ列リテラルの最大長|128
+|`maxLogStringLength`                       |ログに出力する文字列値の最大長|200
+|`maxLogByteArrayLength`                    |ログに出力するバイト配列の最大要素数|200
+|`maxLogArrayLength`                        |ログに出力する配列の最大要素数|100
+|`maxLogMapSize`                            |ログに出力するマップの最大要素数|100
+|===
 
-`lightsleep.properties`ファイルは、クラス･パスのいずれかに置いてください。あるいはシステム･プロパティ `lightsleep.resource`でファイル･パスを指定する事もできます。*(java -Dlightsleep.resource=...)*  
+`lightsleep.properties`ファイルは、クラス･パスのいずれかに置いてください。あるいはシステム･プロパティ `lightsleep.resource`でファイル･パスを指定する事もできます。*(java -Dlightsleep.resource=...)* +
 上記以外にもコネクション･プール･ライブラリが使用するプロパティを定義します。
 
-lightsleep.propertiesの例: 
+lightsleep.propertiesの例: +
 
-```properties:lightsleep.properties
+[source,properties]
+.lightsleep.properties
+----
 Logger      = Log4j2
 ConnectionSupplier = Dbcp
 url         = jdbc:postgresql://postgresqlserver/example
@@ -561,14 +697,15 @@ user        = example
 password    = _example_
 initialSize = 10
 maxTotal    = 100
-```
+----
 
-`urls`プロパティにカンマ区切りで複数のJDBC URLを指定できます。*(バージョン2.1.0~)*  
-1つのプロパティを複数行で定義する場合は、最後の行以外の行末にバックスラッシュ(`\`)を付加します。  
+`urls`プロパティにカンマ区切りで複数のJDBC URLを指定できます。*(バージョン2.1.0~)* +
+1つのプロパティを複数行で定義する場合は、最後の行以外の行末にバックスラッシュ(`\`)を付加します。 +
 `urls`を指定した場合は、`url`の指定は無効になります。
 
-```properties:lightsleep.properties
-# 複数のJDBC URLを指定する場合
+[source,properties]
+.lightsleep.properties - 複数のJDBC URLを指定する場合
+----
 Logger      = Log4j2
 ConnectionSupplier = Dbcp
 urls        = jdbc:postgresql://postgresqlserver/example1,\
@@ -577,12 +714,13 @@ user        = example
 password    = _example_
 initialSize = 10
 maxTotal    = 100
-```
+----
 
 JDBC URL毎に異なるDBMSのURLを指定できます。JDBC URL毎にユーザー、パスワードが異なる場合は、URL内で指定してください。
 
-```properties:lightsleep.properties
-# 複数のDBMSを使用する場合(URL内でユーザーとパスワードを指定)
+[source,properties]
+.lightsleep.properties - 複数のDBMSを使用する場合(URL内でユーザーとパスワードを指定)
+----
 Logger = Log4j2
 ConnectionSupplier = Dbcp
 urls = \
@@ -595,14 +733,15 @@ urls = \
 
 initialSize = 10
 maxTotal    = 100
-```
+----
 
-URL毎にコネクション･サプライヤを指定する場合は、URLの先頭の`[]`内に記述します。*(バージョン2.1.0~)*  
-この形式の指定は、`ConnectionSupplier`プロパティの指定よりも優先されます。  
+URL毎にコネクション･サプライヤを指定する場合は、URLの先頭の`[]`内に記述します。*(バージョン2.1.0~)* +
+この形式の指定は、`ConnectionSupplier`プロパティの指定よりも優先されます。 +
 `username`, `jdbcUrl`プロパティは、`user`, `url`プロパティで指定する事ができますが、それら以外はコネクション･プール･ライブラリ固有のプロパティ名で指定してください。
 
-```properties:lightsleep.properties
-# URL毎にコネクション･サプライヤを指定する場合
+[source,properties]
+.lightsleep.properties - URL毎にコネクション･サプライヤを指定する場合
+----
 Logger = Log4j2
 urls = \
     [  Jdbc  ]jdbc:db2://db2-11:50000/example:user=example;password=_example_;,\
@@ -624,104 +763,114 @@ maxActive   = 10
 # HikariCP
 minimumIdle     = 10
 maximumPoolSize = 10
-```
+----
 
-<div id="Logger"></div>
+[[Logger]]
 
-[【目次へ】](#TOC) [【プロパティ一覧へ】](#lightsleep-properties)
+<<TOC_,目次へ>> <<lightsleep-properties,【プロパティ一覧へ】>>
 
-#### 3-1. ログ･ライブラリ･クラスの指定
+==== 3-1. ログ･ライブラリ･クラスの指定
 
 Loggerプロパティの値は以下から選択してください。
 
-|指定値|ログ･ライブラリなど|ログ･レベル|ログ･ライブラリが使用する定義ファイル|
-|:--|:--|:-:|:--|
-|`Jdk`    |Java Runtime|－|logging.properties|
-|`Log4j`  |Log4j       |－|log4j.propertiesまたはlog4j.xml|
-|`Log4j2` |Log4j 2     |－|log4j2.xml|
-|`SLF4J`  |SLF4J       |－|対象とするログ･ライブラリ実装に依存|
-|`Std$Out$Trace`|System.outに出力|trace|－|
-|`Std$Out$Debug`|同上|debug|－|
-|`Std$Out$Info` |同上|info |－|
-|`Std$Out$Warn` |同上|warn |－|
-|`Std$Out$Error`|同上|error|－|
-|`Std$Out$Fatal`|同上|fatal|－|
-|`Std$Err$Trace`|System.errに出力|trace|－|
-|`Std$Err$Debug`|同上|debug|－|
-|`Std$Err$Info` |同上|info |－|
-|`Std$Err$Warn` |同上|warn |－|
-|`Std$Err$Error`|同上|error|－|
-|`Std$Err$Fatal`|同上|fatal|－|
+[options="header", width="80%"]
+|===
+|指定値|ログ･ライブラリなど|ログ･レベル|ログ･ライブラリが使用する定義ファイル
+|`Jdk`          |Java Runtime    |－   |logging.properties
+|`Log4j`        |Log4j           |－   |log4j.propertiesまたはlog4j.xml
+|`Log4j2`       |Log4j 2         |－   |log4j2.xml
+|`SLF4J`        |SLF4J           |－   |対象とするログ･ライブラリ実装に依存
+|`Std$Out$Trace`|System.outに出力|trace|－
+|`Std$Out$Debug`|_同上_          |debug|－
+|`Std$Out$Info` |_同上_          |info |－
+|`Std$Out$Warn` |_同上_          |warn |－
+|`Std$Out$Error`|_同上_          |error|－
+|`Std$Out$Fatal`|_同上_          |fatal|－
+|`Std$Err$Trace`|System.errに出力|trace|－
+|`Std$Err$Debug`|_同上_          |debug|－
+|`Std$Err$Info` |_同上_          |info |－
+|`Std$Err$Warn` |_同上_          |warn |－
+|`Std$Err$Error`|_同上_          |error|－
+|`Std$Err$Fatal`|_同上_          |fatal|－
+|===
 
 指定がない場合は、`Std$Out$Info`が選択されます。
 
-<div id="Database"></div>
+[[Database]]
 
-[【目次へ】](#TOC) [【プロパティ一覧へ】](#lightsleep-properties)
+<<TOC_,目次へ>> <<lightsleep-properties,【プロパティ一覧へ】>>
 
-#### 3-2. データベース･ハンドラ･クラス
+==== 3-2. データベース･ハンドラ･クラス
 
 データベース･ハンドラ･クラスは、`url`または`urls`プロパティで指定されたJDBC URLの内容から自動的に選択されます。*(バージョン2.1.0~)*
 
-|JDBC URLに含まれる文字列|選択されるクラス|対応するDBMS|
-|:--|:--|:--|
-|db2       |DB2       |<a href="https://www.ibm.com/us-en/marketplace/db2-express-c" target="_blank">DB2</a>|
-|mysql     |MySQL     |<a href="https://www.mysql.com/" target="_blank">MySQL</a>|
-|oracle    |Oracle    |<a href="https://www.oracle.com/database/index.html" target="_blank">Oracle Database</a>|
-|postgresql|PostgreSQL|<a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a>|
-|sqlite    |SQLite    |<a href="https://sqlite.org/index.html" target="_blank">SQLite</a>|
-|sqlserver |SQLServer |<a href="https://www.microsoft.com/ja-jp/sql-server/sql-server-2016" target="_blank">Microsoft SQL Server</a>|
+[options="header", width="60%"]
+|===
+|JDBC URLに含まれる文字列|選択されるクラス|対応するDBMS
+|`db2`       |`DB2`       |link:https://www.ibm.com/us-en/marketplace/db2-express-c[DB2]
+|`mysql`     |`MySQL`     |link:https://www.mysql.com/[MySQL]
+|`oracle`    |`Oracle`    |link:https://www.oracle.com/database/index.html[Oracle Database]
+|`postgresql`|`PostgreSQL`|link:https://www.postgresql.org/[PostgreSQL]
+|`sqlite`    |`SQLite`    |link:https://sqlite.org/index.html[SQLite]
+|`sqlserver` |`SQLServer` |link:https://www.microsoft.com/ja-jp/sql-server/sql-server-2016[Microsoft SQL Server]
+|===
 
 JDBC URLに上記の文字列のいずれもが含まれていない場合、`Standard`クラスが選択されます。
 
-<div id="ConnectionSupplier"></div>
+[[ConnectionSupplier]]
 
-[【目次へ】](#TOC) [【プロパティ一覧へ】](#lightsleep-properties)
+<<TOC_,目次へ>> <<lightsleep-properties,【プロパティ一覧へ】>>
 
-#### 3-3. コネクションを供給するクラスの指定
+==== 3-3. コネクションを供給するクラスの指定
 
 ConnectionSupplierプロパティの値は以下から選択してください。JDBC URLの先頭の`[]`内で指定する事もできます。
 
-|指定値|対応するコネクション･プール･ライブラリ|
-|:--|:--|
-|C3p0    |<a href="http://www.mchange.com/projects/c3p0/" target="_blank">c3p0</a>|
-|Dbcp    |<a href="https://commons.apache.org/proper/commons-dbcp/" target="_blank">Apache Commons DBCP</a>|
-|HikariCP|<a href="http://brettwooldridge.github.io/HikariCP/" target="_blank">HikariCP</a>|
-|TomcatCP|<a href="http://tomcat.apache.org/tomcat-8.5-doc/jdbc-pool.html" target="_blank">Tomcat JDBC Connection Pool</a>|
-|Jndi    |Java Naming and Directory Interface (JNDI) (<a href="http://tomcat.apache.org/tomcat-8.5-doc/jndi-datasource-examples-howto.html" target="_blank">Tomcatの場合</a>)|
-|Jdbc    |DriverManager#getConnection(String url, Properties info) メソッド|
+[options="header", width="60%"]
+|===
+|指定値|対応するコネクション･プール･ライブラリ
+|`C3p0`    |link:http://www.mchange.com/projects/c3p0/[c3p0]
+|`Dbcp`    |link:https://commons.apache.org/proper/commons-dbcp/[Apache Commons DBCP]
+|`HikariCP`|link:http://brettwooldridge.github.io/HikariCP/[HikariCP]
+|`TomcatCP`|link:http://tomcat.apache.org/tomcat-8.5-doc/jdbc-pool.html[Tomcat JDBC Connection Pool]
+|`Jndi`    |Java Naming and Directory Interface (JNDI) (link:http://tomcat.apache.org/tomcat-8.5-doc/jndi-datasource-examples-howto.html[Tomcatの場合])
+|`Jdbc`    |`DriverManager#getConnection(String url, Properties info)` メソッド
+|===
 
-`C3p0`, `Dbcp 2`, `HikariCP`, `TomcatCP`クラスは、それぞれ対応するコネクション･プール･ライブラリを使用してデータベース･コネクションを取得します。  
-`Jndi`クラスは、JNDI (Java Naming and Directory Interface)を使用して取得したデータソース(`javax.sql.DataSource`)からデータベース･コネクションを取得します。  
-`Jdbc`クラスは、`java.sql.DriverManager.getConnection`メソッドを使用してデータベース･コネクションを取得します。  
+`C3p0`, `Dbcp 2`, `HikariCP`, `TomcatCP`クラスは、それぞれ対応するコネクション･プール･ライブラリを使用してデータベース･コネクションを取得します。 +
+`Jndi`クラスは、JNDI (Java Naming and Directory Interface)を使用して取得したデータソース(`javax.sql.DataSource`)からデータベース･コネクションを取得します。 +
+`Jdbc`クラスは、`java.sql.DriverManager.getConnection`メソッドを使用してデータベース･コネクションを取得します。 +
 コネクション･プール･ライブラリが必要する情報もlightsleep.propertiesファイルに定義してください。
 以下のlightsleep.propertiesの定義例のConnectionSupplierより下(url ~)は、コネクション･プール･ライブラリに渡す内容です。
 
-```properties:lightsleep.properties
-# lightsleep.properties/Jdbc
+[source,properties]
+.lightsleep.properties - Jdbc
+----
 ConnectionSupplier = Jdbc
 url      = jdbc:db2://db2-11:50000/example
 user     = example
 password = _example_
-```
+----
 
-```properties:lightsleep.properties
-# lightsleep.properties/C3p0
+[source,properties]
+.lightsleep.properties - C3p0
+----
 ConnectionSupplier = C3p0
 url      = jdbc:mysql://mysql57/example
 user     = example
 password = _example_
-```
+----
 
-```properties:c3p0.properties
-# c3p0.properties
+[source,properties]
+.c3p0.properties
+----
 c3p0.initialPoolSize = 20
 c3p0.minPoolSize     = 10
 c3p0.maxPoolSize     = 30
-```
+----
 
-```properties:lightsleep.properties
-# lightsleep.properties/Dbcp
+[source,properties]
+.lightsleep.properties - Dbcp
+----
 ConnectionSupplier = Dbcp
 url         = jdbc:oracle:thin:@oracle121:1521:example
 user        = example
@@ -730,10 +879,11 @@ username    = example
 password    = _example_
 initialSize = 20
 maxTotal    = 30
-```
+----
 
-```properties:lightsleep.properties
-# lightsleep.properties/HikariCP
+[source,properties]
+.lightsleep.properties - HikariCP
+----
 ConnectionSupplier = HikariCP
 url             = jdbc:postgresql://postgres96/example
   または
@@ -744,10 +894,11 @@ username        = example
 password        = _example_
 minimumIdle     = 10
 maximumPoolSize = 30
-```
+----
 
-```properties:lightsleep.properties
-# lightsleep.properties/TomcatCP
+[source,properties]
+.lightsleep.properties - TomcatCP
+----
 ConnectionSupplier = TomcatCP
 url         = jdbc:sqlserver://sqlserver13;database=example
 user        = example
@@ -756,26 +907,28 @@ username    = example
 password    = _example_
 initialSize = 20
 maxActive   = 30
-```
+----
 
-```properties:lightsleep.properties
-# lightsleep.properties/Jndi
+[source,properties]
+.lightsleep.properties - Jndi
+----
 ConnectionSupplier = Jndi
 dataSource         = jdbc/example
   または
 dataSource         = example
-```
+----
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-### 4. トランザクション
+=== 4. トランザクション
 
 `Transaction.execute`メソッドの実行が1つのトランザクションの実行に相当します。
 トランザクションの内容を引数`transaction`(ラムダ式) で定義してください。
 ラムダ式は、`Transaction.executeBody`メソッドの内容に相当し、このメソッドの引数は、`ConnectionWrapper`です。
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Contact contact = new Contact(1, "Akane", "Apple");
 
 Transaction.execute(conn -> {
@@ -785,10 +938,11 @@ Transaction.execute(conn -> {
    ...
     // トランザクション終了
 });
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 def contact = new Contact(1, 'Akane', 'Apple')
 
 Transaction.execute {
@@ -798,13 +952,14 @@ Transaction.execute {
     ...
     // トランザクション終了
 }
-```
+----
 
 複数のJDBC URLを`lightsleep.properties`に定義した場合は、どのURLに対してトランザクションの実行を行うかを指定する必要があります。`ConnectionSupplier.find`メソッドは、引数の文字列配列のすべてが含まれるJDBC URLを検索します。
 複数見つかった場合または見つからない場合は例外がスローされます。
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 public static final ConnectionSupplier supplier1 = ConnectionSupplier.find("example1");
     ...
 
@@ -817,10 +972,11 @@ Transaction.execute(supplier1, conn -> {
    ...
     // トランザクション終了
 });
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 static final supplier1 = ConnectionSupplier.find('example1')
     ...
 
@@ -833,57 +989,61 @@ Transaction.execute(supplier1) {
     ...
     // トランザクション終了
 }
-```
+----
 
 トランザクション中に例外がスローされた場合は、`Transaction.rollback`メソッドが実行され、
 そうでなければ `Transaction.commit`メソッドが実行されます。
 
-<div id="ExecuteSQL"></div>
+[[ExecuteSQL]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-### 5. SQLの実行
+=== 5. SQLの実行
 SQLの実行は、`Sql`クラスの各種メソッドを使用し、`Transaction.execute`メソッドの引数のラムダ式内に定義します。
 
-<div id="ExecuteSQL-select"></div>
+[[ExecuteSQL-select]]
 
-#### 5-1. SELECT
+==== 5-1. SELECT
 
-<div id="ExecuteSQL-select-1-Expression"></div>
+[[ExecuteSQL-select-1-Expression]]
 
-#### 5-1-1. SELECT 1行/式条件
+==== 5-1-1. SELECT 1行/式条件
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Transaction.execute(conn -> {
     Optional<Contact> contactOpt = new Sql<>(Contact.class).connection(conn)
         .where("{id}={}", 1)
         .select();
 });
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 Transaction.execute {
     def contactOpt = new Sql<>(Contact).connection(it)
         .where('{id}={}', 1)
         .select()
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
-```
+----
 
-<div id="ExecuteSQL-select-Entity"></div>
+[[ExecuteSQL-select-Entity]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-2. SELECT 1行/エンティティ条件
+==== 5-1-2. SELECT 1行/エンティティ条件
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Contact contact = new Contact();
 contact.id = 1;
 Transaction.execute(conn -> {
@@ -891,10 +1051,11 @@ Transaction.execute(conn -> {
         .where(contact)
         .select();
 });
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 def contact = new Contact()
 contact.id = 1
 Transaction.execute {
@@ -902,53 +1063,58 @@ Transaction.execute {
         .where(contact)
         .select()
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
-```
+----
 
-<div id="ExecuteSQL-select-N-Expression"></div>
+[[ExecuteSQL-select-N-Expression]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-3. SELECT 複数行/式条件
+==== 5-1-3. SELECT 複数行/式条件
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
         .where("{lastName}={}", "Apple")
         .select(contacts::add)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Apple')
         .select({contacts << it})
 }
-```
+----
 
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
-```
+----
 
-<div id="ExecuteSQL-select-Subquery"></div>
+[[ExecuteSQL-select-Subquery]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-4. SELECT サブクエリ条件
+==== 5-1-4. SELECT サブクエリ条件
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C").connection(conn)
@@ -958,10 +1124,11 @@ Transaction.execute(conn ->
         )
         .select(contacts::add)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact, 'C').connection(it)
@@ -971,21 +1138,23 @@ Transaction.execute {
         )
         .select({contacts << it})
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime FROM Contact C WHERE EXISTS (SELECT * FROM Phone P WHERE P.contactId=C.id)
-```
+----
 
-<div id="ExecuteSQL-select-Expression-and"></div>
+[[ExecuteSQL-select-Expression-and]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-5. SELECT 式条件/AND
+==== 5-1-5. SELECT 式条件/AND
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
@@ -993,10 +1162,11 @@ Transaction.execute(conn ->
         .and  ("{firstName}={}", "Akane")
         .select(contacts::add)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
@@ -1004,21 +1174,23 @@ Transaction.execute {
         .and  ('{firstName}={}', 'Akane')
         .select({contacts << it})
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' AND firstName='Akane'
-```
+----
 
-<div id="ExecuteSQL-select-Expression-or"></div>
+[[ExecuteSQL-select-Expression-or]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-6. SELECT 式条件/OR
+==== 5-1-6. SELECT 式条件/OR
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
@@ -1026,10 +1198,11 @@ Transaction.execute(conn ->
         .or   ("{lastName}={}", "Orange")
         .select(contacts::add)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
@@ -1037,21 +1210,23 @@ Transaction.execute {
         .or   ('{lastName}={}', 'Orange')
         .select({contacts << it})
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange'
-```
+----
 
-<div id="ExecuteSQL-select-Expression-andor"></div>
+[[ExecuteSQL-select-Expression-andor]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-7. SELECT 式条件/A AND B OR C AND D
+==== 5-1-7. SELECT 式条件/A AND B OR C AND D
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
@@ -1065,9 +1240,10 @@ Transaction.execute(conn ->
         )
         .select(contacts::add)
 );
-```
-```groovy:Groovy
-// Groovyでの例
+----
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 Transaction.execute(conn ->
     new Sql<>(Contact).connection(it)
@@ -1081,21 +1257,23 @@ Transaction.execute(conn ->
         )
         .select({contacts << it})
 );
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' AND firstName='Akane' OR lastName='Orange' AND firstName='Setoka'
-```
+----
 
-<div id="ExecuteSQL-select-columns"></div>
+[[ExecuteSQL-select-columns]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-8. SELECTカラムの選択
+==== 5-1-8. SELECTカラムの選択
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
@@ -1103,10 +1281,11 @@ Transaction.execute(conn ->
         .columns("lastName", "firstName")
         .select(contacts::add)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
@@ -1114,21 +1293,23 @@ Transaction.execute {
         .columns('lastName', 'firstName')
         .select({contacts << it})
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT firstName, lastName FROM Contact WHERE lastName='Apple'
-```
+----
 
-<div id="ExecuteSQL-select-groupBy-having"></div>
+[[ExecuteSQL-select-groupBy-having]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-9. SELECT GROUP BY, HAVING
+==== 5-1-9. SELECT GROUP BY, HAVING
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C").connection(conn)
@@ -1137,10 +1318,11 @@ Transaction.execute(conn ->
         .having("COUNT({lastName})>=2")
         .select(contacts::add)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact, 'C').connection(it)
@@ -1149,21 +1331,23 @@ Transaction.execute {
         .having('COUNT({lastName})>=2')
         .select({contacts << it})
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT MIN(C.lastName) AS C_lastName FROM Contact C GROUP BY C.lastName HAVING COUNT(C.lastName)>=2
-```
+----
 
-<div id="ExecuteSQL-select-orderBy-offset-limit"></div>
+[[ExecuteSQL-select-orderBy-offset-limit]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-10. SELECT ORDER BY, OFFSET, LIMIT
+==== 5-1-10. SELECT ORDER BY, OFFSET, LIMIT
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
@@ -1173,10 +1357,11 @@ Transaction.execute(conn ->
         .offset(10).limit(5)
         .select(contacts::add)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
@@ -1186,74 +1371,81 @@ Transaction.execute {
         .offset(10).limit(5)
         .select({contacts << it})
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL/DB2, MySQL, PostgreSQL, SQLite
+[source,sql]
+.生成されるSQL - DB2, MySQL, PostgreSQL, SQLite
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY lastName ASC, firstName ASC, id ASC LIMIT 5 OFFSET 10
-```
+----
 
-```sql:SQL
--- 生成されるSQL/Oracle, SQLServer (取得時に行をスキップする)
+[source,sql]
+.生成されるSQL - Oracle, SQLServer (取得時に行をスキップする)
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact ORDER BY lastName ASC, firstName ASC, id ASC
-```
+----
 
-<div id="ExecuteSQL-select-forUpdate"></div>
+[[ExecuteSQL-select-forUpdate]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-11. SELECT FOR UPDATE
+==== 5-1-11. SELECT FOR UPDATE
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Transaction.execute(conn -> {
     Optional<Contact> contactOpt = new Sql<>(Contact.class).connection(conn)
         .where("{id}={}", 1)
         .forUpdate()
         .select();
 });
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 Transaction.execute {
     def contactOpt = new Sql<>(Contact).connection(it)
         .where('{id}={}', 1)
         .forUpdate()
         .select()
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL/DB2
+[source,sql]
+.生成されるSQL - DB2
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE WITH RS
-```
+----
 
-```sql:SQL
--- 生成されるSQL/MySQL, Oracle, PostgreSQL, SQLite
+[source,sql]
+.生成されるSQL - MySQL, Oracle, PostgreSQL, SQLite
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1 FOR UPDATE
-```
+----
 
-```sql:SQL
--- 生成されるSQL/SQLite
+[source,sql]
+.生成されるSQL - SQLite
+----
 -- SQLiteでは、FOR UPDATEをサポートしていないのでUnsupportedOperationExceptionがスローされます。
-```
+----
 
-```sql:SQL
--- 生成されるSQL/SQLServer
+[source,sql]
+.生成されるSQL - SQLServer
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WITH (ROWLOCK,UPDLOCK) WHERE id=1
-```
+----
 
--- SQLiteでは、FOR UPDATEが未サポートのため、例外がスローされます。
+[[ExecuteSQL-select-innerJoin]]
 
-<div id="ExecuteSQL-select-innerJoin"></div>
+<<TOC_,目次へ>>
 
-[【目次へ】](#TOC)
+==== 5-1-12. SELECT 内部結合
 
-#### 5-1-12. SELECT 内部結合
-
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1262,10 +1454,11 @@ Transaction.execute(conn ->
         .where("{C.id}={}", 1)
         .<Phone>select(contacts::add, phones::add)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 List<Phone> phones = []
 Transaction.execute {
@@ -1274,21 +1467,23 @@ Transaction.execute {
         .where('{C.id}={}', 1)
         .select({contacts << it}, {phones << it})
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C INNER JOIN Phone P ON P.contactId=C.id WHERE C.id=1
-```
+----
 
-<div id="ExecuteSQL-select-leftJoin"></div>
+[[ExecuteSQL-select-leftJoin]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-13. SELECT 左外部結合
+==== 5-1-13. SELECT 左外部結合
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1297,10 +1492,11 @@ Transaction.execute(conn ->
 	    .where("{C.lastName}={}", "Apple")
 	    .<Phone>select(contacts::add, phones::add)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 List<Phone> phones = []
 Transaction.execute {
@@ -1309,21 +1505,23 @@ Transaction.execute {
         .where('{C.lastName}={}', 'Apple')
         .select({contacts << it}, {phones << it})
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C LEFT OUTER JOIN Phone P ON P.contactId=C.id WHERE C.lastName='Apple'
-```
+----
 
-<div id="ExecuteSQL-select-rightJoin"></div>
+[[ExecuteSQL-select-rightJoin]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-1-14. SELECT 右外部結合
+==== 5-1-14. SELECT 右外部結合
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1332,10 +1530,11 @@ Transaction.execute(conn ->
         .where("{P.label}={}", "Main")
         .<Phone>select(contacts::add, phones::add)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 List<Contact> contacts = []
 List<Phone> phones = []
 Transaction.execute {
@@ -1344,99 +1543,110 @@ Transaction.execute {
         .where('{P.label}={}', 'Main')
         .select({contacts << it}, {phones << it})
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 -- SQLiteでは、RIGHT OUTER JOINが未サポートのため、例外がスローされます。
 SELECT C.id AS C_id, C.firstName AS C_firstName, C.lastName AS C_lastName, C.birthday AS C_birthday, C.updateCount AS C_updateCount, C.createdTime AS C_createdTime, C.updatedTime AS C_updatedTime, P.contactId AS P_contactId, P.childIndex AS P_childIndex, P.label AS P_label, P.content AS P_content FROM Contact C RIGHT OUTER JOIN Phone P ON P.contactId=C.id WHERE P.label='Main'
-```
+----
 
-#### 5-1-15. SELECT COUNT(*)
+==== 5-1-15. SELECT COUNT(*)
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 int[] rowCount = new int[1];
 Transaction.execute(conn ->
     count[0] = new Sql<>(Contact.class).connection(conn)
         .where("lastName={}", "Apple")
         .selectCount()
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 def rowCount = 0
 Transaction.execute {
     count = new Sql<>(Contact).connection(it)
         .where('lastName={}', 'Apple')
         .selectCount()
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT COUNT(*) FROM Contact WHERE lastName='Apple'
-```
+----
 
-<div id="ExecuteSQL-insert"></div>
+[[ExecuteSQL-insert]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-2. INSERT
+==== 5-2. INSERT
 
-<div id="ExecuteSQL-insert-1"></div>
+[[ExecuteSQL-insert-1]]
 
-#### 5-2-1. INSERT 1行
+==== 5-2-1. INSERT 1行
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
         .insert(new Contact(1, "Akane", "Apple", 2001, 1, 1))
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 Transaction.execute {
     new Sql<>(Contact).connection(it)
        .insert(new Contact(1, "Akane", "Apple", 2001, 1, 1))
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL/DB2, MySQL, Oracle, PostgreSQL
+[source,sql]
+.生成されるSQL - DB2, MySQL, Oracle, PostgreSQL
+----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Akane', 'Apple', DATE'2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-```
+----
 
-```sql:SQL
--- 生成されるSQL/SQLite
+[source,sql]
+.生成されるSQL - SQLite
+----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Akane', 'Apple', '2001-01-01', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-```
+----
 
-```sql:SQL
--- 生成されるSQL/SQLServer
+[source,sql]
+.生成されるSQL - SQLServer
+----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (1, 'Akane', 'Apple', CAST('2001-01-01' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-```
+----
 
-<div id="ExecuteSQL-insert-N"></div>
+[[ExecuteSQL-insert-N]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-2-2. INSERT 複数行
+==== 5-2-2. INSERT 複数行
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
         .insert(Arrays.asList(
             new Contact(2, "Yukari", "Apple", 2001, 1, 2),
             new Contact(3, "Azusa", "Apple", 2001, 1, 3)
         ))
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .insert([
@@ -1444,38 +1654,42 @@ Transaction.execute {
             new Contact(3, "Azusa", "Apple", 2001, 1, 3)
         ])
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL/DB2, MySQL, Oracle, PostgreSQL
+[source,sql]
+.生成されるSQL - DB2, MySQL, Oracle, PostgreSQL
+----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Yukari', 'Apple', DATE'2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Azusa', 'Apple', DATE'2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-```
+----
 
-```sql:SQL
--- 生成されるSQL/SQLite
+[source,sql]
+.生成されるSQL - SQLite
+----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Yukari', 'Apple', '2001-01-02', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Azusa', 'Apple', '2001-01-03', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-```
+----
 
-```sql:SQL
--- 生成されるSQL/SQLServer
+[source,sql]
+.生成されるSQL - SQLServer
+----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (2, 'Yukari', 'Apple', CAST('2001-01-02' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime) VALUES (3, 'Azusa', 'Apple', CAST('2001-01-03' AS DATE), 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-```
+----
 
-<div id="ExecuteSQL-update"></div>
+[[ExecuteSQL-update]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-3. UPDATE
+==== 5-3. UPDATE
 
-<div id="ExecuteSQL-update-1"></div>
+[[ExecuteSQL-update-1]]
 
-#### 5-3-1. UPDATE 1行
+==== 5-3-1. UPDATE 1行
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
         .where("{id}={}", 1)
@@ -1486,10 +1700,11 @@ Transaction.execute(conn ->
                 .update(contact);
         })
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .where('{id}={}', 1)
@@ -1500,34 +1715,38 @@ Transaction.execute {
                 .update(contact)
         }
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL/DB2, MySQL, Oracle, PostgreSQL
+[source,sql]
+.生成されるSQL - DB2, MySQL, Oracle, PostgreSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 UPDATE Contact SET firstName='Akiyo', lastName='Apple', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
-```
+----
 
-```sql:SQL
--- 生成されるSQL/SQLite
+[source,sql]
+.生成されるSQL - SQLite
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 UPDATE Contact SET firstName='Akiyo', lastName='Apple', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
-```
+----
 
-```sql:SQL
--- 生成されるSQL/SQLServer
+[source,sql]
+.生成されるSQL - SQLServer
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 UPDATE Contact SET firstName='Akiyo', lastName='Apple', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
-```
+----
 
-<div id="ExecuteSQL-update-N"></div>
+[[ExecuteSQL-update-N]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-3-2. UPDATE 複数行
+==== 5-3-2. UPDATE 複数行
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Transaction.execute(conn -> {
     List<Contact> contacts = new ArrayList<>();
     new Sql<>(Contact.class).connection(conn)
@@ -1539,10 +1758,11 @@ Transaction.execute(conn -> {
     new Sql<>(Contact.class).connection(conn)
         .update(contacts);
 });
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 Transaction.execute {
     List<Contact> contacts = []
     new Sql<>(Contact).connection(it)
@@ -1554,40 +1774,44 @@ Transaction.execute {
     new Sql<>(Contact).connection(it)
         .update(contacts)
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL/DB2, MySQL, Oracle, PostgreSQL
+[source,sql]
+.生成されるSQL - DB2, MySQL, Oracle, PostgreSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
 UPDATE Contact SET firstName='Akiyo', lastName='Apfel', birthday=DATE'2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 UPDATE Contact SET firstName='Yukari', lastName='Apfel', birthday=DATE'2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
 UPDATE Contact SET firstName='Azusa', lastName='Apfel', birthday=DATE'2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
-```
+----
 
-```sql:SQL
--- 生成されるSQL/SQLite
+[source,sql]
+.生成されるSQL - SQLite
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
 UPDATE Contact SET firstName='Akiyo', lastName='Apfel', birthday='2001-01-01', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 UPDATE Contact SET firstName='Yukari', lastName='Apfel', birthday='2001-01-02', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
 UPDATE Contact SET firstName='Azusa', lastName='Apfel', birthday='2001-01-03', updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
-```
+----
 
-```sql:SQL
--- 生成されるSQL/SQLServer
+[source,sql]
+.生成されるSQL - SQLServer
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple'
 UPDATE Contact SET firstName='Akiyo', lastName='Apfel', birthday=CAST('2001-01-01' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=1
 UPDATE Contact SET firstName='Yukari', lastName='Apfel', birthday=CAST('2001-01-02' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=2
 UPDATE Contact SET firstName='Azusa', lastName='Apfel', birthday=CAST('2001-01-03' AS DATE), updateCount=updateCount+1, updatedTime=CURRENT_TIMESTAMP WHERE id=3
-```
+----
 
-<div id="ExecuteSQL-update-Condition"></div>
+[[ExecuteSQL-update-Condition]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-3-3. UPDATE 指定条件, カラム選択
+==== 5-3-3. UPDATE 指定条件, カラム選択
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Contact contact = new Contact();
 contact.lastName = "Pomme";
 Transaction.execute(conn ->
@@ -1596,10 +1820,11 @@ Transaction.execute(conn ->
         .columns("lastName")
         .update(contact)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 def contact = new Contact()
 contact.lastName = 'Pomme'
 Transaction.execute {
@@ -1608,21 +1833,23 @@ Transaction.execute {
         .columns('lastName')
         .update(contact)
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 UPDATE Contact SET lastName='Pomme' WHERE lastName='Apfel'
-```
+----
 
-<div id="ExecuteSQL-update-all"></div>
+[[ExecuteSQL-update-all]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-3-4. UPDATE 全行
+==== 5-3-4. UPDATE 全行
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Contact contact = new Contact();
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
@@ -1630,10 +1857,11 @@ Transaction.execute(conn ->
         .columns("birthday")
         .update(contact)
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 def contact = new Contact()
 Transaction.execute {
     new Sql<>(Contact).connection(it)
@@ -1641,25 +1869,27 @@ Transaction.execute {
         .columns('birthday')
         .update(contact)
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 UPDATE Contact SET birthday=NULL
-```
+----
 
-<div id="ExecuteSQL-delete"></div>
+[[ExecuteSQL-delete]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-4. DELETE
+==== 5-4. DELETE
 
-<div id="ExecuteSQL-delete-1"></div>
+[[ExecuteSQL-delete-1]]
 
-#### 5-4-1. DELETE 1行
+==== 5-4-1. DELETE 1行
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
         .where("{id}={}", 1)
@@ -1668,10 +1898,11 @@ Transaction.execute(conn ->
             new Sql<>(Contact.class).connection(conn)
                 .delete(contact))
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .where('{id}={}', 1)
@@ -1681,22 +1912,24 @@ Transaction.execute {
                 .delete(contact)
         }
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE id=1
 DELETE FROM Contact WHERE id=1
-```
+----
 
-<div id="ExecuteSQL-delete-N"></div>
+[[ExecuteSQL-delete-N]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-4-2. DELETE 複数行
+==== 5-4-2. DELETE 複数行
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Transaction.execute(conn -> {
     List<Contact> contacts = new ArrayList<>();
     new Sql<>(Contact.class).connection(conn)
@@ -1705,10 +1938,11 @@ Transaction.execute(conn -> {
     new Sql<>(Contact.class).connection(conn)
         .delete(contacts);
 });
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 Transaction.execute {
     List<Contact> contacts = []
     new Sql<>(Contact).connection(it)
@@ -1717,78 +1951,85 @@ Transaction.execute {
     new Sql<>(Contact).connection(it)
         .delete(contacts)
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Pomme'
 DELETE FROM Contact WHERE id=2
 DELETE FROM Contact WHERE id=3
-```
+----
 
-<div id="ExecuteSQL-delete-Condition"></div>
+[[ExecuteSQL-delete-Condition]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-4-3. DELETE 指定条件
+==== 5-4-3. DELETE 指定条件
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
         .where("{lastName}={}", "Orange")
         .delete()
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 Transaction.execute {
     new Sql<>(Contact).connection(it)
         .where('{lastName}={}', 'Orange')
         .delete()
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 DELETE FROM Contact WHERE lastName='Orange'
-```
+----
 
-<div id="ExecuteSQL-delete-all"></div>
+[[ExecuteSQL-delete-all]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-#### 5-4-4. DELETE 全行
+==== 5-4-4. DELETE 全行
 
-```java:Java
-// Javaでの例
+[source,java]
+.Java
+----
 Transaction.execute(conn ->
     new Sql<>(Phone.class).connection(conn)
         .where(Condition.ALL)
         .delete()
 );
-```
+----
 
-```groovy:Groovy
-// Groovyでの例
+[source,groovy]
+.Groovy
+----
 Transaction.execute {
     new Sql<>(Phone).connection(it)
         .where(Condition.ALL)
         .delete()
 }
-```
+----
 
-```sql:SQL
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 DELETE FROM Phone
-```
+----
 
-<div id="Expression"></div>
+[[Expression]]
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-### 6. 式の変換処理
+=== 6. 式の変換処理
 
 SQL を生成する時に、以下の文字列を式として評価し、変換処理を行います。
 
@@ -1821,14 +2062,16 @@ SQL を生成する時に、以下の文字列を式として評価し、変換�
 
 式の変換には以下があります。
 
-|書式|変換内容|
-|:--|:--|
-|`{}`     |出現順に`arguments`の要素|
-|`{xxx}`  |`xxx`プロパティに関連するカラム名|
-|`{A.xxx}`|`"A."` + `xxx`プロパティに関連するカラム名(`A` はテーブル別名)|
-|`{A_xxx}`|テーブル別名`A`と`xxx`プロパティに関連するカラム別名|
-|`{#xxx}` |`Sql`オブジェクトに設定されたエンティティ(または`Sql#insert`, `Sql#update`メソッドのエンティティ引数)の`xxx`プロパティの値|
+[options="header", width="80%"]
+|===
+|書式|変換内容
+|`{}`     |出現順に`arguments`の要素
+|`{xxx}`  |`xxx`プロパティに関連するカラム名
+|`{A.xxx}`|`"A."` + `xxx`プロパティに関連するカラム名(`A` はテーブル別名)
+|`{A_xxx}`|テーブル別名`A`と`xxx`プロパティに関連するカラム別名
+|`{#xxx}` |`Sql`オブジェクトに設定されたエンティティ(または`Sql#insert`, `Sql#update`メソッドのエンティティ引数)の`xxx`プロパティの値
+|===
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-<div style="text-align:center; margin-top:20px"><i>&copy; 2016 Masato Kokubo</i></div>
+[gray]#_(C) 2015 Masato Kokubo_#

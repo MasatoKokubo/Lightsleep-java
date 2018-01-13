@@ -1,19 +1,17 @@
-Lightsleep Release Notes
-===========
+= Lightsleep Release Notes
 
-[[Japanese]](ReleaseNotes_ja.md)
+link:ReleaseNotes_ja.asciidoc[Japanese]
 
-<div id="TOC"></div>
+[[TOC_]]
+=== Table of Contents
 
-### Table of Contents
+- <<ReleaseNote2.1.1,version 2.1.1>>
+- <<ReleaseNote2.1.0,version 2.1.0>>
+- <<ReleaseNote2.0.0,version 2.0.0>>
 
-- [version 2.1.1](#ReleaseNote2.1.1)
-- [version 2.1.0](#ReleaseNote2.1.0)
-- [version 2.0.0](#ReleaseNote2.0.0)
+[[ReleaseNote2.1.1]]
 
-<div id="ReleaseNote2.1.1"></div>
-
-### version 2.1.1
+=== version 2.1.1
 
 1. Bug fix
     - [Fixed] `Standard` database handler is always selected when connection supplier is `Jndi`.
@@ -21,9 +19,9 @@ Lightsleep Release Notes
 1. Other
     - Improve log messages
 
-<div id="ReleaseNote2.1.0"></div>
+[[ReleaseNote2.1.0]]
 
-### version 2.1.0
+=== version 2.1.0
 
 Version number is a minor release, but there are **some specification changes**.
 
@@ -69,11 +67,11 @@ Version number is a minor release, but there are **some specification changes**.
 
 1. **Deprecated** the `instance()` methods and **added** `instance` static variables of each class in the `org.lightsleep.database` package.
 
-[[To TOC]](#TOC)
+<<TOC_,To TOC>>
 
-<div id="ReleaseNote2.0.0"></div>
+[[ReleaseNote2.0.0]]
 
-### version 2.0.0
+=== version 2.0.0
 
 1. Added the following method to get the result of SELECT SQL with entity type different from type parameter of `org.lightsleep.Sql` class.
     - public <R> Optional<R> selectAs(Class<R> resultClass)
@@ -119,6 +117,6 @@ Version number is a minor release, but there are **some specification changes**.
 
 1. **Changed** the exception thrown on `getField`, `getValue` and `setValue` methods of `org.lightsleep.helper.Accessor` class from `IllegalArgumentException` to `MissingPropertyException` *(new class)*. **(Specification change)**
 
-[[To TOC]](#TOC)
+<<TOC_,To TOC>>
 
-<div style="text-align:center; margin-top:20px"><i>&copy; 2016 Masato Kokubo</i></div>
+[gray]#_(C) 2016 Masato Kokubo_#

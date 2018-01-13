@@ -1,18 +1,18 @@
-Lightsleep チュートリアル
-===========
+= Lightsleep Tutorial
 
-[[English]](Tutorial.md)
+link:Tutorial_ja.asciidoc[Japanese]
 
-テーブルの行を取得してコンソールに出力する簡単なプログラムを作成してみます。
+Let's create a simple program that gets rows from the table and output to the console.
 
-#### 1. テーブルの準備
+==== 1. Preparing the table
 
-DB2, MySQL, Oracle, PostgreSQL, SQLiteまたはSQL ServerのいずれかのデータベースにContactテーブルを作成し、サンプルデータを挿入します。
+Create the Contact table to any database in DB2, MySQL, Oracle, PostgreSQL, SQLite or SQL Server, and then insert the sample data.
 
-以下のSQLのいずれかを実行してテーブルを作成します。
+Create a table using one of the following SQL.
 
-```sql:ddl_db2.sql
--- for DB2
+[source,sql]
+.ddl_db2.sql - DB2
+----
 CREATE TABLE Contact (
     id        INTEGER        NOT NULL,
     firstName VARGRAPHIC(20) NOT NULL,
@@ -21,10 +21,11 @@ CREATE TABLE Contact (
 
     PRIMARY KEY(id)
 );
-```
+----
 
-```sql:ddl_mysql.sql
--- for MySQL
+[source,sql]
+.ddl_mysql.sql - MySQL
+----
 CREATE TABLE Contact (
     id         INT         NOT NULL,
     firstName  VARCHAR(20) NOT NULL,
@@ -33,10 +34,11 @@ CREATE TABLE Contact (
 
     PRIMARY KEY(id)
 );
-```
+----
 
-```sql:ddl_oracle.sql
--- for Oracle
+[source,sql]
+.ddl_oracle.sql - Oracle
+----
 CREATE TABLE Contact (
     id         NUMBER  ( 9)      NOT NULL,
     firstName  VARCHAR2(20 CHAR) NOT NULL,
@@ -45,10 +47,11 @@ CREATE TABLE Contact (
 
     PRIMARY KEY(id)
 );
-```
+----
 
-```sql:ddl_postgresql.sql
--- for PostgreSQL
+[source,sql]
+.ddl_postgresql.sql - PostgreSQL
+----
 CREATE TABLE Contact (
     id         INT         NOT NULL,
     firstName  VARCHAR(20) NOT NULL,
@@ -57,10 +60,11 @@ CREATE TABLE Contact (
 
     PRIMARY KEY(id)
 );
-```
+----
 
-```sql:ddl_sqlite.sql
--- for SQLite
+[source,sql]
+.ddl_sqlite.sql - SQLite
+----
 CREATE TABLE Contact (
     id        INTEGER     NOT NULL,
     firstName VARCHAR(20) NOT NULL,
@@ -69,10 +73,11 @@ CREATE TABLE Contact (
 
     PRIMARY KEY(id)
 );
-```
+----
 
-```sql:ddl_sqlserver.sql
--- for SQLServer
+[source,sql]
+.ddl_sqlserver.sql - SQLServer
+----
 CREATE TABLE Contact (
     id         INT         NOT NULL,
     firstName  VARCHAR(20) NOT NULL,
@@ -81,23 +86,27 @@ CREATE TABLE Contact (
 
     PRIMARY KEY(id)
 );
-```
+----
 
-以下のSQLを実行してテーブルにデータを挿入します。
+Execute the following SQL to insert the data into the table.
 
-```sql:sample.sql
+[source,sql]
+.sample.sql
+----
 DELETE FROM Contact;
 INSERT INTO Contact VALUES (1, 'First' , 'Example', DATE'1991-01-01');
 INSERT INTO Contact VALUES (2, 'Second', 'Example', DATE'1992-02-02');
 INSERT INTO Contact VALUES (3, 'Third' , 'Example', DATE'1993-03-03');
 INSERT INTO Contact VALUES (4, 'Fourth', 'Example', DATE'1994-04-04');
-````
+----
 
-#### 2. エンティティ･クラスの作成
+==== 2. Creating the entity class
 
-Contactテーブルから取得した行を保持するためのエンティティ･クラスを作成します。
+Create the entity class to hold rows obtained from the Contact table.
 
-```java:Contact.java
+[source,java]
+.Contact.java
+----
 package org.lightsleep.tutorial.entity;
 
 import java.sql.Date;
@@ -105,72 +114,80 @@ import java.sql.Date;
 import org.lightsleep.entity.*;
 
 /**
- * Contactエンティティ
+ * Contact entity
  */
 public class Contact {
-    /** ID */
+    /** Contact ID */
     @Key
-    public int id;
+    public Integer id;
 
-    /** 名前 */
+    /** First Name */
     public String firstName;
 
-    /** 苗字 */
+    /** Last Name */
     public String lastName;
 
-    /** 誕生日 */
+    /** Birthday */
     public Date birthday;
 }
-```
+----
 
-#### 3. プロパティ･ファイルの準備
+==== 3. Preparation of properties file
 
-下記の`lightsleep.properties`ファイルを作成しクラス･パスのいずれかにおいてください。`url`, `user`および`password`の値は、使用するデータベース環境に合わせて変更してください。
+Create `lightsleep.properties` file below and place one of the class paths. Change to match the database environment to use the value of `url`, `user` and `password`.
 
-```properties:lightsleep.properties
-# for DB2
-url      = jdbc:db2://<データベース･サーバー>:50000/<データベース>
-user     = <ユーザー名>
-password = <パスワード>
-```
+[source,properties]
+.lightsleep.properties - DB2
+----
+url      = jdbc:db2://<Database Server>:50000/<Database>
+user     = <User Name>
+password = <Password>
+----
 
-```properties:lightsleep.properties
-# for MySQL
-url      = jdbc:mysql://<DB Server>/<データベース>
-user     = <ユーザー名>
-password = <パスワード>
-```
+[source,properties]
+.lightsleep.properties - MySQL
+----
+url      = jdbc:mysql://<Database Server>/<Database>
+user     = <User Name>
+password = <Password>
+----
 
-```properties:lightsleep.properties
-# for Oracle
-url      = jdbc:oracle:thin:@<DB Server>:1521:<SID>
-user     = <ユーザー名>
-password = <パスワード>
-```
+[source,properties]
+.lightsleep.properties - Oracle
+----
+url      = jdbc:oracle:thin:@<Database Server>:1521:<SID>
+user     = <User Name>
+password = <Password>
+----
 
-```properties:lightsleep.properties
-# for PostgreSQL
-url      = jdbc:postgresql://<DB Server>/<データベース>
-user     = <ユーザー名>
-password = <パスワード>
-```
+[source,properties]
+.lightsleep.properties - PostgreSQL
+----
+url      = jdbc:postgresql://<Database Server>/<Database>
+user     = <User Name>
+password = <Password>
+----
 
-```properties:lightsleep.properties
-# for SQLite
-url = jdbc:sqlite:<インストールしたディレクトリ>/<データベース>
-```
+[source,properties]
+.lightsleep.properties - SQLite
+----
+url = jdbc:sqlite:<Installed Directory>/<Database>
+----
 
-```properties:lightsleep.properties
-# for SQL Server
-url      = jdbc:sqlserver://<DB Server>;Database=<データベース>
-user     = <ユーザー名>
-password = <パスワード>
-```
+[source,properties]
+.lightsleep.properties - SQL Server
+----
+url      = jdbc:sqlserver://<Database Server>;Database=<Database>
+user     = <User Name>
+password = <Password>
+----
 
-#### 4. データの取得
-テーブルから全行を取得するプログラムを作成します。
+==== 4. Getting data
+Create a program to retrieve all the rows from the table.
 
-```java:Example1.java
+[source,java]
+.Example1.java
+----
 package org.lightsleep.tutorial;
 
 import java.util.ArrayList;
@@ -203,11 +220,13 @@ public class Example1 {
         }
     }
 }
-```
+----
 
-Example1 を実行すると以下がコンソールに表示されます。
+When you run the Example1 following is displayed on the console.
 
-```log:標準出力
+[source,log]
+.stdout
+----
     ...
     ...
     ...
@@ -215,6 +234,6 @@ Example1 を実行すると以下がコンソールに表示されます。
 1: Name: Second Example, Birthday: 1992-02-02
 2: Name: Third Example, Birthday: 1993-03-03
 3: Name: Fourth Example, Birthday: 1994-04-04
-```
+----
 
-<div style="text-align:center; margin-top:20px"><i>&copy; 2016 Masato Kokubo</i></div>
+[gray]#_(C) 2016 Masato Kokubo_#

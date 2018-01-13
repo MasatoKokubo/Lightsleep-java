@@ -1,12 +1,10 @@
-Lightsleep
-===========
+= Lightsleep
 
-[[English]](README.md)
+link:README.asciidoc[English]
 
-Lightsleepは、軽量のO/Rマッピング･ライブラリで、Java 8以降で利用できます。Java 7以前には対応していません。
-またJava Persistence API (JPA)との互換性はありません。
+Lightsleepは、軽量のO/Rマッピング･ライブラリで、Java 8以降で利用できます。
 
-### 特徴
+=== 特徴
 
 - Java 8で追加された機能(関数型インタフェース、Optionalクラス)を使用したAPI 。
 - SQLを構築する際のメソッド名がSQLの予約語と同じため、直観的に理解しやすい。
@@ -17,7 +15,7 @@ Lightsleepは、軽量のO/Rマッピング･ライブラリで、Java 8以降�
 - 各種のコネクション･プール･ライブラリを同時に使用可能。**(バージョン2.1.0~)**
 - 内部ログを各種のロギング･ライブラリから選択して出力可能。
 
-### 対応DBMS
+=== 対応DBMS
 
 - DB2
 - MySQL
@@ -27,10 +25,11 @@ Lightsleepは、軽量のO/Rマッピング･ライブラリで、Java 8以降�
 - Microsoft SQL Server
 - 標準SQL準拠DBMS
 
-#### build.gradleでの依存関係の記述例
+==== build.gradleでの依存関係の記述例
 
-```gradle:build.gradle
-# build.gradle
+[source,groovy]
+.build.gradle
+----
 repositories {
     jcenter()
 }
@@ -38,12 +37,13 @@ repositories {
 dependencies {
     compile 'org.lightsleep:lightsleep:2.1.0'
 }
-```
+----
 
-### Lightsleepで使用するエンティティ･クラスの定義例
+=== Lightsleepで使用するエンティティ･クラスの定義例
 
-```java:Contact.java
-// Java
+[source,java]
+.Contact.java
+----
 package org.lightsleep.example.java.entity;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -65,10 +65,11 @@ public class Contact {
 	@Insert("CURRENT_TIMESTAMP") @Update("CURRENT_TIMESTAMP")
 	public Timestamp updatedTime;
 }
-```
+----
 
-```groovy:Contact.groovy
-// Groovy
+[source,groovy]
+.Contact.groovy
+----
 package org.lightsleep.example.groovy.entity
 import java.sql.Date
 import java.sql.Timestamp
@@ -90,11 +91,13 @@ class Contact {
 	@Insert('CURRENT_TIMESTAMP') @Update('CURRENT_TIMESTAMP')
 	Timestamp updatedTime
 }
-```
+----
 
-### Lightsleepの使用例
+=== Lightsleepの使用例
 
-```java:Java
+[source,java]
+.Javaの使用例
+----
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
@@ -104,9 +107,11 @@ Transaction.execute(conn ->
         .orderBy("{firstName}")
         .select(contacts::add)
 );
-```
+----
 
-```groovy:Groovy
+[source,groovy]
+.Groovyの使用例
+----
 def contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
@@ -116,29 +121,32 @@ Transaction.execute {
         .orderBy('{firstName}')
         .select({contacts << it})
 }
-```
+----
 
-```sql
--- 生成されるSQL
+[source,sql]
+.生成されるSQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange' ORDER BY lastName ASC, firstName ASC
-```
+----
 
-### ライセンス
+=== ライセンス
 
 The MIT License (MIT)
 
-*&copy; 2016 Masato Kokubo (小久保 雅人)*
+[gray]#_(C) 2015 Masato Kokubo (小久保 雅人)_#
 
-### ドキュメント
+=== ドキュメント
 
-[リリース･ノート](ReleaseNotes_ja.md)
+link:ReleaseNotes_ja.asciidoc[リリース･ノート]
 
-[チュートリアル](Tutorial_ja.md)
+link:Tutorial_ja.asciidoc[チュートリアル]
 
-[マニュアル](Manual_ja.md)
+link:UserGuide_ja.asciidoc[ユーザー･ガイド]
 
-[API仕様](http://masatokokubo.github.io/Lightsleep/javadoc_ja/index.html)
+http://masatokokubo.github.io/Lightsleep/javadoc_ja/index.html[API仕様]
 
-Qiita記事
-- <a href="http://qiita.com/MasatoKokubo/items/ab46696b203d7f67036c" target="_blank">Java RuntimeとJDBCドライバーだけで動作するO/R マッピング･ライブラリLightsleepの紹介</a>
-- <a href="http://qiita.com/MasatoKokubo/items/1080d1277e2b51d88f89" target="_blank">Java 8用O/Rマッピング･ライブラリLightsleepの柔軟なデータ型変換の仕組み</a>
+=== Qiita記事
+
+http://qiita.com/MasatoKokubo/items/ab46696b203d7f67036c[Java RuntimeとJDBCドライバーだけで動作するO/R マッピング･ライブラリLightsleepの紹介]
+
+http://qiita.com/MasatoKokubo/items/1080d1277e2b51d88f89[Java 8用O/Rマッピング･ライブラリLightsleepの柔軟なデータ型変換の仕組み]

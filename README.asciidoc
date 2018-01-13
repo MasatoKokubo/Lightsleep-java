@@ -1,12 +1,10 @@
-Lightsleep
-===========
+= Lightsleep
 
-[[Japanese]](README_ja.md)
+link:README_ja.asciidoc[Japanese]
 
-Lightsleep is a lightweight Object-Relational (O/R) mapping library and is available in Java 8 or later. It does not work in Java 7 or earlier.
-It is not compatible with the Java Persistence API (JPA).
+Lightsleep is a lightweight Object-Relational (O/R) mapping library and is available in Java 8 or later.
 
-### Features
+=== Features
 
 - It has API using features added in Java 8 (functional interface and Optional class).
 - It is easy to understand intuitively because method names when constructing SQL are the same as SQL reserved words.
@@ -17,7 +15,7 @@ It is not compatible with the Java Persistence API (JPA).
 - Various connection pool libraries can be used simultaneously. **(since 2.1.0)**
 - You can select from various logging libraries when outputting internal logs.
 
-### Supported DBMS
+=== Supported DBMS
 
 - DB2
 - MySQL
@@ -27,9 +25,11 @@ It is not compatible with the Java Persistence API (JPA).
 - Microsoft SQL Server
 - DBMSs that conforms to the standard SQL
 
-### Description example of dependency in build.gradle
+=== Description example of dependency in build.gradle
 
-```gradle:build.gradle
+[source,groovy]
+.build.gradle
+----
 repositories {
     jcenter()
 }
@@ -37,11 +37,13 @@ repositories {
 dependencies {
     compile 'org.lightsleep:lightsleep:2.1.0'
 }
-```
-### Definition example of entity class used in Lightsleep
+----
 
-```java:Contact.java
-// Java Example
+=== Definition example of entity class used in Lightsleep
+
+[source,java]
+.Contact.java
+----
 package org.lightsleep.example.java.entity;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -63,10 +65,11 @@ public class Contact {
 	@Insert("CURRENT_TIMESTAMP") @Update("CURRENT_TIMESTAMP")
 	public Timestamp updatedTime;
 }
-```
+----
 
-```groovy:Contact.groovy
-// Groovy Example
+[source,groovy]
+.Contact.groovy
+----
 package org.lightsleep.example.groovy.entity
 import java.sql.Date
 import java.sql.Timestamp
@@ -88,11 +91,13 @@ class Contact {
 	@Insert('CURRENT_TIMESTAMP') @Update('CURRENT_TIMESTAMP')
 	Timestamp updatedTime
 }
-```
+----
 
-### Examples of using Lightsleep
+=== Examples of using Lightsleep
 
-```java:Java
+[source,java]
+.Java Example
+----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class).connection(conn)
@@ -102,9 +107,11 @@ Transaction.execute(conn ->
         .orderBy("{firstName}")
         .select(contacts::add)
 );
-```
+----
 
-```groovy:Groovy
+[source,groovy]
+.Groovy Example
+----
 List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact).connection(it)
@@ -114,27 +121,28 @@ Transaction.execute {
         .orderBy('{firstName}')
         .select({contacts << it})
 }
-```
+----
 
-```sql
--- Generated SQLs
+[source,sql]
+.Generated SQL
+----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange' ORDER BY lastName ASC, firstName ASC
-```
+----
 
-### License
+=== License
 
 The MIT License (MIT)
 
-*&copy; 2016 Masato Kokubo*
+[gray]#_(C) 2015 Masato Kokubo_#
 
-### Documents
+=== Documents
 
-[Release Notes](ReleaseNotes.md)
+link:ReleaseNotes.asciidoc[Release Notes]
 
-[Tutorial](Tutorial.md)
+link:Tutorial.asciidoc[Tutorial]
 
-[Manual](Manual.md)
+link:UserGuide.asciidoc[User Guide]
 
-[API Specification](http://masatokokubo.github.io/Lightsleep/javadoc/index.html)
+http://masatokokubo.github.io/Lightsleep/javadoc/index.html[API Specification]
 
-<a href="http://lightsleep.hatenablog.com/" target="_blank">BLOG @Hatena</a>
+http://lightsleep.hatenablog.com/[BLOG @Hatena]

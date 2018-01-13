@@ -1,19 +1,17 @@
-Lightsleep リリース･ノート
-===========
+= Lightsleep リリース･ノート
 
-[[English]](ReleaseNotes.md)
+link:ReleaseNotes.asciidoc[English]
 
-<div id="TOC"></div>
+[[TOC_]]
+=== 目次
 
-### 目次
+- <<ReleaseNote2.1.1,バージョン 2.1.1>>
+- <<ReleaseNote2.1.0,バージョン 2.1.0>>
+- <<ReleaseNote2.0.0,バージョン 2.0.0>>
 
-- [バージョン2.1.1](#ReleaseNotes2.1.1)
-- [バージョン2.1.0](#ReleaseNotes2.1.0)
-- [バージョン2.0.0](#ReleaseNotes2.0.0)
+[[ReleaseNote2.1.1]]
 
-<div id="ReleaseNotes2.1.1"></div>
-
-### バージョン2.1.1
+=== バージョン2.1.1
 
 1. バグ修正
     - [修正済] コネクション･サプライヤが`Jndi`の場合に常に`Standardデータベース･ハンドラが選択される。
@@ -21,9 +19,9 @@ Lightsleep リリース･ノート
 1. その他
     - ログメッセージの改善
 
-<div id="ReleaseNotes2.1.0"></div>
+[[ReleaseNote2.1.0]]
 
-### バージョン2.1.0
+=== バージョン2.1.0
 
 バージョン番号はマイナー･リリースですが、**仕様変更があります**。
 
@@ -68,11 +66,11 @@ Lightsleep リリース･ノート
 
 1. `org.lightsleep.database`パッケージの各クラスの`instance()`メソッドを**非推奨**にし、`instance`静的変数を**追加**しました。
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-<div id="ReleaseNotes2.0.0"></div>
+[[ReleaseNote2.0.0]]
 
-### バージョン2.0.0
+=== バージョン2.0.0
 
 1. `org.lightsleep.Sql`クラスの型パラメータとは異なるエンティティ型でSELECT SQLの結果を取得する以下のメソッドを**追加**しました。
     - public <R> Optional<R> selectAs(Class<R> resultClass)
@@ -118,6 +116,6 @@ Lightsleep リリース･ノート
 
 1. `org.lightsleep.helper.Accessor`クラスの`getField`, `getValue`, `setValue`メソッドでスローする例外を`IllegalArgumentException`から`MissingPropertyException`(新規追加)に**変更**にしました。**(仕様変更)**
 
-[【目次へ】](#TOC)
+<<TOC_,目次へ>>
 
-<div style="text-align:center; margin-top:20px"><i>&copy; 2016 Masato Kokubo</i></div>
+[gray]#_(C) 2016 Masato Kokubo_#
