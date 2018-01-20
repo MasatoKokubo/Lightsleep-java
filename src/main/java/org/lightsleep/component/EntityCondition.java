@@ -60,14 +60,8 @@ public class EntityCondition<K> implements Condition {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public <T> String toString(Sql<T> sql, List<Object> parameters) {
 	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
-////
-	// 2.1.0
-	//	String tableAlias = sql.tableAlias();
 		String tableAlias = Objects.requireNonNull(sql, "sql").tableAlias();
-	////
 		Accessor<K> accessor = entityInfo.accessor();
 
 		Condition[] condition = new Condition[] {Condition.EMPTY};
@@ -79,9 +73,6 @@ public class EntityCondition<K> implements Condition {
 				condition[0] = condition[0].and(columnName + "={}", accessor.getValue(entity, propertyName));
 			});
 
-	// 2.1.0
-	//	return condition[0].toString(sql, parameters);
 		return condition[0].toString(database, sql, parameters);
-	////
 	}
 }

@@ -36,8 +36,5 @@ public interface SqlComponent {
 	 *
 	 * @throws NullPointerException if <b>sql</b> or <b>parameters</b> is null
 	 */
-// 2.1.0
-//	<E> String toString(Sql<E> sql, List<Object> parameters);
 	<E> String toString(Database database, Sql<E> sql, List<Object> parameters);
-////
 }

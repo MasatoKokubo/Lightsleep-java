@@ -50,11 +50,6 @@ public class Utils {
 	}
 
 	// Class resources
-// 2.1.0
-//	private static final int maxLogStringLength    = Resource.getGlobal().getInt("maxLogStringLength"   , 200);
-//	private static final int maxLogByteArrayLength = Resource.getGlobal().getInt("maxLogByteArrayLength", 200);
-//	private static final int maxLogArrayLength     = Resource.getGlobal().getInt("maxLogArrayLength"    , 100);
-//	private static final int maxLogMapSize         = Resource.getGlobal().getInt("maxLogMapSize"        , 100);
 	private static int maxLogStringLength;
 	private static int maxLogByteArrayLength;
 	private static int maxLogArrayLength;

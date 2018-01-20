@@ -46,9 +46,7 @@ public class TomcatCP extends AbstractConnectionSupplier {
 	 * </p>
 	 */
 	public TomcatCP() {
-	// 2.1.0
 		this(Resource.getGlobal().getProperties(), props -> {});
-	////
 	}
 
 	/**
@@ -63,10 +61,7 @@ public class TomcatCP extends AbstractConnectionSupplier {
 	 * @since 1.5.0
 	 */
 	public TomcatCP(Consumer<Properties> modifier) {
-	// 2.1.0
-	//	super(modifier);
 		this(Resource.getGlobal().getProperties(), modifier);
-	////
 	}
 
 	/**
@@ -104,26 +99,14 @@ public class TomcatCP extends AbstractConnectionSupplier {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	protected DataSource getDataSource() {
 	public DataSource getDataSource() {
-////
 		try {
 			DataSource dataSource = new DataSourceFactory().createDataSource(jdbcProperties);
-		// 2.1.0
-		//	logger.debug(() -> "TomcatCP.getDataSource: dataSource = " + dataSource);
-		////
 			return dataSource;
 		}
 		catch (RuntimeException e) {throw e;}
 		catch (Exception e) {
-		// 2.1.0
-		//	logger.error("TomcatCP.getDataSource: " + e, e);
 			throw new RuntimeException("jdbcProperties: " + jdbcProperties, e);
-		////
 		}
-	// 2.1.0
-	//	return null;
-	////
 	}
 }

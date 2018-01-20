@@ -42,9 +42,7 @@ public class C3p0 extends AbstractConnectionSupplier {
 	 * </p>
 	 */
 	public C3p0() {
-	// 2.1.0
 		super(Resource.getGlobal().getProperties(), props -> {});
-	////
 	}
 
 	/**
@@ -61,10 +59,7 @@ public class C3p0 extends AbstractConnectionSupplier {
 	 * @since 1.5.0
 	 */
 	public C3p0(Consumer<Properties> modifier) {
-	// 2.1.0
-	//	super(modifier);
 		super(Resource.getGlobal().getProperties(), modifier);
-	////
 	}
 
 	/**
@@ -82,34 +77,14 @@ public class C3p0 extends AbstractConnectionSupplier {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	protected DataSource getDataSource() {
 	public DataSource getDataSource() {
-////
-	// 2.1.0
-	//	// url
-	//	String url = properties.getProperty("url");
-	//	if (url == null)
-	//		logger.error("C3p0.<init>: property url == null");
-	////
 		try {
-		// 2.1.0
-		//	DataSource unpooledDataSource = DataSources.unpooledDataSource(url, properties);
-		//	logger.debug(() -> "C3p0.getDataSource: unpooledDataSource = " + unpooledDataSource);
 			DataSource unpooledDataSource = DataSources.unpooledDataSource(jdbcProperties.getProperty("url"), jdbcProperties);
 			DataSource dataSource = DataSources.pooledDataSource(unpooledDataSource);
-		// 2.1.0
-		//	logger.debug(() -> "C3p0.getDataSource: dataSource = " + dataSource);
-		////
 			return dataSource;
 		}
 		catch (SQLException e) {
-		// 2.1.0
-		//	logger.error("C3p0.<init>: " + e, e);
 			throw new RuntimeException("jdbcProperties: " + jdbcProperties, e);
 		}
-	// 2.1.0
-	//	return null;
-	////
 	}
 }

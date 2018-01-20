@@ -41,8 +41,5 @@ public interface PreInsert {
 	 *
 	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-// 2.1.0
-//	int preInsert(Connection conn);
 	int preInsert(ConnectionWrapper conn);
-////
 }

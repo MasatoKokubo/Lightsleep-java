@@ -31,14 +31,10 @@ import org.lightsleep.logger.LoggerFactory;
  * @author Masato Kokubo
  */
 public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
-// 2.1.0
-	// Class resources
 	private static final Resource resource = new Resource(AbstractConnectionSupplier.class);
 	protected static final String messageUrlNotFound       = resource.getString("messageUrlNotFound"); // Used in ConnectionSupplier
 	protected static final String messageMultipleUrlsFound = resource.getString("messageMultipleUrlsFound"); // Used in ConnectionSupplier
-// 2.1.1
 	private static final String messageMultipleUrlsDefined = resource.getString("messageMultipleUrlsDefined");
-////
 
 	/** The logger */
 	protected static final Logger logger = LoggerFactory.getLogger(AbstractConnectionSupplier.class);
@@ -53,7 +49,6 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 		isolationLevelsMap.put(Connection.TRANSACTION_SERIALIZABLE    , "serializable");
 	}
 
-// 2.1.0
 	/** The map of key: url string and value: ConnectionSupplier */
 	protected static final Map<String, ConnectionSupplier> supplierMap = new LinkedHashMap<>();
 	static {
@@ -126,10 +121,7 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 						}
 						ConnectionSupplier beforeUrl = supplierMap.put(url, supplier);
 						if (beforeUrl != null)
-						// 2.1.1
-						//	logger.warn("ConnectionSupplier.initClass: Multiple same urls are defined. url: \"" + url + '"');
 							logger.warn(MessageFormat.format(messageMultipleUrlsDefined, url));
-						////
 					}
 					catch (Exception e) {
 						logger.error("ConnectionSupplier.initClass: url: \"" + url + "\", exception: " + e);
@@ -140,49 +132,15 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 			throw new RuntimeException(e);
 		}
 	}
-////
 
 	/** The properties */
-// 2.1.0
-//	protected final Properties properties = Resource.globalResource.getProperties();
 	protected Properties jdbcProperties;
-////
 
 	// The data source
 	private DataSource dataSource;
 
 	// The database handler. @since 2.1.0
-// 2.1.1
-//	private Database database;
 	private Database database = Standard.instance;
-////
-
-// 2.1.0
-//	/**
-//	 * Constructs a new <b>AbstractConnectionSupplier</b>.
-//	 * Use values specified in the lightsleep.properties file as the connection information.
-//	 */
-//	public AbstractConnectionSupplier() {
-//		this(modifier -> {});
-//	}
-//
-//	/**
-//	 * Constructs a new <b>AbstractConnectionSupplier</b>.
-//	 * Use values specified in the lightsleep.properties file as the connection information.
-//	 *
-//	 * @param modifier a consumer to modify the properties
-//	 *
-//	 * @since 1.5.0
-//	 */
-//	public AbstractConnectionSupplier(Consumer<Properties> modifier) {
-//		properties.remove(Logger.class.getSimpleName());
-//		properties.remove(Database.class.getSimpleName());
-//		properties.remove(ConnectionSupplier.class.getSimpleName());
-//		Objects.requireNonNull(modifier, "modifier").accept(properties);
-//	
-//		logger.debug(() -> getClass().getSimpleName() + ".<init>: properties: " + properties);
-//	}
-////
 
 	/**
 	 * Constructs a new <b>AbstractConnectionSupplier</b>.
@@ -201,35 +159,19 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 
 		logger.debug(() -> getClass().getSimpleName() + ".<init>: jdbcProperties: " + jdbcProperties);
 
-	// 2.1.1
 		if (!(this instanceof Jndi)) {
 			// not Jndi
-	////
 			String url = jdbcProperties.getProperty("url");
 			try {
 				database = Database.getInstance(url);
 			}
 			catch (IllegalArgumentException e) {
 				logger.warn(e.toString());
-			// 2.1.1
-			//	database = Standard.instance;
-			////
 			}
 			logger.info(() -> getClass().getSimpleName()
 				+ ".<init>: url: \"" + url + "\", database handler: " + database.getClass().getSimpleName());
-	// 2.1.1
 		}
-	////
 	}
-
-// 2.1.0
-//	/**
-//	 * Returns a data source.
-//	 *
-//	 * @return a data source
-//	 */
-//	protected abstract DataSource getDataSource();
-////
 
 	/**
 	 * Returns a connection wrapper.
@@ -239,27 +181,19 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown
 	 */
 	@Override
-// 2.1.0
-//	public Connection get() {
 	public ConnectionWrapper get() {
-////
 		try {
-		// 2.1.1
 			boolean first = false;
-		////
 			if (dataSource == null) {
 				synchronized (this) {
 					if (dataSource == null) {
 						dataSource = getDataSource();
-					// 2.1.1
 						first = true;
-					////
 					}
 				}
 			}
 
 			Connection connection = dataSource.getConnection();
-		// 2.1.1
 			if (first) {
 				// first time and Jndi
 				DatabaseMetaData metaData = connection.getMetaData();
@@ -283,7 +217,6 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 				if (logger.isInfoEnabled())
 					logger.info("DBMS: " + metaData.getDatabaseProductName() + ' ' + metaData.getDatabaseProductVersion());
 			}
-		////
 
 			boolean beforeAutoCommit = connection.getAutoCommit();
 			int transactionIsolation = connection.getTransactionIsolation();
@@ -297,10 +230,7 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 				+ isolationLevelsMap.getOrDefault(transactionIsolation, "unknow")
 			);
 
-		// 2.1.0
-		//	return connection;
 			return new ConnectionWrapper(connection, database);
-		////
 		}
 		catch (SQLException e) {
 			throw new RuntimeSQLException(getUrl(), e);

@@ -115,13 +115,10 @@ public class Expression implements Condition {
 	 * @throws MissingPropertyException if a property that does not exist in the expression is referenced
 	 */
 	@Override
-// 2.1.0
-//	public <E> String toString(Sql<E> sql, List<Object> parameters) {
 	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
 		Objects.requireNonNull(database, "database");
 		Objects.requireNonNull(sql, "sql");
 		Objects.requireNonNull(parameters, "parameters");
-////
 		EntityInfo<E> entityInfo = sql.entityInfo();
 		E entity = sql.entity();
 		StringBuilder buff = new StringBuilder(content.length());
@@ -183,19 +180,13 @@ public class Expression implements Condition {
 							ColumnInfo columnInfo = entityInfo.getColumnInfo(propertyName);
 							Class<?> columnType = columnInfo.columnType();
 							if (columnType != null)
-							// 2.1.0
-							//	value = Sql.getDatabase().convert(value, columnType);
 								value = database.convert(value, columnType);
-							////
 						}
 
 						if (value == null)
 							buff.append("NULL");
 						else {
-						// 2.1.0
-						//	SqlString sqlString = Sql.getDatabase().convert(value, SqlString.class);
 							SqlString sqlString = database.convert(value, SqlString.class);
-						////
 							buff.append(sqlString.toString());
 							parameters.addAll(Arrays.asList(sqlString.parameters()));
 						}

@@ -97,10 +97,7 @@ public interface Composite {
 	 *
 	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-// 2.1.0
-//	void postSelect(Connection conn);
 	void postSelect(ConnectionWrapper conn);
-////
 
 	/**
 	 * <b>postInsert</b> is executed after a row has been inserted.
@@ -110,10 +107,7 @@ public interface Composite {
 	 *
 	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-// 2.1.0
-//	int postInsert(Connection conn);
 	int postInsert(ConnectionWrapper conn);
-////
 
 	/**
 	 * <b>postUpdate</b> is executed after a row has been updated.
@@ -123,10 +117,7 @@ public interface Composite {
 	 *
 	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-// 2.1.0
-//	int postUpdate(Connection conn);
 	int postUpdate(ConnectionWrapper conn);
-////
 
 	/**
 	 * <b>postDelete</b> is executed after a row has been deleted.
@@ -136,8 +127,5 @@ public interface Composite {
 	 *
 	 * @throws NullPointerException if <b>conn</b> is null
 	 */
-// 2.1.0
-//	int postDelete(Connection conn);
 	int postDelete(ConnectionWrapper conn);
-////
 }

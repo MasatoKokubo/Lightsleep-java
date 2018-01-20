@@ -46,10 +46,7 @@ public class SQLServer extends Standard {
 	 *
 	 * @since 2.1.0
 	 */
-// 2.1.0
-//	private static final Database instance = new SQLServer();
 	public static final SQLServer instance = new SQLServer();
-////
 
 	/**
 	 * Returns the only instance of this class.
@@ -60,9 +57,7 @@ public class SQLServer extends Standard {
 	 *
 	 * @return the only instance of this class
 	 */
-// 2.1.0
 	@Deprecated
-////
 	public static Database instance() {
 		return instance;
 	}

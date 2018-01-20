@@ -109,10 +109,7 @@ public class Standard implements Database {
 	 * (if undefined, 128)
 	 * </p>
 	 */
-// 2.1.0
-//	public static final int maxStringLiteralLength = Resource.getGlobal().getInt("maxStringLiteralLength", 128);
 	public final int maxStringLiteralLength = Resource.getGlobal().getInt("maxStringLiteralLength", 128);
-////
 
 	/**
 	 * Maximum length of binary literal when generates SQL.
@@ -123,10 +120,7 @@ public class Standard implements Database {
 	 * (if undefined, 128)
 	 * </p>
 	 */
-// 2.1.0
-//	public static final int maxBinaryLiteralLength = Resource.getGlobal().getInt("maxBinaryLiteralLength", 128);
 	public final int maxBinaryLiteralLength = Resource.getGlobal().getInt("maxBinaryLiteralLength", 128);
-////
 
 	/**
 	 * <b>TypeConverter</b> object to convert
@@ -140,10 +134,7 @@ public class Standard implements Database {
 	 *
 	 * @since 2.1.0
 	 */
-// 2.1.0
-//	private static final Database instance = new Standard();
 	public static final Standard instance = new Standard();
-////
 
 	/**
 	 * Returns the only instance of this class.
@@ -154,9 +145,7 @@ public class Standard implements Database {
 	 *
 	 * @return the only instance of this class
 	 */
-// 2.1.0
 	@Deprecated
-////
 	public static Database instance() {
 		return instance;
 	}
@@ -656,10 +645,7 @@ public class Standard implements Database {
 
 					} else {
 						// First expression
-					// 2.1.0
-					//	buff.append(expression.toString(sql, parameters));
 						buff.append(expression.toString(this, sql, parameters));
-					////
 
 						// column alias
 						buff.append(" AS ").append(columnAlias);
@@ -850,10 +836,7 @@ public class Standard implements Database {
 
 			// ON ...
 			if (!joinInfo.on().isEmpty())
-			// 2.1.0
-			//	buff.append(" ON ").append(joinInfo.on().toString(sql, parameters));
 				buff.append(" ON ").append(joinInfo.on().toString(this, sql, parameters));
-			////
 		});
 	}
 
@@ -897,10 +880,7 @@ public class Standard implements Database {
 					expression = new Expression("{#" + propertyName + "}");
 
 				buff.append(delimiter[0])
-				// 2.1.0
-				//	.append(expression.toString(sql, parameters));
 					.append(expression.toString(this, sql, parameters));
-				////
 				delimiter[0] = ", ";
 			});
 		buff.append(")");
@@ -940,10 +920,7 @@ public class Standard implements Database {
 				buff.append(delimiter[0])
 					.append(columnName)
 					.append("=")
-				// 2.1.0
-				//	.append(expression.toString(sql, parameters));
 					.append(expression.toString(this, sql, parameters));
-				////
 				delimiter[0] = ", ";
 			});
 	}
@@ -960,10 +937,7 @@ public class Standard implements Database {
 	 */
 	protected <E> void appendWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (sql.getWhere() != Condition.ALL)
-		// 2.1.0
-		//	buff.append(" WHERE ").append(sql.getWhere().toString(sql, parameters));
 			buff.append(" WHERE ").append(sql.getWhere().toString(this, sql, parameters));
-		////
 	}
 
 	/**
@@ -978,10 +952,7 @@ public class Standard implements Database {
 	 */
 	protected <E> void appendGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (!sql.getGroupBy().isEmpty())
-		// 2.1.0
-		//	buff.append(' ').append(sql.getGroupBy().toString(sql, parameters));
 			buff.append(' ').append(sql.getGroupBy().toString(this, sql, parameters));
-		////
 	}
 
 	/**
@@ -996,10 +967,7 @@ public class Standard implements Database {
 	 */
 	protected <E> void appendHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (!sql.getHaving().isEmpty())
-		// 2.1.0
-		//	buff.append(" HAVING ").append(sql.getHaving().toString(sql, parameters));
 			buff.append(" HAVING ").append(sql.getHaving().toString(this, sql, parameters));
-		////
 	}
 
 	/**
@@ -1014,10 +982,7 @@ public class Standard implements Database {
 	 */
 	protected <E> void appendOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
 		if (!sql.getOrderBy().isEmpty())
-		// 2.1.0
-		//	buff.append(' ').append(sql.getOrderBy().toString(sql, parameters));
 			buff.append(' ').append(sql.getOrderBy().toString(this, sql, parameters));
-		////
 	}
 
 	/**

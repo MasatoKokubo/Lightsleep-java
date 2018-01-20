@@ -69,10 +69,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 		 * {@inheritDoc}
 		 */
 		@Override
-	// 2.1.0
-	//	public <E> String toString(Sql<E> sql, List<Object> parameters) {
 		public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
-	////
 			return super.toString(database, sql, parameters) + order;
 		}
 
@@ -188,19 +185,13 @@ public class OrderBy implements SqlComponent, Cloneable {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public <E> String toString(Sql<E> sql, List<Object> parameters) {
 	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
-////
 		StringBuilder buff = new StringBuilder();
 		if (elements.size() > 0) {
 			buff.append("ORDER BY ");
 			String[] delimiter = new String[] {""};
 			elements.forEach(element -> {
-			// 2.1.0
-			//	buff.append(delimiter[0]).append(element.toString(sql, parameters));
 				buff.append(delimiter[0]).append(element.toString(database, sql, parameters));
-			////
 				delimiter[0] = ", ";
 			});
 		}

@@ -50,9 +50,7 @@ public class HikariCP extends AbstractConnectionSupplier {
 	 * </p>
 	 */
 	public HikariCP() {
-	// 2.1.0
 		this(Resource.getGlobal().getProperties(), props -> {});
-	////
 	}
 
 	/**
@@ -67,10 +65,7 @@ public class HikariCP extends AbstractConnectionSupplier {
 	 * @since 1.5.0
 	 */
 	public HikariCP(Consumer<Properties> modifier) {
-	// 2.1.0
-	//	super(modifier);
 		this(Resource.getGlobal().getProperties(), modifier);
-	////
 	}
 
 	/**
@@ -119,10 +114,7 @@ public class HikariCP extends AbstractConnectionSupplier {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	protected DataSource getDataSource() {
 	public DataSource getDataSource() {
-////
 		Properties properties = new Properties();
 		try {
 			// Gets HikariCP properties to the properties2.
@@ -136,20 +128,11 @@ public class HikariCP extends AbstractConnectionSupplier {
 
 			HikariConfig config = new HikariConfig(properties);
 			DataSource dataSource = new HikariDataSource(config);
-		// 2.1.0
-		//	logger.debug(() -> "HikariCP.getDataSource: dataSource = " + dataSource);
-		////
 			return dataSource;
 		}
 		catch (RuntimeException e) {throw e;}
 		catch (Exception e) {
-		// 2.1.0
-		//	logger.error("HikariCP.getDataSource: " + e, e);
 			throw new RuntimeException("properties: " + properties, e);
-		////
 		}
-	// 2.1.0
-	//	return null;
-	////
 	}
 }

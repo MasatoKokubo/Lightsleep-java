@@ -74,8 +74,6 @@ public class Resource {
 	};
 
 	/** The global <b>Resource</b> */
-// 2.1.0
-//	public static final Resource globalResource = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
 	private static Resource global;
 	static {
 		initClass();
@@ -84,7 +82,6 @@ public class Resource {
 	private static void initClass() {
 		global = new Resource(System.getProperty("lightsleep.resource", "lightsleep"));
 	}
-////
 
 	/**
 	 * Returns the <b>Resource</b> created based on lightsleep.properties.

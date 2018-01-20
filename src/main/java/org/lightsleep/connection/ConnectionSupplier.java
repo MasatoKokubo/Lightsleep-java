@@ -23,10 +23,7 @@ import org.lightsleep.database.Database;
  * @since 1.0.0
  * @author Masato Kokubo
  */
-// 2.1.0
-//public interface ConnectionSupplier extends Supplier<Connection> {
 public interface ConnectionSupplier extends Supplier<ConnectionWrapper> {
-////
 	/**
 	 * Returns the database handler related to this object.
 	 *

@@ -106,20 +106,13 @@ public abstract class LogicalCondition implements Condition {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public <E> String toString(Sql<E> sql, List<Object> parameters) {
 	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
-////
 		return String.join(operator.sql(),
 			conditions.stream()
 				.map(condition ->
 					operator == Operator.AND && condition instanceof Or
-				// 2.1.0
-				//	? '(' + condition.toString(sql, parameters) + ')'
-				//	: condition.toString(sql, parameters)
 					? '(' + condition.toString(database, sql, parameters) + ')'
 					: condition.toString(database, sql, parameters)
-				////
 				)
 				.toArray(String[]::new)
 		);

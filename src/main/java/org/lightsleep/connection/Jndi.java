@@ -29,11 +29,6 @@ import org.lightsleep.helper.Resource;
  * @author Masato Kokubo
  */
 public class Jndi extends AbstractConnectionSupplier {
-	// The data source name
-// 2.1.0
-//	private String dataSourceName;
-////
-
 	/**
 	 * Constructs a new <b>Jndi</b>.
 	 *
@@ -44,9 +39,7 @@ public class Jndi extends AbstractConnectionSupplier {
 	 * @see #Jndi(java.lang.String)
 	 */
 	public Jndi() {
-	// 2.1.0
 		this(Resource.getGlobal().getProperties(), props -> {});
-	////
 	}
 
 	/**
@@ -61,12 +54,7 @@ public class Jndi extends AbstractConnectionSupplier {
 	 * @param dataSourceName ther data source name (null permit)
 	 */
 	public Jndi(String dataSourceName) {
-	// 2.1.0
-	//	logger.debug(() -> "Jndi.<init>: dataSourceName=" + dataSourceName);
-	//
-	//	this.dataSourceName = dataSourceName;
 		this(Resource.getGlobal().getProperties(), properties -> properties.put("dataSource", dataSourceName));
-	////
 	}
 
 	/**
@@ -94,13 +82,6 @@ public class Jndi extends AbstractConnectionSupplier {
 			String url = props.getProperty("url");
 			String dataSource = props.getProperty("dataSource");
 			if (url != null && dataSource == null) {
-			// 2.1.1
-			//	if (url.startsWith(":")) {
-			//		int index = url.indexOf(':', 1);
-			//		if (index >= 1)
-			//			url = url.substring(index + 1);
-			//	}
-			////
 				props.setProperty("dataSource", url);
 				logger.info("Jndi.<init>: properties.dataSource <- \"" + url + '"');
 			}
@@ -111,44 +92,23 @@ public class Jndi extends AbstractConnectionSupplier {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	protected DataSource getDataSource() {
 	public DataSource getDataSource() {
 		String lookupStr = "?";
-////
 		try {
-		// 2.1.0
-		//	if (dataSourceName == null) {
-		//		// If the data source name is not specified, gets it from properties.
-		//		dataSourceName = Resource.globalResource.getString("dataSource");
 				String dataSourceName = jdbcProperties.getProperty("dataSource");
-		////
 				if (dataSourceName == null) {
 					logger.error("Jndi.getDataSource: jdbcProperties dataSource: " + dataSourceName);
 					return null;
 				}
-		// 2.1.0
-		//	}
-		////
-
-		// 2.1.0
-		//	logger.debug(() -> "Jndi.getDataSource: property dataSource: " + dataSourceName);
-		////
 
 			// Gets a new Context
 			Context initContext = new InitialContext();
 
 			// Creates a string for lookup
-		// 2.1.0
-		//	String lookupStr = "java:/comp/env/" + dataSourceName;
 			lookupStr = dataSourceName.startsWith("jdbc/")
-			// 2.1.1
-			//	? "java:/comp/env/" + dataSourceName
-			//	: "java:/comp/env/jdbc/" + dataSourceName;
 				? "java:comp/env/" + dataSourceName
 				: "java:comp/env/jdbc/" + dataSourceName;
-			////
-	////
+
 			if (logger.isDebugEnabled())
 				logger.debug("Jndi.lookup: \"" + lookupStr + '"');
 

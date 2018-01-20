@@ -44,20 +44,15 @@ import org.lightsleep.helper.Resource;
 @SuppressWarnings("unchecked")
 public class LoggerFactory {
 	// The logger class
-// 2.1.0
-//	public static Class<? extends Logger> loggerClass;
 	private static Class<? extends Logger> loggerClass;
-////
 
 	// The logger map
 	private static final Map<String, Logger> loggerMap = new LinkedHashMap<>();
 
 	static {
-// 2.1.0
 		initClass();
 	}
 	private static void initClass() {
-////
 		String loggerName = null;
 		Logger logger = null;
 
@@ -86,10 +81,8 @@ public class LoggerFactory {
 			}
 		}
 
-	// 2.1.0
 		String version = new Resource("org.lightsleep.lightsleep-version").getString("version");
 		logger.info("Lightsleep " + version + " / logger: " + loggerClass.getName());
-	////
 	}
 
 	// Returns the logger

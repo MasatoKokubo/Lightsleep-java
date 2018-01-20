@@ -34,10 +34,7 @@ public class DB2 extends Standard {
 	 *
 	 * @since 2.1.0
 	 */
-// 2.1.0
-//	private static final Database instance = new DB2();
 	public static final DB2 instance = new DB2();
-////
 
 	/**
 	 * Returns the only instance of this class.
@@ -48,9 +45,7 @@ public class DB2 extends Standard {
 	 *
 	 * @return the only instance of this class
 	 */
-// 2.1.0
 	@Deprecated
-////
 	public static Database instance() {
 		return instance;
 	}

@@ -52,22 +52,13 @@ public class SubqueryCondition<SE> implements Condition {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public <E> String toString(Sql<E> sql, List<Object> parameters) {
 	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
 		Objects.requireNonNull(database, "database");
-////
 		StringBuilder buff = new StringBuilder();
 
-	// 2.1.0
-	//	buff.append(expression.toString(sql, parameters));
 		buff.append(expression.toString(database, sql, parameters));
-	////
 		buff.append(" (")
-		// 2.1.0
-		//	.append(Sql.getDatabase().subSelectSql(subSql, () -> "*", parameters))
 			.append(database.subSelectSql(subSql, () -> "*", parameters))
-		////
 			.append(')');
 		return buff.toString();
 	}

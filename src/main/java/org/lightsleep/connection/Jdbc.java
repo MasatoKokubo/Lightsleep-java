@@ -46,9 +46,7 @@ public class Jdbc extends AbstractConnectionSupplier {
 	 * </p>
 	 */
 	public Jdbc() {
-	// 2.1.0
 		super(Resource.getGlobal().getProperties(), props -> {});
-	////
 	}
 
 	/**
@@ -63,10 +61,7 @@ public class Jdbc extends AbstractConnectionSupplier {
 	 * @since 1.5.0
 	 */
 	public Jdbc(Consumer<Properties> modifier) {
-	// 2.1.0
-	//	super(modifier);
 		super(Resource.getGlobal().getProperties(), modifier);
-	////
 	}
 
 	/**
@@ -84,10 +79,7 @@ public class Jdbc extends AbstractConnectionSupplier {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	protected DataSource getDataSource() {
 	public DataSource getDataSource() {
-////
 		return new DataSource() {
 			@Override
 			public PrintWriter getLogWriter() throws SQLException {

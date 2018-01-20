@@ -46,9 +46,7 @@ public class Dbcp extends AbstractConnectionSupplier {
 	 * </p>
 	 */
 	public Dbcp() {
-	// 2.1.0
 		this(Resource.getGlobal().getProperties(), props -> {});
-	////
 	}
 
 	/**
@@ -63,10 +61,7 @@ public class Dbcp extends AbstractConnectionSupplier {
 	 * @since 1.5.0
 	 */
 	public Dbcp(Consumer<Properties> modifier) {
-	// 2.1.0
-	//	super(modifier);
 		this(Resource.getGlobal().getProperties(), modifier);
-	////
 	}
 
 	/**
@@ -104,25 +99,14 @@ public class Dbcp extends AbstractConnectionSupplier {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	protected DataSource getDataSource() {
 	public DataSource getDataSource() {
-////
 		try {
 			DataSource dataSource = BasicDataSourceFactory.createDataSource(jdbcProperties);
-		// 2.1.0
-		//	logger.debug(() -> "Dbcp.getDataSource: dataSource = " + dataSource);
-		////
 			return dataSource;
 		}
 		catch (RuntimeException e) {throw e;}
 		catch (Exception e) {
-		// 2.1.0
-		//	logger.error("Dbcp.getDataSource:", e);
 			throw new RuntimeException("jdbcProperties: " + jdbcProperties, e);
 		}
-	// 2.1.0
-	//	return null;
-	////
 	}
 }

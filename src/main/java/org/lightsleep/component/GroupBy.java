@@ -76,19 +76,13 @@ public class GroupBy implements SqlComponent, Cloneable {
 	 * {@inheritDoc}
 	 */
 	@Override
-// 2.1.0
-//	public <E> String toString(Database database, Sql<E> sql,, List<Object> parameters) {
 	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
-////
 		StringBuilder buff = new StringBuilder();
 		if (elements.size() > 0) {
 			buff.append("GROUP BY ");
 			String[] delimiter = new String[] {""};
 			elements.forEach(element -> {
-			// 2.1.0
-			//	buff.append(delimiter[0]).append(element.toString(sql, parameters));
 				buff.append(delimiter[0]).append(element.toString(database, sql, parameters));
-			////
 				delimiter[0] = ", ";
 			});
 		}
