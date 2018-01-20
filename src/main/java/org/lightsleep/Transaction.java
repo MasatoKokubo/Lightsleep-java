@@ -50,20 +50,6 @@ import org.lightsleep.connection.ConnectionWrapper;
  */
 @FunctionalInterface
 public interface Transaction {
-// 2.1.0
-//	// The logger
-//	static final Logger logger = LoggerFactory.getLogger(Transaction.class);
-//
-//	// Class resources
-//	static final Resource resource = new Resource(Transaction.class);
-//	static final String messageGet      = resource.getString("messageGet");
-//	static final String messageClose    = resource.getString("messageClose");
-//	static final String messageStart    = resource.getString("messageStart");
-//	static final String messageEnd      = resource.getString("messageEnd");
-//	static final String messageCommit   = resource.getString("messageCommit");
-//	static final String messageRollback = resource.getString("messageRollback");
-////
-
 	/**
 	 * Describe the body of the transaction in this method.
 	 *
@@ -71,10 +57,7 @@ public interface Transaction {
 	 *
 	 * @throws Exception if an error occurred
 	 */
-// 2.1.0
-//	void executeBody(Connection connection) throws Exception;
 	void executeBody(ConnectionWrapper connection) throws Exception;
-////
 
 	/**
 	 * Executes a transaction in the following order.
@@ -100,10 +83,7 @@ public interface Transaction {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
 	static void execute(Transaction transaction) {
-	// 2.1.0
-	//	execute(Sql.getConnectionSupplier(), Objects.requireNonNull(transaction, "transaction"));
 		execute(ConnectionSupplier.find(), transaction);
-	////
 	}
 
 	/**
@@ -136,12 +116,7 @@ public interface Transaction {
 		Objects.requireNonNull(connectionSupplier, "connectionSupplier");
 		Objects.requireNonNull(transaction, "transaction");
 
-	// 2.1.0
-	//	Connection connection = null;
-	// 2.1.1
-	//	String logHeader = connectionSupplier.toString() + ": ";
 		ConnectionWrapper connection = null;
-	////
 		boolean committed = false;
 		try {
 			// Gets a connection
@@ -154,29 +129,12 @@ public interface Transaction {
 				DecimalFormat timeFormat = new DecimalFormat();
 				timeFormat.setMinimumFractionDigits(0);
 				timeFormat.setMaximumFractionDigits(3);
-			// 2.1.0
-			//	logger.debug(
-			//		Sql.getDatabase().getClass().getSimpleName()
-			//		+ "/" + connectionSupplier.getClass().getSimpleName()
-			//		+ ": " + MessageFormat.format(messageGet, timeFormat.format(time))
-			//	);
-			// 2.1.1
-			//	Sql.logger.debug(logHeader + MessageFormat.format(Sql.messageGet, timeFormat.format(time)));
 				String logHeader = connectionSupplier.toString() + ": ";
 				Sql.logger.debug(logHeader
 					+ MessageFormat.format(Sql.messageGet, timeFormat.format(time), connectionSupplier.getUrl()));
-			////
 
-			// 2.1.0
-			// Logging of the transaction start
 				Sql.logger.debug(logHeader + Sql.messageStart);
-			////
 			}
-
-		// 2.1.0
-		//	// Logging of the transaction start
-		//	logger.debug(() -> Sql.getDatabase().getClass().getSimpleName() + ": " + messageStart);
-		////
 
 			// Execute the transaction body
 			transaction.executeBody(connection);
@@ -187,28 +145,6 @@ public interface Transaction {
 
 			//  Logging of the transaction end
 			Sql.logger.debug(Sql.messageEnd);
-
-		// 2.1.1
-		//	// Closes the connection
-		//	long beforeCloseTime = System.nanoTime(); // The time before connectionSupplier.get
-		//	connection.close();
-		//	long afterCloseTime = System.nanoTime(); // The time after connectionSupplier.get
-		//
-		//	if (Sql.logger.isDebugEnabled()) {
-		//		double time = (afterCloseTime - beforeCloseTime) / 1_000_000.0;
-		//		DecimalFormat timeFormat = new DecimalFormat();
-		//		timeFormat.setMinimumFractionDigits(0);
-		//		timeFormat.setMaximumFractionDigits(3);
-		//	// 2.1.0
-		//	//	logger.debug(
-		//	//		Sql.getDatabase().getClass().getSimpleName()
-		//	//		+ "/" + connectionSupplier.getClass().getSimpleName()
-		//	//		+ ": " + MessageFormat.format(messageClose, timeFormat.format(time))
-		//	//	);
-		//		Sql.logger.debug(logHeader + MessageFormat.format(Sql.messageClose, timeFormat.format(time)));
-		//	////
-		//	}
-		////
 		}
 		catch (Throwable e) {
 			Sql.logger.error(e.toString(), e);
@@ -219,29 +155,13 @@ public interface Transaction {
 						rollback(connection);
 
 						//  Logging of the transaction end
-					// 2.1.0
-					//	logger.debug(() -> Sql.getDatabase().getClass().getSimpleName() + ": " + messageEnd);
 						if (Sql.logger.isDebugEnabled())
-						// 2.1.1
-						//	Sql.logger.debug(logHeader + Sql.messageEnd);
 							Sql.logger.debug(connectionSupplier.toString() + ": " + Sql.messageEnd);
-						////
-					////
 					}
 					catch (Throwable e2) {
 						Sql.logger.error(e2.toString(), e2);
 					}
 				}
-
-			// 2.1.1
-			//	// Closes the connection
-			//	try {
-			//		connection.close();
-			//	}
-			//	catch (Throwable e2) {
-			//		Sql.logger.error(e2.toString(), e2);
-			//	}
-			////
 			}
 
 			if (e instanceof Error) throw (Error)e;
@@ -249,7 +169,6 @@ public interface Transaction {
 			if (e instanceof SQLException) throw new RuntimeSQLException(e);
 			throw new RuntimeException(e);
 		}
-	// 2.1.1
 		finally {
 			if (connection != null) {
 				// Closes the connection
@@ -272,7 +191,6 @@ public interface Transaction {
 				}
 			}
 		}
-	////
 	}
 
 	/**
@@ -282,10 +200,7 @@ public interface Transaction {
 	 *
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
-// 2.1.0
-//	static void commit(Connection connection) {
 	static void commit(ConnectionWrapper connection) {
-////
 		Objects.requireNonNull(connection, "connection");
 
 		try {
@@ -300,11 +215,8 @@ public interface Transaction {
 					DecimalFormat timeFormat = new DecimalFormat();
 					timeFormat.setMinimumFractionDigits(0);
 					timeFormat.setMaximumFractionDigits(3);
-				// 2.1.0
-				//	logger.debug(Sql.getDatabase().getClass().getSimpleName() + ": " + MessageFormat.format(messageCommit, timeFormat.format(time)));
 					Sql.logger.debug(connection.getDatabase().getClass().getSimpleName()
 						+ ": " + MessageFormat.format(Sql.messageCommit, timeFormat.format(time)));
-				////
 				}
 			}
 		}
@@ -320,10 +232,7 @@ public interface Transaction {
 	 *
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
-// 2.1.0
-//	static void rollback(Connection connection) {
 	static void rollback(ConnectionWrapper connection) {
-////
 		Objects.requireNonNull(connection, "connection");
 		try {
 			if (!connection.getAutoCommit()) {
@@ -337,11 +246,8 @@ public interface Transaction {
 					DecimalFormat timeFormat = new DecimalFormat();
 					timeFormat.setMinimumFractionDigits(0);
 					timeFormat.setMaximumFractionDigits(3);
-				// 2.1.0
-				//	logger.debug(Sql.getDatabase().getClass().getSimpleName() + ": " + MessageFormat.format(messageRollback, timeFormat.format(time)));
 					Sql.logger.debug(connection.getDatabase().getClass().getSimpleName()
 						+ ": " + MessageFormat.format(Sql.messageRollback, timeFormat.format(time)));
-				////
 				}
 			}
 		}
