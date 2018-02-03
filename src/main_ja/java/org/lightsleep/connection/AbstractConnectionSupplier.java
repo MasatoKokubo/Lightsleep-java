@@ -18,34 +18,53 @@ import org.lightsleep.logger.Logger;
  * @author Masato Kokubo
  */
 public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
+	/**
+	 * {@value}
+	 * @since 2.2.0
+	 */
+	protected static final String URL = "url";
+
+	/**
+	 * {@value}
+	 * @since 2.2.0
+	 */
+	protected static final String URLS = "urls";
+
+	/**
+	 * {@value}
+	 * @since 2.2.0
+	 */
+	protected static final String JDBC_URL = "jdbcUrl";
+
+	/**
+	 * {@value}
+	 * @since 2.2.0
+	 */
+	protected static final String DATA_SOURCE = "dataSource";
+
+	/**
+	 * {@value}
+	 * @since 2.2.0
+	 */
+	protected static final String DATA_SOURCES = "dataSources";
+
+	/**
+	 * {@value}
+	 * @since 2.2.0
+	 */
+	protected static final String USER = "user";
+
+	/**
+	 * {@value}
+	 * @since 2.2.0
+	 */
+	protected static final String USERNAME = "username";
+
 	/** ロガー */
 	protected static final Logger logger = null;
 
 	/** キー: url 文字列、値: ConnectionSupplier のマップ */
 	protected static final Map<String, ConnectionSupplier> supplierMap = null;
-
-	/** プロパティ */
-	protected Properties properties = null;
-
-// 2.1.0
-//	/**
-//	 * <b>AbstractConnectionSupplier</b>を構築します。
-//	 * lightsleep.propertiesファイルの設定値を接続情報として使用します。
-//	 */
-//	public AbstractConnectionSupplier() {
-//	}
-//
-//	/**
-//	 * <b>AbstractConnectionSupplier</b>を構築します。
-//	 * lightsleep.propertiesファイルの設定値を接続情報として使用します。
-//	 *
-//	 * @param modifier propertiesを変更するコンシューマー
-//	 *
-//	 * @since 1.5.0
-//	 */
-//	public AbstractConnectionSupplier(Consumer<Properties> modifier) {
-//	}
-////
 
 	/**
 	 * <b>AbstractConnectionSupplier</b>を構築します。
@@ -57,15 +76,6 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 */
 	protected AbstractConnectionSupplier(Properties properties, Consumer<Properties> modifier) {
 	}
-
-// 2.1.0
-//	/**
-//	 * データソースを返します。
-//	 *
-//	 * @return データソース
-//	 */
-//	protected abstract DataSource getDataSource();
-////
 
 	/**
 	 * コネクション･ラッパーを返します。

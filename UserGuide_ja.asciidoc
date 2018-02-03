@@ -668,18 +668,33 @@ lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイ�
 [options="header", width="80%"]
 |===
 |プロパティ名|指定する内容|デフォルト値
-|`<<Logger,Logger>>`            |ログ出力クラス|`Std$Out$Info`
-|`<<ConnectionSupplier,ConnectionSupplier>>`|コネクション･サプライヤ･クラス|`Jdbc`
-|`url`                                      |JDBC URL|なし
-|`urls`                                     |JDBC URL(複数)|なし
-|`dataSource`                               |`Jndi`を使用した場合のデータソース名|なし
-|`dataSources`                              |`Jndi`を使用した場合のデータソース名(複数)|なし
-|`maxStringLiteralLength`                   |SQLが生成される時の文字列リテラルの最大長|128
-|`maxBinaryLiteralLength`                   |SQLが生成される時のバイナリ列リテラルの最大長|128
-|`maxLogStringLength`                       |ログに出力する文字列値の最大長|200
-|`maxLogByteArrayLength`                    |ログに出力するバイト配列の最大要素数|200
-|`maxLogArrayLength`                        |ログに出力する配列の最大要素数|100
-|`maxLogMapSize`                            |ログに出力するマップの最大要素数|100
+|`<<Logger,Logger>>`
+|ログ出力クラス
+|`Std$Out$Info`
+
+|`<<ConnectionSupplier,ConnectionSupplier>>`
+|コネクション･サプライヤ･クラス
+|`Jdbc`
+
+|`url`                   |JDBC URL|なし
+|`urls`                  |JDBC URL(複数)|なし
+|`dataSource`            |`Jndi`を使用した場合のデータソース名|なし
+|`dataSources`           |`Jndi`を使用した場合のデータソース名(複数)|なし
+|`maxStringLiteralLength`|SQLが生成される時の文字列リテラルの最大長|128
+|`maxBinaryLiteralLength`|SQLが生成される時のバイナリ列リテラルの最大長|128
+|`maxLogStringLength`    |ログに出力する文字列値の最大長|200
+|`maxLogByteArrayLength` |ログに出力するバイト配列の最大要素数|200
+|`maxLogArrayLength`     |ログに出力する配列の最大要素数|100
+|`maxLogMapSize`         |ログに出力するマップの最大要素数|100
+
+|`connectionLogFormat` +
+*(バージョン2.2.0~)*
+|`ConnectionSupplier`のログ出力フォーマット +
+*文字列の置換:* +
+*{0}*: データベース･ハンドラのクラス名 +
+*{1}*: コネクション･サプライヤのクラス名 +
+*{2}*: 接続先JDBC URL
+|`[{0}/{1}]`
 |===
 
 `lightsleep.properties`ファイルは、クラス･パスのいずれかに置いてください。あるいはシステム･プロパティ `lightsleep.resource`でファイル･パスを指定する事もできます。*(java -Dlightsleep.resource=...)* +

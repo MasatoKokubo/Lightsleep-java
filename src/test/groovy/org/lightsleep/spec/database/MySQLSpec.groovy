@@ -6,6 +6,7 @@ package org.lightsleep.spec.database
 import org.debugtrace.DebugTrace
 import org.lightsleep.component.*
 import org.lightsleep.database.MySQL
+import static org.lightsleep.database.Standard.*
 import org.lightsleep.helper.*
 
 import spock.lang.*
@@ -16,8 +17,7 @@ class MySQLSpec extends Specification {
 	@Shared map = MySQL.instance.typeConverterMap()
 
 	// -> SqlString
-	def "MySQLSpec -> SqlString"() {
-	/**/DebugTrace.enter()
+	def "MySQL -> SqlString"() {
 		expect:
 			TypeConverter.convert(map, false   , SqlString).toString() == '0'
 			TypeConverter.convert(map, true    , SqlString).toString() == '1'
@@ -28,6 +28,20 @@ class MySQLSpec extends Specification {
 			TypeConverter.convert(map, '\r'    , SqlString).toString() == "'\\r'"
 			TypeConverter.convert(map, "'A'"   , SqlString).toString() == "'''A'''"
 			TypeConverter.convert(map, '\\'    , SqlString).toString() == "'\\\\'"
-	/**/DebugTrace.leave()
+	}
+
+	// maskPassword
+	def "MySQL maskPassword"(String jdbcUrl, String result) {
+		expect: MySQL.instance.maskPassword(jdbcUrl) == result
+
+		where:
+			jdbcUrl                       |result
+			''                            |''
+			'passwor='                    |'passwor='
+			'password ='                  |'password=' + PASSWORD_MASK
+			'password  =a'                |'password=' + PASSWORD_MASK
+			'password= !"#$%\'()*+,-./&'  |'password=' + PASSWORD_MASK + '&'
+			'?password=;<=>?@[\\]^_`(|)~:'|'?password=' + PASSWORD_MASK + ':'
+			'?password=a&password=a:bbb'  |'?password=' + PASSWORD_MASK + '&password=' + PASSWORD_MASK + ':bbb'
 	}
 }

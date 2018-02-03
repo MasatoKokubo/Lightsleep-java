@@ -35,6 +35,13 @@ import org.lightsleep.Sql;
  */
 public class Oracle extends Standard {
 	/**
+	 * パスワードのパターン文字列
+	 *
+	 * @since 2.2.0
+	 */
+	protected static final String PASSWORD_PATTERN = "";
+
+	/**
 	 * このクラスの唯一のインスタンス
 	 *
 	 * @since 2.1.0
@@ -61,5 +68,15 @@ public class Oracle extends Standard {
 	 * <b>Oracle</b>を構築します。
 	 */
 	protected Oracle() {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 2.2.0
+	 */
+	@Override
+	public String maskPassword(String jdbcUrl) {
+		return null;
 	}
 }

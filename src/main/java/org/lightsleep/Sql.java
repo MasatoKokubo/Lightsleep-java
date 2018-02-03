@@ -181,16 +181,18 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 */
 	public static <E> EntityInfo<E> getEntityInfo(Class<E> entityClass) {
 		Objects.requireNonNull(entityClass, "entityClass");
-
-		EntityInfo<E> entityInfo = (EntityInfo<E>)entityInfoMap.get(entityClass);
-
- 		if (entityInfo == null) {
-			// creates a new entity information and put it into the map
-			entityInfo = new EntityInfo<>(entityClass);
-			entityInfoMap.put(entityClass, entityInfo);
-		}
-
-		return entityInfo;
+	// 2.2.0
+	//	EntityInfo<E> entityInfo = (EntityInfo<E>)entityInfoMap.get(entityClass);
+	//
+ 	//	if (entityInfo == null) {
+	//		// creates a new entity information and put it into the map
+	//		entityInfo = new EntityInfo<>(entityClass);
+	//		entityInfoMap.put(entityClass, entityInfo);
+	//	}
+	//
+	//	return entityInfo;
+		return (EntityInfo<E>)entityInfoMap.computeIfAbsent(entityClass, key -> new EntityInfo<>(key));
+	////
 	}
 
 	/**
@@ -1725,9 +1727,12 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param sqlEntityInfo the SqlEntityInfo object
 	 */
 	public void addSqlEntityInfo(SqlEntityInfo<?> sqlEntityInfo) {
-		String tableAlias = sqlEntityInfo.tableAlias();
-		if (!sqlEntityInfoMap.containsKey(tableAlias))
-			sqlEntityInfoMap.put(tableAlias, sqlEntityInfo);
+	// 2.2.0
+	//	String tableAlias = sqlEntityInfo.tableAlias();
+	//	if (!sqlEntityInfoMap.containsKey(tableAlias))
+	//		sqlEntityInfoMap.put(tableAlias, sqlEntityInfo);
+		sqlEntityInfoMap.putIfAbsent(sqlEntityInfo.tableAlias(), sqlEntityInfo);
+	////
 
 		if (sqlEntityInfo instanceof Sql) {
 			((Sql<?>)sqlEntityInfo).sqlEntityInfoMap.values().stream()
@@ -3241,7 +3246,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		int sqlNo = Sql.sqlNo++;
 		if (logger.isInfoEnabled())
 			logger.info('#' + Integer.toUnsignedString(sqlNo) + ' '
-				+ connection.getDatabase().getClass().getSimpleName() + ": "  + sql);
+			// 2.2.0
+			//	+ connection.getDatabase().getClass().getSimpleName() + ": "  + sql);
+				+ connection.toString() + ' ' + sql);
+			////
 
 		// Prepares SQL
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -3337,7 +3345,9 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		int sqlNo = Sql.sqlNo++;
 		if (logger.isInfoEnabled())
 			logger.info('#' + Integer.toUnsignedString(sqlNo) + ' '
-				+ connection.getDatabase().getClass().getSimpleName() + ": " + sql);
+			//	+ connection.getDatabase().getClass().getSimpleName() + ": " + sql);
+				+ connection.toString() + ' '  + sql);
+			////
 
 		// Prepares SQL
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {

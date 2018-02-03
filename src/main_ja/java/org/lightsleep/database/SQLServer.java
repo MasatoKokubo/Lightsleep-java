@@ -35,6 +35,13 @@ import org.lightsleep.Sql;
  */
 public class SQLServer extends Standard {
 	/**
+	 * パスワードのパターン文字列
+	 *
+	 * @since 2.2.0
+	 */
+	protected static final String PASSWORD_PATTERN = "";
+
+	/**
 	 * このクラスの唯一のインスタンス
 	 *
 	 * @since 2.1.0
@@ -96,5 +103,15 @@ public class SQLServer extends Standard {
 	 */
 	@Override
 	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 2.2.0
+	 */
+	@Override
+	public String maskPassword(String jdbcUrl) {
+		return null;
 	}
 }

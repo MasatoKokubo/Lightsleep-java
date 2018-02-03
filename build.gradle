@@ -23,7 +23,7 @@ dependencies {
 	compileOnly        'org.apache.logging.log4j:log4j-api:2.+'
 	testRuntimeOnly    'org.apache.logging.log4j:log4j-core:2.+'
 	compileOnly        'org.slf4j:slf4j-api:1.7.+'
-	testRuntimeOnly    'ch.qos.logback:logback-classic:1.+'
+	testRuntimeOnly    'ch.qos.logback:logback-classic:1.2.+'
 
 	compileOnly        'com.mchange:c3p0:0.+'
 	testRuntimeOnly    'com.mchange:c3p0:0.+'
@@ -36,14 +36,16 @@ dependencies {
 
 	testRuntimeOnly    'com.ibm.db2.jcc:db2jcc4:10.+'
 	testRuntimeOnly    'mysql:mysql-connector-java:5.+'
-	compileOnly        'com.hynnet:oracle-driver-ojdbc:12.+'
-	testCompile        'com.hynnet:oracle-driver-ojdbc:12.+'
+//	compileOnly        'com.hynnet:oracle-driver-ojdbc:12.+'
+//	testCompile        'com.hynnet:oracle-driver-ojdbc:12.+'
+	compileOnly        files('C:/Java/jdbc/ojdbc8_g.jar')
+	testCompile        files('C:/Java/jdbc/ojdbc8_g.jar')
 	testRuntimeOnly    'org.postgresql:postgresql:42.+'
 	testRuntimeOnly    'org.xerial:sqlite-jdbc:3.+'
 	testRuntimeOnly    'com.microsoft.sqlserver:mssql-jdbc:6.2.+'
 
 	testRuntimeOnly    'junit:junit:4.+'
-	testImplementation 'org.codehaus.groovy:groovy-all:2.4.12'
+	testImplementation 'org.codehaus.groovy:groovy-all:2.4.+'
 	testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
 
 	testRuntimeOnly    'tomcat:naming-java:5.+'
@@ -58,7 +60,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '2.1.1'
+version             = '2.2.0'
 
 sourceSets {
 	main {
@@ -94,7 +96,7 @@ sourceSets {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.4.1'
+	gradleVersion = '4.5'
 }
 
 compileJava {
@@ -192,8 +194,8 @@ task zip(type: Zip) {
 
 	into('/'         , {from "build/libs/${archivesBaseName}-${version}.jar"})
 	into('/'         , {from 'LICENSE.txt'})
-	into('/'         , {from 'README.md', 'ReleaseNotes.md', 'Tutorial.md', 'Manual.md'})
-	into('/'         , {from 'README_ja.md', 'ReleaseNotes_ja.md', 'Tutorial_ja.md', 'Manual_ja.md'})
+	into('/'         , {from 'README.asciidoc', 'ReleaseNotes.asciidoc', 'Tutorial.asciidoc', 'UserGuide.asciidoc'})
+	into('/'         , {from 'README_ja.asciidoc', 'ReleaseNotes_ja.asciidoc', 'Tutorial_ja.asciidoc', 'UserGuide_ja.asciidoc'})
 	into('javadoc'   , {from 'build/docs/javadoc'})
 	into('javadoc_ja', {from 'build/docs/javadoc_ja'})
 }

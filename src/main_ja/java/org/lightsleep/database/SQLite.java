@@ -73,4 +73,14 @@ public class SQLite extends Standard {
 	public boolean supportsOffsetLimit() {
 		return true;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 2.2.0
+	 */
+	@Override
+	public String maskPassword(String jdbcUrl) {
+		return null;
+	}
 }

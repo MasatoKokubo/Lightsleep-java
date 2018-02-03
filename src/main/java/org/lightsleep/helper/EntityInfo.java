@@ -4,6 +4,7 @@
 package org.lightsleep.helper;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,10 +47,32 @@ public class EntityInfo<E> {
 	 *
 	 * @param entityClass the entity class
 	 *
-	 * @throws NullPointerException <b>entityClass</b> is null
+	 * @throws NullPointerException if <b>entityClass</b> is null
+	 * @throws IllegalArgumentException if <b>entityClass</b> is illegal
 	 */
 	public EntityInfo(Class<E> entityClass) {
 		this.entityClass = Objects.requireNonNull(entityClass, "entityClass");
+	// 2.2.0
+
+		if (entityClass.isAnnotation())
+			throw new IllegalArgumentException("entityClass: " + entityClass.getName() + " is an annotation class");
+
+		if (entityClass.isArray())
+			throw new IllegalArgumentException("entityClass: " + entityClass.getName() + " is an array class");
+
+		if (entityClass.isEnum())
+			throw new IllegalArgumentException("entityClass: " + entityClass.getName() + " is an enum class");
+
+		if (entityClass.isInterface())
+			throw new IllegalArgumentException("entityClass: " + entityClass.getName() + " is an interface");
+
+		if (entityClass.isPrimitive())
+			throw new IllegalArgumentException("entityClass: " + entityClass.getName() + " is a primitive class");
+
+		if ((entityClass.getModifiers() & Modifier.ABSTRACT) != 0)
+			throw new IllegalArgumentException("entityClass: " + entityClass.getName() + " is an abstract class");
+
+	////
 		accessor = new Accessor<>(entityClass);
 
 		// @Table / the table name

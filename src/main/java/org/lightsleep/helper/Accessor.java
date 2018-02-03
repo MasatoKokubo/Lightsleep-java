@@ -111,9 +111,16 @@ public class Accessor<T> {
 	 * Constructs a new <b>Accessor</b>.
 	 *
 	 * @param objectClass the class of access target object
+	 *
+	 * @throws NullPointerException if <b>objectClass</b> is null
+	 * @throws IllegalArgumentException if <b>objectClass</b> is interface
 	 */
 	public Accessor(Class<T> objectClass) {
 		this.objectClass = Objects.requireNonNull(objectClass, "objectClass");
+	// 2.2.0
+		if (objectClass.isInterface())
+			throw new IllegalArgumentException("objectClass: " + objectClass);
+	////
 
 		// @NonColumnProperty, @NonColumnProperties
 		List<NonColumnProperty> nonColumnProperties = Utils.getAnnotations(objectClass, NonColumnProperty.class);

@@ -40,9 +40,11 @@ public class ConnectionWrapper implements Connection {
 	 * <b>ConnectionWrapper</b>を構築します。
 	 *
 	 * @param connection ラップされるコネクション
-	 * @param database コネクションに関連するデータベース･ハンドラ
+	 * @param supplier コネクションのサプライヤ
+	 *
+	 * @since 2.2.0
 	 */
-	public ConnectionWrapper(Connection connection, Database database) {
+	public ConnectionWrapper(Connection connection, ConnectionSupplier supplier) {
 	}
 
 	/**
@@ -51,6 +53,17 @@ public class ConnectionWrapper implements Connection {
 	 * @return コネクション
 	 */
 	public Connection getConnection() {
+		return null;
+	}
+
+	/**
+	 * コネクションのサプライヤを返します。
+	 *
+	 * @return コネクションのサプライヤ
+	 *
+	 * @since 2.2.0
+	 */
+	public ConnectionSupplier getSupplier() {
 		return null;
 	}
 

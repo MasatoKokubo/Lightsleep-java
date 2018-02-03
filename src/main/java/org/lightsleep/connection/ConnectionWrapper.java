@@ -38,17 +38,35 @@ import org.lightsleep.database.Database;
  */
 public class ConnectionWrapper implements Connection {
 	private final Connection connection;
-	private final Database database;
+// 2.2.0
+//	private final Database database;
+	private final ConnectionSupplier supplier; // @since 2.2.0
+////
+
+// 2.2.0
+//	/**
+//	 * Constructs a new <b>ConnectionWrapper</b>.<br>
+//	 *
+//	 * @param connection a connection to be wrapped
+//	 * @param database a database handler related to the connection
+//	 */
+//	public ConnectionWrapper(Connection connection, Database database) {
+//		this.connection = Objects.requireNonNull(connection, "connection");
+//		this.database = Objects.requireNonNull(database, "database");
+//	}
+////
 
 	/**
 	 * Constructs a new <b>ConnectionWrapper</b>.<br>
 	 *
 	 * @param connection a connection to be wrapped
-	 * @param database a database handler related to the connection
+	 * @param supplier the supplier of the connection
+	 *
+	 * @since 2.2.0
 	 */
-	public ConnectionWrapper(Connection connection, Database database) {
+	public ConnectionWrapper(Connection connection, ConnectionSupplier supplier) {
 		this.connection = Objects.requireNonNull(connection, "connection");
-		this.database = Objects.requireNonNull(database, "database");
+		this.supplier = Objects.requireNonNull(supplier, "supplier");
 	}
 
 	/**
@@ -61,12 +79,26 @@ public class ConnectionWrapper implements Connection {
 	}
 
 	/**
+	 * Returns the supplier of the connection.
+	 *
+	 * @return the supplier of the connection
+	 *
+	 * @since 2.2.0
+	 */
+	public ConnectionSupplier getSupplier() {
+		return supplier;
+	}
+
+	/**
 	 * Returns the database handler related to the connection.
 	 *
 	 * @return the database handler related to the connection
 	 */
 	public Database getDatabase() {
-		return database;
+	// 2.2.0
+	//	return database;
+		return supplier.getDatabase();
+	////
 	}
 
 	/**
@@ -506,6 +538,9 @@ public class ConnectionWrapper implements Connection {
 	 */
 	@Override
 	public String toString() {
-		return "ConnectionWrapper: database: " + database.getClass().getSimpleName();
+	// 2.2.0
+	//	return "ConnectionWrapper: database: " + database.getClass().getSimpleName();
+		return supplier.toString();
+	////
 	}
 }

@@ -6,6 +6,7 @@ package org.lightsleep.spec.database
 import org.debugtrace.DebugTrace
 import org.lightsleep.component.*
 import org.lightsleep.database.SQLServer
+import static org.lightsleep.database.Standard.*
 import org.lightsleep.helper.*
 
 import spock.lang.*
@@ -16,8 +17,7 @@ class SQLServerSpec extends Specification {
 	@Shared map = SQLServer.instance.typeConverterMap()
 
 	// -> SqlString
-	def "SQLServerSpec -> SqlString"() {
-	/**/DebugTrace.enter()
+	def "SQLServer -> SqlString"() {
 		expect:
 			TypeConverter.convert(map, false     , SqlString).toString() == '0'
 			TypeConverter.convert(map, true      , SqlString).toString() == '1'
@@ -32,6 +32,20 @@ class SQLServerSpec extends Specification {
 			TypeConverter.convert(map, "'A'"     , SqlString).toString() == "'''A'''"
 			TypeConverter.convert(map, '\\'      , SqlString).toString() == "'\\'"
 			TypeConverter.convert(map, 'A\tB\n\r', SqlString).toString() == "'A'+CHAR(9)+'B'+CHAR(10)+CHAR(13)"
-	/**/DebugTrace.leave()
+	}
+
+	// maskPassword
+	def "SQLServer maskPassword"(String jdbcUrl, String result) {
+		expect: SQLServer.instance.maskPassword(jdbcUrl) == result
+
+		where:
+			jdbcUrl                      |result
+			''                           |''
+			'passwor='                   |'passwor='
+			'password ='                 |'password=' + PASSWORD_MASK
+			'password  =a'               |'password=' + PASSWORD_MASK
+			'password= !"#$%&\'()*+,-./;'|'password=' + PASSWORD_MASK + ';'
+			':password=<=>?@[\\]^_`(|)~:'|':password=' + PASSWORD_MASK + ':'
+			':password=a;password=a:bbb' |':password=' + PASSWORD_MASK + ';password=' + PASSWORD_MASK + ':bbb'
 	}
 }

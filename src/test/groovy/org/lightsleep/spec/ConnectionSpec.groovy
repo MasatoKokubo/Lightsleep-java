@@ -20,12 +20,12 @@ import spock.lang.*
 // ConnectionSpec
 @Unroll
 public class ConnectionSpec extends SpecCommon {
-	private static final int THREAD_COUNT         =   50
-	private static final long SLEEP_TIME1         =   10 // ms
-	private static final long SLEEP_TIME2         = 1000 // ms
-	private static final int THREAD_COUNT_SQLITE  =   10
-	private static final long SLEEP_TIME1_SQLITE  = 2000 // ms
-	private static final long SLEEP_TIME2_SQLITE  =    1 // ms
+	private static final int THREAD_COUNT        =   50
+	private static final long SLEEP_TIME1        =   10 // ms
+	private static final long SLEEP_TIME2        = 1000 // ms
+	private static final int THREAD_COUNT_SQLITE =   10
+	private static final long SLEEP_TIME1_SQLITE = 2000 // ms
+	private static final long SLEEP_TIME2_SQLITE =    1 // ms
 
 	// The map of isolation levels
 	private static isolationLevelsMap = [

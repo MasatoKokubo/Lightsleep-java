@@ -9,6 +9,7 @@ import java.sql.Timestamp
 
 import org.debugtrace.DebugTrace
 import org.lightsleep.database.Standard
+import static org.lightsleep.database.Standard.*
 import org.lightsleep.component.*
 import org.lightsleep.helper.*
 import org.lightsleep.test.type.*
@@ -93,7 +94,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> byte[]
-	def "StandardSpec Array -> byte[]"() {
+	def "Standard Array -> byte[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax = [Byte.MIN_VALUE, 0, Byte.MAX_VALUE] as byte[]
@@ -111,7 +112,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> short[]
-	def "StandardSpec Array -> short[]"() {
+	def "Standard Array -> short[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [ Byte.MIN_VALUE, 0,  Byte.MAX_VALUE] as short[]
@@ -130,7 +131,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> int[]
-	def "StandardSpec Array -> int[]"() {
+	def "Standard Array -> int[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [   Byte.MIN_VALUE, 0,    Byte.MAX_VALUE] as int[]
@@ -150,7 +151,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> long[]
-	def "StandardSpec Array -> long[]"() {
+	def "Standard Array -> long[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [   Byte.MIN_VALUE, 0,    Byte.MAX_VALUE] as long[]
@@ -171,7 +172,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> float[]
-	def "StandardSpec Array -> float[]"() {
+	def "Standard Array -> float[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as float[]
@@ -198,7 +199,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> double[]
-	def "StandardSpec Array -> double[]"() {
+	def "Standard Array -> double[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [   Byte.MIN_VALUE, 0   ,    Byte.MAX_VALUE] as double[]
@@ -227,7 +228,7 @@ class StandardSpec extends Specification {
 
 
 	// Array -> BigDecimal[]
-	def "StandardSpec Array -> BigDecimal[]"() {
+	def "Standard Array -> BigDecimal[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def byteMinZeroMax  = [BIG_BYTE_MIN    , BIG_0, BIG_BYTE_MAX  ] as BigDecimal[]
@@ -251,7 +252,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> String[]
-	def "StandardSpec Array -> String[]"() {
+	def "Standard Array -> String[]"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new TestArray(['A'  , 'B'  , 'C'  ] as      char[]), String[]) == ['A'  , 'B'  , 'C'  ] as String[]
@@ -262,7 +263,7 @@ class StandardSpec extends Specification {
 
 
 	// Array -> java.util.Date[]
-	def "StandardSpec Array -> java.util.Date[]"() {
+	def "Standard Array -> java.util.Date[]"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, new TestArray([UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]), java.util.Date[]) == [UTIL_DATE1, UTIL_DATE2, UTIL_DATE3] as java.util.Date[]
@@ -273,7 +274,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> java.sql.Date[]
-	def "StandardSpec Array -> java.sql.Date[]"() {
+	def "Standard Array -> java.sql.Date[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def date123 = [SQL_DATE1, SQL_DATE2, SQL_DATE3] as Date[]
@@ -287,7 +288,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> Time[]
-	def "StandardSpec Array -> Time[]"() {
+	def "Standard Array -> Time[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def time123 = [TIME1, TIME2, TIME3] as Time[]
@@ -301,7 +302,7 @@ class StandardSpec extends Specification {
 	}
 
 	// Array -> Timestamp[]
-	def "StandardSpec Array -> Timestamp[]"() {
+	def "Standard Array -> Timestamp[]"() {
 	/**/DebugTrace.enter()
 		setup:
 			def timestamp123 = [TIMESTAMP1, TIMESTAMP2, TIMESTAMP3] as Timestamp[]
@@ -317,7 +318,7 @@ class StandardSpec extends Specification {
 	enum Size {XS, S, M, L, XL}
 
 	// -> SqlString
-	def "StandardSpec -> SqlString"() {
+	def "Standard -> SqlString"() {
 	/**/DebugTrace.enter()
 		expect:
 			TypeConverter.convert(map, 0                       , SqlString).toString() == '0'
@@ -365,7 +366,7 @@ class StandardSpec extends Specification {
 	}
 
 	// long String -> SqlString
-	def "StandardSpec long String -> SqlString"() {
+	def "Standard long String -> SqlString"() {
 	/**/DebugTrace.enter()
 		when:
 		/**/DebugTrace.print('maxStringLiteralLength', Standard.instance.maxStringLiteralLength)
@@ -384,7 +385,7 @@ class StandardSpec extends Specification {
 	}
 
 	// long byte[] -> SqlString
-	def "StandardSpec long byte[] -> SqlString"() {
+	def "Standard long byte[] -> SqlString"() {
 	/**/DebugTrace.enter()
 		when:
 		/**/DebugTrace.print('maxBinaryLiteralLength', Standard.instance.maxBinaryLiteralLength)
@@ -406,7 +407,7 @@ class StandardSpec extends Specification {
 	}
 
 	// long String[] -> SqlString
-	def "StandardSpec long String[] -> SqlString"() {
+	def "Standard long String[] -> SqlString"() {
 	/**/DebugTrace.enter()
 	/**/DebugTrace.print('maxStringLiteralLength', Standard.instance.maxStringLiteralLength)
 		when:
@@ -435,7 +436,7 @@ class StandardSpec extends Specification {
 	}
 
 	// long byte[][] -> SqlString
-	def "StandardSpec long byte[][] -> SqlString"() {
+	def "Standard long byte[][] -> SqlString"() {
 	/**/DebugTrace.enter()
 		when:
 		/**/DebugTrace.print('maxStringLiteralLength', Standard.instance.maxStringLiteralLength)
@@ -465,4 +466,28 @@ class StandardSpec extends Specification {
 	/**/DebugTrace.leave()
 	}
 
+	// maskPassword
+	def "Standard maskPassword"(String jdbcUrl, String result) {
+		expect: Standard.instance.maskPassword(jdbcUrl) == result
+
+		where:
+			jdbcUrl                       |result
+			''                            |''
+			'passwor='                    |'passwor='
+			'password ='                  |'password=' + PASSWORD_MASK
+			'password  =a'                |'password=' + PASSWORD_MASK
+
+			'password= !"#$%\'()*+,-./;'  |'password=' + PASSWORD_MASK
+			':password=<=>?[\\]^_`(|)~:'  |':password=' + PASSWORD_MASK + ':'
+
+			'password= !"#$%\'()*+,-./&'  |'password=' + PASSWORD_MASK
+			'?password=;<=>?[\\]^_`(|)~:' |'?password=' + PASSWORD_MASK + ':'
+
+			'/@'                          |'/' + PASSWORD_MASK + '@'
+			'/ @'                         |'/' + PASSWORD_MASK + '@'
+			'/a@'                         |'/' + PASSWORD_MASK + '@'
+			'/ !"#$%&\'()*+,-./@'         |'/' + PASSWORD_MASK + '@'
+			'/;<=>?[\\]^_`(|)~@'          |'/' + PASSWORD_MASK + '@'
+			'/a@/a@bbb'                   |'/' + PASSWORD_MASK + '@/' + PASSWORD_MASK + '@bbb'
+	}
 }

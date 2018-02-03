@@ -116,10 +116,20 @@ public interface Database {
 	 <T> T convert(Object value, Class<T> type);
 
 	/**
+	 * Masks ths password of the JDBC URL.
+	 *
+	 * @param jdbcUrl a JDBC URL
+	 * @return the JDBC URL masked the password
+	 *
+	 * @since 2.2.0
+	 */
+	String maskPassword(String jdbcUrl);
+
+	/**
 	 * Returns a database handler related to <b>jdbcUrl</b>.
 	 *
-	 * @param jdbcUrl a jdbc url
-	 * @return the database handler related to the jdbc url
+	 * @param jdbcUrl a JDBC URL
+	 * @return the database handler related to the JDBC URL
 	 *
 	 * @throws IllegalArgumentException if <b>jdbcUrl</b> does not contain a string that can identify a <b>Database</b> class
 	 *

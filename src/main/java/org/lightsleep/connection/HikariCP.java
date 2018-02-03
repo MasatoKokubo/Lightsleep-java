@@ -90,14 +90,26 @@ public class HikariCP extends AbstractConnectionSupplier {
 	private HikariCP(Properties properties, Consumer<Properties> modifier) {
 		super(properties, modifier.andThen(props -> {
 			// jdbcUrl <- url
-			String url = props.getProperty("url");
-			String jdbcUrl = props.getProperty("jdbcUrl");
+		// 2.2.0
+		//	String url = props.getProperty("url");
+		//	String jdbcUrl = props.getProperty("jdbcUrl");
+			String url = props.getProperty(URL);
+			String jdbcUrl = props.getProperty(JDBC_URL);
+		////
 			if (url != null && jdbcUrl == null) {
-				props.setProperty("jdbcUrl", url);
-				logger.info("HikariCP.<init>: properties.jdbcUrl <- properties.url: \"" + url + '"');
+			// 2.2.0
+			//	props.setProperty("jdbcUrl", url);
+			//	logger.info("HikariCP.<init>: properties.jdbcUrl <- properties.url: \"" + url + '"');
+				props.setProperty(JDBC_URL, url);
+				logger.info("HikariCP.<init>: properties.jdbcUrl <- properties.url");
+			////
 			} else if (url == null && jdbcUrl != null) {
-				props.setProperty("url", jdbcUrl);
-				logger.info("HikariCP.<init>: properties.url <- properties.jdbcUrl: \"" + jdbcUrl + '"');
+			// 2.2.0
+			//	props.setProperty("url", jdbcUrl);
+			//	logger.info("HikariCP.<init>: properties.url <- properties.jdbcUrl: \"" + jdbcUrl + '"');
+				props.setProperty(URL, jdbcUrl);
+				logger.info("HikariCP.<init>: properties.url <- properties.jdbcUrl");
+			////
 			}
 
 			// username <- user

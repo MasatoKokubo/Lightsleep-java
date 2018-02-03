@@ -80,6 +80,20 @@ import org.lightsleep.Sql;
  */
 public class Standard implements Database {
 	/**
+	 * 制御文字を以外ASCII文字からなる文字列
+	 *
+	 * @since 2.2.0
+	 */
+	protected static final String ASCII_CHARS = "";
+
+	/**
+	 * パスワードのパターン文字列
+	 *
+	 * @since 2.2.0
+	 */
+	protected static final String PASSWORD_PATTERN = "";
+
+	/**
 	 * SQLが生成される時の文字列リテラルの最大長
 	 *
 	 * <p>
@@ -87,10 +101,7 @@ public class Standard implements Database {
 	 * lightsleep.propertiesの<b>maxStringLiteralLength</b>の値が設定されます。(未定義の場合は 128)
 	 * </p>
 	 */
-// 2.1.0
-//	protected static final int maxStringLiteralLength = 0;
 	public final int maxStringLiteralLength = 0;
-////
 
 	/**
 	 * SQLが生成される時のバイナリ列リテラルの最大長
@@ -100,10 +111,7 @@ public class Standard implements Database {
 	 * lightsleep.propertiesの<b>maxBinaryLiteralLength</b>の値が設定されます。(未定義の場合は 128)
 	 * </p>
 	 */
-// 2.1.0
-//	protected static final int maxBinaryLiteralLength = 0;
 	public final int maxBinaryLiteralLength = 0;
-////
 
 	/**
 	 * <b>boolean</b>から<b>SqlString</b>(0か1)へ変換する
@@ -127,9 +135,7 @@ public class Standard implements Database {
 	 *
 	 * @return このクラスの唯一のインスタンス
 	 */
-// 2.1.0
 	@Deprecated
-////
 	public static Database instance() {
 		return null;
 	}
@@ -387,6 +393,16 @@ public class Standard implements Database {
 	 */
 	@Override
 	public <T> T convert(Object value, Class<T> type) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 2.2.0
+	 */
+	@Override
+	public String maskPassword(String jdbcUrl) {
 		return null;
 	}
 }

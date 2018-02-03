@@ -39,6 +39,7 @@ class SqlSpec extends Specification {
 		@Override public <E> String deleteSql(Sql<E> sql, List<Object> parameters) {return ''}
 		@Override public Map<String, TypeConverter<?, ?>> typeConverterMap() {return null}
 		@Override public <T> T convert(Object value, Class<T> type) {return null}
+		@Override public String maskPassword(String jdbcUrl) {return jdbcUrl}
 	}
 
 	// Sql.getEntityInfo(Class<E>)

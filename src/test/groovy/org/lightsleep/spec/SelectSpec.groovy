@@ -292,6 +292,54 @@ class SelectSpec extends SpecCommon {
 	/**/DebugTrace.leave()
 	}
 
+	// since 2.2.0
+	// selectAs(Class<R> resultClass, Consumer<? super R> consumer) - exception
+	// selectAs(Class<R> resultClass) - exception
+	public static interface Id {
+		public int getId();
+		public int setId(int id);
+	}
+	def "SelectSpec selectAs - exception #connectionSupplier #comment"(
+		ConnectionSupplier connectionSupplier, Class<?> resultClass, Class<? extends Exception> exception, String comment) {
+	/**/DebugTrace.enter()
+	/**/DebugTrace.print('selectAs')
+	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+	/**/DebugTrace.print('resultClass', resultClass)
+	/**/DebugTrace.print('comment', comment)
+		setup:
+			List<Id> ids = []
+			List<Common> commons = []
+			Exception e = null
+
+		// selectAs(Class<R> resultClass, Consumer<? super R> consumer)
+		when:
+			Transaction.execute(connectionSupplier) {
+				new Sql<>(Contact).connection(it).selectAs(resultClass, {ids << it})
+			}
+		then:
+			thrown exception
+
+		// selectAs(Class<R> resultClass)
+		when:
+			Transaction.execute(connectionSupplier) {
+				new Sql<>(Contact).connection(it).selectAs(resultClass)
+			}
+		then:
+			thrown exception
+
+	/**/DebugTrace.leave()
+		where:
+			connectionSupplier = connectionSuppliers[0]
+			resultClass |exception               |comment
+			null        |NullPointerException    |'null'
+			Id          |IllegalArgumentException|'interface'
+			Common      |IllegalArgumentException|'abstract class'
+			Product.Size|IllegalArgumentException|'enum class'
+			int         |IllegalArgumentException|'primitive'
+			Table       |IllegalArgumentException|'annotation class'
+			Contact[]   |IllegalArgumentException|'array class'
+	}
+
 	// select()
 	def "SelectSpec select1 #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 	/**/DebugTrace.enter()

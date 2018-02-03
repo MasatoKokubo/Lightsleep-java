@@ -80,7 +80,7 @@ class ConnectionSupplierSpec extends Specification {
 			'test/lightsleep-C3p0-url'        |[':db2:'                                      ]|C3p0         |DB2.instance
 			'test/lightsleep-C3p0-url'        |[':db2:'       , '/db2-10'                    ]|C3p0         |DB2.instance
 			'test/lightsleep-C3p0-url'        |[':db2:'       , '/db2-10'          , '/test1']|C3p0         |DB2.instance
-
+		
 			'test/lightsleep-Dbcp-urls'       |[':db2:'       , '/db2-10'          , '/test1']|Dbcp         |DB2.instance
 			'test/lightsleep-Dbcp-urls'       |[':db2:'       , '/db2-10'          , '/test2']|Dbcp         |DB2.instance
 			'test/lightsleep-Dbcp-urls'       |[':db2:'       , '/db2-11'          , '/test1']|Dbcp         |DB2.instance

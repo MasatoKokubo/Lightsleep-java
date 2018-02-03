@@ -130,6 +130,26 @@ public class Standard implements Database {
 		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"));
 
 	/**
+	 * The ASCII characters without controle charactes
+	 *
+	 * @since 2.2.0
+	 */
+	protected static final String ASCII_CHARS =
+		  " !\"#$%&'()*+,-./"
+		+ "0123456789:;<=>?"
+		+ "@ABCDEFGHUJKLMNO"
+		+ "PQRSTUVWXYZ[\\]^_"
+		+ "`abcdefghijklmno"
+		+ "pqrstuvwxyz(|)~";
+
+	/**
+	 * The pattern string of passwords
+	 *
+	 * @since 2.2.0
+	 */
+	protected static final String PASSWORD_MASK = "xxxx";
+
+	/**
 	 * The only instance of this class
 	 *
 	 * @since 2.1.0
@@ -1051,5 +1071,19 @@ public class Standard implements Database {
 	@Override
 	public <T> T convert(Object value, Class<T> type) {
 		return TypeConverter.convert(typeConverterMap, value, type);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 2.2.0
+	 */
+	@Override
+	public String maskPassword(String jdbcUrl) {
+		return
+			Oracle.instance.maskPassword(
+			SQLServer.instance.maskPassword(
+			MySQL.instance.maskPassword(
+				jdbcUrl)));
 	}
 }

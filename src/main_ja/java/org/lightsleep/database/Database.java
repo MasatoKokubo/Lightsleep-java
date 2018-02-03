@@ -112,6 +112,16 @@ public interface Database {
 	<T> T convert(Object value, Class<T> type);
 
 	/**
+	 * JDBC URLのパスワードをマスクします。.
+	 *
+	 * @param jdbcUrl JDBC URL
+	 * @return パスワードをマスクしたJDBC URL
+	 *
+	 * @since 2.2.0
+	 */
+	String maskPassword(String jdbcUrl);
+
+	/**
 	 * <b>jdbcUrl</b>に関連するデータベース･ハンドラを返します。
 	 *
 	 * @param jdbcUrl JDBC URL

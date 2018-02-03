@@ -5,9 +5,24 @@ link:ReleaseNotes.asciidoc[English]
 [[TOC_]]
 === 目次
 
+- <<ReleaseNote2.2.0,バージョン 2.2.0>>
 - <<ReleaseNote2.1.1,バージョン 2.1.1>>
 - <<ReleaseNote2.1.0,バージョン 2.1.0>>
 - <<ReleaseNote2.0.0,バージョン 2.0.0>>
+
+[[ReleaseNote2.2.0]]
+
+=== バージョン2.2.0
+
+1. 改善
+    - SQLのログに接続先のJDBC URLを含めるオプションを*追加*しました。 +
+    使用例:::
+    `lightsleep.properties`ファイルに以下を追加 +
+    `connectionLogFormat = [{0}/{1}/{2}]`
+
+    - ログのパスワード部分を`"xxxx"`でマスクするようにしました。
+
+1. `Database`インタフェースおよびその実装クラスに`maskPassword`メソッドを*追加*しました。
 
 [[ReleaseNote2.1.1]]
 

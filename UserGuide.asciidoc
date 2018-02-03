@@ -653,18 +653,33 @@ Lightsleep.properties is a properties file referenced by Lightsleep and you can 
 [options="header", width="80%"]
 |===
 |Property Name|Content|Default Value
-|`<<Logger,Logger>>`                        |Logging class|`Std$Out$Info`
-|`<<ConnectionSupplier,ConnectionSupplier>>`|Connection Supplier class|`Jdbc`
-|`url`                                      |JDBC URL|None
-|`urls`                                     |JDBC URLs|None
-|`dataSource`                               |Data source name when using `Jndi`|None
-|`dataSources`                              |Data source names when using `Jndi`|None
-|`maxStringLiteralLength`                   |Maximum length of string literals when generates SQL|128
-|`maxBinaryLiteralLength`                   |Maximum length of binary literals when generates SQL|128
-|`maxLogStringLength`                       |Maximum length of string values output to log|200
-|`maxLogByteArrayLength`                    |Maximum number of elements of byte arrays output to log|200
-|`maxLogArrayLength`                        |Maximum number of elements of arrays output to log|100
-|`maxLogMapSize`                            |Maximum number of elements of maps output to log|100
+|`<<Logger,Logger>>`
+|Logging class
+|`Std$Out$Info`
+
+|`<<ConnectionSupplier,ConnectionSupplier>>`
+|Connection Supplier class
+|`Jdbc`
+
+|`url`                   |JDBC URL|None
+|`urls`                  |JDBC URLs|None
+|`dataSource`            |Data source name when using `Jndi`|None
+|`dataSources`           |Data source names when using `Jndi`|None
+|`maxStringLiteralLength`|Maximum length of string literals when generates SQL|128
+|`maxBinaryLiteralLength`|Maximum length of binary literals when generates SQL|128
+|`maxLogStringLength`    |Maximum length of string values output to log|200
+|`maxLogByteArrayLength` |Maximum number of elements of byte arrays output to log|200
+|`maxLogArrayLength`     |Maximum number of elements of arrays output to log|100
+|`maxLogMapSize`         |Maximum number of elements of maps output to log|100
+
+|`connectionLogFormat` +
+*(since 2.2.0)*
+|The log output format of `ConnectionSupplier` +
+*String replacements:* +
+*{0}*: To the simple class name of the database handler +
+*{1}*: To the simple class name of the connection supplier +
+*{2}*: To the JDBC URL of the connection
+|`[{0}/{1}]`
 |===
 
 Place the `lightsleep.properties` file in one of the class paths. Or you can specify the file path with the system property `lightsleep.resource`. *(java -Dlightsleep.resource=...)*  +

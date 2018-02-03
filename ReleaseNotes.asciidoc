@@ -5,9 +5,24 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 [[TOC_]]
 === Table of Contents
 
+- <<ReleaseNote2.2.0,version 2.2.0>>
 - <<ReleaseNote2.1.1,version 2.1.1>>
 - <<ReleaseNote2.1.0,version 2.1.0>>
 - <<ReleaseNote2.0.0,version 2.0.0>>
+
+[[ReleaseNote2.2.0]]
+
+=== version 2.2.0
+
+1. Improvements
+    - *Added* an option to include JDBC URL of the connection to SQL logs. +
+    Example of use:::
+    Add the following to `lightsleep.properties` file +
+    `connectionLogFormat = [{0}/{1}/{2}]`
+
+    - The password parts of the logs are masked with `"xxxx"`.
+
+1. *Added* `maskPassword` method to the `Database` interface and its implementation classes.
 
 [[ReleaseNote2.1.1]]
 

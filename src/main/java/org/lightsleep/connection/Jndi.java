@@ -79,10 +79,17 @@ public class Jndi extends AbstractConnectionSupplier {
 	private Jndi(Properties properties, Consumer<Properties> modifier) {
 		super(properties, modifier.andThen(props -> {
 			// dataSource <- url
-			String url = props.getProperty("url");
-			String dataSource = props.getProperty("dataSource");
+		// 2.2.0
+		//	String url = props.getProperty("url");
+		//	String dataSource = props.getProperty("dataSource");
+			String url = props.getProperty(URL);
+			String dataSource = props.getProperty(DATA_SOURCE);
+		////
 			if (url != null && dataSource == null) {
-				props.setProperty("dataSource", url);
+			// 2.2.0
+			//	props.setProperty("dataSource", url);
+				props.setProperty(DATA_SOURCE, url);
+			////
 				logger.info("Jndi.<init>: properties.dataSource <- \"" + url + '"');
 			}
 		}));

@@ -105,10 +105,10 @@ class VariousTypeSpce extends SpecCommon {
 				various1p.doubles          = [-1.1D, 0.0D, 1.1D, 2.2D] as double[]
 				various1p.decimals         = [new BigDecimal('-2.22'), new BigDecimal('-1.11'), new BigDecimal('1.11'), new BigDecimal('2.22')] as BigDecimal[]
 				various1p.texts            = [
-					'ABC', readTextFile(new File('README.md')),
-					'EFG', readTextFile(new File('README_ja.md')),
-					'HIJ', readTextFile(new File('Tutorial.md')),
-					'KLM', readTextFile(new File('Tutorial_ja.md'))
+					'ABC', readTextFile(new File('README.asciidoc')),
+					'EFG', readTextFile(new File('README_ja.asciidoc')),
+					'HIJ', readTextFile(new File('Tutorial.asciidoc')),
+					'KLM', readTextFile(new File('Tutorial_ja.asciidoc'))
 				] as String[]
 				various1p.dates            = new Date[4]
 				various1p.dates     [0]    = new Date(dayCal .timeInMillis); dayCal.add(Calendar.DAY_OF_MONTH, 1)

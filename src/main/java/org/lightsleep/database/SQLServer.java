@@ -42,6 +42,19 @@ import org.lightsleep.helper.TypeConverter;
  */
 public class SQLServer extends Standard {
 	/**
+	 * The pattern string of passwords
+	 *
+	 * @since 2.2.0
+	 */
+	protected static final String PASSWORD_PATTERN =
+		'['
+		+ ASCII_CHARS
+			.replace(":;", "")
+			.replace("[\\]", "\\[\\\\\\]")
+			.replace("^", "\\^")
+		+ "]*";
+
+	/**
 	 * The only instance of this class
 	 *
 	 * @since 2.1.0
@@ -258,5 +271,15 @@ public class SQLServer extends Standard {
 			else
 				throw new UnsupportedOperationException("wait N");
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 2.2.0
+	 */
+	@Override
+	public String maskPassword(String jdbcUrl) {
+		return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
 	}
 }

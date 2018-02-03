@@ -6,6 +6,7 @@ package org.lightsleep.spec.database
 import org.debugtrace.DebugTrace
 import org.lightsleep.component.*
 import org.lightsleep.database.PostgreSQL
+import static org.lightsleep.database.Standard.*
 import org.lightsleep.helper.*
 
 import spock.lang.*
@@ -16,8 +17,7 @@ class PostgreSQLSpec extends Specification {
 	@Shared map = PostgreSQL.instance.typeConverterMap()
 
 	// -> SqlString
-	def "PostgreSQLSpec -> SqlString"() {
-	/**/DebugTrace.enter()
+	def "PostgreSQL -> SqlString"() {
 		expect:
 			TypeConverter.convert(map, false     , SqlString).toString() == 'FALSE'
 			TypeConverter.convert(map, true      , SqlString).toString() == 'TRUE'
@@ -33,6 +33,20 @@ class PostgreSQLSpec extends Specification {
 			TypeConverter.convert(map, '\\'      , SqlString).toString() == "E'\\\\'"
 			TypeConverter.convert(map, '\u0001A\tB\n\u0002\r', SqlString).toString() == "E'\\u0001A\\tB\\n\\u0002\\r'"
 			TypeConverter.convert(map, [(byte)0x7F , (byte)0x80 , (byte)0xFF] as byte[], SqlString).toString() == "E'\\\\x7F80FF'"
-	/**/DebugTrace.leave()
+	}
+
+	// maskPassword
+	def "PostgreSQL maskPassword"(String jdbcUrl, String result) {
+		expect: PostgreSQL.instance.maskPassword(jdbcUrl) == result
+
+		where:
+			jdbcUrl                     |result
+			''                            |''
+			'passwor='                    |'passwor='
+			'password ='                  |'password=' + PASSWORD_MASK
+			'password  =a'                |'password=' + PASSWORD_MASK
+			'password= !"#$%\'()*+,-./&'  |'password=' + PASSWORD_MASK + '&'
+			'?password=;<=>?@[\\]^_`(|)~:'|'?password=' + PASSWORD_MASK + ':'
+			'?password=a&password=a:bbb'  |'?password=' + PASSWORD_MASK + '&password=' + PASSWORD_MASK + ':bbb'
 	}
 }

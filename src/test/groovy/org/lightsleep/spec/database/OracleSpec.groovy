@@ -6,6 +6,7 @@ package org.lightsleep.spec.database
 import org.debugtrace.DebugTrace
 import org.lightsleep.component.*
 import org.lightsleep.database.Oracle
+import static org.lightsleep.database.Standard.*
 import org.lightsleep.helper.*
 
 import spock.lang.*
@@ -16,8 +17,7 @@ class OracleSpec extends Specification {
 	@Shared map = Oracle.instance.typeConverterMap()
 
 	// -> SqlString
-	def "OracleSpec -> SqlString"() {
-	/**/DebugTrace.enter()
+	def "Oracle -> SqlString"() {
 		expect:
 			TypeConverter.convert(map, false     , SqlString).toString() == '0'
 			TypeConverter.convert(map, true      , SqlString).toString() == '1'
@@ -32,6 +32,20 @@ class OracleSpec extends Specification {
 			TypeConverter.convert(map, "'A'"     , SqlString).toString() == "'''A'''"
 			TypeConverter.convert(map, '\\'      , SqlString).toString() == "'\\'"
 			TypeConverter.convert(map, 'A\tB\n\r', SqlString).toString() == "'A'||CHR(9)||'B'||CHR(10)||CHR(13)"
-	/**/DebugTrace.leave()
+	}
+
+	// maskPassword
+	def "Oracle maskPassword"(String jdbcUrl, String result) {
+		expect: Oracle.instance.maskPassword(jdbcUrl) == result
+
+		where:
+			jdbcUrl              |result
+			''                   |''
+			'/@'                 |'/' + PASSWORD_MASK + '@'
+			'/ @'                |'/' + PASSWORD_MASK + '@'
+			'/a@'                |'/' + PASSWORD_MASK + '@'
+			'/ !"#$%&\'()*+,-./@'|'/' + PASSWORD_MASK + '@'
+			'/;<=>?[\\]^_`(|)~@' |'/' + PASSWORD_MASK + '@'
+			'/a@/a@bbb'          |'/' + PASSWORD_MASK + '@/' + PASSWORD_MASK + '@bbb'
 	}
 }
