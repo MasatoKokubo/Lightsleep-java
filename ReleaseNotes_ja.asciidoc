@@ -5,10 +5,18 @@ link:ReleaseNotes.asciidoc[English]
 [[TOC_]]
 === 目次
 
+- <<ReleaseNote2.2.1,バージョン 2.2.1>>
 - <<ReleaseNote2.2.0,バージョン 2.2.0>>
 - <<ReleaseNote2.1.1,バージョン 2.1.1>>
 - <<ReleaseNote2.1.0,バージョン 2.1.0>>
 - <<ReleaseNote2.0.0,バージョン 2.0.0>>
+
+[[ReleaseNote2.2.1]]
+
+=== バージョン2.2.1
+
+1. バグ修正
+    - [修正済] OracleのJDBCドライバjarがクラスパスにないと動作しない。
 
 [[ReleaseNote2.2.0]]
 

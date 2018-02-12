@@ -1081,9 +1081,14 @@ public class Standard implements Database {
 	@Override
 	public String maskPassword(String jdbcUrl) {
 		return
-			Oracle.instance.maskPassword(
+		// 2.2.1
+		//	Oracle.instance.maskPassword(
+		////
 			SQLServer.instance.maskPassword(
 			MySQL.instance.maskPassword(
-				jdbcUrl)));
+		// 2.2.1
+		//		jdbcUrl)));
+				jdbcUrl));
+		////
 	}
 }

@@ -11,9 +11,9 @@ CREATE TABLE Contact (
     birthday    TEXT        NULL,
 	birthday2   INTEGER     NULL,
 
-    updateCount INTEGER NOT NULL DEFAULT 0,
-    createdTime TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updatedTime TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updateCount INTEGER DEFAULT 0                 NOT NULL,
+    createdTime TEXT    DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updatedTime TEXT    DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
     PRIMARY KEY(id)
 );

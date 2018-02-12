@@ -483,11 +483,13 @@ class StandardSpec extends Specification {
 			'password= !"#$%\'()*+,-./&'  |'password=' + PASSWORD_MASK
 			'?password=;<=>?[\\]^_`(|)~:' |'?password=' + PASSWORD_MASK + ':'
 
-			'/@'                          |'/' + PASSWORD_MASK + '@'
-			'/ @'                         |'/' + PASSWORD_MASK + '@'
-			'/a@'                         |'/' + PASSWORD_MASK + '@'
-			'/ !"#$%&\'()*+,-./@'         |'/' + PASSWORD_MASK + '@'
-			'/;<=>?[\\]^_`(|)~@'          |'/' + PASSWORD_MASK + '@'
-			'/a@/a@bbb'                   |'/' + PASSWORD_MASK + '@/' + PASSWORD_MASK + '@bbb'
+		// 2.2.1
+		//	'/@'                          |'/' + PASSWORD_MASK + '@'
+		//	'/ @'                         |'/' + PASSWORD_MASK + '@'
+		//	'/a@'                         |'/' + PASSWORD_MASK + '@'
+		//	'/ !"#$%&\'()*+,-./@'         |'/' + PASSWORD_MASK + '@'
+		//	'/;<=>?[\\]^_`(|)~@'          |'/' + PASSWORD_MASK + '@'
+		//	'/a@/a@bbb'                   |'/' + PASSWORD_MASK + '@/' + PASSWORD_MASK + '@bbb'
+		////
 	}
 }

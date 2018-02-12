@@ -105,47 +105,47 @@ CREATE TABLE SaleItem (
 -- Various
 DROP TABLE IF EXISTS Various;
 CREATE TABLE Various (
-	id               INTEGER  NOT NULL,
+	id               INTEGER NOT NULL,
 
-	booleanPValue    INTEGER  NOT NULL DEFAULT 0,
-	char1PValue      TEXT     NOT NULL DEFAULT ' ',
-	tinyIntPValue    INTEGER  NOT NULL DEFAULT 0,
-	smallIntPValue   INTEGER  NOT NULL DEFAULT 0,
-	intPValue        INTEGER  NOT NULL DEFAULT 0,
-	bigIntPValue     INTEGER  NOT NULL DEFAULT 0,
-	floatPValue      REAL     NOT NULL DEFAULT 0,
-	doublePValue     REAL     NOT NULL DEFAULT 0,
+	booleanPValue    INTEGER DEFAULT 0   NOT NULL,
+	char1PValue      TEXT    DEFAULT ' ' NOT NULL,
+	tinyIntPValue    INTEGER DEFAULT 0   NOT NULL,
+	smallIntPValue   INTEGER DEFAULT 0   NOT NULL,
+	intPValue        INTEGER DEFAULT 0   NOT NULL,
+	bigIntPValue     INTEGER DEFAULT 0   NOT NULL,
+	floatPValue      REAL    DEFAULT 0   NOT NULL,
+	doublePValue     REAL    DEFAULT 0   NOT NULL,
 
-	booleanValue     INTEGER      ,
-	char1Value       TEXT         ,
-	tinyIntValue     INTEGER      ,
-	smallIntValue    INTEGER      ,
-	intValue         INTEGER      ,
-	bigIntValue      INTEGER      ,
-	floatValue       REAL         ,
-	doubleValue      REAL         ,
+	booleanValue     INTEGER,
+	char1Value       TEXT   ,
+	tinyIntValue     INTEGER,
+	smallIntValue    INTEGER,
+	intValue         INTEGER,
+	bigIntValue      INTEGER,
+	floatValue       REAL   ,
+	doubleValue      REAL   ,
 
-	decimalValue     REAL         ,
+	decimalValue     REAL   ,
 
-	dateValue        TEXT         ,
-	timeValue        TEXT         ,
-	timeTZValue      TEXT         , -- instead of TIME WITH TIME ZONE type
-	dateTimeValue    TEXT         ,
-	timestampValue   TEXT         ,
-	timestampTZValue TEXT         , -- instead of DATETIME  WITH TIME ZONE type
+	dateValue        TEXT   ,
+	timeValue        TEXT   ,
+	timeTZValue      TEXT   , -- instead of TIME WITH TIME ZONE type
+	dateTimeValue    TEXT   ,
+	timestampValue   TEXT   ,
+	timestampTZValue TEXT   , -- instead of DATETIME  WITH TIME ZONE type
 
-	longDate         INTEGER      , -- since 1.8.0
-	longTime         INTEGER      , -- since 1.8.0
-	longTimestamp    INTEGER      , -- since 1.8.0
+	longDate         INTEGER, -- since 1.8.0
+	longTime         INTEGER, -- since 1.8.0
+	longTimestamp    INTEGER, -- since 1.8.0
 
-	charValue        TEXT         ,
-	varCharValue     TEXT         ,
+	charValue        TEXT   ,
+	varCharValue     TEXT   ,
 
-	binaryValue      BLOB         ,
-	varBinaryValue   BLOB         ,
+	binaryValue      BLOB   ,
+	varBinaryValue   BLOB   ,
 
-	textValue        TEXT         ,
-	blobValue        BLOB         ,
+	textValue        TEXT   ,
+	blobValue        BLOB   ,
 
 	PRIMARY KEY(id)
 );

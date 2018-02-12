@@ -24,8 +24,6 @@ public class ConnectionSpec extends SpecCommon {
 	private static final long SLEEP_TIME1        =   10 // ms
 	private static final long SLEEP_TIME2        = 1000 // ms
 	private static final int THREAD_COUNT_SQLITE =   10
-	private static final long SLEEP_TIME1_SQLITE = 2000 // ms
-	private static final long SLEEP_TIME2_SQLITE =    1 // ms
 
 	// The map of isolation levels
 	private static isolationLevelsMap = [
@@ -83,11 +81,9 @@ public class ConnectionSpec extends SpecCommon {
 							new Sql<>(ContactComposite).connection(it).insert(contact)
 
 							ContactComposite contact2 = new Sql<>(ContactComposite).connection(it).where(contact).select().orElse(null)
-							try {
-								Thread.sleep(isSQLite ? SLEEP_TIME2_SQLITE : SLEEP_TIME2)
-							}
-							catch (InterruptedException e4) {
-								new RuntimeException(e4)
+							if (!isSQLite) {
+								try {Thread.sleep(SLEEP_TIME2)}
+								catch (InterruptedException e4) {new RuntimeException(e4)}
 							}
 
 						/**/DebugTrace.print(index2 + ': end')
@@ -101,12 +97,19 @@ public class ConnectionSpec extends SpecCommon {
 				/**/DebugTrace.leave()
 				})
 				threads[index].start()
-				Thread.sleep(isSQLite ? SLEEP_TIME1_SQLITE : SLEEP_TIME1)
+
+			//	Thread.sleep(isSQLite ? SLEEP_TIME1_SQLITE : SLEEP_TIME1)
+				if (isSQLite)
+					threads[index].join()
+				else
+					Thread.sleep(SLEEP_TIME1)
 			}
 
-			// Wait for all threads to finish.
-			for (def index = 0; index < threads.length; ++index)
-				threads[index].join()
+			if (!isSQLite) {
+				// Wait for all threads to finish.
+				for (def index = 0; index < threads.length; ++index)
+					threads[index].join()
+			}
 
 		then:
 			errorCount == 0

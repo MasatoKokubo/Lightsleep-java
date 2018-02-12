@@ -36,10 +36,8 @@ dependencies {
 
 	testRuntimeOnly    'com.ibm.db2.jcc:db2jcc4:10.+'
 	testRuntimeOnly    'mysql:mysql-connector-java:5.+'
-//	compileOnly        'com.hynnet:oracle-driver-ojdbc:12.+'
-//	testCompile        'com.hynnet:oracle-driver-ojdbc:12.+'
-	compileOnly        files('C:/Java/jdbc/ojdbc8_g.jar')
-	testCompile        files('C:/Java/jdbc/ojdbc8_g.jar')
+//	testRuntimeOnly    'com.hynnet:oracle-driver-ojdbc:12.+'
+	testRuntimeOnly    files('C:/Java/jdbc/ojdbc8_g.jar')
 	testRuntimeOnly    'org.postgresql:postgresql:42.+'
 	testRuntimeOnly    'org.xerial:sqlite-jdbc:3.+'
 	testRuntimeOnly    'com.microsoft.sqlserver:mssql-jdbc:6.2.+'
@@ -60,7 +58,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '2.2.0'
+version             = '2.2.1'
 
 sourceSets {
 	main {
@@ -96,7 +94,7 @@ sourceSets {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.5'
+	gradleVersion = '4.5.1'
 }
 
 compileJava {
@@ -201,7 +199,7 @@ task zip(type: Zip) {
 }
 
 task sourcesJar(type: Jar) {
-	classifier = 'source'
+	classifier = 'sources'
 
 	manifest {
 		attributes	'Implementation-Title'    : project.name,

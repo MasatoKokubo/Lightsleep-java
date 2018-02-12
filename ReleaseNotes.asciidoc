@@ -5,10 +5,18 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 [[TOC_]]
 === Table of Contents
 
+- <<ReleaseNote2.2.1,version 2.2.1>>
 - <<ReleaseNote2.2.0,version 2.2.0>>
 - <<ReleaseNote2.1.1,version 2.1.1>>
 - <<ReleaseNote2.1.0,version 2.1.0>>
 - <<ReleaseNote2.0.0,version 2.0.0>>
+
+[[ReleaseNote2.2.1]]
+
+=== version 2.2.1
+
+1. Bug fix
+    - [Fixed] Lightsleep does not work unless the Oracle JDBC driver jar is in the classpath.
 
 [[ReleaseNote2.2.0]]
 

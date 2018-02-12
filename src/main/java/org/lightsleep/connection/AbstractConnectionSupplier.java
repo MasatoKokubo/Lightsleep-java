@@ -3,7 +3,6 @@
 
 package org.lightsleep.connection;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;

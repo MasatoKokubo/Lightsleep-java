@@ -107,14 +107,14 @@ DROP TABLE Various;
 CREATE TABLE Various (
     id               INTEGER        NOT NULL,
 
-    booleanPValue    BOOLEAN        NOT NULL DEFAULT FALSE,
-    char1PValue      GRAPHIC    (1) NOT NULL DEFAULT ' ',
-    tinyIntPValue    SMALLINT       NOT NULL DEFAULT 0, -- instead of TINYINT type
-    smallIntPValue   SMALLINT       NOT NULL DEFAULT 0,
-    intPValue        INTEGER        NOT NULL DEFAULT 0,
-    bigIntPValue     BIGINT         NOT NULL DEFAULT 0,
-    floatPValue      REAL           NOT NULL DEFAULT 0,
-    doublePValue     DOUBLE         NOT NULL DEFAULT 0,
+    booleanPValue    BOOLEAN        DEFAULT FALSE NOT NULL,
+    char1PValue      GRAPHIC    (1) DEFAULT ' '   NOT NULL,
+    tinyIntPValue    SMALLINT       DEFAULT 0     NOT NULL, -- instead of TINYINT type
+    smallIntPValue   SMALLINT       DEFAULT 0     NOT NULL,
+    intPValue        INTEGER        DEFAULT 0     NOT NULL,
+    bigIntPValue     BIGINT         DEFAULT 0     NOT NULL,
+    floatPValue      REAL           DEFAULT 0     NOT NULL,
+    doublePValue     DOUBLE         DEFAULT 0     NOT NULL,
 
     booleanValue     BOOLEAN       ,
     char1Value       GRAPHIC    (1),

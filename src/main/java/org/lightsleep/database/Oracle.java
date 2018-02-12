@@ -3,10 +3,13 @@
 
 package org.lightsleep.database;
 
-import oracle.sql.TIMESTAMP;
+import java.lang.reflect.Method;
+
+// 2.2.1
+//import oracle.sql.TIMESTAMP;
+////
 
 import java.sql.Date;
-import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 
@@ -99,53 +102,105 @@ public class Oracle extends Standard {
 				new SqlString(SqlString.PARAMETER, object))
 		);
 
-		// oracle.sql.TIMESTAMP -> java.util.Date (since 1.4.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(TIMESTAMP.class, java.util.Date.class, object -> {
-				try {
-					return new java.util.Date(object.dateValue().getTime());
-				}
-				catch (SQLException e) {
-					throw new ConvertException(e);
-				}
-			})
-		);
+	// 2.2.1
+		try {
+			Class<?> oracleTimestampClass = Class.forName("oracle.sql.TIMESTAMP");
+			Method dateValueMethod = oracleTimestampClass.getDeclaredMethod("dateValue");
+			Method timeValueMethod = oracleTimestampClass.getDeclaredMethod("timeValue");
+			Method timestampValueMethod = oracleTimestampClass.getDeclaredMethod("timestampValue");
+	////
+			// oracle.sql.TIMESTAMP -> java.util.Date (since 1.4.0)
+			TypeConverter.put(typeConverterMap,
+			// 2.2.1
+			//	new TypeConverter<>(TIMESTAMP.class, java.util.Date.class, object -> {
+			//		try {
+			//			return new java.util.Date(object.dateValue().getTime());
+			//		}
+			//		catch (SQLException e) {
+			//			throw new ConvertException(e);
+			//		}
+			//	})
+				new TypeConverter<>(oracleTimestampClass, java.util.Date.class, object -> {
+					try {
+						return new java.util.Date(((Date)dateValueMethod.invoke(object)).getTime());
+					}
+					catch (Exception e) {
+						throw new ConvertException(e);
+					}
+				})
+			////
+			);
 
-		// oracle.sql.TIMESTAMP -> java.sql.Date
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(TIMESTAMP.class, Date.class, object -> {
-				try {
-					return object.dateValue();
-				}
-				catch (SQLException e) {
-					throw new ConvertException(e);
-				}
-			})
-		);
+			// oracle.sql.TIMESTAMP -> java.sql.Date
+			TypeConverter.put(typeConverterMap,
+			// 2.2.1
+			//	new TypeConverter<>(TIMESTAMP.class, Date.class, object -> {
+			//		try {
+			//			return object.dateValue();
+			//		}
+			//		catch (SQLException e) {
+			//			throw new ConvertException(e);
+			//		}
+			//	})
+				new TypeConverter<>(oracleTimestampClass, Date.class, object -> {
+					try {
+						return (Date)dateValueMethod.invoke(object);
+					}
+					catch (Exception e) {
+						throw new ConvertException(e);
+					}
+				})
+			////
+			);
 
-		// oracle.sql.TIMESTAMP -> java.sql.Time
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(TIMESTAMP.class, Time.class, object -> {
-				try {
-					return object.timeValue();
-				}
-				catch (SQLException e) {
-					throw new ConvertException(e);
-				}
-			})
-		);
+			// oracle.sql.TIMESTAMP -> java.sql.Time
+			TypeConverter.put(typeConverterMap,
+			// 2.2.1
+			//	new TypeConverter<>(TIMESTAMP.class, Time.class, object -> {
+			//		try {
+			//			return object.timeValue();
+			//		}
+			//		catch (SQLException e) {
+			//			throw new ConvertException(e);
+			//		}
+			//	})
+				new TypeConverter<>(oracleTimestampClass, Time.class, object -> {
+					try {
+						return (Time)timeValueMethod.invoke(object);
+					}
+					catch (Exception e) {
+						throw new ConvertException(e);
+					}
+				})
+			);
 
-		// oracle.sql.TIMESTAMP -> java.sql.Timestamp
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(TIMESTAMP.class, Timestamp.class, object -> {
-				try {
-					return object.timestampValue();
-				}
-				catch (SQLException e) {
-					throw new ConvertException(e);
-				}
-			})
-		);
+			// oracle.sql.TIMESTAMP -> java.sql.Timestamp
+			TypeConverter.put(typeConverterMap,
+			// 2.2.1
+			//	new TypeConverter<>(TIMESTAMP.class, Timestamp.class, object -> {
+			//		try {
+			//			return object.timestampValue();
+			//		}
+			//		catch (SQLException e) {
+			//			throw new ConvertException(e);
+			//		}
+			//	})
+				new TypeConverter<>(oracleTimestampClass, Timestamp.class, object -> {
+					try {
+						return (Timestamp)timestampValueMethod.invoke(object);
+					}
+					catch (Exception e) {
+						throw new ConvertException(e);
+					}
+				})
+			////
+			);
+	// 2.2.1
+		}
+		catch (ClassNotFoundException | NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		}
+	////
 	}
 
 	/**
