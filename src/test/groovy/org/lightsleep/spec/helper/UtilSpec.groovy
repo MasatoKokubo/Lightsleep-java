@@ -36,7 +36,7 @@ public class UtilSpec extends Specification {
 	}
 
 	def "UtilSpec getAnnotations"() {
-	/**/DebugTrace.enter();
+		DebugTrace.enter(); // for Debugging
 
 		when: def nonColumnProperties = Utils.getAnnotations(Test4, NonColumnProperty);
 		then:
@@ -50,6 +50,6 @@ public class UtilSpec extends Specification {
 			]
 			nonColumnProperties*.value() == [true]*nonColumnProperties.size()
 
-	/**/DebugTrace.leave();
+		DebugTrace.leave(); // for Debugging
 	}
 }

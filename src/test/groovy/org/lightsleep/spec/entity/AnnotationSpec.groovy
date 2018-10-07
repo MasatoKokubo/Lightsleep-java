@@ -148,7 +148,7 @@ class AnnotationSpec extends Specification {
 	}
 
 	def "AnnotationSpec field annotations"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		setup:
 			def sql1 = new Sql<>(TestEntity1)
@@ -184,11 +184,11 @@ class AnnotationSpec extends Specification {
 		when: def selectSql3 = Standard.instance.selectSql(sql3, new ArrayList<Object>())
 		then: thrown IllegalStateException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "AnnotationSpec type annotations"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		setup:
 			def sql = new Sql<>(TestEntity4)
@@ -212,11 +212,11 @@ class AnnotationSpec extends Specification {
 			updateSql.indexOf("c1=1, c2=2, _c3_=3, c4=444, c5=5, c6=6, c9=9, c11=11, c12=12, _c13_=13, c14=1444, c15=15, c16=16, c19=19") >= 0
 			updateSql.indexOf("key=-1 AND key2=-2") >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "AnnotationSpec type annotations (multiple)"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		setup:
 			def sql = new Sql<>(TestEntity5)
@@ -240,7 +240,7 @@ class AnnotationSpec extends Specification {
 			updateSql.indexOf("c1=1, c2=2, _c3_=3, c4=444, c5=5, c6=6, c9=9, c11=11, c12=12, _c13_=13, c14=1444, c15=15, c16=16, c19=19, c21=21, c22=22, _c23_=23, c24=2444, c25=25, c26=26, c29=29") >= 0
 			updateSql.indexOf("key=-1 AND key2=-2 AND key3=-3") >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	static class ColumnTypeEntityBase {
@@ -259,7 +259,7 @@ class AnnotationSpec extends Specification {
 	}
 
 	def "AnnotationSpec ColumnType annotation"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		setup:
 			def entity = new ColumnTypeEntity()
@@ -277,6 +277,6 @@ class AnnotationSpec extends Specification {
 		when: def updateSql = Standard.instance.updateSql(sql, new ArrayList<Object>())
 		then: updateSql == "UPDATE ColumnTypeEntity SET timestamp1=-123456789, timestamp2=0, timestamp3=123456789 WHERE id=1"
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 }

@@ -48,7 +48,7 @@ public class JoinInfo<JE> implements SqlEntityInfo<JE> {
 	 * @param tableAlias 結合テーブルの別名
 	 * @param on 結合条件
 	 *
-	 * @throws NullPointerException <b>joinType</b>, <b>entityInfo</b>, <b>tableAlias</b> または <b>on</b>がnullの場合
+	 * @throws NullPointerException <b>joinType</b>, <b>entityInfo</b>, <b>tableAlias</b> または <b>on</b>が<b>null</b>の場合
 	 */
 	public JoinInfo(JoinType joinType, EntityInfo<JE> entityInfo, String tableAlias, Condition on) {
 	}

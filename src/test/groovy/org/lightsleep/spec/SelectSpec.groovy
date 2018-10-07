@@ -26,7 +26,7 @@ class SelectSpec extends SpecCommon {
 	 * Inserts data for tests.
 	 */
 	def setupSpec() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		deleteAllTables()
 
 		// 2001-01-01
@@ -40,14 +40,14 @@ class SelectSpec extends SpecCommon {
 		insertContacts()
 		insertProducts()
 		insertSales   ()
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	/**
 	 * Inserts to Contact table.
 	 */
 	def insertContacts() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		Calendar calendar = birthdayStart.clone()
 
 		// 0 ~ 99
@@ -98,7 +98,7 @@ class SelectSpec extends SpecCommon {
 				new Sql<>(Contact).connection(it).insert(contact)
 			}
 		}
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Colors
@@ -120,7 +120,7 @@ class SelectSpec extends SpecCommon {
 	 * Inserts to Product table.
 	 */
 	def insertProducts() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		// 0 ~ 99
 		(0..<100).each {index ->
 			Product product = new Product()
@@ -149,14 +149,14 @@ class SelectSpec extends SpecCommon {
 				new Sql<>(Product).connection(it).insert(product)
 			}
 		}
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	/**
 	 * Insert to Sale table.
 	 */
 	def insertSales() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		Calendar calendar = saleDateStart.clone()
 
 		// 0 ~ 99
@@ -202,7 +202,7 @@ class SelectSpec extends SpecCommon {
 				new Sql<>(Sale).connection(it).insert(sale)
 			}
 		}
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// select(Consumer<? super E> consumer,
@@ -225,8 +225,8 @@ class SelectSpec extends SpecCommon {
 	//
 	// select()
 	def "SelectSpec select - exception"() {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('select - exception')
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('select - exception') // for Debugging
 
 		setup:
 			List<Contact> contacts = []
@@ -289,7 +289,7 @@ class SelectSpec extends SpecCommon {
 			thrown IllegalStateException
 
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// since 2.2.0
@@ -301,11 +301,11 @@ class SelectSpec extends SpecCommon {
 	}
 	def "SelectSpec selectAs - exception #connectionSupplier #comment"(
 		ConnectionSupplier connectionSupplier, Class<?> resultClass, Class<? extends Exception> exception, String comment) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('selectAs')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
-	/**/DebugTrace.print('resultClass', resultClass)
-	/**/DebugTrace.print('comment', comment)
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('selectAs') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
+		DebugTrace.print('resultClass', resultClass) // for Debugging
+		DebugTrace.print('comment', comment) // for Debugging
 		setup:
 			List<Id> ids = []
 			List<Common> commons = []
@@ -327,7 +327,7 @@ class SelectSpec extends SpecCommon {
 		then:
 			thrown exception
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier = connectionSuppliers[0]
 			resultClass |exception               |comment
@@ -342,9 +342,9 @@ class SelectSpec extends SpecCommon {
 
 	// select()
 	def "SelectSpec select1 #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('select1')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('select1') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		when:
 			Transaction.execute(connectionSupplier) {
 				new Sql<>(Contact).connection(it).select()
@@ -362,7 +362,7 @@ class SelectSpec extends SpecCommon {
 		then:
 			contact == null
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
@@ -370,9 +370,9 @@ class SelectSpec extends SpecCommon {
 	// select()
 	// SELECT MAX(...)
 	def "SelectSpec select MAX #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('select MAX')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('select MAX') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			Contact contact = null
 
@@ -383,7 +383,7 @@ class SelectSpec extends SpecCommon {
 					.columns('id')                 // without table alias
 					.select().orElse(null)
 			}
-			/**/DebugTrace.print('contact', contact)
+				DebugTrace.print('contact', contact) // for Debugging
 
 		then:
 			contact != null
@@ -396,7 +396,7 @@ class SelectSpec extends SpecCommon {
 					.columns('C.id')                   // with table alias
 					.select().orElse(null)
 			}
-		/**/DebugTrace.print('contact', contact)
+			DebugTrace.print('contact', contact) // for Debugging
 
 		then:
 			contact != null
@@ -409,7 +409,7 @@ class SelectSpec extends SpecCommon {
 					.columns('C.id')                    // with table alias
 					.select().orElse(null)
 			}
-		/**/DebugTrace.print('contact', contact)
+			DebugTrace.print('contact', contact) // for Debugging
 
 		then:
 			contact != null
@@ -422,22 +422,22 @@ class SelectSpec extends SpecCommon {
 					.columns('id')                      // without table alias
 					.select().orElse(null)
 			}
-		/**/DebugTrace.print('contact', contact)
+			DebugTrace.print('contact', contact) // for Debugging
 
 		then:
 			contact != null
 			contact.id != 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
 
 	// select() / where A and B or C and D
 	def "SelectSpec where A and B or C and D #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('where A and B or C and D')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('where A and B or C and D') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<Contact> contacts = []
 
@@ -462,16 +462,16 @@ class SelectSpec extends SpecCommon {
 			contacts[1].name.last == 'Last1'
 			contacts[1].name.first  == 'First1'
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
 
 	// select() / where (A or B) and (C or D)
 	def "SelectSpec where (A or B) and (C or D) #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('where (A or B) and (C or D)')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('where (A or B) and (C or D)') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<Contact> contacts = []
 
@@ -500,16 +500,16 @@ class SelectSpec extends SpecCommon {
 			contacts[3].name.last == 'Last1'
 			contacts[3].name.first  == 'First1'
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
 
 	// selectCount()
 	def "SelectSpec selectCount #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('selectCount')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('selectCount') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			def count = 0
 
@@ -533,16 +533,16 @@ class SelectSpec extends SpecCommon {
 		then:
 			count == 6 // 4, 5, 6, 7, 8, 9
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
 
 	// select() / limit, offset
 	def "SelectSpec limit, offset #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('limit, offset')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('limit, offset') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<Contact> contacts = []
 
@@ -564,16 +564,16 @@ class SelectSpec extends SpecCommon {
 			contacts[14].name.last  == 'Last1'
 			contacts[14].name.first == 'First5'
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
 
 	// select() / innerJoin
 	def "SelectSpec innerJoin #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('innerJoin')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('innerJoin') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<Phone> phones = []
 			List<Contact> contacts = []
@@ -588,8 +588,8 @@ class SelectSpec extends SpecCommon {
 					.columns('P.phoneId', 'P.phoneNumber', 'C.id')
 					.<Contact>select({phones << it}, {contacts << it})
 			}
-		/**/DebugTrace.print('phones .size', phones .size())
-		/**/DebugTrace.print('contacts.size', contacts.size())
+			DebugTrace.print('phones .size', phones .size()) // for Debugging
+			DebugTrace.print('contacts.size', contacts.size()) // for Debugging
 
 		then:
 			phones  .size() == 6 // 4, 5, 6, 7, 8, 9
@@ -610,19 +610,19 @@ class SelectSpec extends SpecCommon {
 
 		then:
 			// No 'C_xxxx' columns
-		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql)
+			DebugTrace.print('sql.generatedSql', sql.generatedSql) // for Debugging
 			sql.generatedSql.indexOf('P_phoneNumber FROM') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
 
 	// select() / innerJoin
 	def "SelectSpec innerJoin2 #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('innerJoin')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('innerJoin') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<SaleItem> saleItems = []
 			List<Sale    > sales     = []
@@ -636,21 +636,21 @@ class SelectSpec extends SpecCommon {
 						{saleItems << it}, {sales << it}
 					)
 			}
-		/**/DebugTrace.print('sales.size', sales.size())
+			DebugTrace.print('sales.size', sales.size()) // for Debugging
 
 		then:
 			sales.size() == saleItems.size()
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
 
 	// select() / innerJoin x 2
 	def "SelectSpec innerJoin innerJoin #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('innerJoin innerJoin')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('innerJoin innerJoin') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<SaleItem> saleItems = []
 			List<Sale    > sales     = []
@@ -666,7 +666,7 @@ class SelectSpec extends SpecCommon {
 						{saleItems << it}, {sales << it}, {contacts << it}
 					)
 			}
-		/**/DebugTrace.print('sales.size', sales.size())
+			DebugTrace.print('sales.size', sales.size()) // for Debugging
 
 		then:
 			sales   .size() == saleItems .size()
@@ -683,23 +683,23 @@ class SelectSpec extends SpecCommon {
 				sql.connection(it)
 					.<Sale>select({saleItems << it}, {sales << it})
 			}
-		/**/DebugTrace.print('sales.size', sales.size())
+			DebugTrace.print('sales.size', sales.size()) // for Debugging
 
 		then:
 			// No 'C_xxxx' columns
-		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql)
+			DebugTrace.print('sql.generatedSql', sql.generatedSql) // for Debugging
 			sql.generatedSql.indexOf('S_taxRate FROM') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
 
 	// select() / innerJoin x 3
 	def "SelectSpec innerJoin x 3 #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('innerJoin x 3')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('innerJoin x 3') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<SaleItem> saleItems = []
 			List<Sale    > sales     = []
@@ -718,7 +718,7 @@ class SelectSpec extends SpecCommon {
 						{contacts << it}, {addresses << it}
 					)
 			}
-		/**/DebugTrace.print('sales.size', sales.size())
+			DebugTrace.print('sales.size', sales.size()) // for Debugging
 
 		then:
 			sales    .size() == saleItems .size()
@@ -740,23 +740,23 @@ class SelectSpec extends SpecCommon {
 						{saleItems << it}, {sales << it}, {contacts << it}
 					)
 			}
-		/**/DebugTrace.print('sales.size', sales.size())
+			DebugTrace.print('sales.size', sales.size()) // for Debugging
 
 		then:
 			// No 'A_xxxx' columns
-		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql)
+			DebugTrace.print('sql.generatedSql', sql.generatedSql) // for Debugging
 			sql.generatedSql.indexOf('C_addressId FROM') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
 
 	// select() / innerJoin x 3 + leftJoin
 	def "SelectSpec innerJoin x 3  leftJoin #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('innerJoin x 3 leftJoin')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('innerJoin x 3 leftJoin') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<SaleItem> saleItems = []
 			List<Sale    > sales     = []
@@ -778,7 +778,7 @@ class SelectSpec extends SpecCommon {
 						{phones << it}
 					)
 			}
-		/**/DebugTrace.print('sales.size', sales.size())
+			DebugTrace.print('sales.size', sales.size()) // for Debugging
 
 		then:
 			sales    .size() == saleItems .size()
@@ -807,19 +807,19 @@ class SelectSpec extends SpecCommon {
 
 		then:
 			// No 'P_xxxx' columns
-		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql)
+			DebugTrace.print('sql.generatedSql', sql.generatedSql) // for Debugging
 			sql.generatedSql.indexOf('A_address4 FROM') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
 
 	// select() / innerJoin x 3 + leftJoin x 2
 	def "SelectSpec innerJoin x 3  leftJoin x 2 #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('innerJoin x 3 leftJoin x 2')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('innerJoin x 3 leftJoin x 2') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<SaleItem> saleItems = []
 			List<Sale    > sales     = []
@@ -846,10 +846,10 @@ class SelectSpec extends SpecCommon {
 
 		then:
 			// No 'P2_xxxx' columns
-		/**/DebugTrace.print('sql.generatedSql', sql.generatedSql)
+			DebugTrace.print('sql.generatedSql', sql.generatedSql) // for Debugging
 			sql.generatedSql.indexOf('P1_phoneNumber FROM') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
@@ -862,9 +862,9 @@ class SelectSpec extends SpecCommon {
 
 	// select() / gourpBy
 	def "SelectSpec gourpBy #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('gourpBy')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('gourpBy') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<ContactPhoneCount> phoneCounts = []
 
@@ -885,7 +885,7 @@ class SelectSpec extends SpecCommon {
 			phoneCounts.size() == 10
 			phoneCounts[0].count == 6
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
@@ -893,9 +893,9 @@ class SelectSpec extends SpecCommon {
 	// select() / forUpdate
 	def "SelectSpec forUpdate #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 		if (connectionSupplier.database instanceof SQLite) return
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('forUpdate')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('forUpdate') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			Contact contact0 = null
 
@@ -979,7 +979,7 @@ class SelectSpec extends SpecCommon {
 					.update(contact0)
 				}
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
@@ -990,9 +990,9 @@ class SelectSpec extends SpecCommon {
 		if (connectionSupplier.database instanceof MySQL) return
 		if (connectionSupplier.database instanceof PostgreSQL) return
 		if (connectionSupplier.database instanceof SQLite) return
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('forUpdate noWait')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('forUpdate noWait') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			Contact contact0 = null
 
@@ -1036,7 +1036,7 @@ class SelectSpec extends SpecCommon {
 								.update(contact)
 						}
 						catch (RuntimeSQLException e) {
-						/**/DebugTrace.print('e', e)
+							DebugTrace.print('e', e) // for Debugging
 						}
 					}
 				})
@@ -1080,7 +1080,7 @@ class SelectSpec extends SpecCommon {
 					.update(contact0)
 				}
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
@@ -1092,9 +1092,9 @@ class SelectSpec extends SpecCommon {
 		if (connectionSupplier.database instanceof PostgreSQL) return
 		if (connectionSupplier.database instanceof SQLite) return
 		if (connectionSupplier.database instanceof SQLServer) return
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('forUpdate wait N')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('forUpdate wait N') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			Contact contact0 = null
 
@@ -1137,7 +1137,7 @@ class SelectSpec extends SpecCommon {
 								.update(contact)
 						}
 						catch (RuntimeSQLException e) {
-						/**/DebugTrace.print('e', e)
+							DebugTrace.print('e', e) // for Debugging
 						}
 					}
 				})
@@ -1182,7 +1182,7 @@ class SelectSpec extends SpecCommon {
 				}
 			Thread.sleep(1000)
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
@@ -1194,9 +1194,9 @@ class SelectSpec extends SpecCommon {
 		if (connectionSupplier.database instanceof Oracle) return
 		if (connectionSupplier.database instanceof PostgreSQL) return
 		if (connectionSupplier.database instanceof SQLServer) return
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('forUpdate - exception')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('forUpdate - exception') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			Contact contact0 = null
 
@@ -1207,7 +1207,7 @@ class SelectSpec extends SpecCommon {
 					.orderBy('{id}')
 					.select().orElse(null)
 			}
-		/**/DebugTrace.print('1 contact0', contact0)
+			DebugTrace.print('1 contact0', contact0) // for Debugging
 			
 		then:
 			assert contact0 != null
@@ -1224,7 +1224,7 @@ class SelectSpec extends SpecCommon {
 			def e = thrown UnsupportedOperationException
 			e.message.indexOf('forUpdate') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSupplier
 	}
@@ -1234,9 +1234,9 @@ class SelectSpec extends SpecCommon {
 		if (connectionSupplier.database instanceof Oracle) return
 		if (connectionSupplier.database instanceof SQLite) return
 		if (connectionSupplier.database instanceof SQLServer) return
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('forUpdate noWait - exception')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('forUpdate noWait - exception') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			Contact contact0 = null
 
@@ -1247,7 +1247,7 @@ class SelectSpec extends SpecCommon {
 					.orderBy('{id}')
 					.select().orElse(null)
 			}
-		/**/DebugTrace.print('1 contact0', contact0)
+			DebugTrace.print('1 contact0', contact0) // for Debugging
 			
 		then:
 			assert contact0 != null
@@ -1264,7 +1264,7 @@ class SelectSpec extends SpecCommon {
 			def e = thrown UnsupportedOperationException
 			e.message.indexOf('noWait') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSupplier
 	}
@@ -1273,9 +1273,9 @@ class SelectSpec extends SpecCommon {
 	def "SelectSpec forUpdate wait N - exception #connectionSupplier"(ConnectionSupplier connectionSupplier) {
 		if (connectionSupplier.database instanceof Oracle) return
 		if (connectionSupplier.database instanceof SQLite) return
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('forUpdate noWait N - exception')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('forUpdate noWait N - exception') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			Contact contact0 = null
 
@@ -1286,7 +1286,7 @@ class SelectSpec extends SpecCommon {
 					.orderBy('{id}')
 					.select().orElse(null)
 			}
-		/**/DebugTrace.print('1 contact0', contact0)
+			DebugTrace.print('1 contact0', contact0) // for Debugging
 			
 		then:
 			assert contact0 != null
@@ -1303,15 +1303,15 @@ class SelectSpec extends SpecCommon {
 			def e = thrown UnsupportedOperationException
 			e.message.indexOf('wait N') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSupplier
 	}
 
 	// exceptionTest
 	def "SelectSpec exception - ManyRowsException"() {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('exception - ManyRowsException')
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('exception - ManyRowsException') // for Debugging
 
 		when:
 			Transaction.execute(connectionSupplier) {
@@ -1324,7 +1324,7 @@ class SelectSpec extends SpecCommon {
 			def e = thrown ManyRowsException
 			e.message.indexOf('WHERE') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	@Table('super')
@@ -1358,9 +1358,9 @@ class SelectSpec extends SpecCommon {
 
 	// extendsClassTest
 	def "SelectSpec extends class #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('extends Class')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('extends Class') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		when:
 			Class<? extends ContactFn> contactClass =
 				connectionSupplier.database instanceof DB2        ? ContactFnDB2        :
@@ -1381,12 +1381,12 @@ class SelectSpec extends SpecCommon {
 					.limit(1)
 					.select().orElse(null)
 			}
-		/**/DebugTrace.print('contact', contact)
+			DebugTrace.print('contact', contact) // for Debugging
 
 		then:
 			contact != null
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
@@ -1397,9 +1397,9 @@ class SelectSpec extends SpecCommon {
 
 	// selectAs
 	def "SelectSpec selectAs #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('selectBy')
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('selectBy') // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<Contact> contacts = []
 			List<ContactName> contactNames = []
@@ -1414,8 +1414,8 @@ class SelectSpec extends SpecCommon {
 			}
 
 		then:
-		/**/DebugTrace.print('contacts', contacts)
-		/**/DebugTrace.print('contactNames', contactNames)
+			DebugTrace.print('contacts', contacts) // for Debugging
+			DebugTrace.print('contactNames', contactNames) // for Debugging
 			contactNames*.name*.first == contacts*.name*.first
 			contactNames*.name*.last == contacts*.name*.last
 			sql2.generatedSql.indexOf('SELECT firstName, lastName FROM') == 0
@@ -1432,13 +1432,13 @@ class SelectSpec extends SpecCommon {
 			}
 
 		then:
-		/**/DebugTrace.print('contactOpt', contactOpt)
-		/**/DebugTrace.print('contactNameOpt', contactNameOpt)
+			DebugTrace.print('contactOpt', contactOpt) // for Debugging
+			DebugTrace.print('contactNameOpt', contactNameOpt) // for Debugging
 			contactNameOpt.get().name.first == contactOpt.get().name.first
 			contactNameOpt.get().name.last == contactOpt.get().name.last
 			sql2.generatedSql.indexOf('SELECT firstName, lastName FROM') == 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}

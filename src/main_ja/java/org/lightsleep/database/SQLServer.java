@@ -3,6 +3,8 @@
 
 package org.lightsleep.database;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -18,14 +20,68 @@ import org.lightsleep.Sql;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>追加されるTypeConverterオブジェクト</span></caption>
- *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
- *   <tr><td>Boolean      </td><td rowspan="6">SqlString</td><td>false ➔ <code>0</code><br>true ➔ <code>1</code></td></tr>
- *   <tr><td>java.sql.Date</td><td><code>CAST('yyyy:MM:dd' AS DATE)</code></td></tr>
- *   <tr><td>Time         </td><td><code>CAST('HH:mm:ss' AS DATE)</code></td></tr>
- *   <tr><td>Timestamp    </td><td><code>CAST('yyyy-MM-dd HH:mm:ss.SSS' AS DATETIME2)</code></td></tr>
- *   <tr><td>String       </td><td><code>'...'</code><br>制御文字は<code>'...'+CHAR(n)+'...'</code>に変換<br>長い文字列の場合は<code>?</code><i>(SQLパラメータ)</i></td></tr>
- *   <tr><td>byte[]</td><td><code>?</code><i>(SQLパラメータ)</i></td></tr>
+ *   <caption><span>TypeConverterマップへの追加内容</span></caption>
+ *   <tr><th colspan="2">キー: データ型</th><th rowspan="2">値: 変換関数</th></tr>
+ *   <tr><th>変換元</th><th>変換先</th></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="13">SqlString</td>
+ *     <td>
+ *       <b>new SqlString("0")</b> <span class="comment">変換元の値が<b>false</b>の場合</span><br>
+ *       <b>new SqlString("1")</b> <span class="comment">変換元の値が<b>true</b>の場合</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>String        </td>
+ *     <td>
+ *       <b>new SqlString("'" + source + "'")</b><br>
+ *       <span class="comment">変換元の文字列中のシングルクォートは、連続する2個のシングルクォートに変換、<br>
+ *       また制御文字は</span> <b>'...'+CHAR(文字コード)+'...'</b><span class="comment"> に変換</span><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">変換元の文字列が長すぎる場合</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>java.util.Date</td>
+ *     <td rowspan="3">
+ *       (<b>java.util.Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalDate</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("CAST('" + string + "' AS DATE)")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>Date          </td>
+ *   <tr><td>LocalDate     </td></tr>
+ *   <tr><td>Time          </td>
+ *     <td>
+ *       <b>Time</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> <img src="../../../../images/arrow-right.gif" alt="->"><br>
+ *       <b>new SqlString("CAST('" + string + "' AS TIME)")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>LocalTime     </td>
+ *     <td>
+ *       <b>LocalTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> <img src="../../../../images/arrow-right.gif" alt="->"><br>
+ *       <b>new SqlString("CAST('" + string + "' AS TIME)")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>Timestamp     </td>
+ *     <td rowspan="2">
+ *       (<b>Timestamp</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("CAST('" + string + "' AS DATETIME2)")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>LocalDateTime </td></tr>
+ *   <tr><td>OffsetDateTime</td>
+ *     <td rowspan="3">
+ *       (<b>OffsetDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>ZonedDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Instant</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("CAST('" + string + "' AS DATETIMEOFFSET)")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>ZonedDateTime </td></tr>
+ *   <tr><td>Instant       </td></tr>
+ *   <tr><td>byte[]</td><td><b>new SqlString(SqlString.PARAMETER, source)</b></td></tr>
  * </table>
  *
  * @since 1.0.0
@@ -47,22 +103,6 @@ public class SQLServer extends Standard {
 	 * @since 2.1.0
 	 */
 	public static final SQLServer instance = new SQLServer();
-
-	/**
-	 * このクラスの唯一のインスタンスを返します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.1.0 より。代わりに{@link #instance}を使用してください。
-	 * </p>
-	 *
-	 * @return このクラスの唯一のインスタンス
-	 */
-// 2.1.0
-	@Deprecated
-////
-	public static Database instance() {
-		return null;
-	}
 
 	/**
 	 * <b>SQLServer</b>を構築します。
@@ -112,6 +152,16 @@ public class SQLServer extends Standard {
 	 */
 	@Override
 	public String maskPassword(String jdbcUrl) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0.0
+	 */
+	@Override
+	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
 		return null;
 	}
 }

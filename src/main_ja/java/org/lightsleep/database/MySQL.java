@@ -3,7 +3,8 @@
 
 package org.lightsleep.database;
 
-import org.lightsleep.Sql;
+import java.sql.Connection;
+import java.sql.ResultSet;
 
 /**
  * <a href="http://www.mysql.com/" target="MySQL">MySQL</a>
@@ -15,10 +16,25 @@ import org.lightsleep.Sql;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>追加されるTypeConverterオブジェクト</span></caption>
- *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
- *   <tr><td>Boolean</td><td rowspan="2">SqlString</td><td>false ➔ <code>0</code><br>true ➔ <code>1</code></td></tr>
- *   <tr><td>String </td><td><code>'...'</code><br>制御文字はエスケープ･シーケンスに変換<br>長い文字列の場合は<code>?</code><i>(SQLパラメータ)</i></td></tr>
+ *   <caption><span>TypeConverterマップへの追加内容</span></caption>
+ *   <tr><th colspan="2">キー: データ型</th><th rowspan="2">値: 変換関数</th></tr>
+ *   <tr><th>変換元</th><th>変換先</th></tr>
+ *
+ *   <tr><td>Boolean</td><td rowspan="2">SqlString</td>
+ *     <td>
+ *       <b>new SqlString("0")</b> <span class="comment">変換元の値が<b>false</b>の場合</span><br>
+ *       <b>new SqlString("1")</b> <span class="comment">変換元の値が<b>true</b>の場合</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>String</td>
+ *     <td>
+ *       <b>new SqlString("'" + source + "'")</b><br>
+ *       <span class="comment">変換元の文字列中のシングルクォートは、連続する2個のシングルクォートに変換、<br>
+ *       また制御文字はエスケープシーケンスに変換 ( \0, \b, \t, \n, \r, \\ )</span><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">変換元の文字列が長すぎる場合</span>
+ *     </td>
+ *   </tr>
  * </table>
  *
  * @since 1.0.0
@@ -42,22 +58,6 @@ public class MySQL extends Standard {
 	public static final MySQL instance = new MySQL();
 
 	/**
-	 * このクラスの唯一のインスタンスを返します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.1.0 より。代わりに{@link #instance}を使用してください。
-	 * </p>
-	 *
-	 * @return このクラスの唯一のインスタンス
-	 */
-// 2.1.0
-	@Deprecated
-////
-	public static Database instance() {
-		return null;
-	}
-
-	/**
 	 * <b>MySQL</b>を構築します。
 	 */
 	protected MySQL() {
@@ -78,6 +78,16 @@ public class MySQL extends Standard {
 	 */
 	@Override
 	public String maskPassword(String jdbcUrl) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0.0
+	 */
+	@Override
+	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
 		return null;
 	}
 }

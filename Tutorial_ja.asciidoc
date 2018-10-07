@@ -128,7 +128,7 @@ public class Contact {
     public String lastName;
 
     /** 誕生日 */
-    public Date birthday;
+    public LocalDate birthday;
 }
 ----
 

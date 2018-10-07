@@ -21,8 +21,8 @@ CREATE TABLE Contact (
     addressId   INT             NULL,
 
     updateCount INT         NOT NULL,
-    created     DATETIME    NOT NULL,
-    updated     DATETIME    NOT NULL,
+    created     DATETIME(6) NOT NULL,
+    updated     DATETIME(6) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -38,8 +38,8 @@ CREATE TABLE Address (
     address4    VARCHAR(20)     NULL,
 
     updateCount INT         NOT NULL,
-    created     DATETIME    NOT NULL,
-    updated     DATETIME    NOT NULL,
+    created     DATETIME(6) NOT NULL,
+    updated     DATETIME(6) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -52,8 +52,8 @@ CREATE TABLE Phone (
     phoneNumber VARCHAR(12) NOT NULL,
 
     updateCount INT         NOT NULL,
-    created     DATETIME    NOT NULL,
-    updated     DATETIME    NOT NULL,
+    created     DATETIME(6) NOT NULL,
+    updated     DATETIME(6) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -68,8 +68,8 @@ CREATE TABLE Product (
     color       VARCHAR(20)     NULL,
 
     updateCount INT         NOT NULL,
-    created     DATETIME    NOT NULL,
-    updated     DATETIME    NOT NULL,
+    created     DATETIME(6) NOT NULL,
+    updated     DATETIME(6) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -83,8 +83,8 @@ CREATE TABLE Sale (
     taxRate     SMALLINT    NOT NULL,
 
     updateCount INT         NOT NULL,
-    created     DATETIME    NOT NULL,
-    updated     DATETIME    NOT NULL,
+    created     DATETIME(6) NOT NULL,
+    updated     DATETIME(6) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -124,15 +124,7 @@ CREATE TABLE Various (
     bigIntValue      BIGINT       ,
     floatValue       FLOAT        ,
     doubleValue      DOUBLE       ,
-
     decimalValue     DECIMAL(12,2),
-
-    dateValue        DATE         ,
-    timeValue        TIME         ,
-    timeTZValue      TIME         , -- instead of TIME WITH TIME ZONE type
-    dateTimeValue    DATETIME ( 3),
-    timestampValue   DATETIME ( 3),
-    timestampTZValue DATETIME ( 3), -- instead of DATETIME  WITH TIME ZONE type
 
     longDate         BIGINT       , -- since 1.8.0
     longTime         BIGINT       , -- since 1.8.0
@@ -147,6 +139,19 @@ CREATE TABLE Various (
     textValue        TEXT         ,
     blobValue        LONGBLOB     ,
     jsonValue        JSON         , -- since 1.8.0
+
+    PRIMARY KEY(id)
+);
+
+-- DateAndTime since 3.0.0
+DROP TABLE IF EXISTS DateAndTime;
+CREATE TABLE DateAndTime (
+    id               INT  NOT NULL,
+
+    dateValue        DATE         ,
+    timeValue        TIME      (6),
+    timestampValue   DATETIME  (6),
+    timestampTZValue TIMESTAMP (6),
 
     PRIMARY KEY(id)
 );

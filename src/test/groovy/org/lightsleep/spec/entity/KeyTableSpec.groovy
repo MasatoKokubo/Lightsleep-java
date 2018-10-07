@@ -81,7 +81,7 @@ class KeyTableSpec extends Specification {
 	}
 
 	def "@Key #method #no"(String method, int no, Class<?> entityClass, String expectedSql) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		setup:
 			def entity = entityClass.getDeclaredConstructor().newInstance()
 			def sql = new Sql<>(entityClass)
@@ -93,12 +93,12 @@ class KeyTableSpec extends Specification {
 				method == 'insert' ? Standard.instance.insertSql(sql, []) :
 				method == 'update' ? Standard.instance.updateSql(sql, []) :
 				method == 'delete' ? Standard.instance.deleteSql(sql, []) : ''
-		/**/DebugTrace.print('createdSql', createdSql)
+			DebugTrace.print('createdSql', createdSql) // for Debugging
 
 		then:
 			createdSql == expectedSql
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			method  |no|entityClass|expectedSql
 			'select'|1 |Entity1    |'SELECT c0, c1, c2, c3, c4 FROM Table1 WHERE c1=1 AND c2=2 AND c4=4'

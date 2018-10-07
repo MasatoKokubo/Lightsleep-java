@@ -20,7 +20,7 @@ public class And extends LogicalCondition {
 	 *
 	 * @param conditionStream 条件ストリーム
 	 *
-	 * @throws NullPointerException <b>conditionStream</b>または<b>conditionStream</b>の要素がnullの場合
+	 * @throws NullPointerException <b>conditionStream</b>または<b>conditionStream</b>の要素が<b>null</b>の場合
 	 */
 	public And(Stream<Condition> conditionStream) {
 		super(Operator.AND, conditionStream);
@@ -31,7 +31,7 @@ public class And extends LogicalCondition {
 	 *
 	 * @param conditions 条件コレクション
 	 *
-	 * @throws NullPointerException <b>conditions</b>または<b>conditions</b>の要素がnullの場合
+	 * @throws NullPointerException <b>conditions</b>または<b>conditions</b>の要素が<b>null</b>の場合
 	 */
 	public And(Collection<Condition> conditions) {
 		super(Operator.AND, Objects.requireNonNull(conditions, "Collection<Condition> conditions").stream());
@@ -42,7 +42,7 @@ public class And extends LogicalCondition {
 	 *
 	 * @param conditions 条件配列
 	 *
-	 * @throws NullPointerException <b>conditions</b>または<b>conditions</b>の要素がnullの場合
+	 * @throws NullPointerException <b>conditions</b>または<b>conditions</b>の要素が<b>null</b>の場合
 	 */
 	public And(Condition... conditions) {
 		super(Operator.AND, Arrays.stream(Objects.requireNonNull(conditions, "Condition[] conditions")));

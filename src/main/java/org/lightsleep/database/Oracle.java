@@ -3,19 +3,19 @@
 
 package org.lightsleep.database;
 
-import java.lang.reflect.Method;
-
-// 2.2.1
-//import oracle.sql.TIMESTAMP;
-////
-
-import java.sql.Date;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Time;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.function.Function;
 
+import org.lightsleep.RuntimeSQLException;
 import org.lightsleep.Sql;
 import org.lightsleep.component.SqlString;
-import org.lightsleep.helper.ConvertException;
 import org.lightsleep.helper.TypeConverter;
 
 /**
@@ -29,15 +29,17 @@ import org.lightsleep.helper.TypeConverter;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Contents</th></tr>
- *   <tr><td>Boolean</td><td rowspan="3">SqlString</td><td>false -&gt; <code>0</code><br>true -&gt; <code>1</code></td></tr>
- *   <tr><td>Time   </td><td><code>TO_TIMESTAMP('1970-01-01 HH:mm:ss','YYYY-MM-DD HH24:MI:SS.FF3')</code></td></tr>
- *   <tr><td>byte[]</td><td><code>?</code> <i>(SQL parameter)</i></td></tr>
- *   <tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date</td><td rowspan="4">Throws a ConvertException if SQLException is thrown when getting value.</td></tr>
- *   <tr>                                         <td>java.sql.Date     </td></tr>
- *   <tr>                                         <td>java.sql.Time     </td></tr>
- *   <tr>                                         <td>java.sql.Timestamp</td></tr>
+ *   <caption><span>Additional contents of the TypeConverter map</span></caption>
+ *   <tr><th colspan="2">Key: Data Types</th><th rowspan="2">Value: Conversion Function</th></tr>
+ *   <tr><th>Source</th><th>Destination</th></tr>
+ *
+ *   <tr><td>Boolean</td><td rowspan="2">SqlString</td>
+ *     <td>
+ *       <b>new SqlString("0")</b> <span class="comment">if the source value is <b>false</b></span><br>
+ *       <b>new SqlString("1")</b> <span class="comment">if the source value is <b>true</b></span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>byte[]</td><td><b>new SqlString(SqlString.PARAMETER, source)</b></td></tr>
  * </table>
  *
  * @since 1.0.0
@@ -68,138 +70,98 @@ public class Oracle extends Standard {
 	public static final Oracle instance = new Oracle();
 
 	/**
-	 * Returns the only instance of this class.
-	 *
-	 * <p>
-	 * @deprecated As of release 2.1.0, instead use {@link #instance}
-	 * </p>
-	 *
-	 * @return the only instance of this class
-	 */
-	@Deprecated
-	public static Database instance() {
-		return instance;
-	}
-
-	/**
 	 * Constructs a new <b>Oracle</b>.
 	 */
 	protected Oracle() {
 		// boolean -> 0, 1
-		TypeConverter.put(typeConverterMap, booleanToSql01Converter);
-
-		// Time.class -> SqlString.class
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, SqlString.class, object ->
-				new SqlString("TO_TIMESTAMP('1970-01-01 " + object + "','YYYY-MM-DD HH24:MI:SS.FF3')")
+			new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
+		);
+
+		Function<String, SqlString> toTimeSqlString =
+			string -> new SqlString("TO_TIMESTAMP('1970-01-01 " + string + "','YYYY-MM-DD HH24:MI:SS')");
+
+		// Time -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Time.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
+				toTimeSqlString
+			)
+		);
+
+		// LocalTime -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(LocalTime.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
+				toTimeSqlString
 			)
 		);
 
 		// 1.7.0
-		// byte[] -> SqlString
+		// byte[] -> SqlString (since 1.7.0)
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(byte[].class, SqlString.class, object ->
 				new SqlString(SqlString.PARAMETER, object))
 		);
 
-	// 2.2.1
-		try {
-			Class<?> oracleTimestampClass = Class.forName("oracle.sql.TIMESTAMP");
-			Method dateValueMethod = oracleTimestampClass.getDeclaredMethod("dateValue");
-			Method timeValueMethod = oracleTimestampClass.getDeclaredMethod("timeValue");
-			Method timestampValueMethod = oracleTimestampClass.getDeclaredMethod("timestampValue");
-	////
-			// oracle.sql.TIMESTAMP -> java.util.Date (since 1.4.0)
-			TypeConverter.put(typeConverterMap,
-			// 2.2.1
-			//	new TypeConverter<>(TIMESTAMP.class, java.util.Date.class, object -> {
-			//		try {
-			//			return new java.util.Date(object.dateValue().getTime());
-			//		}
-			//		catch (SQLException e) {
-			//			throw new ConvertException(e);
-			//		}
-			//	})
-				new TypeConverter<>(oracleTimestampClass, java.util.Date.class, object -> {
-					try {
-						return new java.util.Date(((Date)dateValueMethod.invoke(object)).getTime());
-					}
-					catch (Exception e) {
-						throw new ConvertException(e);
-					}
-				})
-			////
-			);
-
-			// oracle.sql.TIMESTAMP -> java.sql.Date
-			TypeConverter.put(typeConverterMap,
-			// 2.2.1
-			//	new TypeConverter<>(TIMESTAMP.class, Date.class, object -> {
-			//		try {
-			//			return object.dateValue();
-			//		}
-			//		catch (SQLException e) {
-			//			throw new ConvertException(e);
-			//		}
-			//	})
-				new TypeConverter<>(oracleTimestampClass, Date.class, object -> {
-					try {
-						return (Date)dateValueMethod.invoke(object);
-					}
-					catch (Exception e) {
-						throw new ConvertException(e);
-					}
-				})
-			////
-			);
-
-			// oracle.sql.TIMESTAMP -> java.sql.Time
-			TypeConverter.put(typeConverterMap,
-			// 2.2.1
-			//	new TypeConverter<>(TIMESTAMP.class, Time.class, object -> {
-			//		try {
-			//			return object.timeValue();
-			//		}
-			//		catch (SQLException e) {
-			//			throw new ConvertException(e);
-			//		}
-			//	})
-				new TypeConverter<>(oracleTimestampClass, Time.class, object -> {
-					try {
-						return (Time)timeValueMethod.invoke(object);
-					}
-					catch (Exception e) {
-						throw new ConvertException(e);
-					}
-				})
-			);
-
-			// oracle.sql.TIMESTAMP -> java.sql.Timestamp
-			TypeConverter.put(typeConverterMap,
-			// 2.2.1
-			//	new TypeConverter<>(TIMESTAMP.class, Timestamp.class, object -> {
-			//		try {
-			//			return object.timestampValue();
-			//		}
-			//		catch (SQLException e) {
-			//			throw new ConvertException(e);
-			//		}
-			//	})
-				new TypeConverter<>(oracleTimestampClass, Timestamp.class, object -> {
-					try {
-						return (Timestamp)timestampValueMethod.invoke(object);
-					}
-					catch (Exception e) {
-						throw new ConvertException(e);
-					}
-				})
-			////
-			);
-	// 2.2.1
-		}
-		catch (ClassNotFoundException | NoSuchMethodException e) {
-			throw new RuntimeException(e);
-		}
+	// 3.0.0
+	//	try {
+	//		Class<?> oracleTimestampClass = Class.forName("oracle.sql.TIMESTAMP");
+	//		Method dateValueMethod = oracleTimestampClass.getDeclaredMethod("dateValue");
+	//		Method timeValueMethod = oracleTimestampClass.getDeclaredMethod("timeValue");
+	//		Method timestampValueMethod = oracleTimestampClass.getDeclaredMethod("timestampValue");
+	//
+	//		// oracle.sql.TIMESTAMP -> java.util.Date (since 1.4.0)
+	//		TypeConverter.put(typeConverterMap,
+	//			new TypeConverter<>(oracleTimestampClass, java.util.Date.class, object -> {
+	//				try {
+	//					return new java.util.Date(((Date)dateValueMethod.invoke(object)).getTime());
+	//				}
+	//				catch (Exception e) {
+	//					throw new ConvertException(e);
+	//				}
+	//			})
+	//		);
+	//
+	//		// oracle.sql.TIMESTAMP -> java.sql.Date
+	//		TypeConverter.put(typeConverterMap,
+	//			new TypeConverter<>(oracleTimestampClass, Date.class, object -> {
+	//				try {
+	//					return (Date)dateValueMethod.invoke(object);
+	//				}
+	//				catch (Exception e) {
+	//					throw new ConvertException(e);
+	//				}
+	//			})
+	//		);
+	//
+	//		// oracle.sql.TIMESTAMP -> Time
+	//		TypeConverter.put(typeConverterMap,
+	//			new TypeConverter<>(oracleTimestampClass, Time.class, object -> {
+	//				try {
+	//					return (Time)timeValueMethod.invoke(object);
+	//				}
+	//				catch (Exception e) {
+	//					throw new ConvertException(e);
+	//				}
+	//			})
+	//		);
+	//
+	//		// oracle.sql.TIMESTAMP -> Timestamp
+	//		TypeConverter.put(typeConverterMap,
+	//			new TypeConverter<>(oracleTimestampClass, Timestamp.class, object -> {
+	//				try {
+	//					return (Timestamp)timestampValueMethod.invoke(object);
+	//				}
+	//				catch (Exception e) {
+	//					throw new ConvertException(e);
+	//				}
+	//			})
+	//		);
+	//	}
+	//	catch (ClassNotFoundException | NoSuchMethodException e) {
+	//		throw new RuntimeException(e);
+	//	}
 	////
 	}
 
@@ -232,5 +194,38 @@ public class Oracle extends Standard {
 	@Override
 	public String maskPassword(String jdbcUrl) {
 		return jdbcUrl.replaceAll('/' + PASSWORD_PATTERN + '@', '/' + PASSWORD_MASK + '@');
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0.0
+	 */
+	@Override
+	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+		Object object = super.getObject(connection, resultSet, columnLabel);
+		if (object instanceof oracle.sql.Datum) {
+			try {
+				if (object instanceof oracle.sql.TIMESTAMP)
+					// oracle.sql.TIMESTAMP
+					object = ((oracle.sql.TIMESTAMP)object).timestampValue();
+
+				else if (object instanceof oracle.sql.TIMESTAMPLTZ)
+					// oracle.sql.TIMESTAMPLTZ
+					object = ((oracle.sql.TIMESTAMPLTZ)object).timestampValue(connection);
+
+				else if (object instanceof oracle.sql.TIMESTAMPTZ) {
+					// oracle.sql.TIMESTAMPTZ
+					LocalDateTime localDateTime = ((oracle.sql.TIMESTAMPTZ)object).timestampValue(connection).toLocalDateTime();
+					ZoneId zoneId = ((oracle.sql.TIMESTAMPTZ)object).getTimeZone().toZoneId();
+					object = ZonedDateTime.of(localDateTime, zoneId);
+				}
+			}
+			catch (SQLException e) {
+				throw new RuntimeSQLException(e);
+			}
+		}
+
+		return object;
 	}
 }

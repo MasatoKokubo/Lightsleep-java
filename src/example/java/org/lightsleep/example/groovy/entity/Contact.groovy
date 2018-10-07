@@ -3,13 +3,11 @@
 
 package org.lightsleep.example.groovy.entity
 
-import java.sql.Date
-import java.sql.Timestamp
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.LocalDateTime
+
 import org.lightsleep.database.Database
-import org.lightsleep.entity.Column
 import org.lightsleep.entity.Insert
-import org.lightsleep.entity.Key
 import org.lightsleep.entity.NonInsert
 import org.lightsleep.entity.NonUpdate
 import org.lightsleep.entity.Select
@@ -21,7 +19,7 @@ import org.lightsleep.entity.Update
 class Contact extends ContactKey {
 	String firstName
 	String lastName
-	Date   birthday
+	LocalDate birthday
 
 	@Insert('0')
 	@Update('{updateCount}+1')
@@ -29,11 +27,11 @@ class Contact extends ContactKey {
 
 	@Insert('CURRENT_TIMESTAMP')
 	@NonUpdate
-	Timestamp createdTime
+	LocalDateTime createdTime
 
 	@Insert('CURRENT_TIMESTAMP')
 	@Update('CURRENT_TIMESTAMP')
-	Timestamp updatedTime
+	LocalDateTime updatedTime
 
 	Contact() {
 	}
@@ -54,10 +52,7 @@ class Contact extends ContactKey {
 	}
 
 	def void setBirthday(int year, int month, int day) {
-		def calendar = Calendar.instance
-		calendar.clear()
-		calendar.set(year, month - 1, day, 0, 0, 0)
-		birthday = new Date(calendar.timeInMillis)
+		birthday = LocalDate.of(year, month, day);
 	}
 
 	// Contact.Ex

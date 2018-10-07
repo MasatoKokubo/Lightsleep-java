@@ -23,12 +23,24 @@ b, b i {
 	font-family: Consolas, monospace;
 	font-weight: normal;
 	background-color: #EEE7E7;
-	border-radius: 2px;
-	padding: 1px 2px 1px 2px;
+	border-radius: 6px;
+	padding: 0px 2px 0px 2px;
 }
 
 a code, dd code a, dd a {
 	color: #4444DD;
+}
+
+a:link, a:visited {
+	text-decoration:none;
+	color:#0033AA;
+}
+
+a:hover, a:focus {
+	text-decoration:none;
+	color:#002288;
+	background-color: #FFFF99;
+	border-radius: 6px;
 }
 
 .title {
@@ -48,7 +60,7 @@ a code, dd code a, dd a {
 .parameter {
 	color: #CC2222;
 	background-color: #F7EEFF;
-	border-radius: 4px;
+	border-radius: 6px;
 	padding: 2px 3px 2px 3px;
 }
 
@@ -102,7 +114,7 @@ table.additional caption {
 	color: #2266FF;
 	background-color: #FFFFAA;
 	font-weight: normal;
-	padding: 1px 2px 1px 2px;
+	padding: 0px 2px 0px 2px;
 }
 
 .exampleCode pre i {
@@ -158,6 +170,18 @@ table.additional tr td {
 	background-color: #FFFF44;
 	padding: 2px 8px 5px 8px;
 	border-radius: 6px;
+}
+
+.comment {
+	font-style: italic;
+	color: #005599;
+	margin-top: 4px;
+}
+
+.warning {
+	font-style: italic;
+	color: #DD6666;
+	margin-top: 4px;
 }
 
 .ja {display: none;}

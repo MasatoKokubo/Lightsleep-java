@@ -3,7 +3,8 @@
 
 package org.lightsleep.database;
 
-import java.util.List;
+import java.sql.Connection;
+import java.sql.ResultSet;
 
 import org.lightsleep.Sql;
 
@@ -17,15 +18,17 @@ import org.lightsleep.Sql;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>追加されるTypeConverter オブジェクト</span></caption>
- *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
- *   <tr><td>Boolean</td><td rowspan="3">SqlString</td><td>false ➔ <code>0</code><br>true ➔ <code>1</code></td></tr>
- *   <tr><td>Time   </td><td><code>TO_TIMESTAMP('1970-01-01 HH:mm:ss','YYYY-MM-DD HH24:MI:SS.FF3')</code></td></tr>
- *   <tr><td>byte[]</td><td><code>?</code><i>(SQLパラメータ)</i></td></tr>
- *   <tr><td rowspan="4">oracle.sql.TIMESTAMP</td><td>java.util.Date</td><td rowspan="4">値の取得時にSQLExceptionがスローされた場合ConvertExceptionをスロー</td></tr>
- *   <tr>                                         <td>java.sql.Date     </td></tr>
- *   <tr>                                         <td>java.sql.Time     </td></tr>
- *   <tr>                                         <td>java.sql.Timestamp</td></tr>
+ *   <caption><span>TypeConverterマップへの追加内容</span></caption>
+ *   <tr><th colspan="2">キー: データ型</th><th rowspan="2">値: 変換関数</th></tr>
+ *   <tr><th>変換元</th><th>変換先</th></tr>
+ *
+ *   <tr><td>Boolean</td><td rowspan="2">SqlString</td>
+ *     <td>
+ *       <b>new SqlString("0")</b> <span class="comment">変換元の値が<b>false</b>の場合</span><br>
+ *       <b>new SqlString("1")</b> <span class="comment">変換元の値が<b>true</b>の場合</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>byte[]</td><td><b>new SqlString(SqlString.PARAMETER, source)</b></td></tr>
  * </table>
  *
  * @since 1.0.0
@@ -49,22 +52,6 @@ public class Oracle extends Standard {
 	public static final Oracle instance = new Oracle();
 
 	/**
-	 * このクラスの唯一のインスタンスを返します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.1.0 より。代わりに{@link #instance}を使用してください。
-	 * </p>
-	 *
-	 * @return このクラスの唯一のインスタンス
-	 */
-// 2.1.0
-	@Deprecated
-////
-	public static Database instance() {
-		return null;
-	}
-
-	/**
 	 * <b>Oracle</b>を構築します。
 	 */
 	protected Oracle() {
@@ -77,6 +64,16 @@ public class Oracle extends Standard {
 	 */
 	@Override
 	public String maskPassword(String jdbcUrl) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0.0
+	 */
+	@Override
+	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
 		return null;
 	}
 }

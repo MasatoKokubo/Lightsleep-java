@@ -18,9 +18,17 @@ import org.lightsleep.helper.TypeConverter;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Contents</th></tr>
- *   <tr><td>byte[]</td><td>SqlString</td><td><code>BX'...'</code><br><code>?</code> <i>(SQL parameter)</i> if the byte array is long</td></tr>
+ *   <caption><span>Additional contents of the TypeConverter map</span></caption>
+ *   <tr><th colspan="2">Key: Data Types</th><th rowspan="2">Value: Conversion Function</th></tr>
+ *   <tr><th>Source</th><th>Destination</th></tr>
+ *
+ *   <tr><td>byte[]</td><td>SqlString</td>
+ *     <td>
+ *       <b>new SqlString("BX'" + hexadecimal string + "'")</b><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">if the source byte array is too long</span>
+ *     </td>
+ *   </tr>
  * </table>
  *
  * @since 1.9.0
@@ -50,32 +58,15 @@ public class DB2 extends Standard {
 	public static final DB2 instance = new DB2();
 
 	/**
-	 * Returns the only instance of this class.
-	 *
-	 * <p>
-	 * @deprecated As of release 2.1.0, instead use {@link #instance}
-	 * </p>
-	 *
-	 * @return the only instance of this class
-	 */
-	@Deprecated
-	public static Database instance() {
-		return instance;
-	}
-
-	/**
 	 * Constructs a new <b>DB2</b>.
 	 */
 	protected DB2() {
 		// byte[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[].class, SqlString.class,
-				TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function()
-					.andThen(object ->
-						object.parameters().length > 0
-							? object
-							: new SqlString('B' + object.content()) // X'...' -> BX'...'
-					)
+			new TypeConverter<byte[], SqlString>(byte[].class, SqlString.class,
+				TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function(),
+				object -> object.parameters().length > 0
+					? object : new SqlString('B' + object.content()) // X'...' -> BX'...'
 			)
 		);
 	}

@@ -124,28 +124,34 @@ CREATE TABLE Various (
 	bigIntValue      INTEGER,
 	floatValue       REAL   ,
 	doubleValue      REAL   ,
+    decimalValue     REAL   ,
 
-	decimalValue     REAL   ,
+    longDate         INTEGER, -- since 1.8.0
+    longTime         INTEGER, -- since 1.8.0
+    longTimestamp    INTEGER, -- since 1.8.0
 
-	dateValue        TEXT   ,
-	timeValue        TEXT   ,
-	timeTZValue      TEXT   , -- instead of TIME WITH TIME ZONE type
-	dateTimeValue    TEXT   ,
-	timestampValue   TEXT   ,
-	timestampTZValue TEXT   , -- instead of DATETIME  WITH TIME ZONE type
+    charValue        TEXT   ,
+    varCharValue     TEXT   ,
 
-	longDate         INTEGER, -- since 1.8.0
-	longTime         INTEGER, -- since 1.8.0
-	longTimestamp    INTEGER, -- since 1.8.0
+    binaryValue      BLOB   ,
+    varBinaryValue   BLOB   ,
 
-	charValue        TEXT   ,
-	varCharValue     TEXT   ,
+    textValue        TEXT   ,
+    blobValue        BLOB   ,
 
-	binaryValue      BLOB   ,
-	varBinaryValue   BLOB   ,
+    PRIMARY KEY(id)
+);
 
-	textValue        TEXT   ,
-	blobValue        BLOB   ,
 
-	PRIMARY KEY(id)
+-- DateAndTime since 3.0.0
+DROP TABLE IF EXISTS DateAndTime;
+CREATE TABLE DateAndTime (
+    id               INT  NOT NULL,
+
+    dateValue        DATE,
+    timeValue        TIME,
+    timestampValue   DATETIME,
+    timestampTZValue DATETIME,
+
+    PRIMARY KEY(id)
 );

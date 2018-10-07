@@ -15,7 +15,7 @@ import spock.lang.*
 @Unroll
 class EntityConditionSpec extends Specification {
 	def "EntityConditionSpec 01 normal"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			def contact = new Contact()
@@ -27,27 +27,27 @@ class EntityConditionSpec extends Specification {
 		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == 'id=1'
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "EntityConditionSpec 02 exception - null argument"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: Condition.of((Contact)null)
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	static class Entity {
 	}
 
 	def "EntityConditionSpec 03 exception - entity without key property"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: Condition.of(new Entity())
 		then: thrown IllegalArgumentException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 }

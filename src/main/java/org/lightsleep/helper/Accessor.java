@@ -13,6 +13,12 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -105,6 +111,12 @@ public class Accessor<T> {
 		valueTypes.add(Time      .class);
 		valueTypes.add(Timestamp .class);
 		valueTypes.add(java.util.Date.class);
+		valueTypes.add(LocalDate     .class); // since 3.0.0
+		valueTypes.add(LocalTime     .class); // since 3.0.0
+		valueTypes.add(LocalDateTime .class); // since 3.0.0
+		valueTypes.add(OffsetDateTime.class); // since 3.0.0
+		valueTypes.add(ZonedDateTime .class); // since 3.0.0
+		valueTypes.add(Instant       .class); // since 3.0.0
 	}
 
 	/**
@@ -117,10 +129,8 @@ public class Accessor<T> {
 	 */
 	public Accessor(Class<T> objectClass) {
 		this.objectClass = Objects.requireNonNull(objectClass, "objectClass");
-	// 2.2.0
 		if (objectClass.isInterface())
 			throw new IllegalArgumentException("objectClass: " + objectClass);
-	////
 
 		// @NonColumnProperty, @NonColumnProperties
 		List<NonColumnProperty> nonColumnProperties = Utils.getAnnotations(objectClass, NonColumnProperty.class);

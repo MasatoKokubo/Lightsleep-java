@@ -3,8 +3,16 @@
 
 package org.lightsleep.database;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.time.LocalTime;
+
+import org.lightsleep.RuntimeSQLException;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
+import org.lightsleep.helper.Utils;
 
 /**
  * A database handler for
@@ -17,10 +25,25 @@ import org.lightsleep.helper.TypeConverter;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source Data Type</th><th>Destination Data Type</th><th>Conversion Contents</th></tr>
- *   <tr><td>Boolean</td><td rowspan="2">SqlString</td><td>false -&gt; <code>0</code><br>true -&gt; <code>1</code></td></tr>
- *   <tr><td>String </td><td><code>'...'</code><br>Converts control characters to escape sequence.<br><code>?</code> <i>(SQL parameter)</i> if the string is long</td></tr>
+ *   <caption><span>Additional contents of the TypeConverter map</span></caption>
+ *   <tr><th colspan="2">Key: Data Types</th><th rowspan="2">Value: Conversion Function</th></tr>
+ *   <tr><th>Source</th><th>Destination</th></tr>
+ *
+ *   <tr><td>Boolean</td><td rowspan="2">SqlString</td>
+ *     <td>
+ *       <b>new SqlString("0")</b> <span class="comment">if the source value is <b>false</b></span><br>
+ *       <b>new SqlString("1")</b> <span class="comment">if the source value is <b>true</b></span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>String</td>
+ *     <td>
+ *       <b>new SqlString("'" + source + "'")</b><br>
+ *       <span class="comment">Converts a single quote in the source string to two consecutive single quotes
+ *       and converts control characters to escape sequences ( \0, \b, \t, \n, \r, \\ ).</span><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">if the source string is too long</span>
+ *     </td>
+ *   </tr>
  * </table>
  *
  * @since 1.0.0
@@ -51,25 +74,13 @@ public class MySQL extends Standard {
 	public static final MySQL instance = new MySQL();
 
 	/**
-	 * Returns the only instance of this class.
-	 *
-	 * <p>
-	 * @deprecated As of release 2.1.0, instead use {@link #instance}
-	 * </p>
-	 *
-	 * @return the only instance of this class
-	 */
-	@Deprecated
-	public static Database instance() {
-		return instance;
-	}
-
-	/**
 	 * Constructs a new <b>MySQL</b>.
 	 */
 	protected MySQL() {
 		// boolean -> 0, 1
-		TypeConverter.put(typeConverterMap, booleanToSql01Converter);
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
+		);
 
 		// String.class -> SqlString.class
 		TypeConverter.put(typeConverterMap,
@@ -113,5 +124,31 @@ public class MySQL extends Standard {
 	@Override
 	public String maskPassword(String jdbcUrl) {
 		return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0.0
+	 */
+	@Override
+	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+		Object object = super.getObject(connection, resultSet, columnLabel);
+
+		if (object instanceof Time) {
+			// Time (for get microseconds)
+			try {
+				object = resultSet.getObject(columnLabel, LocalTime.class);
+
+				if (logger.isDebugEnabled())
+					logger.debug("  -> MySQL.getObject: columnLabel: " + columnLabel
+						+ ", getted object: " + Utils.toLogString(object));
+			}
+			catch (SQLException e) {
+				throw new RuntimeSQLException(e);
+			}
+		}
+
+		return object;
 	}
 }

@@ -3,13 +3,18 @@
 
 package org.lightsleep.database;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.lightsleep.RuntimeSQLException;
 import org.lightsleep.Sql;
 import org.lightsleep.helper.TypeConverter;
+import org.lightsleep.helper.Utils;
 
 /**
  * An interface to generate SQLs.
@@ -123,7 +128,44 @@ public interface Database {
 	 *
 	 * @since 2.2.0
 	 */
-	String maskPassword(String jdbcUrl);
+// 3.0.0
+//	String maskPassword(String jdbcUrl);
+	default String maskPassword(String jdbcUrl) {
+		return SQLServer.instance.maskPassword(MySQL.instance.maskPassword(jdbcUrl));
+	}
+////
+
+	/**
+	 * Gets the value from the resultSet and returns it.
+	 *
+	 * @param connection the <b>Connection</b> object
+	 * @param resultSet the <b>ResultSet</b> object
+	 * @param columnLabel the label for the column
+	 * @return the column value
+	 *
+	 * @throws NullPointerException if <b>connection</b>, <b>resultSet</b> or <b>columnLabel</b> is null
+	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
+	 *
+	 * @since 3.0.0
+	 */
+	default Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+		Objects.requireNonNull(connection, "connection");
+		Objects.requireNonNull(resultSet, "resultSet");
+		Objects.requireNonNull(columnLabel, "columnLabel");
+
+		try {
+			Object object = resultSet.getObject(columnLabel);
+
+			if (Standard.logger.isDebugEnabled())
+				Standard.logger.debug("Database.getObject: columnLabel: " + columnLabel
+					+ ", getted object: " + Utils.toLogString(object));
+
+			return object;
+		}
+		catch (SQLException e) {
+			throw new RuntimeSQLException(e);
+		}
+	}
 
 	/**
 	 * Returns a database handler related to <b>jdbcUrl</b>.

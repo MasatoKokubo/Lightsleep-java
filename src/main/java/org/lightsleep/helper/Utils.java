@@ -6,7 +6,20 @@ package org.lightsleep.helper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -64,6 +77,19 @@ public class Utils {
 		maxLogArrayLength     = Resource.getGlobal().getInt("maxLogArrayLength"    , 100);
 		maxLogMapSize         = Resource.getGlobal().getInt("maxLogMapSize"        , 100);
 	}
+
+// 3.0.0
+	private static final DateTimeFormatter utilDateFormatter       = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSxxx");
+	private static final DateTimeFormatter sqlDateFormatter        = DateTimeFormatter.ofPattern("yyyy-MM-ddxxx");
+	private static final DateTimeFormatter timeFormatter           = DateTimeFormatter.ofPattern("HH:mm:ss.SSSxxx");
+	private static final DateTimeFormatter timestampFormatter      = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSSxxx");
+	private static final DateTimeFormatter localDateFormatter      = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	private static final DateTimeFormatter localTimeFormatter      = DateTimeFormatter.ofPattern("HH:mm:ss.SSSSSSSSS");
+	private static final DateTimeFormatter offsetTimeFormatter     = DateTimeFormatter.ofPattern("HH:mm:ss.SSSSSSSSSxxx");
+	private static final DateTimeFormatter localDateTimeFormatter  = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSS");
+	private static final DateTimeFormatter offsetDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSSxxx");
+	private static final DateTimeFormatter zonedDateTimeFormatter  = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSSxxx VV");
+	private static final DateTimeFormatter instantFormatter        = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSSX");
 ////
 
 	/**
@@ -100,9 +126,11 @@ public class Utils {
 			className = nameWithoutPackage(clazz.getComponentType()) + "[]";
 		} else {
 			className = clazz.getName();
-
-			// right from the last period
-			className = className.substring(className.lastIndexOf('.') + 1);
+		// 3.0.0
+			if (className.startsWith("java."))
+		////
+				// gets the right from the last period
+				className = className.substring(className.lastIndexOf('.') + 1);
 		}
 
 		return className;
@@ -248,13 +276,13 @@ public class Utils {
 			// object type
 			if (type.isArray()) {
 				// Array
-				append(buff.append('('), type, object).append(')');
+				appendType(buff.append('('), type, object).append(')');
 				if (type == char[].class)
 					// String Array
-					append(buff, ((char[])object));
+					appendChars(buff, ((char[])object));
 				else if (type == byte[].class)
 					// Byte Array
-					append(buff, ((byte[])object));
+					appendBytes(buff, ((byte[])object));
 				else
 					// etc. Array
 					appendArray(buff, object);
@@ -262,54 +290,84 @@ public class Utils {
 			} else if (object instanceof Boolean) {
 				// Boolean
 				if (type != Boolean.TYPE)
-					append(buff.append('('), type, object).append(')');
+					appendType(buff.append('('), type, object).append(')');
 				buff.append(object);
 
 			} else if (object instanceof Character) {
 				// Character
 				if (type != Character.TYPE)
-					append(buff.append('('), type, object).append(')');
+					appendType(buff.append('('), type, object).append(')');
 				buff.append('\'');
-				append(buff, ((Character)object).charValue());
+				appendChar(buff, ((Character)object).charValue());
 				buff.append('\'');
 
 			} else if (object instanceof BigDecimal) {
 				// BigDecimal
-				if (type != Integer.TYPE)
-					append(buff.append('('), type, object).append(')');
-				buff.append(((BigDecimal)object).toPlainString());
+				appendType(buff.append('('), type, object).append(')')
+					.append(((BigDecimal)object).toPlainString());
 
 			} else if (object instanceof Number) {
 				// Number
 				if (type != Integer.TYPE)
-					append(buff.append('('), type, object).append(')');
+					appendType(buff.append('('), type, object).append(')');
 				buff.append(object);
 
 			} else if (object instanceof java.util.Date) {
 				// java.util.Date
-				if (type == java.util.Date.class)
-					append(buff.append('('), type, object).append(')')
-						.append(new Timestamp(((java.util.Date)object).getTime()));
-				else
-					buff.append(object);
+			// 3.0.0
+			//	if (type == java.util.Date.class)
+			//		appendType(buff.append('('), type, object).append(')')
+			//			.append(new Timestamp(((java.util.Date)object).getTime()));
+			//	else
+			//		buff.append(object);
+				appendType(buff.append('('), type, object).append(')');
+				Timestamp timestamp = object instanceof Timestamp ? (Timestamp)object : new Timestamp(((java.util.Date)object).getTime());
+				ZonedDateTime zonedDateTime = timestamp.toLocalDateTime().atZone(ZoneId.systemDefault());
+				if      (object instanceof Date     ) buff.append(zonedDateTime.format(sqlDateFormatter  )); // java.sql.Date
+				else if (object instanceof Time     ) buff.append(zonedDateTime.format(timeFormatter     )); // Time
+				else if (object instanceof Timestamp) buff.append(zonedDateTime.format(timestampFormatter)); // Timestamp
+				else                                  buff.append(zonedDateTime.format(utilDateFormatter )); // java.util.Date
+			////
+		// 3.0.0
+			} else if (object instanceof Temporal) {
+				// Temporal
+				appendType(buff.append('('), type, object).append(')');
+				if      (object instanceof LocalDate     ) buff.append(((LocalDate     )object).format(localDateFormatter     )); // LocalDate
+				else if (object instanceof LocalTime     ) buff.append(((LocalTime     )object).format(localTimeFormatter     )); // LocalTime
+				else if (object instanceof OffsetTime    ) buff.append(((OffsetTime    )object).format(offsetTimeFormatter    )); // OffsetTime
+				else if (object instanceof LocalDateTime ) buff.append(((LocalDateTime )object).format(localDateTimeFormatter )); // LocalDateTime
+				else if (object instanceof OffsetDateTime) buff.append(((OffsetDateTime)object).format(offsetDateTimeFormatter)); // OffsetDateTime
+				else if (object instanceof ZonedDateTime ) buff.append(((ZonedDateTime )object).format(zonedDateTimeFormatter )); // ZonedDateTime
+				else if (object instanceof Instant) buff.append(((Instant)object).atOffset(ZoneOffset.ofHours(0)).format(instantFormatter)); // Instant
+				else buff.append(object);
+		////
 
 			} else if (object instanceof String) {
 				// String
-				append(buff, (String)object);
+				appendString(buff, (String)object);
+
+		// 3.0.0
+			} else if (object instanceof Class<?>) {
+				// Class
+				buff.append(((Class<?>)object).getName());
+		////
 
 			} else if (object instanceof Iterable) {
 				// Iterable
-				append(buff.append('('), type, object).append(')');
-				append(buff, (Iterable)object);
+				appendType(buff.append('('), type, object).append(')');
+				appendIterable(buff, (Iterable)object);
 
 			} else if (object instanceof Map) {
 				// Map
-				append(buff.append('('), type, object).append(')');
-				append(buff, (Map<?,?>)object);
+				appendType(buff.append('('), type, object).append(')');
+				appendMap(buff, (Map<?,?>)object);
 
 			} else {
 				// etc.
-				buff.append(object);
+			// 3.0.0
+			//	buff.append(object);
+				appendType(buff.append('('), type, object).append(')')
+					.append(object);
 			}
 		}
 
@@ -327,7 +385,7 @@ public class Utils {
 	 * @throws NullPointerException if <b>buff</b> or <b>type</b> is null
 	 */
 	@SuppressWarnings("rawtypes")
-	private static StringBuilder append(StringBuilder buff, Class<?> type, Object value) {
+	private static StringBuilder appendType(StringBuilder buff, Class<?> type, Object value) {
 		Objects.requireNonNull(type, "type");
 
 		long length = -1L;
@@ -335,12 +393,12 @@ public class Utils {
 
 		if (type.isArray()) {
 			// Array
-			append(buff, type.getComponentType(), null).append("[]");
+			appendType(buff, type.getComponentType(), null).append("[]");
 			if (value != null)
 				length = Array.getLength(value);
 		} else {
 			// Non Array
-			String typeName = Utils.nameWithoutPackage(type);
+			String typeName = nameWithoutPackage(type);
 			if (typeName.equals("Date")) type.getName();
 
 			if (value != null) {
@@ -368,11 +426,13 @@ public class Utils {
 	 *
 	 * @throws NullPointerException if <b>buff</b> is null
 	 */
-	private static StringBuilder append(StringBuilder buff, char ch) {
+	private static StringBuilder appendChar(StringBuilder buff, char ch) {
 		if (ch >= ' ' && ch != '\u007F') {
 			if      (ch == '"' ) buff.append("\\\"");
 			else if (ch == '\'') buff.append("\\'" );
-			else if (ch == '/' ) buff.append("\\/" );
+		// 3.0.0
+		//	else if (ch == '/' ) buff.append("\\/" );
+		////
 			else if (ch == '\\') buff.append("\\\\");
 			else buff.append(ch);
 		} else {
@@ -398,14 +458,14 @@ public class Utils {
 	 *
 	 * @throws NullPointerException if <b>buff</b> or <b>string</b> is null
 	 */
-	private static StringBuilder append(StringBuilder buff, String string) {
+	private static StringBuilder appendString(StringBuilder buff, String string) {
 		buff.append('"');
 		for (int index = 0; index < string.length(); ++index) {
 			if (index >= maxLogStringLength) {
 				buff.append("...");
 				break;
 			}
-			append(buff, string.charAt(index));
+			appendChar(buff, string.charAt(index));
 		}
 		buff.append('"');
 
@@ -421,14 +481,14 @@ public class Utils {
 	 *
 	 * @throws NullPointerException if <b>buff</b> or <b>chars</b> is null
 	 */
-	private static StringBuilder append(StringBuilder buff, char[] chars) {
+	private static StringBuilder appendChars(StringBuilder buff, char[] chars) {
 		buff.append('"');
 		for (int index = 0; index < chars.length; ++index) {
 			if (index >= maxLogStringLength) {
 				buff.append("...");
 				break;
 			}
-			append(buff, chars[index]);
+			appendChar(buff, chars[index]);
 		}
 		buff.append('"');
 
@@ -444,7 +504,7 @@ public class Utils {
 	 *
 	 * @throws NullPointerException if <b>buff</b> or <b>bytes</b> is null
 	 */
-	private static StringBuilder append(StringBuilder buff, byte[] bytes) {
+	private static StringBuilder appendBytes(StringBuilder buff, byte[] bytes) {
 		buff.append('[');
 		String delimiter = "";
 		for (int index = 0; index < bytes.length; ++index) {
@@ -509,7 +569,7 @@ public class Utils {
 	 *
 	 * @throws NullPointerException if <b>buff</b> or <b>iterable</b> is null
 	 */
-	private static StringBuilder append(StringBuilder buff, Iterable<?> iterable) {
+	private static StringBuilder appendIterable(StringBuilder buff, Iterable<?> iterable) {
 		Iterator<?> iter = iterable.iterator();
 		buff.append('[');
 		String delimiter = "";
@@ -536,7 +596,7 @@ public class Utils {
 	 *
 	 * @throws NullPointerException if <b>buff</b> or <b>map</b> is null
 	 */
-	private static <K,V> StringBuilder append(StringBuilder buff, Map<K,V> map) {
+	private static <K,V> StringBuilder appendMap(StringBuilder buff, Map<K,V> map) {
 		Iterator<Map.Entry<K,V>> iter = map.entrySet().iterator();
 		buff.append('[');
 		String delimiter = "";

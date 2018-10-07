@@ -199,6 +199,13 @@ public abstract class Std implements Logger {
 	// The message format
 	private static String messageFormat = "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS.%1$tL %2$s ";
 
+	// StackTraceElement format
+	// %1: class name
+	// %2: mwthod name
+	// %3: file name
+	// %4: line number
+	private static String stackTraceFormat = "    at %1$s.%2$s (%3$s:%4$d)";
+
 	/**
 	 * Constructs a new <b>Std</b>.
 	 *
@@ -217,10 +224,13 @@ public abstract class Std implements Logger {
 	 * @param message a message
 	 */
 	private void println(Level level, String message) {
-		if (level.compareTo(this.level) >= 0)
-			stream.println(
-				String.format(messageFormat, new Timestamp(System.currentTimeMillis()), level)
-				+ message);
+	// 3.0.0
+	//	if (level.compareTo(this.level) >= 0)
+	//		stream.println(
+	//			String.format(messageFormat, new Timestamp(System.currentTimeMillis()), level)
+	//			+ message);
+		println(level, message, null);
+	////
 	}
 
 	/**
@@ -228,10 +238,37 @@ public abstract class Std implements Logger {
 	 *
 	 * @param level the level
 	 * @param message a message
-	 * @param t a Throwable
+	 * @param t a Throwable (nullable)
 	 */
 	private void println(Level level, String message, Throwable t) {
-		println(level, message + ", " + t.toString());
+	// 3.0.0
+	//	println(level, message + ", " + t.toString());
+		if (level.compareTo(this.level) < 0)
+			return;
+
+		stream.println(String.format(messageFormat, new Timestamp(System.currentTimeMillis()), level) + message);
+
+		boolean isCause = false;
+		int elementsCount = 0;
+		while (t != null) {
+			stream.println(isCause ? "Caused by: " + t.toString() : t.toString());
+			StackTraceElement[] elements = t.getStackTrace();
+			if (!isCause)
+				elementsCount = elements.length;
+			for (int index = 0; index < elements.length; ++index) {
+				StackTraceElement element = elements[index];
+				if (isCause && index > elements.length - elementsCount) {
+					stream.println("    ..." + (elementsCount - 1) + " more");
+					break;
+				}
+				stream.println(String.format(stackTraceFormat,
+					element.getClassName(), element.getMethodName(),
+					element.getFileName(), element.getLineNumber()));
+			}
+			t = t.getCause();
+			isCause = true;
+		}
+	////
 	}
 
 	/**

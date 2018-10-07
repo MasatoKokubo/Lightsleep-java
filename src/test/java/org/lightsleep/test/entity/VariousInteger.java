@@ -30,6 +30,5 @@ public class VariousInteger {
 	/** BIGINT              */ public Integer  bigIntValue   ;
 	/** FLOAT               */ public Integer  floatValue    ;
 	/** DOUBLE              */ public Integer  doubleValue   ;
-
 	/** DECIMAL(12.2)       */ public Integer  decimalValue  ;
 }

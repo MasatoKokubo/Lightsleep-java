@@ -39,15 +39,15 @@ public class ConnectionSpec extends SpecCommon {
 	}
 
 	def "ConnectionSpec #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			// Make test data.
-		/**/DebugTrace.print('Make test data.')
+			DebugTrace.print('Make test data.') // for Debugging
 			def contacts = InsertUpdateDeleteSpec.makeTestData(null, 0, THREAD_COUNT)
 
 			def isSQLite = connectionSupplier.database instanceof SQLite
-		/**/DebugTrace.print('isSQLite', isSQLite)
+			DebugTrace.print('isSQLite', isSQLite) // for Debugging
 
 			Thread[] threads = new Thread[isSQLite ? THREAD_COUNT_SQLITE : THREAD_COUNT]
 			def count = 0
@@ -55,26 +55,26 @@ public class ConnectionSpec extends SpecCommon {
 
 		when:
 			(0..<threads.length).each {index ->
-			/**/DebugTrace.print('index', index)
+				DebugTrace.print('index', index) // for Debugging
 				ContactComposite contact = contacts.get(index)
 				threads[index] = new Thread({
-				/**/DebugTrace.enter()
+					DebugTrace.enter() // for Debugging
 					int index2 = index
 					try {
 						Transaction.execute(connectionSupplier) {
 							++count
-						/**/DebugTrace.print(index2 + ': start: connection count', count)
+							DebugTrace.print(index2 + ': start: connection count', count) // for Debugging
 
 							if (it.database instanceof SQLServer) {
 								def beforeTransactionIsolation = it.transactionIsolation
 								it.transactionIsolation = Connection.TRANSACTION_READ_UNCOMMITTED
 								def afterTransactionIsolation = it.transactionIsolation
-								/**/DebugTrace.print(
-									getClass().simpleName
-									+ 'connection.transactionIsolation: '
-									+ isolationLevelsMap.getOrDefault(beforeTransactionIsolation, 'unknow')
-									+ ' -> '
-									+ isolationLevelsMap.getOrDefault(afterTransactionIsolation, 'unknow')
+									DebugTrace.print(
+										getClass().simpleName
+										+ 'connection.transactionIsolation: '
+										+ isolationLevelsMap.getOrDefault(beforeTransactionIsolation, 'unknow')
+										+ ' -> '
+										+ isolationLevelsMap.getOrDefault(afterTransactionIsolation, 'unknow') // for Debugging
 								)
 							}
 
@@ -86,15 +86,15 @@ public class ConnectionSpec extends SpecCommon {
 								catch (InterruptedException e4) {new RuntimeException(e4)}
 							}
 
-						/**/DebugTrace.print(index2 + ': end')
+							DebugTrace.print(index2 + ': end') // for Debugging
 							--count
 						}
 					}
 					catch (Exception e) {
 						++errorCount
-					/**/DebugTrace.print('e', e)
+						DebugTrace.print('e', e) // for Debugging
 					}
-				/**/DebugTrace.leave()
+					DebugTrace.leave() // for Debugging
 				})
 				threads[index].start()
 
@@ -114,7 +114,7 @@ public class ConnectionSpec extends SpecCommon {
 		then:
 			errorCount == 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 
 		where:
 			connectionSupplier << connectionSuppliers

@@ -1,4 +1,4 @@
-= Lightsleep User Guide
+= Lightsleep 3.0.0 User's Guide
 
 link:UserGuide_ja.asciidoc[Japanese]
 
@@ -60,6 +60,13 @@ link:UserGuide_ja.asciidoc[Japanese]
 5-4-3. <<ExecuteSQL-delete-Condition,DELETE with a Condition>> +
 5-4-4. <<ExecuteSQL-delete-all,DELETE all rows>> +
 6. <<Expression,Expression Conversion>> +
+7. <<DateTime,Mappings of Java types and column types in datetime types>> +
+7-1. <<DateTime-DB2,DB2>> +
+7-2. <<DateTime-MySQL,MySQL>> +
+7-3. <<DateTime-Oracle,Oracle>> +
+7-4. <<DateTime-PostgreSQL,PostgreSQL>> +
+7-5. <<DateTime-SQLite,SQLite>> +
+7-6. <<DateTime-SQLServer,SQL Server>> +
 
 [[Package]]
 
@@ -306,14 +313,14 @@ Specify if field type (e.g. date type) and column type (e.g. numerical type) are
 .Java
 ----
 @ColumnType(Long.class)
-public Date birthday;
+public LocalDate birthday;
 ----
 
 [source,groovy]
 .Groovy
 ----
 @ColumnType(Long)
-Date birthday
+LocalDate birthday
 ----
 
 [[Entity-NonColumn]]
@@ -351,18 +358,18 @@ Indicates that the column related the field is not used in SELECT SQL.
 .Java
 ----
 @NonSelect
-public Timestamp createdTime;
+public LocalDateTime createdTime;
 @NonSelect
-public Timestamp updatedTime;
+public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
 .Groovy
 ----
 @NonSelect
-Timestamp createdTime
+LocalDateTime createdTime
 @NonSelect
-Timestamp updatedTime
+LocalDateTime updatedTime
 ----
 
 [[Entity-NonInsert]]
@@ -374,18 +381,18 @@ Indicates that the column related the field is not used in INSERT SQL.
 .Java
 ----
 @NonInsert
-public Timestamp createdTime;
+public LocalDateTime createdTime;
 @NonInsert
-public Timestamp updatedTime;
+public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
 .Groovy
 ----
 @NonInsert
-Timestamp createdTime
+LocalDateTime createdTime
 @NonInsert
-Timestamp updatedTime
+LocalDateTime updatedTime
 ----
 
 [[Entity-NonUpdate]]
@@ -397,14 +404,14 @@ Indicates that the column related the field is not used in UPDATE SQL.
 .Java
 ----
 @NonUpdate
-public Timestamp createdTime;
+public LocalDateTime createdTime;
 ----
 
 [source,groovy]
 .Groovy
 ----
 @NonUpdate
-Timestamp createdTime
+LocalDateTime createdTime
 ----
 
 [[Entity-Select]]
@@ -441,18 +448,18 @@ If this annotation is specified, the value of the field is not used.
 .Java
 ----
 @Insert("CURRENT_TIMESTAMP")
-public Timestamp createdTime;
+public LocalDateTime createdTime;
 @Insert("CURRENT_TIMESTAMP")
-public Timestamp updatedTime;
+public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
 .Groovy
 ----
 @Insert('CURRENT_TIMESTAMP')
-Timestamp createdTime
+LocalDateTime createdTime
 @Insert('CURRENT_TIMESTAMP')
-Timestamp updatedTime
+LocalDateTime updatedTime
 ----
 
 [[Entity-Update]]
@@ -467,7 +474,7 @@ If this annotation is specified, the value of the field is not used.
 @Update("{updateCount}+1")
 public int updateCount;
 @Update("CURRENT_TIMESTAMP")
-public Timestamp updatedTime;
+public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
@@ -476,7 +483,7 @@ public Timestamp updatedTime;
 @Update('{updateCount}+1')
 int updateCount
 @Update('CURRENT_TIMESTAMP')
-Timestamp updatedTime
+LocalDateTime updatedTime
 ----
 
 [[Entity-XxxxxProperty]]
@@ -487,7 +494,7 @@ Timestamp updatedTime
 ===== 2-1-12. @KeyProperty, @ColumnProperty, ... and @UpdateProperty
 These annotations are used to specify for fields defined in superclass.
 The specified contents also affects subclasses, but specifications in the subclass takes precedence.
-If you specify `value=false`, `column="" `, `type=Void.class` or `expression=""`, specifications in the superclass are canceled.
+If you specify `value=false`, `column=""`, `type=Void.class` or `expression=""`, specifications in the superclass are canceled.
 
 [source,java]
 .Java
@@ -2065,6 +2072,126 @@ Conversion of expressions has the followings.
 |`{A.xxx}`|`"A."` + The column name related to property `xxx` (`A` is a table alias)
 |`{A_xxx}`|The column alias related to table alias `A` and `xxx` property
 |`{#xxx}`|The value of property `xxx` of an entity set on the `Sql` object (or an entity argument of `Sql#insert` or `Sql#update` method)
+|===
+
+[[DateTime]]
+
+<<TOC_,To TOC>>
+
+=== 7. Mappings of Java types and column types in datetime types
+
+[[DateTime-DB2]]
+
+===== 7.1 DB2
+
+[options="header", width="65%", cols=",^,^,^"]
+|===
+|                          |`DATE`|`TIME` |`TIMESTAMP(9)`
+|`java.util.Date`          |✓     |       |
+|`java.sql.Date`           |✓     |       |
+|`java.sql.Time`           |      |✓ (sec)|
+|`java.sql.Timestamp`      |✓     |       |✓ (10^9^ sec)
+|`java.time.LocalDate`     |      |       |
+|`java.time.LocalTime`     |      |✓ (sec)|
+|`java.time.LocalDateTime` |      |       |✓ (10^9^ sec)
+|`java.time.OffsetDateTime`|      |       |
+|`java.time.ZonedDateTime` |      |       |
+|`java.time.Instant`       |      |       |
+|===
+
+[[DateTime-MySQL]]
+
+===== 7.2 MySQL
+
+[options="header", width="80%", cols=",^,^,^,^"]
+|===
+|                          |`DATE`|`TIME`       |`DATETIME`   |`TIMESTAMP`
+|`java.util.Date`          |✓     |             |             |
+|`java.sql.Date`           |✓     |             |             |
+|`java.sql.Time`           |      |✓ (10^3^ sec)|             |
+|`java.sql.Timestamp`      |✓     |             |✓ (10^6^ sec)|✓ (10^6^ sec)
+|`java.time.LocalDate`     |      |             |             |
+|`java.time.LocalTime`     |      |✓ (10^6^ sec)|             |
+|`java.time.LocalDateTime` |      |             |✓ (10^6^ sec)|✓ (10^6^ sec)
+|`java.time.OffsetDateTime`|      |             |             |
+|`java.time.ZonedDateTime` |      |             |             |
+|`java.time.Instant`       |      |             |             |
+|===
+
+[[DateTime-Oracle]]
+
+===== 7.3 Oracle
+
+[options="header", width="80%", cols=",^,^,^,^"]
+|===
+|                          |`DATE` |`TIMESTAMP(9)`|`TIMESTAMP(9) WITH TIME ZONE`|`TIMESTAMP(9) WITH LOCAL TIME ZONE`
+|`java.util.Date`          |✓      |              |                             |
+|`java.sql.Date`           |✓      |              |                             |
+|`java.sql.Time`           |✓ (sec)|              |                             |
+|`java.sql.Timestamp`      |✓ (sec)|✓ (10^9^ sec) |                             |✓ (10^9^ sec)
+|`java.time.LocalDate`     |✓ (sec)|              |                             |
+|`java.time.LocalTime`     |✓ (sec)|              |                             |
+|`java.time.LocalDateTime` |✓ (sec)|✓ (10^9^ sec) |                             |✓ (10^9^ sec)
+|`java.time.OffsetDateTime`|       |              |✓ (10^9^ sec)                |
+|`java.time.ZonedDateTime` |       |              |✓ (10^9^ sec)                |
+|`java.time.Instant`       |       |              |✓ (10^9^ sec)                |
+|===
+
+[[DateTime-PostgreSQL]]
+
+===== 7.4 PostgreSQL
+
+[options="header", width="80%", cols=",^,^,^,^"]
+|===
+|                          |`DATE`|`TIME(6)`    |`TIMESTAMP(6)`|`TIMESTAMP(6) WITH TIME ZONE`
+|`java.util.Date`          |✓     |             |              |
+|`java.sql.Date`           |✓     |             |              |
+|`java.sql.Time`           |      |✓ (10^3^ sec)|              |
+|`java.sql.Timestamp`      |✓     |             |✓ (10^6^ sec) |
+|`java.time.LocalDate`     |      |             |              |
+|`java.time.LocalTime`     |      |✓ (10^6^ sec)|              |
+|`java.time.LocalDateTime` |      |             |✓ (10^6^ sec) |
+|`java.time.OffsetDateTime`|      |             |              |✓ (10^6^ sec)
+|`java.time.ZonedDateTime` |      |             |              |
+|`java.time.Instant`       |      |             |              |✓ (10^6^ sec)
+|===
+
+[[DateTime-SQLite]]
+
+===== 7.5 SQLite
+
+[options="header", width="40%", cols=",^"]
+|===
+|                          |`DATE`, `TIME`, `DATETIME`, `TEXT`
+|`java.util.Date`          |✓
+|`java.sql.Date`           |✓
+|`java.sql.Time`           |✓ (10^3^ sec)
+|`java.sql.Timestamp`      |✓ (10^9^ sec)
+|`java.time.LocalDate`     |✓ (10^9^ sec)
+|`java.time.LocalTime`     |✓ (10^9^ sec)
+|`java.time.LocalDateTime` |✓ (10^9^ sec)
+|`java.time.OffsetDateTime`|✓ (10^9^ sec)
+|`java.time.ZonedDateTime` |✓ (10^9^ sec)
+|`java.time.Instant`       |✓ (10^9^ sec)
+|===
+
+[[DateTime-SQLServer]]
+
+===== 7.6 SQL Server
+
+[options="header", width="80%", cols=",^,^,^,^"]
+|===
+|                          |`DATE`|`TIME(7)`    |`DATETIME2(7)`|`DATETIMEOFFSET(7)`
+|`java.util.Date`          |✓     |             |              |
+|`java.sql.Date`           |✓     |             |              |
+|`java.sql.Time`           |      |✓ (10^3^ sec)|              |
+|`java.sql.Timestamp`      |✓     |             |✓ (10^7^ sec) |
+|`java.time.LocalDate`     |      |             |              |
+|`java.time.LocalTime`     |      |✓ (10^3^ sec)|              |
+|`java.time.LocalDateTime` |      |             |✓ (10^7^ sec) |
+|`java.time.OffsetDateTime`|      |             |              |✓ (10^7^ sec)
+|`java.time.ZonedDateTime` |      |             |              |
+|`java.time.Instant`       |      |             |              |✓ (10^7^ sec)
 |===
 
 [gray]#_(C) 2015 Masato Kokubo_#

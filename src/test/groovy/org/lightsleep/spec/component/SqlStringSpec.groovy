@@ -15,24 +15,24 @@ import spock.lang.*
 @Unroll
 class SqlStringSpec extends Specification {
 	def "SqlStringSpec 01 A"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: SqlString sqlString = new SqlString("A")
 		then:
 			sqlString.content() == 'A'
 			sqlString.toString() == 'A'
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "SqlStringSpec 02 null"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: SqlString sqlString = new SqlString(null)
 		then:
 			sqlString.content() == null
 			sqlString.toString() == 'NULL'
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 }

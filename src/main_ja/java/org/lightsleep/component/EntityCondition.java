@@ -22,7 +22,7 @@ public class EntityCondition<E> implements Condition {
 	 *
 	 * @param entity エンティティ
 	 *
-	 * @throws NullPointerException <b>entity</b>がnullの場合
+	 * @throws NullPointerException <b>entity</b>が<b>null</b>の場合
 	 */
 	public EntityCondition(E entity) {
 	}

@@ -32,9 +32,9 @@ class InsertUpdateDeleteSpec extends SpecCommon {
 	*/
 	def "InsertUpdateDeleteSpec insert update delete - 1 row - #connectionSupplier"(
 		ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplier.class', connectionSupplier.getClass().name)
-	/**/DebugTrace.print('1 connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('connectionSupplier.class', connectionSupplier.getClass().name) // for Debugging
+		DebugTrace.print('1 connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			ContactComposite contact2 = null
 
@@ -78,7 +78,7 @@ class InsertUpdateDeleteSpec extends SpecCommon {
 			// Confirm delete result.
 			assert contact2 == null
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
@@ -92,8 +92,8 @@ class InsertUpdateDeleteSpec extends SpecCommon {
 	 */
 	def "InsertUpdateDeleteSpec insert update delete - multiple rows - #connectionSupplier"(
 		ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<ContactComposite> contacts2 = new ArrayList<>()
 
@@ -170,7 +170,7 @@ class InsertUpdateDeleteSpec extends SpecCommon {
 			// Confirm delete result.
 			assert contacts2.size() == 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
@@ -187,8 +187,8 @@ class InsertUpdateDeleteSpec extends SpecCommon {
 		if (connectionSupplier.database instanceof Oracle) return
 		if (connectionSupplier.database instanceof PostgreSQL) return
 		if (connectionSupplier.database instanceof SQLite) return
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			List<ContactComposite> contacts2 = new ArrayList<>()
 
@@ -276,7 +276,7 @@ class InsertUpdateDeleteSpec extends SpecCommon {
 			// Confirm delete result.
 			assert contacts5.size() == contacts4.size() - 1
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}
@@ -302,7 +302,7 @@ class InsertUpdateDeleteSpec extends SpecCommon {
 	 *  Error case / Illegal argument
 	 */
 	def "InsertUpdateDeleteSpec insert update delete - exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		// insert
 		when:
 			Transaction.execute(connectionSupplier) {
@@ -353,13 +353,13 @@ class InsertUpdateDeleteSpec extends SpecCommon {
 			}
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InsertUpdateDeleteSpec optimistic lock #connectionSupplier" (
 		ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		setup:
 			// Insert
 			Calendar calendar = Calendar.getInstance()
@@ -391,7 +391,7 @@ class InsertUpdateDeleteSpec extends SpecCommon {
 			Transaction.execute(connectionSupplier) {
 				contact1t = new Sql<>(Contact).connection(it)
 					.where(contact1)
-					.doIf(!(it.database instanceof SQLite)) {Sql sql -> sql.forUpdate()}
+					.doNotIf(it.database instanceof SQLite) {Sql sql -> sql.forUpdate()}
 					.select().orElse(null)
 				if (contact1t == null)
 					throw new DeletedException()
@@ -403,7 +403,7 @@ class InsertUpdateDeleteSpec extends SpecCommon {
 			// optimistic lock error
 			thrown UpdateException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}

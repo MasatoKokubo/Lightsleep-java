@@ -38,23 +38,7 @@ import org.lightsleep.database.Database;
  */
 public class ConnectionWrapper implements Connection {
 	private final Connection connection;
-// 2.2.0
-//	private final Database database;
 	private final ConnectionSupplier supplier; // @since 2.2.0
-////
-
-// 2.2.0
-//	/**
-//	 * Constructs a new <b>ConnectionWrapper</b>.<br>
-//	 *
-//	 * @param connection a connection to be wrapped
-//	 * @param database a database handler related to the connection
-//	 */
-//	public ConnectionWrapper(Connection connection, Database database) {
-//		this.connection = Objects.requireNonNull(connection, "connection");
-//		this.database = Objects.requireNonNull(database, "database");
-//	}
-////
 
 	/**
 	 * Constructs a new <b>ConnectionWrapper</b>.<br>
@@ -95,10 +79,7 @@ public class ConnectionWrapper implements Connection {
 	 * @return the database handler related to the connection
 	 */
 	public Database getDatabase() {
-	// 2.2.0
-	//	return database;
 		return supplier.getDatabase();
-	////
 	}
 
 	/**
@@ -538,9 +519,6 @@ public class ConnectionWrapper implements Connection {
 	 */
 	@Override
 	public String toString() {
-	// 2.2.0
-	//	return "ConnectionWrapper: database: " + database.getClass().getSimpleName();
 		return supplier.toString();
-	////
 	}
 }

@@ -21,46 +21,37 @@ import org.lightsleep.entity.*;
 //public class Various extends VariousBase {
 public class Various {
 	@Key()
-	/**     PRIMARY KEY          */ public int          id              ;
+	/**     PRIMARY KEY          */   public int          id              ;
 
-	/** BOOLEAN  (NOT NULL)      */ public boolean      booleanPValue   ;
-	/** CHAR(1)  (NOT NULL)      */ public char         char1PValue     ;
-	/** TINYINT  (NOT NULL)      */ public byte         tinyIntPValue   ;
-	/** SMALLINT (NOT NULL)      */ public short        smallIntPValue  ;
-	/** INT      (NOT NULL)      */ public int          intPValue       ;
-	/** BIGINT   (NOT NULL)      */ public long         bigIntPValue    ;
-	/** FLOAT    (NOT NULL)      */ public float        floatPValue     ;
-	/** DOUBLE   (NOT NULL)      */ public double       doublePValue    ;
+	/** BOOLEAN  (NOT NULL)      */   public boolean      booleanPValue   ;
+	/** CHAR(1)  (NOT NULL)      */   public char         char1PValue     ;
+	/** TINYINT  (NOT NULL)      */   public byte         tinyIntPValue   ;
+	/** SMALLINT (NOT NULL)      */   public short        smallIntPValue  ;
+	/** INT      (NOT NULL)      */   public int          intPValue       ;
+	/** BIGINT   (NOT NULL)      */   public long         bigIntPValue    ;
+	/** FLOAT    (NOT NULL)      */   public float        floatPValue     ;
+	/** DOUBLE   (NOT NULL)      */   public double       doublePValue    ;
 
-	/** BOOLEAN                  */ public Boolean      booleanValue    ;
-	/** CHAR(1)                  */ public Character    char1Value      ;
-	/** TINYINT                  */ public Byte         tinyIntValue    ;
-	/** SMALLINT                 */ public Short        smallIntValue   ;
-	/** INT                      */ public Integer      intValue        ;
-	/** BIGINT                   */ public Long         bigIntValue     ;
-	/** FLOAT                    */ public Float        floatValue      ;
-	/** DOUBLE                   */ public Double       doubleValue     ;
-	/** DECIMAL(12.2)            */ public BigDecimal   decimalValue    ;
+	/** BOOLEAN                  */   public Boolean      booleanValue     ;
+	/** CHAR(1)                  */   public Character    char1Value       ;
+	/** TINYINT                  */   public Byte         tinyIntValue     ;
+	/** SMALLINT                 */   public Short        smallIntValue    ;
+	/** INT                      */   public Integer      intValue         ;
+	/** BIGINT                   */   public Long         bigIntValue      ;
+	/** FLOAT                    */   public Float        floatValue       ;
+	/** DOUBLE                   */   public Double       doubleValue      ;
+	/** DECIMAL(12.2)            */   public BigDecimal   decimalValue     ;
 
-	/** DATE                     */ public Date         dateValue       ;
-	/** TIME                     */ public Time         timeValue       ;
-	/** TIME WITH TIME ZONE      */ public Time         timeTZValue     ;
-	/** DATETIME                 */ public Timestamp    dateTimeValue   ;
-	/** TIMESTAMP                */ public Timestamp    timestampValue  ;
-	/** TIMESTAMP WITH TIME ZONE */ public Timestamp    timestampTZValue;
+	/** DATE      */ @ColumnType(Long.class) public Date      longDate     ; // since 1.8.0
+	/** TIME      */ @ColumnType(Long.class) public Time      longTime     ; // since 1.8.0
+	/** TIMESTAMP */ @ColumnType(Long.class) public Timestamp longTimestamp; // since 1.8.0
 
-// 1.8.0
-	/** DATE       */ @ColumnType(Long.class) public Date      longDate     ;
-	/** TIME       */ @ColumnType(Long.class) public Time      longTime     ;
-	/** TIMESTAMP  */ @ColumnType(Long.class) public Timestamp longTimestamp;
-////
-
-	/** CHAR(20)                 */ public String       charValue       ;
-	/** VARCHAR(40)              */ public String       varCharValue    ;
-	/** BINARY(20)               */ public byte[]       binaryValue     ;
-	/** VARBINARY(40)            */ public byte[]       varBinaryValue  ;
-	/** TEXT                     */ public String       textValue       ;
-	/** BLOB                     */ public byte[]       blobValue       ;
+	/** CHAR(20)                 */   public String       charValue        ;
+	/** VARCHAR(40)              */   public String       varCharValue     ;
+	/** BINARY(20)               */   public byte[]       binaryValue      ;
+	/** VARBINARY(40)            */   public byte[]       varBinaryValue   ;
+	/** TEXT                     */   public String       textValue        ;
+	/** BLOB                     */   public byte[]       blobValue        ;
 
 	@Table("super")
 	public static class PostgreSQL extends Various implements PreStore, PostLoad {

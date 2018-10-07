@@ -18,7 +18,7 @@ public class Log4j implements Logger {
 	 *
 	 * @param name 名前
 	 *
-	 * @throws NullPointerException <b>name</b>がnullの場合
+	 * @throws NullPointerException <b>name</b>が<b>null</b>の場合
 	 */
 	public Log4j(String name) {
 	}

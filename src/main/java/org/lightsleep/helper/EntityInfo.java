@@ -52,7 +52,6 @@ public class EntityInfo<E> {
 	 */
 	public EntityInfo(Class<E> entityClass) {
 		this.entityClass = Objects.requireNonNull(entityClass, "entityClass");
-	// 2.2.0
 
 		if (entityClass.isAnnotation())
 			throw new IllegalArgumentException("entityClass: " + entityClass.getName() + " is an annotation class");
@@ -72,7 +71,6 @@ public class EntityInfo<E> {
 		if ((entityClass.getModifiers() & Modifier.ABSTRACT) != 0)
 			throw new IllegalArgumentException("entityClass: " + entityClass.getName() + " is an abstract class");
 
-	////
 		accessor = new Accessor<>(entityClass);
 
 		// @Table / the table name

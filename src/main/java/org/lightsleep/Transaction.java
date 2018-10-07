@@ -215,10 +215,7 @@ public interface Transaction {
 					DecimalFormat timeFormat = new DecimalFormat();
 					timeFormat.setMinimumFractionDigits(0);
 					timeFormat.setMaximumFractionDigits(3);
-				// 2.2.0
-				//	Sql.logger.debug(connection.getDatabase().getClass().getSimpleName()
 					Sql.logger.debug(connection.toString()
-				////
 						+ ": " + MessageFormat.format(Sql.messageCommit, timeFormat.format(time)));
 				}
 			}
@@ -249,10 +246,7 @@ public interface Transaction {
 					DecimalFormat timeFormat = new DecimalFormat();
 					timeFormat.setMinimumFractionDigits(0);
 					timeFormat.setMaximumFractionDigits(3);
-				// 2.2.0
-				//	Sql.logger.debug(connection.getDatabase().getClass().getSimpleName()
 					Sql.logger.debug(connection.toString()
-				////
 						+ ": " + MessageFormat.format(Sql.messageRollback, timeFormat.format(time)));
 				}
 			}

@@ -5,7 +5,7 @@
 -- Numbering
 DROP TABLE Numbering;
 CREATE TABLE Numbering (
-    tableName   VARCHAR(32)  NOT NULL,
+    tableName   VARCHAR (32) NOT NULL,
     nextId      INT          NOT NULL,
 
     PRIMARY KEY(tableName)
@@ -15,14 +15,14 @@ CREATE TABLE Numbering (
 DROP TABLE Contact;
 CREATE TABLE Contact (
     id          INT          NOT NULL,
-    firstName   VARCHAR(40)  NOT NULL, -- 2 times
-    lastName    VARCHAR(40)  NOT NULL, -- 2 times
+    firstName   VARCHAR (40) NOT NULL, -- 2 times
+    lastName    VARCHAR (40) NOT NULL, -- 2 times
     birthday    DATE             NULL,
     addressId   INT              NULL,
 
     updateCount INT          NOT NULL,
-    created     DATETIME2(3) NOT NULL,
-    updated     DATETIME2(3) NOT NULL,
+    created     DATETIME2(7) NOT NULL,
+    updated     DATETIME2(7) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -31,15 +31,15 @@ CREATE TABLE Contact (
 DROP TABLE Address;
 CREATE TABLE Address (
     id          INT          NOT NULL,
-    postCode    VARCHAR(10)      NULL,
-    address1    VARCHAR(40)      NULL, -- 2 times
-    address2    VARCHAR(40)      NULL, -- 2 times
-    address3    VARCHAR(40)      NULL, -- 2 times
-    address4    VARCHAR(40)      NULL, -- 2 times
+    postCode    VARCHAR (10)     NULL,
+    address1    VARCHAR (40)     NULL, -- 2 times
+    address2    VARCHAR (40)     NULL, -- 2 times
+    address3    VARCHAR (40)     NULL, -- 2 times
+    address4    VARCHAR (40)     NULL, -- 2 times
 
     updateCount INT          NOT NULL,
-    created     DATETIME2(3) NOT NULL,
-    updated     DATETIME2(3) NOT NULL,
+    created     DATETIME2(7) NOT NULL,
+    updated     DATETIME2(7) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -49,11 +49,11 @@ DROP TABLE Phone;
 CREATE TABLE Phone (
     id          INT          NOT NULL,
     contactId   INT          NOT NULL,
-    phoneNumber VARCHAR(12)  NOT NULL,
+    phoneNumber VARCHAR (12) NOT NULL,
 
     updateCount INT          NOT NULL,
-    created     DATETIME2(3) NOT NULL,
-    updated     DATETIME2(3) NOT NULL,
+    created     DATETIME2(7) NOT NULL,
+    updated     DATETIME2(7) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -62,14 +62,14 @@ CREATE TABLE Phone (
 DROP TABLE Product;
 CREATE TABLE Product (
     id          INT          NOT NULL,
-    productName VARCHAR(40)  NOT NULL, -- 2 times
+    productName VARCHAR (40) NOT NULL, -- 2 times
     price       INT          NOT NULL,
-    productSize CHAR   ( 2)      NULL,
-    color       VARCHAR(20)      NULL,
+    productSize CHAR     (2) NULL,
+    color       VARCHAR (20) NULL,
 
     updateCount INT          NOT NULL,
-    created     DATETIME2(3) NOT NULL,
-    updated     DATETIME2(3) NOT NULL,
+    created     DATETIME2(7) NOT NULL,
+    updated     DATETIME2(7) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -83,8 +83,8 @@ CREATE TABLE Sale (
     taxRate     SMALLINT     NOT NULL,
 
     updateCount INT          NOT NULL,
-    created     DATETIME2(3) NOT NULL,
-    updated     DATETIME2(3) NOT NULL,
+    created     DATETIME2(7) NOT NULL,
+    updated     DATETIME2(7) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -105,7 +105,7 @@ CREATE TABLE SaleItem (
 -- Various
 DROP TABLE Various;
 CREATE TABLE Various (
-    id               INT          NOT NULL,
+    id               INT                   NOT NULL,
 
     booleanPValue    BIT       DEFAULT 0   NOT NULL,
     char1PValue      CHAR(2)   DEFAULT ' ' NOT NULL, -- 2 times
@@ -116,37 +116,42 @@ CREATE TABLE Various (
     floatPValue      FLOAT(24) DEFAULT 0   NOT NULL,
     doublePValue     FLOAT(53) DEFAULT 0   NOT NULL,
 
-    booleanValue     BIT          ,
-    char1Value       CHAR(2)      , -- 2 times
-    tinyIntValue     TINYINT      ,
-    smallIntValue    SMALLINT     ,
-    intValue         INT          ,
-    bigIntValue      BIGINT       ,
-    floatValue       FLOAT(24)    ,
-    doubleValue      FLOAT(53)    ,
+    booleanValue     BIT              ,
+    char1Value       CHAR          (2), -- 2 times
+    tinyIntValue     TINYINT          ,
+    smallIntValue    SMALLINT         ,
+    intValue         INT              ,
+    bigIntValue      BIGINT           ,
+    floatValue       FLOAT        (24),
+    doubleValue      FLOAT        (53),
+    decimalValue     DECIMAL    (12,2),
 
-    decimalValue     DECIMAL(12,2),
+    longDate         BIGINT           , -- since 1.8.0
+    longTime         BIGINT           , -- since 1.8.0
+    longTimestamp    BIGINT           , -- since 1.8.0
 
-    dateValue        DATE         ,
-    timeValue        TIME         ,
-    timeTZValue      TIME         , -- instead of TIME WITH TIME ZONE type
-    dateTimeValue    DATETIME2(3) ,
-    timestampValue   DATETIME2(3) ,
-    timestampTZValue DATETIME2(3) , -- instead of DATETIME2(3) WITH TIME ZONE type
+    charValue        CHAR         (40), -- 2 times
+    varCharValue     VARCHAR      (80), -- 2 times
 
-    charValue        CHAR     (40), -- 2 times
-    varCharValue     VARCHAR  (80), -- 2 times
+    binaryValue      BINARY       (20),
+    varBinaryValue   VARBINARY    (40),
 
-    longDate         BIGINT       , -- since 1.8.0
-    longTime         BIGINT       , -- since 1.8.0
-    longTimestamp    BIGINT       , -- since 1.8.0
+    textValue        TEXT             ,
+    blobValue        IMAGE            ,
+    jsonValue        TEXT             ,
 
-    binaryValue      BINARY   (20),
-    varBinaryValue   VARBINARY(40),
+    PRIMARY KEY(id)
+);
 
-    textValue        TEXT         ,
-    blobValue        IMAGE        ,
-    jsonValue        TEXT         ,
+-- DateAndTime since 3.0.0
+DROP TABLE DateAndTime;
+CREATE TABLE DateAndTime (
+    id               INT      NOT NULL,
+
+    dateValue        DATE             ,
+    timeValue        TIME          (7),
+    timestampValue   DATETIME2     (7),
+    timestampTZValue DATETIMEOFFSET(7),
 
     PRIMARY KEY(id)
 );

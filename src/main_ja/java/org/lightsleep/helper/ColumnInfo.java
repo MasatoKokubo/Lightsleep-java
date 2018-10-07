@@ -24,7 +24,7 @@ public class ColumnInfo {
 	 * @param insertExpression INSERT SQLを作成する時に使用する式(式を使用しない場合は、null)
 	 * @param updateExpression UPDATE SQLを作成する時に使用する式(式を使用しない場合は、null)
 	 *	 *
-	 * @throws NullPointerException <b>entityInfo</b>, <b>propertyName</b> または <b>columnName</b>がnullの場合
+	 * @throws NullPointerException <b>entityInfo</b>, <b>propertyName</b> または <b>columnName</b>が<b>null</b>の場合
 	 */
 	public ColumnInfo(
 		EntityInfo<?> entityInfo, String propertyName, String columnName, Class<?> columnType, boolean isKey,
@@ -139,7 +139,7 @@ public class ColumnInfo {
 	 * @param tableAlias テーブル別名
 	 * @return テーブル別名付きのプロパティ名
 	 *
-	 * @throws NullPointerException <b>tableAlias</b>がnullの場合
+	 * @throws NullPointerException <b>tableAlias</b>が<b>null</b>の場合
 	 *
 	 * @since 1.8.2
 	 */
@@ -154,7 +154,7 @@ public class ColumnInfo {
 	 * @param tableAlias テーブル別名
 	 * @return テーブル別名付きのカラム名
 	 *
-	 * @throws NullPointerException <b>tableAlias</b>がnullの場合
+	 * @throws NullPointerException <b>tableAlias</b>が<b>null</b>の場合
 	 */
 	public String getColumnName(String tableAlias) {
 		return null;
@@ -167,7 +167,7 @@ public class ColumnInfo {
 	 * @param tableAlias テーブル別名
 	 * @return カラム別名
 	 *
-	 * @throws NullPointerException <b>tableAlias</b>がnullの場合
+	 * @throws NullPointerException <b>tableAlias</b>が<b>null</b>の場合
 	 */
 	public String getColumnAlias(String tableAlias) {
 		return null;

@@ -42,7 +42,7 @@ public class Jndi extends AbstractConnectionSupplier {
 	 *
 	 * <p>
 	 * <b>"java:/comp/env/" + dataSourceName</b>の文字列でデータソースを検索します。
-	 * <b>dataSourceName</b>がnullの場合、lightsleep.propertiesファイルで指定された値を使用します。
+	 * <b>dataSourceName</b>が<b>null</b>の場合、lightsleep.propertiesファイルで指定された値を使用します。
 	 * </p>
 	 *
 	 * @param dataSourceName データソース名(null可)

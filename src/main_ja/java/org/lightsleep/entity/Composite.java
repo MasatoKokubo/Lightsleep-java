@@ -94,7 +94,7 @@ public interface Composite {
 	 *
 	 * @param connection コネクション･ラッパー
 	 *
-	 * @throws NullPointerException <b>connection</b>がnullの場合
+	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
 	 */
 	void postSelect(ConnectionWrapper connection);
 
@@ -104,7 +104,7 @@ public interface Composite {
 	 * @param connection コネクション･ラッパー
 	 * @return 挿入された行数
 	 *
-	 * @throws NullPointerException <b>connection</b>がnullの場合
+	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
 	 */
 	int postInsert(ConnectionWrapper connection);
 
@@ -114,7 +114,7 @@ public interface Composite {
 	 * @param connection コネクション･ラッパー
 	 * @return 更新された行数
 	 *
-	 * @throws NullPointerException <b>connection</b>がnullの場合
+	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
 	 */
 	int postUpdate(ConnectionWrapper connection);
 
@@ -124,7 +124,7 @@ public interface Composite {
 	 * @param connection コネクション･ラッパー
 	 * @return 削除された行数
 	 *
-	 * @throws NullPointerException <b>connection</b>がnullの場合
+	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
 	 */
 	int postDelete(ConnectionWrapper connection);
 }

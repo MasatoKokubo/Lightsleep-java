@@ -22,7 +22,7 @@ class LogicalConditionSpec extends Specification {
 
 	def "LogicalConditionSpec #className #type #elements -> #sql"(
 		Class<? extends LogicalCondition> clazz, String type, List<String> elements, String sql, String className) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		when:
 			def expressions = elements.collect {new Expression(it)}
 			def condition = null
@@ -60,11 +60,11 @@ class LogicalConditionSpec extends Specification {
 				default: assert false
 				}
 			} else assert false
-		/**/DebugTrace.print('condition', condition)
+			DebugTrace.print('condition', condition) // for Debugging
 			def string = condition.toString(Standard.instance, new Sql<>(Entity), [])
 			def string2 = condition2.toString(Standard.instance, new Sql<>(Entity), [])
-		/**/DebugTrace.print('string', string)
-		/**/DebugTrace.print('string2', string2)
+			DebugTrace.print('string', string) // for Debugging
+			DebugTrace.print('string2', string2) // for Debugging
 
 		then:
 			string == sql
@@ -86,7 +86,7 @@ class LogicalConditionSpec extends Specification {
 				assert condition2 instanceof Expression
 			}
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 
 		where:
 			clazz|type    |elements       |sql
@@ -185,7 +185,7 @@ class LogicalConditionSpec extends Specification {
 
 	def "LogicalConditionSpec #className #type - exception - argument is null"(
 		Class<? extends LogicalCondition> clazz, String type, String className) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		when:
 			if (clazz == And) {
 				switch (type) {
@@ -205,9 +205,9 @@ class LogicalConditionSpec extends Specification {
 
 		then:
 			def e = thrown NullPointerException
-		/**/DebugTrace.print('e', e)
+			DebugTrace.print('e', e) // for Debugging
 			
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 
 		where:
 			clazz|type    
@@ -222,7 +222,7 @@ class LogicalConditionSpec extends Specification {
 
 	def "LogicalConditionSpec #className #type - exception - element of argument is null"(
 		Class<? extends LogicalCondition> clazz, String type, String className) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		when:
 			if (clazz == And) {
 				switch (type) {
@@ -242,9 +242,9 @@ class LogicalConditionSpec extends Specification {
 
 		then:
 			def e = thrown NullPointerException
-		/**/DebugTrace.print('e', e)
+			DebugTrace.print('e', e) // for Debugging
 			
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 
 		where:
 			clazz|type    

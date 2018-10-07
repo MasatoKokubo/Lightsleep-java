@@ -86,17 +86,10 @@ public class TomcatCP extends AbstractConnectionSupplier {
 	private TomcatCP(Properties properties, Consumer<Properties> modifier) {
 		super(properties, modifier.andThen(props -> {
 			// username <- user
-		// 2.2.0
-		//	String user = props.getProperty("user");
-		//	String username = props.getProperty("username");
 			String user = props.getProperty(USER);
 			String username = props.getProperty(USERNAME);
-		////
 			if (user != null && username == null) {
-			// 2.2.0
-			//	props.setProperty("username", user);
 				props.setProperty(USERNAME, user);
-			////
 				logger.info("TomcatCP.<init>: properties.username <- properties.user: \"" + user + '"');
 			}
 		}));

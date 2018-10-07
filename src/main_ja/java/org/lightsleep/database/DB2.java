@@ -17,9 +17,17 @@ import org.lightsleep.helper.TypeConverter;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source Data Type</th><th>Destination Data Type</th><th>Conversion Contents</th></tr>
- *   <tr><td>byte[] </td><td>SqlString</td><td><code>BX'...'</code><br>長いバイト配列の場合は<code>?</code><i>(SQLパラメータ)</i></td></tr>
+ *   <caption><span>TypeConverterマップへの追加内容</span></caption>
+ *   <tr><th colspan="2">キー: データ型</th><th rowspan="2">値: 変換関数</th></tr>
+ *   <tr><th>変換元</th><th>変換先</th></tr>
+ *
+ *   <tr><td>byte[]</td><td>SqlString</td>
+ *     <td>
+ *       <b>new SqlString("BX'" + hexadecimal string + "'")</b><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">変換元のバイト配列が長すぎる場合</span>
+ *     </td>
+ *   </tr>
  * </table>
  *
  * @since 1.9.0
@@ -41,22 +49,6 @@ public class DB2 extends Standard {
 	 * @since 2.1.0
 	 */
 	public static final DB2 instance = new DB2();
-
-	/**
-	 * このクラスの唯一のインスタンスを返します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.1.0 より。代わりに{@link #instance}を使用してください。
-	 * </p>
-	 *
-	 * @return このクラスの唯一のインスタンス
-	 */
-// 2.1.0
-	@Deprecated
-////
-	public static Database instance() {
-		return null;
-	}
 
 	/**
 	 * <b>DB2</b>を構築します。

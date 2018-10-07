@@ -35,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.lightsleep:lightsleep:2.2.0'
+    compile 'org.lightsleep:lightsleep:3.0.0'
 }
 ----
 
@@ -51,19 +51,19 @@ import org.lightsleep.entity.*;
 
 public class Contact {
 	@Key
-	public int    id;
-	public String lastName;
-	public String firstName;
-	public Date   birthday;
+    public int       id;
+    public String    lastName;
+    public String    firstName;
+    public LocalDate birthday;
 
 	@Insert("0") @Update("{updateCount}+1")
 	public int updateCount;
 
 	@Insert("CURRENT_TIMESTAMP") @NonUpdate
-	public Timestamp createdTime;
+	public LocalDateTime createdTime;
 
 	@Insert("CURRENT_TIMESTAMP") @Update("CURRENT_TIMESTAMP")
-	public Timestamp updatedTime;
+	public LocalDateTime updatedTime;
 }
 ----
 
@@ -76,20 +76,20 @@ import java.sql.Timestamp
 import org.lightsleep.entity.*
 
 class Contact {
-	@Key
-	int    id
-	String firstName
-	String lastName
-	Date   birthday
+    @Key
+    int       id
+    String    firstName
+    String    lastName
+    LocalDate birthday
 
-	@Insert('0') @Update('{updateCount}+1')
-	int updateCount
+    @Insert('0') @Update('{updateCount}+1')
+    int updateCount
 
-	@Insert('CURRENT_TIMESTAMP') @NonUpdate
-	Timestamp createdTime
+    @Insert('CURRENT_TIMESTAMP') @NonUpdate
+    LocalDateTime createdTime
 
-	@Insert('CURRENT_TIMESTAMP') @Update('CURRENT_TIMESTAMP')
-	Timestamp updatedTime
+    @Insert('CURRENT_TIMESTAMP') @Update('CURRENT_TIMESTAMP')
+    LocalDateTime updatedTime
 }
 ----
 

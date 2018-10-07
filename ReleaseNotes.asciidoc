@@ -5,42 +5,107 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 [[TOC_]]
 === Table of Contents
 
+- <<ReleaseNote2.2.1,version 3.0.0>>
 - <<ReleaseNote2.2.1,version 2.2.1>>
 - <<ReleaseNote2.2.0,version 2.2.0>>
 - <<ReleaseNote2.1.1,version 2.1.1>>
 - <<ReleaseNote2.1.0,version 2.1.0>>
 - <<ReleaseNote2.0.0,version 2.0.0>>
 
+[[ReleaseNote3.0.0]]
+
+=== version 3.0.0
+
+1. **Improvement**
+  * Supported the following data types. You can use them as a field type for entity classes.
+    ** `java.time.LocalDate`
+    ** `java.time.LocalTime`
+    ** `java.time.LocalDateTime`
+    ** `java.time.OffsetDateTime`
+    ** `java.time.ZonedDateTime`
+    ** `java.time.Instant`
+
+1. **Added** methods and constructors
+  * `org.lightsleep.**Sql**` Class
+    ** `**doNotIf**(boolean condition, Consumer<Sql<E>> action)`
+    ** `**doElse**(Consumer<Sql<E>> elseAction)`
+    ** `**executeUpdate**(String sql)`
+
+  * `org.lightsleep.database.**Database**` Interface and classes implementing it.
+    ** `**getObject**(Connection connection, ResultSet resultSet, String columnLabel)`
+
+  * `org.lightsleep.helper.ConvertException` Class
+    ** `**ConvertException**(Class<?> sourceType, Object source, Class<?> destinType, Throwable cause)`
+
+  * `org.lightsleep.helper.TypeConverter` Class
+    ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT> function1, Function<? super MT, ? extends DT> function2)`
+    ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType,Function<? super ST, ? extends MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends DT> function3)`
+    ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends MT3> function3, Function<? super MT3, ? extends DT> function4)`
+
+1. **Deprecated** method
+  * `org.lightsleep.**Sql**` Class
+    ** `**doIf**(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)`
+
+1. **Deleted** methods and constructor
+  * `org.lightsleep.**Sql**` Class
+
+    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer)`
+    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1)`
+    ** `**select**(ConnectionWrapper connection, Consumer<? super  E > consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)`
+    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)`
+    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)`
+    ** `**select**(ConnectionWrapper connection)`
+    ** `**selectCount**(ConnectionWrapper connection)`
+    ** `**insert**(ConnectionWrapper connection, E entity)`
+    ** `**insert**(ConnectionWrapper connection, Iterable<? extends E> entities)`
+    ** `**update**(ConnectionWrapper connection, E entity)`
+    ** `**update**(ConnectionWrapper connection, Iterable<? extends E> entities)`
+    ** `**delete**(ConnectionWrapper connection)`
+    ** `**delete**(ConnectionWrapper connection, E entity)`
+    ** `**delete**(ConnectionWrapper connection, Iterable<? extends E> entities)`
+
+  * `org.lightsleep.database.**DB2**`, `**MySQL**`, `**Oracle**`, `**PostgreSQL**`, `**SQLite**`, `**SQLServer**` and `**Standard**` Class
+    ** `instance()`
+
+  * `org.lightsleep.helper.TypeConverter` Class
+  ** `**TypeConverter**(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2)`
+
 [[ReleaseNote2.2.1]]
 
 === version 2.2.1
 
 1. Bug fix
-    - [Fixed] Lightsleep does not work unless the Oracle JDBC driver jar is in the classpath.
+  * [Fixed] Lightsleep does not work unless the Oracle JDBC driver jar is in the classpath.
+
+<<TOC_,To TOC>>
 
 [[ReleaseNote2.2.0]]
 
 === version 2.2.0
 
 1. Improvements
-    - *Added* an option to include JDBC URL of the connection to SQL logs. +
+  * *Added* an option to include JDBC URL of the connection to SQL logs. +
     Example of use:::
     Add the following to `lightsleep.properties` file +
     `connectionLogFormat = [{0}/{1}/{2}]`
 
-    - The password parts of the logs are masked with `"xxxx"`.
+  * The password parts of the logs are masked with `"xxxx"`.
 
 1. *Added* `maskPassword` method to the `Database` interface and its implementation classes.
+
+<<TOC_,To TOC>>
 
 [[ReleaseNote2.1.1]]
 
 === version 2.1.1
 
 1. Bug fix
-    - [Fixed] `Standard` database handler is always selected when connection supplier is `Jndi`.
+  * [Fixed] `Standard` database handler is always selected when connection supplier is `Jndi`.
 
 1. Other
-    - Improve log messages
+  * Improve log messages
+
+<<TOC_,To TOC>>
 
 [[ReleaseNote2.1.0]]
 
@@ -54,33 +119,33 @@ Version number is a minor release, but there are **some specification changes**.
 
 
 1. **Added** the following methods and constructor.
-    - Sql *class*
-        - public ConnectionWrapper getConnection()
+  * Sql *class*
+    ** public ConnectionWrapper getConnection()
 
-    - org.lightsleep.connection.ConnectionSupplier *interface*
-        - Database getDatabase()
-        - DataSource getDataSource()
-        - String getUrl()
-        - static ConnectionSupplier of(String supplierName, Properties properties)
-        - static ConnectionSupplier find(String... urlWords)
+  * org.lightsleep.connection.ConnectionSupplier *interface*
+    ** Database getDatabase()
+    ** DataSource getDataSource()
+    ** String getUrl()
+    ** static ConnectionSupplier of(String supplierName, Properties properties)
+    ** static ConnectionSupplier find(String... urlWords)
 
-    - org.lightsleep.connection.AbstractConnectionSupplier *abstract class*
-        - protected AbstractConnectionSupplier(Properties properties, Consumer<Properties> modifier)
-        - @Override public Database getDatabase()
-        - @Override public String getUrl()
-        - @Override public String toString()
+  * org.lightsleep.connection.AbstractConnectionSupplier *abstract class*
+    ** protected AbstractConnectionSupplier(Properties properties, Consumer<Properties> modifier)
+    ** @Override public Database getDatabase()
+    ** @Override public String getUrl()
+    ** @Override public String toString()
 
-    - org.lightsleep.database.Database *interface*
-        - static Database getInstance(String jdbcUrl)
+  * org.lightsleep.database.Database *interface*
+    ** static Database getInstance(String jdbcUrl)
 
-    - org.lightsleep.helper.Resource *class*
-        - public static Resource getGlobal()
+  * org.lightsleep.helper.Resource *class*
+    ** public static Resource getGlobal()
 
 1. **Deleted** the following methods of the `org.lightsleep.Sql` *class*. **(Specification change)**
-    - public static Database getDatabase()
-    - public static void setDatabase(Database database)
-    - public static ConnectionSupplier getConnectionSupplier()
-    - public static void setConnectionSupplier(ConnectionSupplier supplier)
+  * public static Database getDatabase()
+  * public static void setDatabase(Database database)
+  * public static ConnectionSupplier getConnectionSupplier()
+  * public static void setConnectionSupplier(ConnectionSupplier supplier)
 
 1. **Added** the `org.lightsleep.connection.ConnectionWrapper` class, and **changed** the argument type of each method from `java.sql.Connection` to `ConnectionWrapper`. **(Specification change)**
 
@@ -97,29 +162,29 @@ Version number is a minor release, but there are **some specification changes**.
 === version 2.0.0
 
 1. Added the following method to get the result of SELECT SQL with entity type different from type parameter of `org.lightsleep.Sql` class.
-    - public <R> Optional<R> selectAs(Class<R> resultClass)
-    - public <R> void selectAs(Class<R> resultClass, Consumer<? super R> consumer)
+  * public <R> Optional<R> selectAs(Class<R> resultClass)
+  * public <R> void selectAs(Class<R> resultClass, Consumer<? super R> consumer)
 
 1. **Deprecated** the method with the `Connection` argument of the `org.lightsleep.Sql` class and **added** the following method with no `Connection` argument.
-    - public void select(Consumer<? super E> consumer)
-    - public <JE1> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1)
-    - public <JE1, JE2> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)
-    - public <JE1, JE2, JE3> void select(Consumer<? super  E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)
-    - public <JE1, JE2, JE3, JE4> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)
-    - public Optional<E> select()
-    - public int selectCount()
-    - public int insert(E entity)
-    - public int insert(Iterable<? extends E> entities)
-    - public int update(E entity)
-    - public int update(Iterable<? extends E> entities)
-    - public int delete()
-    - public int delete(E entity)
-    - public int delete(Iterable<? extends E> entities)
+  * public void select(Consumer<? super E> consumer)
+  * public <JE1> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1)
+  * public <JE1, JE2> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)
+  * public <JE1, JE2, JE3> void select(Consumer<? super  E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)
+  * public <JE1, JE2, JE3, JE4> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)
+  * public Optional<E> select()
+  * public int selectCount()
+  * public int insert(E entity)
+  * public int insert(Iterable<? extends E> entities)
+  * public int update(E entity)
+  * public int update(Iterable<? extends E> entities)
+  * public int delete()
+  * public int delete(E entity)
+  * public int delete(Iterable<? extends E> entities)
 
 1. **Added** the following method to the `org.lightsleep.Sql` class.
-    - public Sql<E> connection(Connection connection)
-    - public <R> Sql<E> setColumns(Class<R> resultClass)
-    - public Sql<E> doAlways(Consumer<Sql<E>> action)
+  * public Sql<E> connection(Connection connection)
+  * public <R> Sql<E> setColumns(Class<R> resultClass)
+  * public Sql<E> doAlways(Consumer<Sql<E>> action)
 
 1. The `org.lightsleep.Sql` class now **implements** the `Cloneable` interface.
 
@@ -139,7 +204,6 @@ Version number is a minor release, but there are **some specification changes**.
 1. **Changed** the exception thrown on `toString` of `org.lightsleep.component.Expression` class when number of `{}` in the content string and arguments dose not match from `IllegalArgumentException` to `MissingArgumentsException` *(new class)*. **(Specification change)**
 
 1. **Changed** the exception thrown on `getField`, `getValue` and `setValue` methods of `org.lightsleep.helper.Accessor` class from `IllegalArgumentException` to `MissingPropertyException` *(new class)*. **(Specification change)**
-
 <<TOC_,To TOC>>
 
 [gray]#_(C) 2016 Masato Kokubo_#

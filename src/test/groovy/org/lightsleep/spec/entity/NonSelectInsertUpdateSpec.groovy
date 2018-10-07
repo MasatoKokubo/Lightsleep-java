@@ -129,7 +129,7 @@ class NonSelectInsertUpdateSpec extends Specification {
 	}
 
 	def "@Non#type #no"(String type, int no, Class<?> entityClass, String expectedSql) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		setup:
 			def entity = entityClass.getDeclaredConstructor().newInstance()
 			def sql = new Sql<>(entityClass)
@@ -140,12 +140,12 @@ class NonSelectInsertUpdateSpec extends Specification {
 				type == 'Select' ? Standard.instance.selectSql(sql, []) :
 				type == 'Insert' ? Standard.instance.insertSql(sql, []) :
 				type == 'Update' ? Standard.instance.updateSql(sql, []) : ''
-		/**/DebugTrace.print('createdSql', createdSql)
+			DebugTrace.print('createdSql', createdSql) // for Debugging
 
 		then:
 			createdSql == expectedSql
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			type    |no|entityClass|expectedSql
 			'Select'|1 |Entity1    |'SELECT key, c0, c3 FROM Entity1 WHERE key=-1'

@@ -4,6 +4,7 @@
 package org.lightsleep.spec
 
 import java.sql.Connection
+import java.sql.ResultSet
 import java.util.function.Supplier
 
 import org.debugtrace.DebugTrace
@@ -40,64 +41,65 @@ class SqlSpec extends Specification {
 		@Override public Map<String, TypeConverter<?, ?>> typeConverterMap() {return null}
 		@Override public <T> T convert(Object value, Class<T> type) {return null}
 		@Override public String maskPassword(String jdbcUrl) {return jdbcUrl}
+		@Override public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {return null} // since 3.0.0
 	}
 
 	// Sql.getEntityInfo(Class<E>)
 	def "SqlSpec getEntityInfo - exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		when: Sql.getEntityInfo(null)
 		then: thrown NullPointerException
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.Sql(Class<E>), Sql.Sql(Sql)
 	def "SqlSpec constructor - exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		when: new Sql<>(null as Class<Contact>)
 		then: thrown NullPointerException
 
 		when: new Sql<>(Contact, null)
 		then: thrown NullPointerException
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.entityInfo()
 	def "SqlSpec entityInfo"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		when: def entityInfo = new Sql<>(Contact).entityInfo()
 		then: entityInfo.entityClass() == Contact
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.entityClass()
 	def "SqlSpec entityClass"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		when: def clazz = new Sql<>(Contact).entityClass()
 		then: clazz == Contact
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.entity()
 	def "SqlSpec entity"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		when: def contact = new Sql<>(Contact).entity()
 		then: contact == null
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.distinct()
 	// Sql.isDistinct()
 	def "SqlSpec distinct isDistinct - #databaseName"(Database database, String databaseName) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		expect:
 			new Sql<>(Contact).isDistinct() == false
 			new Sql<>(Contact).distinct().isDistinct()
 
 		when: def selectSql = database.selectSql(new Sql<>(Contact).distinct(), [])
-		/**/DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql)
+			DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql) // for Debugging
 		then: selectSql.startsWith('SELECT DISTINCT id,')
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			database << databases
 			databaseName = database.getClass().simpleName
@@ -106,7 +108,7 @@ class SqlSpec extends Specification {
 	// Sql.columns(String...)
 	// Sql.getColumns()
 	def "SqlSpec columns getColumns 1"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		expect:
 			new Sql<>(Contact).columns == [] as Set
 
@@ -116,13 +118,13 @@ class SqlSpec extends Specification {
 
 		when: new Sql<>(Contact).columns((String[])null)
 		then: thrown NullPointerException
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.columns(String...)
 	// Sql.columns()
 	def "SqlSpec columns getColumns 2 - #databaseName"(Database database, String databaseName) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		setup:
 			String selectSql = null
@@ -133,7 +135,7 @@ class SqlSpec extends Specification {
 					.columns('birthday')
 					.columns('name.last', 'name.first')
 				, [])
-		/**/DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql)
+			DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql) // for Debugging
 
 		then:
 			selectSql.startsWith('SELECT firstName, lastName, birthday FROM Contact ')
@@ -143,7 +145,7 @@ class SqlSpec extends Specification {
 				new Sql<>(Contact)
 					.columns('*')
 				, [])
-		/**/DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql)
+			DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql) // for Debugging
 
 		then:
 			selectSql.startsWith('SELECT id, updateCount, created, updated, firstName, lastName, birthday, addressId FROM Contact ')
@@ -154,7 +156,7 @@ class SqlSpec extends Specification {
 					.innerJoin(Phone, 'P', '{P.contactId} = {C.id}')
 					.columns('C.id', 'P.id')
 				, [])
-		/**/DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql)
+			DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql) // for Debugging
 
 		then:
 			selectSql.startsWith('SELECT C.id AS C_id, P.id AS P_id FROM Contact ')
@@ -165,14 +167,14 @@ class SqlSpec extends Specification {
 					.innerJoin(Phone, 'P', '{P.contactId} = {C.id}')
 					.columns('P.*')
 				, [])
-		/**/DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql)
+			DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql) // for Debugging
 
 		then:
 			selectSql.indexOf(' P.id AS P_id, ') >= 0
 			selectSql.indexOf(' P.contactId AS P_contactId, P.phoneNumber AS P_phoneNumber FROM Contact ') >= 0
 			selectSql.indexOf('AS C_') == -1
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			database << databases
 			databaseName = database.getClass().simpleName
@@ -182,7 +184,7 @@ class SqlSpec extends Specification {
 	// Sql.getColumns()
 	// Sql.setColumns(Set)
 	def "SqlSpec setColumns(Set)"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			def sql = new Sql<>(Contact)
@@ -201,7 +203,7 @@ class SqlSpec extends Specification {
 		when: sql = new Sql<>(Contact) .setColumns(['name.first', 'name.last'] as Set)
 		then: sql.columns == ['name.first', 'name.last'] as Set
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	@NonColumnProperties([
@@ -223,7 +225,7 @@ class SqlSpec extends Specification {
 
 	// Sql.setColumns(Class)
 	def "SqlSpec setColumns(Class)"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		expect:
 			new Sql<>(Contact).setColumns(ContactBirthday).columns == ['birthday'] as Set
 			new Sql<>(Contact).setColumns(ContactName).columns == ['name.last', 'name.first'] as Set
@@ -231,14 +233,14 @@ class SqlSpec extends Specification {
 			new Sql<>(Contact, 'C').setColumns(ContactBirthday).columns == ['C.birthday'] as Set
 			new Sql<>(Contact, 'C').setColumns(ContactName).columns == ['C.name.last', 'C.name.first'] as Set
 			new Sql<>(Contact, 'C').setColumns(Nothing).columns.empty
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.expression(String, Expression)
 	// Sql.expression(String, String, Object...)
 	// Sql.getExpression(String)
 	def "SqlSpec expression getExpression"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		setup:
 			String selectSql = null
 			String insertSql = null
@@ -270,7 +272,7 @@ class SqlSpec extends Specification {
 			selectSql = Standard.instance.selectSql(
 				new Sql<>(Contact).expression("name.first", "'['||{name.first}||']'"),
 				[])
-		/**/DebugTrace.print('selectSql', selectSql)
+			DebugTrace.print('selectSql', selectSql) // for Debugging
 
 		then:
 			selectSql.indexOf("'['||firstName||']'") >= 0
@@ -280,7 +282,7 @@ class SqlSpec extends Specification {
 			selectSql = Standard.instance.selectSql(
 				new Sql<>(Contact, "C").expression("name.first", "'['||{name.first}||']'"),
 				[])
-		/**/DebugTrace.print('selectSql', selectSql)
+			DebugTrace.print('selectSql', selectSql) // for Debugging
 
 		then:
 			selectSql.indexOf("'['||C.firstName||']'") >= 0
@@ -290,7 +292,7 @@ class SqlSpec extends Specification {
 			selectSql = Standard.instance.selectSql(
 				new Sql<>(Contact, "C").expression("C.name.last", "'['||{C.name.last}||']'"),
 				[])
-		/**/DebugTrace.print('selectSql', selectSql)
+			DebugTrace.print('selectSql', selectSql) // for Debugging
 
 		then:
 			selectSql.indexOf("'['||C.lastName||']'") >= 0
@@ -305,7 +307,7 @@ class SqlSpec extends Specification {
 					.setEntity(contact)
 					.expression("name.first", "'['||{#name.first}||']'"),
 				[])
-		/**/DebugTrace.print('insertSql', insertSql)
+			DebugTrace.print('insertSql', insertSql) // for Debugging
 
 		then:
 			insertSql.indexOf("'['||'Yukari'||']'") >=0
@@ -317,7 +319,7 @@ class SqlSpec extends Specification {
 					.setEntity(contact)
 					.expression("name.last", "'['||{#name.last}||']'"),
 				[])
-		/**/DebugTrace.print('insertSql', insertSql)
+			DebugTrace.print('insertSql', insertSql) // for Debugging
 
 		then:
 			insertSql.indexOf("'['||'Apple'||']'") >=0
@@ -331,7 +333,7 @@ class SqlSpec extends Specification {
 					.setEntity(contact)
 					.expression("name.first", "'['||{#name.first}||']'"),
 				[])
-		/**/DebugTrace.print('updateSql', updateSql)
+			DebugTrace.print('updateSql', updateSql) // for Debugging
 
 		then:
 			updateSql.indexOf("'['||'Harumi'||']'") >=0
@@ -343,12 +345,12 @@ class SqlSpec extends Specification {
 					.setEntity(contact)
 					.expression("name.last", "'['||{#name.last}||']'"),
 				[])
-		/**/DebugTrace.print('updateSql', updateSql)
+			DebugTrace.print('updateSql', updateSql) // for Debugging
 
 		then:
 			updateSql.indexOf("'['||'Orange'||']'") >=0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 
@@ -356,7 +358,7 @@ class SqlSpec extends Specification {
 	// Sql.expression(String, String, Object...)
 	def "SqlSpec expression - exception #caseNo"(
 		String caseNo, String property, Class<?> expressionType, Object expression, Class<? extends Exception> exception) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		when:
 			if (expressionType == Expression)
 				new Sql<>(Contact).expression(property, (Expression)expression)
@@ -367,7 +369,7 @@ class SqlSpec extends Specification {
 		then:
 			thrown exception
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			caseNo|property    |expressionType|expression           |exception
 			'1-1' |null        |Expression    |new Expression('AAA')|NullPointerException
@@ -379,11 +381,11 @@ class SqlSpec extends Specification {
 	// Sql.getExpression(String)
 	def "SqlSpec getExpression - exception #caseNo"(
 		String caseNo, String property, Class<? extends Exception> exception) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		when: new Sql<>(Contact).getExpression(property)
 		then: thrown exception
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			caseNo|property|exception
 			'1-1' |null    |NullPointerException
@@ -391,32 +393,86 @@ class SqlSpec extends Specification {
 
 	// Sql.doAlways(Consumer)
 	// Sql.doIf(boolean, Consumer)
+	// Sql.doNotIf(boolean, Consumer)
+	// Sql.doElse(Consumer)
 	// Sql.doIf(boolean, Consumer, Consumer)
-	def "SqlSpec doIf"() {
-	/**/DebugTrace.enter()
+	def "SqlSpec doAlways, doIf, doNotIf, doElse"() {
+		DebugTrace.enter() // for Debugging
 		expect:
 			new Sql<>(Contact)
-				.limit(4)
+				.limit(0)
 				.doAlways({it.limit(1)})
 				.limit == 1
 
 			new Sql<>(Contact)
-				.limit(4)
-				.doIf(true, {it.limit(1)})
+				.limit(0)
+				.doIf(true) {it.limit(1)}
 				.limit == 1
 
 			new Sql<>(Contact)
-				.limit(4)
-				.doIf(false, {it.limit(1)})
-				.limit == 4
+				.limit(0)
+				.doIf(false) {it.limit(1)}
+				.limit == 0
 
 			new Sql<>(Contact)
-				.limit(4)
+				.limit(0)
+				.doIf(true) {it.limit(1)}
+				.doElse {it.limit(2)}
+				.limit == 1
+
+			new Sql<>(Contact)
+				.limit(0)
+				.doIf(false) {it.limit(1)}
+				.doElse {it.limit(2)}
+				.limit == 2
+
+			new Sql<>(Contact)
+				.limit(0)
+				.doElse {it.limit(1)}
+				.doIf(false) {it.limit(2)}
+				.offset(0)
+				.doElse {it.limit(3)}
+				.doElse {it.limit(4)}
+				.limit == 3
+
+			new Sql<>(Contact)
+				.limit(0)
+				.doNotIf(true) {it.limit(1)}
+				.limit == 0
+
+			new Sql<>(Contact)
+				.limit(0)
+				.doNotIf(false) {it.limit(1)}
+				.limit == 1
+
+			new Sql<>(Contact)
+				.limit(0)
+				.doNotIf(true) {it.limit(1)}
+				.doElse {it.limit(2)}
+				.limit == 2
+
+			new Sql<>(Contact)
+				.limit(0)
+				.doNotIf(false) {it.limit(1)}
+				.doElse {it.limit(2)}
+				.limit == 1
+
+			new Sql<>(Contact)
+				.limit(0)
+				.doElse {it.limit(1)}
+				.doNotIf(true) {it.limit(2)}
+				.offset(0)
+				.doElse {it.limit(3)}
+				.doElse {it.limit(4)}
+				.limit == 3
+
+			new Sql<>(Contact)
+				.limit(0)
 				.doIf(true, {it.limit(1)}, {it.limit(2)})
 				.limit == 1
 
 			new Sql<>(Contact)
-				.limit(4)
+				.limit(0)
 				.doIf(false, {it.limit(1)}, {it.limit(2)})
 				.limit == 2
 
@@ -432,7 +488,10 @@ class SqlSpec extends Specification {
 		when: new Sql<>(Contact).doIf(false, {}, null)
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		when: new Sql<>(Contact).doIf(false, {}).doElse(null)
+		then: thrown NullPointerException
+
+		DebugTrace.leave() // for Debugging
 	}
 
 
@@ -443,7 +502,7 @@ class SqlSpec extends Specification {
 	// Sql.rightJoin(Class<JE>, String, Condition)
 	// Sql.rightJoin(Class<JE>, String, Condition, Object...)
 	def "SqlSpec innerJoin leftJoin rightJoin"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		setup:
 			List<JoinInfo<?>> joinInfos = null
 
@@ -535,7 +594,7 @@ class SqlSpec extends Specification {
 			joinInfos[3].tableAlias() == 'P2'
 			joinInfos[3].on()         instanceof Expression
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.where(Condition)
@@ -544,7 +603,7 @@ class SqlSpec extends Specification {
 	// Sql.where(String, Sql<SE>)
 	// Sql.where()
 	def "SqlSpec where getWhere"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		expect:
 			new Sql<>(Contact).where == Condition.EMPTY
 			new Sql<>(Contact).where(Condition.ALL).where == Condition.ALL
@@ -554,7 +613,7 @@ class SqlSpec extends Specification {
 
 		when: new Sql<>(Contact).where((Condition)null)
 		then: thrown NullPointerException
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.and(Condition)
@@ -564,7 +623,7 @@ class SqlSpec extends Specification {
 	// Sql.or(String, Object...)
 	// Sql.or(String, Sql<SE>)
 	def "SqlSpec and or"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		expect:
 			new Sql<>(Contact)
 				.where('A')
@@ -600,13 +659,13 @@ class SqlSpec extends Specification {
 		when: new Sql<>(Contact).where('A').or((Condition)null)
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.groupBy(String, Object...)
 	// Sql.getGroupBy()
 	def "SqlSpec groupBy setGroupBy getGroupBy"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		expect:
 			new Sql<>(Contact).groupBy == new GroupBy()
@@ -623,7 +682,7 @@ class SqlSpec extends Specification {
 			sql.setGroupBy(new GroupBy().add('A')).groupBy == new GroupBy().add('A')
 			sql.setGroupBy(new GroupBy().add('A').add('B')).groupBy == new GroupBy().add('A').add('B')
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.having(Condition)
@@ -631,7 +690,7 @@ class SqlSpec extends Specification {
 	// Sql.having(String, Sql<SE>)
 	// Sql.getHaving()
 	def 'SqlSpec having, getHaving'() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		expect:
 			new Sql<>(Contact).having == Condition.EMPTY
 			new Sql<>(Contact).having(Condition.ALL).having ==  Condition.ALL
@@ -644,13 +703,13 @@ class SqlSpec extends Specification {
 		then:
 			thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.orderBy(String, Object...)
 	// Sql.getOrderBy()
 	def "SqlSpec orderBy setOrderBy getOrderBy"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		expect:
 			new Sql<>(Contact).orderBy == new OrderBy()
@@ -669,7 +728,7 @@ class SqlSpec extends Specification {
 			sql.setOrderBy(new OrderBy().add('A').desc()).orderBy == new OrderBy().add('A').desc()
 			sql.setOrderBy(new OrderBy().add('A')).desc().orderBy == new OrderBy().add('A').desc()
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.limit(int)
@@ -677,7 +736,7 @@ class SqlSpec extends Specification {
 	// Sql.offset(int)
 	// Sql.getOffset()
 	def "SqlSpec limit getLimit offset getOffset"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		expect:
 			new Sql<>(Contact).limit == Integer.MAX_VALUE
@@ -685,7 +744,7 @@ class SqlSpec extends Specification {
 			new Sql<>(Contact).offset == 0
 			new Sql<>(Contact).offset(100).offset == 100
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.forUpdate()
@@ -696,7 +755,7 @@ class SqlSpec extends Specification {
 	// Sql.isNoWait()
 	// Sql.isWaitForever()
 	def "SqlSpec forUpdate isForUpdate noWait wait getWaitTime isNoWait isWaitForever"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		expect:
 			new Sql<>(Contact).forUpdate == false
@@ -722,12 +781,12 @@ class SqlSpec extends Specification {
 			new Sql<>(Contact).wait(Sql.FOREVER).waitForever
 			new Sql<>(Contact).wait(Sql.FOREVER).waitTime == Sql.FOREVER
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.getSqlEntityInfo(String)
 	def "SqlSpec getSqlEntityInfo"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		expect:
 			new Sql<>(Contact, 'C')
@@ -742,12 +801,12 @@ class SqlSpec extends Specification {
 				.innerJoin(Address, 'A', '{A.addressId} = {A.addressId}')
 				.getSqlEntityInfo('C').getClass() == Sql
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.updateSql with JOIN
 	def "SqlSpec updateSql with JOIN - #databaseName"(Database database, String databaseName) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			Contact contact = new Contact()
@@ -763,7 +822,7 @@ class SqlSpec extends Specification {
 						.columns('name.first')
 						.columns('updateCount')
 				, [])
-		/**/DebugTrace.print(database.getClass().simpleName + ': ', updateSql)
+			DebugTrace.print(database.getClass().simpleName + ': ', updateSql) // for Debugging
 
 		then:
 			if (database instanceof SQLServer)
@@ -771,7 +830,7 @@ class SqlSpec extends Specification {
 			else
 				assert updateSql == "UPDATE Contact C INNER JOIN Phone P ON P.contactId = C.id SET C.updateCount=C.updateCount+1, C.firstName='Chiyuki' WHERE C.id=1"
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			database << databases
 			databaseName = database.getClass().simpleName
@@ -779,7 +838,7 @@ class SqlSpec extends Specification {
 
 	// Sql.deleteSql with JOIN
 	def "SqlSpec deleteSql with JOIN - #databaseName"(Database database, String databaseName) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		setup:
 			String deleteSql = null
@@ -789,7 +848,7 @@ class SqlSpec extends Specification {
 				new Sql<>(Contact)
 					.where(Condition.ALL)
 				, [])
-		/**/DebugTrace.print(database.getClass().getSimpleName() + ": ", deleteSql)
+			DebugTrace.print(database.getClass().getSimpleName() + ": ", deleteSql) // for Debugging
 
 		then:
 			deleteSql == "DELETE FROM Contact"
@@ -800,7 +859,7 @@ class SqlSpec extends Specification {
 					.innerJoin(Phone, "P", "{P.contactId} = {id}")
 					.where("{P.phoneNumber} LIKE {}", "080%")
 				, [])
-		/**/DebugTrace.print(database.getClass().getSimpleName() + ": ", deleteSql)
+			DebugTrace.print(database.getClass().getSimpleName() + ": ", deleteSql) // for Debugging
 
 		then:
 			deleteSql == "DELETE Contact FROM Contact INNER JOIN Phone P ON P.contactId = id WHERE P.phoneNumber LIKE '080%'"
@@ -811,12 +870,12 @@ class SqlSpec extends Specification {
 					.innerJoin(Phone, "P", "{P.contactId} = {C.id}")
 					.where("{P.phoneNumber} LIKE {}", "080%")
 				, [])
-		/**/DebugTrace.print(database.getClass().getSimpleName() + ": ", deleteSql)
+			DebugTrace.print(database.getClass().getSimpleName() + ": ", deleteSql) // for Debugging
 
 		then:
 			deleteSql == "DELETE C FROM Contact C INNER JOIN Phone P ON P.contactId = C.id WHERE P.phoneNumber LIKE '080%'"
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			database << databases
 			databaseName = database.getClass().simpleName

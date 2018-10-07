@@ -20,7 +20,7 @@ public class Accessor<T> {
 	 *
 	 * @param objectClass アクセス対象のオブジェクトのクラス
 	 *
-	 * @throws NullPointerException <b>objectClass</b>がnullの場合
+	 * @throws NullPointerException <b>objectClass</b>が<b>null</b>の場合
 	 */
 	public Accessor(Class<T> objectClass) {
 	}
@@ -96,7 +96,7 @@ public class Accessor<T> {
 	 * @param propertyName フィールドのプロパティ名
 	 * @return フィールドから取得した値(null有)
 	 *
-	 * @throws NullPointerException <b>object</b>がnullの場合
+	 * @throws NullPointerException <b>object</b>が<b>null</b>の場合
 	 * @throws MissingPropertyException <b>propertyName</b>で指定されるフィールドの取得メソッドが存在しない場合
 	 * @throws RuntimeException <b>IllegalAccessException</b>または<b>InvocationTargetException</b>がスローされた場合
 	 */
@@ -118,7 +118,7 @@ public class Accessor<T> {
 	 * @param propertyName フィールドのプロパティ名
 	 * @param value フィールドに設定する値(null可)
 	 *
-	 * @throws NullPointerException <b>object</b>がnullの場合
+	 * @throws NullPointerException <b>object</b>が<b>null</b>の場合
 	 * @throws MissingPropertyException <b>propertyName</b>で指定されるフィールドの設定メソッドが存在しない場合
 	 * @throws RuntimeException <b>IllegalAccessException</b>または<b>InvocationTargetException</b>がスローされた場合
 	 */

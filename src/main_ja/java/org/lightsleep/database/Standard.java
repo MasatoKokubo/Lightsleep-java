@@ -12,10 +12,10 @@ import org.lightsleep.helper.TypeConverter;
 import org.lightsleep.Sql;
 
 /**
- * 特定の DBMS に依存しないデータベース･ハンドラです。
+ * 特定のDBMSに依存しないデータベース･ハンドラです。
  *
  * <p>
- * {@linkplain org.lightsleep.helper.TypeConverter} クラスが持つ
+ * {@linkplain org.lightsleep.helper.TypeConverter}クラスが持つ
  * <b>TypeConverter</b>オブジェクトおよび以下の変換を行う
  * <b>TypeConverter</b>オブジェクトを持ちます。
  * </p>
@@ -25,53 +25,142 @@ import org.lightsleep.Sql;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>追加されるTypeConverter オブジェクト</span></caption>
- *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
+ *   <caption><span>TypeConverterマップへの追加内容</span></caption>
+ *   <tr><th colspan="2">キー: データ型</th><th rowspan="2">値: 変換関数</th></tr>
+ *   <tr><th>変換元</th><th>変換先</th></tr>
  *
- *   <tr><td>Clob          </td><td>String</td><td rowspan="2">長さが<code>Integer.MAX_VALUE</code>を超える場合ConvertExceptionをスロー<br>内容の取得時にSQLExceptionがスローされた場合ConvertExceptionをスロー</td></tr>
- *
- *   <tr><td>Blob          </td><td>byte[]</td></tr>
- *
- *   <tr><td rowspan="13">java.sql.Array</td><td>boolean[]       </td><td rowspan="13">各要素をTypeConverterで配列要素のデータ型に変換</td></tr>
- *   <tr>                                    <td>byte[]          </td></tr>
- *   <tr>                                    <td>short[]         </td></tr>
- *   <tr>                                    <td>int[]           </td></tr>
- *   <tr>                                    <td>long[]          </td></tr>
- *   <tr>                                    <td>float[]         </td></tr>
- *   <tr>                                    <td>double[]        </td></tr>
- *   <tr>                                    <td>BigDecimal[]    </td></tr>
- *   <tr>                                    <td>String[]        </td></tr>
- *   <tr>                                    <td>java.util.Date[]</td></tr>
- *   <tr>                                    <td>java.sql.Date[] </td></tr>
- *   <tr>                                    <td>Time[]          </td></tr>
- *   <tr>                                    <td>Timestamp[]     </td></tr>
- *
- *   <tr><td>Boolean        </td><td rowspan="26">SqlString</td><td>false ➔ <code>FALSE</code><br>true ➔ <code>TRUE</code></td></tr>
- *   <tr><td>Object         </td><td rowspan="2"><code>'...'</code></td></tr>
- *   <tr><td>Character      </td></tr>
- *   <tr><td>BigDecimal     </td><td></td></tr>
- *   <tr><td>String         </td><td><code>'...'</code><br>制御文字は<code>'...'||CHR(n)||'...'</code>に変換<br>長い文字列場合は<code>?</code><i>(SQLパラメータ)</i></td></tr>
- *   <tr><td>java.util.Date</td><td rowspan="2"><code>DATE'yyyy-MM-dd'</code></td></tr>
- *   <tr><td>java.sql.Date  </td></tr>
- *   <tr><td>Time           </td><td><code>TIME'HH:mm:ss'</code></td></tr>
- *   <tr><td>Timestamp      </td><td><code>TIMESTAMP'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
- *   <tr><td>Enum           </td><td><code>'...'</code> (toString() で変換)</td></tr>
- *   <tr><td>byte[]         </td><td><code>X'...'</code><br>長いバイト配列の場合は<code>?</code><i>(SQLパラメータ)</i></td></tr>
- *   <tr><td>boolean[]      </td><td rowspan="14"><code>ARRAY[x,y,z,...]</code><br>各要素をTypeConverterでSqlStringに変換</td></tr>
- *   <tr><td>char[]         </td></tr>
- *   <tr><td>byte[][]       </td></tr>
- *   <tr><td>short[]        </td></tr>
- *   <tr><td>int[]          </td></tr>
- *   <tr><td>long[]         </td></tr>
- *   <tr><td>float[]        </td></tr>
- *   <tr><td>double[]       </td></tr>
- *   <tr><td>BigDecimal[]   </td></tr>
- *   <tr><td>String[]       </td></tr>
+ *   <tr><td>Clob</td>
+ *     <td>String</td><td rowspan="2">
+ *       <div class="warning">
+ *       変換元の長さが<b>Integer.MAX_VALUE</b>を超えるか、
+ *       内容を取得中に<b>SQLException</b>がスローされた場合は、<b>ConvertException</b>をスロー
+ *       </div>
+ *     </td>
+ *   </tr>
+ * 
+ *   <tr><td>Blob</td><td>byte[]</td></tr>
+ * 
+ *   <tr><td rowspan="19">java.sql.Array</td><td>boolean[]</td>
+ *     <td rowspan="19">
+ *       <b>TypeConverter</b>を使用して、<b>Array</b>の各要素を変換先の要素型に変換
+ *     </td>
+ *   </tr>
+ *   <tr><td>byte[]          </td></tr>
+ *   <tr><td>short[]         </td></tr>
+ *   <tr><td>int[]           </td></tr>
+ *   <tr><td>long[]          </td></tr>
+ *   <tr><td>float[]         </td></tr>
+ *   <tr><td>double[]        </td></tr>
+ *   <tr><td>BigDecimal[]    </td></tr>
+ *   <tr><td>String[]        </td></tr>
  *   <tr><td>java.util.Date[]</td></tr>
- *   <tr><td>java.sql.Date[]</td></tr>
- *   <tr><td>Time[]         </td></tr>
- *   <tr><td>Timestamp[]    </td></tr>
- *   <tr><td>Iterable       </td><td><code>(x,y,z,...)</code><br>各要素をTypeConverterでSqlStringに変換</td></tr>
+ *   <tr><td>Date[]          </td></tr>
+ *   <tr><td>Time[]          </td></tr>
+ *   <tr><td>Timestamp[]     </td></tr>
+ *   <tr><td>LocalDateTime[] </td></tr>
+ *   <tr><td>LocalDate[]     </td></tr>
+ *   <tr><td>LocalTime[]     </td></tr>
+ *   <tr><td>OffsetDateTime[]</td></tr>
+ *   <tr><td>ZonedDateTime[] </td></tr>
+ *   <tr><td>Instant[]       </td></tr>
+ *   <tr>
+ *     <td>
+ *       Object<br>
+ *       <span class="comment">(Boolean, Byte,<br>Short, Integer,<br>Long, Float,<br>Double, Character<br>, Enum, ...)</span>
+ *     </td>
+ *     <td rowspan="37">SqlString</td><td><b>new SqlString(source.toString())</b></td>
+ *   </tr>
+ *   <tr><td>Boolean        </td>
+ *     <td>
+ *       <b>new SqlString("FALSE")</b> <span class="comment">変換元の値が<b>false</b>の場合</span><br>
+ *       <b>new SqlString("TRUE")</b> <span class="comment">変換元の値が<b>true</b>の場合</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>BigDecimal     </td><td><b>new SqlString(object.toPlainString())</b></td></tr>
+ *   <tr><td>String         </td>
+ *     <td>
+ *       <b>new SqlString("'" + source + "'")</b><br>
+ *       <span class="comment">変換元の文字列中のシングルクォートは、連続する2個のシングルクォートに変換、<br>
+ *       また制御文字は</span> <b>'...'+CHR(文字コード)+'...'</b><span class="comment"> に変換</span><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">変換元の文字列が長すぎる場合</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>Character      </td><td><b>Character</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>SqlString</b></td></tr>
+ *   <tr><td>java.util.Date </td>
+ *     <td rowspan="3">
+ *       (<b>java.util.Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("DATE'" + string + '\'')</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>Date           </td></tr>
+ *   <tr><td>LocalDate      </td></tr>
+ *   <tr><td>Time           </td>
+ *     <td rowspan="2">
+ *       (<b>Time</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("TIME'" + string + '\'')</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>LocalTime      </td></tr>
+ *   <tr><td>Timestamp      </td>
+ *     <td rowspan="5">
+ *       (<b>Timestamp</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>OffsetDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>ZonedDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Instant</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("TIMESTAMP'" + string + '\'')</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>LocalDateTime  </td></tr>
+ *   <tr><td>OffsetDateTime </td></tr>
+ *   <tr><td>ZonedDateTime  </td></tr>
+ *   <tr><td>Instant        </td></tr>
+ *   <tr><td>byte[]         </td>
+ *     <td>
+ *       <b>new SqlString("X'" + hexadecimal string + "'")</b><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">変換元のバイト配列が長すぎる場合</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>boolean[]      </td>
+ *     <td rowspan="20">
+ *       <b>new SqlString("ARRAY[a,b,c,...]")</b><br>
+ *       <div class="comment"><b>a,b,c,...</b>は変換元配列の各要素で、それぞれが<b>TypeConverter</b>を使用して<b>SqlString</b>に変換される</div>
+ *     </td>
+ *   </tr>
+ *   <tr><td>char[]          </td></tr>
+ *   <tr><td>byte[][]        </td></tr>
+ *   <tr><td>short[]         </td></tr>
+ *   <tr><td>int[]           </td></tr>
+ *   <tr><td>long[]          </td></tr>
+ *   <tr><td>float[]         </td></tr>
+ *   <tr><td>double[]        </td></tr>
+ *   <tr><td>BigDecimal[]    </td></tr>
+ *   <tr><td>String[]        </td></tr>
+ *   <tr><td>java.util.Date[]</td></tr>
+ *   <tr><td>java.sql.Date[] </td></tr>
+ *   <tr><td>Time[]          </td></tr>
+ *   <tr><td>Timestamp[]     </td></tr>
+ *   <tr><td>LocalDateTime[] </td></tr>
+ *   <tr><td>LocalDate[]     </td></tr>
+ *   <tr><td>LocalTime[]     </td></tr>
+ *   <tr><td>OffsetDateTime[]</td></tr>
+ *   <tr><td>ZonedDateTime[] </td></tr>
+ *   <tr><td>Instant[]       </td></tr>
+ *   <tr><td>Iterable        </td>
+ *     <td>
+ *       <b>new SqlString("(a,b,c,...)")</b><br>
+ *       <div class="comment"><b>a,b,c,...</b>は変換元配列の各要素で、それぞれが<b>TypeConverter</b>を使用して<b>SqlString</b>に変換される</div>
+ *     </td>
+ *   </tr>
  * </table>
  *
  * @since 1.0.0
@@ -125,20 +214,6 @@ public class Standard implements Database {
 	 * @since 2.1.0
 	 */
 	public static final Standard instance = new Standard();
-
-	/**
-	 * このクラスの唯一のインスタンスを返します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.1.0 より。代わりに{@link #instance}を使用してください。
-	 * </p>
-	 *
-	 * @return このクラスの唯一のインスタンス
-	 */
-	@Deprecated
-	public static Database instance() {
-		return null;
-	}
 
 	/**
 	 * 以下のデータ型変換で使用する<b>TypeConverter</b>マップ

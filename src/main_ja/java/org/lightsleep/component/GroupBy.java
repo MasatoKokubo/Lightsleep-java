@@ -28,7 +28,7 @@ public class GroupBy implements SqlComponent, Cloneable {
 	 *
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>expression</b>がnullの場合
+	 * @throws NullPointerException <b>expression</b>が<b>null</b>の場合
 	 */
 	public GroupBy add(Expression expression) {
 		return null;

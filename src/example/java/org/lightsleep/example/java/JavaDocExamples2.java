@@ -179,10 +179,7 @@ public class JavaDocExamples2 extends Common {
 
 	// rightJoin
 	private void sql_rightJoin() {
-	// 2.1.0
-	//	if (Sql.getDatabase() instanceof SQLite) return; // SQLite dose not support RIGHT JOIN
 		if (ConnectionSupplier.find().getDatabase() instanceof SQLite) return; // SQLite dose not support RIGHT JOIN
-	////
 	/**/DebugTrace.enter();
 
  List<Person> persons = new ArrayList<>();
@@ -365,10 +362,7 @@ public class JavaDocExamples2 extends Common {
  List<Person> persons = new ArrayList<>();
  Transaction.execute(conn -> {
      new Sql<>(Person.class, "C").connection(conn)
-     // 2.1.0
-     //  .doIf(!(Sql.getDatabase() instanceof SQLite), Sql::forUpdate) // SQLite dose not support FOR UPDATE
          .doIf(!(conn.getDatabase() instanceof SQLite), Sql::forUpdate) // SQLite dose not support FOR UPDATE
-     ////
          .select(persons::add);
  });
 

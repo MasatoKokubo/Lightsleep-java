@@ -1,6 +1,6 @@
 // (C) 2016 Masato Kokubo
 plugins {
-	id 'com.jfrog.bintray' version '1.8.0'
+	id 'com.jfrog.bintray' version '1.8.4'
 }
 
 apply plugin: 'maven-publish'
@@ -13,7 +13,7 @@ repositories {
 
 	maven {
 		// db2jcc4
-		url "https://artifacts.alfresco.com/nexus/content/repositories/public/"
+		url 'https://artifacts.alfresco.com/nexus/content/repositories/public/'
 	}
 }
 
@@ -27,23 +27,24 @@ dependencies {
 
 	compileOnly        'com.mchange:c3p0:0.+'
 	testRuntimeOnly    'com.mchange:c3p0:0.+'
-	compileOnly        'com.zaxxer:HikariCP:2.+'
-	testRuntimeOnly    'com.zaxxer:HikariCP:2.+'
+	compileOnly        'com.zaxxer:HikariCP:3.+'
+	testRuntimeOnly    'com.zaxxer:HikariCP:3.+'
 	compileOnly        'org.apache.commons:commons-dbcp2:2.+'
 	testRuntimeOnly    'org.apache.commons:commons-dbcp2:2.+'
-	compileOnly        'org.apache.tomcat:tomcat-jdbc:8.+'
-	testRuntimeOnly    'org.apache.tomcat:tomcat-jdbc:8.+'
+	compileOnly        'org.apache.tomcat:tomcat-jdbc:9.+'
+	testRuntimeOnly    'org.apache.tomcat:tomcat-jdbc:9.+'
 
 	testRuntimeOnly    'com.ibm.db2.jcc:db2jcc4:10.+'
-	testRuntimeOnly    'mysql:mysql-connector-java:5.+'
-//	testRuntimeOnly    'com.hynnet:oracle-driver-ojdbc:12.+'
+	testRuntimeOnly    'mysql:mysql-connector-java:8.+'
+	compileOnly        files('C:/Java/jdbc/ojdbc8_g.jar')
 	testRuntimeOnly    files('C:/Java/jdbc/ojdbc8_g.jar')
 	testRuntimeOnly    'org.postgresql:postgresql:42.+'
 	testRuntimeOnly    'org.xerial:sqlite-jdbc:3.+'
-	testRuntimeOnly    'com.microsoft.sqlserver:mssql-jdbc:6.2.+'
+	compileOnly        'com.microsoft.sqlserver:mssql-jdbc:7.0.0.jre8'
+	testRuntimeOnly    'com.microsoft.sqlserver:mssql-jdbc:7.0.0.jre8'
 
 	testRuntimeOnly    'junit:junit:4.+'
-	testImplementation 'org.codehaus.groovy:groovy-all:2.4.+'
+	testImplementation 'org.codehaus.groovy:groovy-all:2.5.+'
 	testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
 
 	testRuntimeOnly    'tomcat:naming-java:5.+'
@@ -58,7 +59,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '2.2.1'
+version             = '3.0.0'
 
 sourceSets {
 	main {
@@ -94,7 +95,7 @@ sourceSets {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.5.1'
+	gradleVersion = '4.10.2'
 }
 
 compileJava {
@@ -143,14 +144,14 @@ javadoc {
 }
 
 javadoc.doFirst {
-	def cssFile = file("build/docs/javadoc/stylesheet.css")
+	def cssFile = file('build/docs/javadoc/stylesheet.css')
 	if (cssFile.exists())
 		cssFile.delete()
 }
 
 javadoc.doLast {
-	def cssFile = file("build/docs/javadoc/stylesheet.css")
-	file("src/main/java/addtional.css").eachLine {
+	def cssFile = file('build/docs/javadoc/stylesheet.css')
+	file('src/main/java/addtional.css').eachLine {
 		cssFile.append("$it\n")
 	}
 }
@@ -173,19 +174,25 @@ task javadoc_ja(type:Javadoc) {
 }
 
 javadoc_ja.doFirst {
-	def cssFile = file("build/docs/javadoc_ja/stylesheet.css")
+	def cssFile = file('build/docs/javadoc_ja/stylesheet.css')
 	if (cssFile.exists())
 		cssFile.delete()
 }
 
 javadoc_ja.doLast {
-	def cssFile = file("build/docs/javadoc_ja/stylesheet.css")
-	file("src/main/java/addtional_ja.css").eachLine {
+	def cssFile = file('build/docs/javadoc_ja/stylesheet.css')
+	file('src/main/java/addtional_ja.css').eachLine {
 		cssFile.append("$it\n")
 	}
 }
 
-build.dependsOn javadoc_ja
+task copyImages(type: Copy) {
+	from 'images'
+	into 'build/docs/images'
+	include '**/*.gif'
+}
+
+build.dependsOn javadoc_ja, copyImages
 
 task zip(type: Zip) {
 	classifier = 'bin'

@@ -15,18 +15,18 @@ import spock.lang.*
 @Unroll
 class NotSpec extends Specification {
 	def "NotSpec 01 NOT empty"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: def condition = Condition.EMPTY.not()
 		then:
 			condition.empty
 			condition.getClass() != Not
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "NotSpec 02 NOT A = B"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: def condition = Condition.of('A = B').not()
 		then: !condition.empty
@@ -34,11 +34,11 @@ class NotSpec extends Specification {
 		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == 'NOT(A = B)'
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "NotSpec 03 NOT NOT A = B"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: def condition = Condition.of('A = B').not().not()
 		then: !condition.empty
@@ -46,15 +46,15 @@ class NotSpec extends Specification {
 		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == 'A = B'
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "NotSpec 04 exception - null argument"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: new Not(null)
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 }

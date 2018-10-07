@@ -11,6 +11,12 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +37,8 @@ import org.lightsleep.helper.ConvertException;
 import org.lightsleep.helper.Resource;
 import org.lightsleep.helper.TypeConverter;
 import org.lightsleep.helper.Utils;
+import org.lightsleep.logger.Logger;
+import org.lightsleep.logger.LoggerFactory;
 
 /**
  * A database handler that does not depend on the particular DBMS.
@@ -42,53 +50,139 @@ import org.lightsleep.helper.Utils;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Contents</th></tr>
+ *   <caption><span>Additional contents of the TypeConverter map</span></caption>
+ *   <tr><th colspan="2">Key: Data Types</th><th rowspan="2">Value: Conversion Function</th></tr>
+ *   <tr><th>Source</th><th>Destination</th></tr>
  *
- *   <tr><td>Clob          </td><td>String</td><td rowspan="2">Throws a ConvertException if the length exceeds <code>Integer.MAX_VALUE</code>.<br>Throws a ConvertException if SQLException is thrown when getting content.</td></tr>
- *
- *   <tr><td>Blob          </td><td>byte[]</td></tr>
- *
- *   <tr><td rowspan="13">java.sql.Array</td><td>boolean[]       </td><td rowspan="13">Converts each element to the data type of array element with TypeConverter.</td></tr>
- *   <tr>                                    <td>byte[]          </td></tr>
- *   <tr>                                    <td>short[]         </td></tr>
- *   <tr>                                    <td>int[]           </td></tr>
- *   <tr>                                    <td>long[]          </td></tr>
- *   <tr>                                    <td>float[]         </td></tr>
- *   <tr>                                    <td>double[]        </td></tr>
- *   <tr>                                    <td>BigDecimal[]    </td></tr>
- *   <tr>                                    <td>String[]        </td></tr>
- *   <tr>                                    <td>java.util.Date[]</td></tr>
- *   <tr>                                    <td>java.sql.Date[] </td></tr>
- *   <tr>                                    <td>Time[]          </td></tr>
- *   <tr>                                    <td>Timestamp[]     </td></tr>
- *
- *   <tr><td>Boolean        </td><td rowspan="26">SqlString</td><td>false -&gt; <code>FALSE</code><br>true -&gt; <code>TRUE</code></td></tr>
- *   <tr><td>Object         </td><td rowspan="2"><code>'...'</code></td></tr>
- *   <tr><td>Character      </td></tr>
- *   <tr><td>BigDecimal     </td><td></td></tr>
- *   <tr><td>String         </td><td><code>'...'</code><br>Converts control characters to <code>'...'||CHR(n)||'...'</code>.<br><code>?</code> <i>(SQL parameter)</i> if the string is long</td></tr>
- *   <tr><td>java.util.Date</td><td rowspan="2"><code>DATE'yyyy-MM-dd'</code></td></tr>
- *   <tr><td>java.sql.Date  </td></tr>
- *   <tr><td>Time           </td><td><code>TIME'HH:mm:ss'</code></td></tr>
- *   <tr><td>Timestamp      </td><td><code>TIMESTAMP'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
- *   <tr><td>Enum           </td><td><code>'...'</code> (Using toString())</td></tr>
- *   <tr><td>byte[]         </td><td><code>X'...'</code><br><code>?</code> <i>(SQL parameter)</i> if the byte array is long</td></tr>
- *   <tr><td>boolean[]      </td><td rowspan="14"><code>ARRAY[x,y,z,...]</code><br>Convert each element to a SqlString with TypeConverter.</td></tr>
- *   <tr><td>char[]         </td></tr>
- *   <tr><td>byte[][]       </td></tr>
- *   <tr><td>short[]        </td></tr>
- *   <tr><td>int[]          </td></tr>
- *   <tr><td>long[]         </td></tr>
- *   <tr><td>float[]        </td></tr>
- *   <tr><td>double[]       </td></tr>
- *   <tr><td>BigDecimal[]   </td></tr>
- *   <tr><td>String[]       </td></tr>
+ *   <tr><td>Clob</td>
+ *     <td>String</td><td rowspan="2">
+ *       <div class="warning">
+ *         Throws a <b>ConvertException</b> if the source length exceeds <b>Integer.MAX_VALUE</b>
+ *         or <b>SQLException</b> is thrown when getting content.
+ *       </div>
+ *     </td>
+ *   </tr>
+ *   <tr><td>Blob</td><td>byte[]</td></tr>
+ *   <tr><td rowspan="19">java.sql.Array</td><td>boolean[]</td>
+ *     <td rowspan="19">Converts each element of the <b>Array</b> to the element type of the destination using <b>TypeConverter</b>.
+ *     </td>
+ *   </tr>
+ *   <tr><td>byte[]          </td></tr>
+ *   <tr><td>short[]         </td></tr>
+ *   <tr><td>int[]           </td></tr>
+ *   <tr><td>long[]          </td></tr>
+ *   <tr><td>float[]         </td></tr>
+ *   <tr><td>double[]        </td></tr>
+ *   <tr><td>BigDecimal[]    </td></tr>
+ *   <tr><td>String[]        </td></tr>
  *   <tr><td>java.util.Date[]</td></tr>
- *   <tr><td>java.sql.Date[]</td></tr>
- *   <tr><td>Time[]         </td></tr>
- *   <tr><td>Timestamp[]    </td></tr>
- *   <tr><td>Iterable       </td><td><code>(x,y,z,...)</code><br>Convert each element to a SqlString with TypeConverter.</td></tr>
+ *   <tr><td>Date[]          </td></tr>
+ *   <tr><td>Time[]          </td></tr>
+ *   <tr><td>Timestamp[]     </td></tr>
+ *   <tr><td>LocalDateTime[] </td></tr>
+ *   <tr><td>LocalDate[]     </td></tr>
+ *   <tr><td>LocalTime[]     </td></tr>
+ *   <tr><td>OffsetDateTime[]</td></tr>
+ *   <tr><td>ZonedDateTime[] </td></tr>
+ *   <tr><td>Instant[]       </td></tr>
+ *   <tr>
+ *     <td>
+ *       Object<br>
+ *       <span class="comment">(Boolean, Byte,<br>Short, Integer,<br>Long, Float,<br>Double, Character<br>, Enum, ...)</span>
+ *     </td>
+ *     <td rowspan="37">SqlString</td><td><b>new SqlString(source.toString())</b></td>
+ *   </tr>
+ *   <tr><td>Boolean        </td>
+ *     <td>
+ *       <b>new SqlString("FALSE")</b> <span class="comment">if the source value is <b>false</b></span><br>
+ *       <b>new SqlString("TRUE")</b> <span class="comment">if the source value is <b>true</b></span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>BigDecimal     </td><td><b>new SqlString(object.toPlainString())</b></td></tr>
+ *   <tr><td>String         </td>
+ *     <td>
+ *       <b>new SqlString("'" + source + "'")</b><br>
+ *       <span class="comment">Converts a single quote in the source string to two consecutive single quotes
+ *       and converts control characters to</span> <b>'...'||CHR(character code)||'...'</b>.<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">if the source string is too long</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>Character      </td><td><b>Character</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>SqlString</b></td></tr>
+ *   <tr><td>java.util.Date </td>
+ *     <td rowspan="3">
+ *       (<b>java.util.Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("DATE'" + string + '\'')</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>Date           </td></tr>
+ *   <tr><td>LocalDate      </td></tr>
+ *   <tr><td>Time           </td>
+ *     <td rowspan="2">
+ *       (<b>Time</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("TIME'" + string + '\'')</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>LocalTime      </td></tr>
+ *   <tr><td>Timestamp      </td>
+ *     <td rowspan="5">
+ *       (<b>Timestamp</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>OffsetDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>ZonedDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Instant</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("TIMESTAMP'" + string + '\'')</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>LocalDateTime  </td></tr>
+ *   <tr><td>OffsetDateTime </td></tr>
+ *   <tr><td>ZonedDateTime  </td></tr>
+ *   <tr><td>Instant        </td></tr>
+ *   <tr><td>byte[]         </td>
+ *     <td>
+ *       <b>new SqlString("X'" + hexadecimal string + "'")</b><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">if the source byte array is too long</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>boolean[]      </td>
+ *     <td rowspan="20">
+ *       <b>new SqlString("ARRAY[a,b,c,...]")</b><br>
+ *       <div class="comment">The <b>a,b,c,...</b> are elements of the source array each converted to <b>SqlString</b> using <b>TypeConverter</b>.</div>
+ *     </td>
+ *   </tr>
+ *   <tr><td>char[]          </td></tr>
+ *   <tr><td>byte[][]        </td></tr>
+ *   <tr><td>short[]         </td></tr>
+ *   <tr><td>int[]           </td></tr>
+ *   <tr><td>long[]          </td></tr>
+ *   <tr><td>float[]         </td></tr>
+ *   <tr><td>double[]        </td></tr>
+ *   <tr><td>BigDecimal[]    </td></tr>
+ *   <tr><td>String[]        </td></tr>
+ *   <tr><td>java.util.Date[]</td></tr>
+ *   <tr><td>java.sql.Date[] </td></tr>
+ *   <tr><td>Time[]          </td></tr>
+ *   <tr><td>Timestamp[]     </td></tr>
+ *   <tr><td>LocalDateTime[] </td></tr>
+ *   <tr><td>LocalDate[]     </td></tr>
+ *   <tr><td>LocalTime[]     </td></tr>
+ *   <tr><td>OffsetDateTime[]</td></tr>
+ *   <tr><td>ZonedDateTime[] </td></tr>
+ *   <tr><td>Instant[]       </td></tr>
+ *   <tr><td>Iterable        </td>
+ *     <td>
+ *       <b>new SqlString("(a,b,c,...)")</b><br>
+ *       <div class="comment">The <b>a,b,c,...</b> are elements of the source each converted to <b>SqlString</b> using <b>TypeConverter</b>.</div>
+ *     </td>
+ *   </tr>
  * </table>
  *
  * @since 1.0.0
@@ -99,6 +193,9 @@ public class Standard implements Database {
 	// Class Resources
 	private static final Resource resource = new Resource(Standard.class);
 	private static final String messageSelectSqlWithoutColumns = resource.getString("messageSelectSqlWithoutColumns");
+
+	// The logger
+	protected static final Logger logger = LoggerFactory.getLogger(Database.class);
 
 	/**
 	 * Maximum length of string literal when generates SQL.
@@ -126,8 +223,10 @@ public class Standard implements Database {
 	 * <b>TypeConverter</b> object to convert
 	 * from <b>Boolean</b> to <b>SqlString</b> (0 or 1)
 	 */
-	protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
-		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"));
+// 3.0.0
+//	protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
+//		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"));
+////
 
 	/**
 	 * The ASCII characters without controle charactes
@@ -155,20 +254,6 @@ public class Standard implements Database {
 	 * @since 2.1.0
 	 */
 	public static final Standard instance = new Standard();
-
-	/**
-	 * Returns the only instance of this class.
-	 *
-	 * <p>
-	 * @deprecated As of release 2.1.0, instead use {@link #instance}
-	 * </p>
-	 *
-	 * @return the only instance of this class
-	 */
-	@Deprecated
-	public static Database instance() {
-		return instance;
-	}
 
 	/**
 	 * <b>TypeConverter</b> map used for the following data type conversion
@@ -280,7 +365,41 @@ public class Standard implements Database {
 			new TypeConverter<>(java.sql.Array.class, Timestamp[].class, object -> toArray(object, Timestamp[].class, Timestamp.class))
 		);
 
+		// java.sql.Array -> LocalDateTime[] (3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, LocalDateTime[].class, object -> toArray(object, LocalDateTime[].class, LocalDateTime.class))
+		);
+
+		// java.sql.Array -> LocalDate[] (3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, LocalDate[].class, object -> toArray(object, LocalDate[].class, LocalDate.class))
+		);
+
+		// java.sql.Array -> LocalTime[] (3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, LocalTime[].class, object -> toArray(object, LocalTime[].class, LocalTime.class))
+		);
+
+		// java.sql.Array -> OffsetDateTime[] (3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, OffsetDateTime[].class, object -> toArray(object, OffsetDateTime[].class, OffsetDateTime.class))
+		);
+
+		// java.sql.Array -> ZonedDateTime[] (3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, ZonedDateTime[].class, object -> toArray(object, ZonedDateTime[].class, ZonedDateTime.class))
+		);
+
+		// java.sql.Array -> Instant[] (3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(java.sql.Array.class, Instant[].class, object -> toArray(object, Instant[].class, Instant.class))
+		);
+
 	// * -> SqlString
+		Function<String, SqlString> toDateSqlString      = string -> new SqlString("DATE'" + string + '\'');
+		Function<String, SqlString> toTimeSqlString      = string -> new SqlString("TIME'" + string + '\'');
+		Function<String, SqlString> toTimestampSqlString = string -> new SqlString("TIMESTAMP'" + string + '\'');
+
 		// Object -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Object.class, SqlString.class, object -> new SqlString(object.toString()))
@@ -336,62 +455,105 @@ public class Standard implements Database {
 
 		// Character -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(
-				TypeConverter.get(typeConverterMap, Character.class, String.class),
-				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
+			new TypeConverter<>(Character.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Character.class, String.class).function(),
+				TypeConverter.get(typeConverterMap, String.class, SqlString.class).function()
 			)
 		);
 
 		// java.util.Date -> String -> SqlString (since 1.4.0)
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(
-				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class),
-				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("DATE'" + object + '\''))
+			new TypeConverter<>(java.util.Date.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function(),
+				toDateSqlString
 			)
 		);
 
 		// java.sql.Date -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(
-				TypeConverter.get(typeConverterMap, Date.class, String.class),
-				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("DATE'" + object + '\''))
+			new TypeConverter<>(Date.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Date.class, String.class).function(),
+				toDateSqlString
+			)
+		);
+
+		// LocalDate -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(LocalDate.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, LocalDate.class, String.class).function(),
+				toDateSqlString
 			)
 		);
 
 		// Time -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(
-				TypeConverter.get(typeConverterMap, Time.class, String.class),
-				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("TIME'" + object + '\''))
+			new TypeConverter<>(Time.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
+				toTimeSqlString
+			)
+		);
+
+		// LocalTime -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(LocalTime.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
+				toTimeSqlString
 			)
 		);
 
 		// Timestamp -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(
-				TypeConverter.get(typeConverterMap, Timestamp.class, String.class),
-				new TypeConverter<>(String.class, SqlString.class, object -> new SqlString("TIMESTAMP'" + object + '\''))
+			new TypeConverter<>(Timestamp.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function(),
+				toTimestampSqlString
 			)
 		);
 
-		// Enum -> String -> SqlString
+		// LocalDateTime -> String -> SqlString (since 3.0.0)
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(
-				TypeConverter.get(typeConverterMap, Enum.class, String.class),
-				TypeConverter.get(typeConverterMap, String.class, SqlString.class)
+			new TypeConverter<>(LocalDateTime.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, LocalDateTime.class, String.class).function(),
+				toTimestampSqlString
 			)
+		);
+
+		// OffsetDateTime -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(OffsetDateTime.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, OffsetDateTime.class, String.class).function(),
+				toTimestampSqlString
+			)
+		);
+
+		// ZonedDateTime -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(ZonedDateTime.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, ZonedDateTime.class, String.class).function(),
+				toTimestampSqlString
+			)
+		);
+
+		// Instant -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Instant.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Instant.class, String.class).function(),
+				toTimestampSqlString
+			)
+		);
+
+		// Enum -> SqlString
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Enum.class, SqlString.class, object -> new SqlString('\'' + object.toString() + '\''))
 		);
 
 		// boolean[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(boolean[].class, SqlString.class, object ->
-				toSqlString(object, Boolean.class))
+			new TypeConverter<>(boolean[].class, SqlString.class, object -> toSqlString(object, Boolean.class))
 		);
 
 		// char[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(char[].class, SqlString.class, object ->
-				toSqlString(object, Character.class))
+			new TypeConverter<>(char[].class, SqlString.class, object -> toSqlString(object, Character.class))
 		);
 
 		// byte[] -> SqlString
@@ -419,74 +581,92 @@ public class Standard implements Database {
 
 		// byte[][] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[][].class, SqlString.class, object ->
-				toSqlString(object, byte[].class))
+			new TypeConverter<>(byte[][].class, SqlString.class, object -> toSqlString(object, byte[].class))
 		);
 
 		// short[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(short[].class, SqlString.class, object ->
-				toSqlString(object, Short.class))
+			new TypeConverter<>(short[].class, SqlString.class, object -> toSqlString(object, Short.class))
 		);
 
 		// int[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(int[].class, SqlString.class, object ->
-				toSqlString(object, Integer.class))
+			new TypeConverter<>(int[].class, SqlString.class, object -> toSqlString(object, Integer.class))
 		);
 
 		// long[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(long[].class, SqlString.class, object ->
-				toSqlString(object, Long.class))
+			new TypeConverter<>(long[].class, SqlString.class, object -> toSqlString(object, Long.class))
 		);
 
 		// float[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(float[].class, SqlString.class, object ->
-				toSqlString(object, Float.class))
+			new TypeConverter<>(float[].class, SqlString.class, object -> toSqlString(object, Float.class))
 		);
 
 		// double[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(double[].class, SqlString.class, object ->
-				toSqlString(object, Double.class))
+			new TypeConverter<>(double[].class, SqlString.class, object -> toSqlString(object, Double.class))
 		);
 
 		// BigDecimal[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigDecimal[].class, SqlString.class, object ->
-				toSqlString(object, BigDecimal.class))
+			new TypeConverter<>(BigDecimal[].class, SqlString.class, object -> toSqlString(object, BigDecimal.class))
 		);
 
 		// String[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String[].class, SqlString.class, object ->
-				toSqlString(object, String.class))
+			new TypeConverter<>(String[].class, SqlString.class, object -> toSqlString(object, String.class))
 		);
 
 		// java.util.Date[] -> SqlString (since 1.4.0)
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.util.Date[].class, SqlString.class, object ->
-				toSqlString(object, java.util.Date.class))
+			new TypeConverter<>(java.util.Date[].class, SqlString.class, object -> toSqlString(object, java.util.Date.class))
 		);
 
 		// Date[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date[].class, SqlString.class, object ->
-				toSqlString(object, Date.class))
+			new TypeConverter<>(Date[].class, SqlString.class, object -> toSqlString(object, Date.class))
 		);
 
 		// Time[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time[].class, SqlString.class, object ->
-				toSqlString(object, Time.class))
+			new TypeConverter<>(Time[].class, SqlString.class, object -> toSqlString(object, Time.class))
 		);
 
 		// Timestamp[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp[].class, SqlString.class, object ->
-				toSqlString(object, Timestamp.class))
+			new TypeConverter<>(Timestamp[].class, SqlString.class, object -> toSqlString(object, Timestamp.class))
+		);
+
+		// LocalDateTime[] -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(LocalDateTime[].class, SqlString.class, object -> toSqlString(object, LocalDateTime.class))
+		);
+
+		// LocalDate[] -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(LocalDate[].class, SqlString.class, object -> toSqlString(object, LocalDate.class))
+		);
+
+		// LocalTime[] -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(LocalTime[].class, SqlString.class, object -> toSqlString(object, LocalTime.class))
+		);
+
+		// OffsetDateTime[] -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(OffsetDateTime[].class, SqlString.class, object -> toSqlString(object, OffsetDateTime.class))
+		);
+
+		// ZonedDateTime[] -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(ZonedDateTime[].class, SqlString.class, object -> toSqlString(object, ZonedDateTime.class))
+		);
+
+		// Instant[] -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Instant[].class, SqlString.class, object -> toSqlString(object, Instant.class))
 		);
 
 		// Iterable -> SqlString
@@ -582,7 +762,10 @@ public class Standard implements Database {
 		if (typeConverter == null)
 			throw new ConvertException(componentType, array, SqlString.class);
 
-		Function<CT, SqlString> function = typeConverter.function();
+	// 3.0.0
+	//	Function<CT, SqlString> function = typeConverter.function();
+		Function<? super CT, ? extends SqlString> function = typeConverter.function();
+	////
 		StringBuilder buff = new StringBuilder("ARRAY[");
 		List<Object> parameters = new ArrayList<>();
 		for (int index = 0; index < Array.getLength(array); ++ index) {
@@ -1073,22 +1256,15 @@ public class Standard implements Database {
 		return TypeConverter.convert(typeConverterMap, value, type);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return
-		// 2.2.1
-		//	Oracle.instance.maskPassword(
-		////
-			SQLServer.instance.maskPassword(
-			MySQL.instance.maskPassword(
-		// 2.2.1
-		//		jdbcUrl)));
-				jdbcUrl));
-		////
-	}
+// 3.0.0
+//	/**
+//	 * {@inheritDoc}
+//	 *
+//	 * @since 2.2.0
+//	 */
+//	@Override
+//	public String maskPassword(String jdbcUrl) {
+//		return SQLServer.instance.maskPassword(MySQL.instance.maskPassword(jdbcUrl));
+//	}
+////
 }

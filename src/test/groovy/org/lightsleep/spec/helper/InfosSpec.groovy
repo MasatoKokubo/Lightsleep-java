@@ -80,16 +80,16 @@ class InfosSpec extends Specification {
 	}
 
 	def "InfosSpec 1 EntityInfo 1 exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: new EntityInfo<>(null)
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 1 EntityInfo 2 normal"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			def entity1Info = new EntityInfo<>(Entity1)
@@ -103,11 +103,11 @@ class InfosSpec extends Specification {
 			entity1Info.columnInfos   ().size() == 7
 			entity1Info.keyColumnInfos().size() == 2
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 1 EntityInfo 3 normal"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			EntityInfo<Entity1> entity1Info  = new EntityInfo<>(Entity1)
@@ -155,11 +155,11 @@ class InfosSpec extends Specification {
 
 			entity1Info.getColumnInfo('value1').hashCode() == entity2Info.getColumnInfo('value1').hashCode()
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 2 ColumnInfo 1 exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			def entity1Info = new EntityInfo<>(Entity1)
@@ -167,22 +167,22 @@ class InfosSpec extends Specification {
 
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 2 ColumnInfo 2 exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			def entity1Info = new EntityInfo<>(Entity1)
 			new ColumnInfo(entity1Info, null, null, null, false, null, null, null)
 
 		then: thrown NullPointerException
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 2 ColumnInfo 3 exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			def entity1Info = new EntityInfo<>(Entity1)
@@ -190,11 +190,11 @@ class InfosSpec extends Specification {
 
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 2 ColumnInfo 4 columnName"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			List<String> columnNames = []
@@ -204,7 +204,7 @@ class InfosSpec extends Specification {
 					assert sqlColumnInfo.tableAlias() == 'E'
 					columnNames.add(sqlColumnInfo.columnInfo().columnName())
 				}
-		/**/DebugTrace.print('columnNames', columnNames)
+			DebugTrace.print('columnNames', columnNames) // for Debugging
 
 		then:
 			columnNames == [
@@ -217,11 +217,11 @@ class InfosSpec extends Specification {
 				'value7'
 			]
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 2 ColumnInfo 5 columnName"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			List<String> columnNames = []
@@ -231,7 +231,7 @@ class InfosSpec extends Specification {
 					assert sqlColumnInfo.tableAlias() == 'E'
 					columnNames.add(sqlColumnInfo.columnInfo().columnName())
 				}
-		/**/DebugTrace.print('columnNames', columnNames)
+			DebugTrace.print('columnNames', columnNames) // for Debugging
 
 		then:
 			columnNames == [
@@ -244,11 +244,11 @@ class InfosSpec extends Specification {
 				'value7'
 			]
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 2 ColumnInfo 6 columnName"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			List<String> columnNames = []
@@ -259,16 +259,16 @@ class InfosSpec extends Specification {
 					assert sqlColumnInfo.tableAlias() == 'E'
 					columnNames.add(sqlColumnInfo.columnInfo().columnName())
 				}
-		/**/DebugTrace.print('columnNames', columnNames)
+			DebugTrace.print('columnNames', columnNames) // for Debugging
 
 		then: columnNames == ['value6', 'value7']
 
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 2 ColumnInfo 7 columnName"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			List<String> columnNames = []
@@ -279,7 +279,7 @@ class InfosSpec extends Specification {
 					assert sqlColumnInfo.tableAlias() == ''
 					columnNames.add(sqlColumnInfo.columnInfo().columnName())
 				}
-		/**/DebugTrace.print('columnNames', columnNames)
+			DebugTrace.print('columnNames', columnNames) // for Debugging
 
 		then:
 			columnNames == [
@@ -292,11 +292,11 @@ class InfosSpec extends Specification {
 				'value7'
 			]
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 2 ColumnInfo 8 columnName"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			List<String> columnNames = []
@@ -316,7 +316,7 @@ class InfosSpec extends Specification {
 				.each {SqlColumnInfo sqlColumnInfo ->
 					columnNames.add(sqlColumnInfo.columnInfo().getColumnName(sqlColumnInfo.tableAlias()))
 				}
-		/**/DebugTrace.print('columnNames', columnNames)
+			DebugTrace.print('columnNames', columnNames) // for Debugging
 
 		then:
 			columnNames == [
@@ -351,11 +351,11 @@ class InfosSpec extends Specification {
 			]
 		////
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 3 JoinInfo 1 exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			def entity1Info = new EntityInfo<>(Entity1)
@@ -363,20 +363,20 @@ class InfosSpec extends Specification {
 
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 3 JoinInfo 2 exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: new JoinInfo<>(JoinInfo.JoinType.INNER, null, null, null)
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 3 JoinInfo 3 exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			def entity1Info = new EntityInfo<>(Entity1)
@@ -384,11 +384,11 @@ class InfosSpec extends Specification {
 
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 3 JoinInfo 4 exception"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			def entity1Info = new EntityInfo<>(Entity1)
@@ -397,11 +397,11 @@ class InfosSpec extends Specification {
 		then:
 			thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "InfosSpec 3 JoinInfo 5 normal"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:
 			def entity1Info = new EntityInfo<>(Entity1)
@@ -415,6 +415,6 @@ class InfosSpec extends Specification {
 			joinInfo.entity() == null
 			((Expression)joinInfo.on()).content() == 'a'
 
-		/**/DebugTrace.leave()
+			DebugTrace.leave() // for Debugging
 	}
 }

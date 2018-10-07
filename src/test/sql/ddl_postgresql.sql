@@ -5,8 +5,8 @@
 -- Numbering
 DROP TABLE IF EXISTS Numbering;
 CREATE TABLE Numbering (
-    tableName   VARCHAR(32) NOT NULL,
-    nextId      INT         NOT NULL,
+    tableName   VARCHAR(32)  NOT NULL,
+    nextId      INT          NOT NULL,
 
     PRIMARY KEY(tableName)
 );
@@ -14,15 +14,15 @@ CREATE TABLE Numbering (
 -- Contact
 DROP TABLE IF EXISTS Contact;
 CREATE TABLE Contact (
-    id          INT         NOT NULL,
-    firstName   VARCHAR(20) NOT NULL,
-    lastName    VARCHAR(20) NOT NULL,
-    birthday    DATE            NULL,
-    addressId   INT             NULL,
+    id          INT          NOT NULL,
+    firstName   VARCHAR(20)  NOT NULL,
+    lastName    VARCHAR(20)  NOT NULL,
+    birthday    DATE             NULL,
+    addressId   INT              NULL,
 
-    updateCount INT         NOT NULL,
-    created     TIMESTAMP   NOT NULL,
-    updated     TIMESTAMP   NOT NULL,
+    updateCount INT          NOT NULL,
+    created     TIMESTAMP(6) NOT NULL,
+    updated     TIMESTAMP(6) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -30,16 +30,16 @@ CREATE TABLE Contact (
 -- Address
 DROP TABLE IF EXISTS Address;
 CREATE TABLE Address (
-    id          INT         NOT NULL,
-    postCode    VARCHAR(10)     NULL,
-    address1    VARCHAR(20)     NULL,
-    address2    VARCHAR(20)     NULL,
-    address3    VARCHAR(20)     NULL,
-    address4    VARCHAR(20)     NULL,
+    id          INT          NOT NULL,
+    postCode    VARCHAR(10)      NULL,
+    address1    VARCHAR(20)      NULL,
+    address2    VARCHAR(20)      NULL,
+    address3    VARCHAR(20)      NULL,
+    address4    VARCHAR(20)      NULL,
 
-    updateCount INT         NOT NULL,
-    created     TIMESTAMP   NOT NULL,
-    updated     TIMESTAMP   NOT NULL,
+    updateCount INT          NOT NULL,
+    created     TIMESTAMP(6) NOT NULL,
+    updated     TIMESTAMP(6) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -47,13 +47,13 @@ CREATE TABLE Address (
 -- Phone
 DROP TABLE IF EXISTS Phone;
 CREATE TABLE Phone (
-    id          INT         NOT NULL,
-    contactId   INT         NOT NULL,
-    phoneNumber VARCHAR(12) NOT NULL,
+    id          INT          NOT NULL,
+    contactId   INT          NOT NULL,
+    phoneNumber VARCHAR(12)  NOT NULL,
 
-    updateCount INT         NOT NULL,
-    created     TIMESTAMP   NOT NULL,
-    updated     TIMESTAMP   NOT NULL,
+    updateCount INT          NOT NULL,
+    created     TIMESTAMP(6) NOT NULL,
+    updated     TIMESTAMP(6) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -61,15 +61,15 @@ CREATE TABLE Phone (
 -- Product
 DROP TABLE IF EXISTS Product;
 CREATE TABLE Product (
-    id          INT         NOT NULL,
-    productName VARCHAR(20) NOT NULL,
-    price       INT         NOT NULL,
-    productSize CHAR   ( 2)     NULL,
-    color       VARCHAR(20)     NULL,
+    id          INT          NOT NULL,
+    productName VARCHAR(20)  NOT NULL,
+    price       INT          NOT NULL,
+    productSize CHAR   ( 2)      NULL,
+    color       VARCHAR(20)      NULL,
 
-    updateCount INT         NOT NULL,
-    created     TIMESTAMP   NOT NULL,
-    updated     TIMESTAMP   NOT NULL,
+    updateCount INT          NOT NULL,
+    created     TIMESTAMP(6) NOT NULL,
+    updated     TIMESTAMP(6) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -77,14 +77,14 @@ CREATE TABLE Product (
 -- Sale
 DROP TABLE IF EXISTS Sale;
 CREATE TABLE Sale (
-    id          INT         NOT NULL,
-    contactId   INT         NOT NULL,
-    saleDate    DATE        NOT NULL,
-    taxRate     SMALLINT    NOT NULL,
+    id          INT          NOT NULL,
+    contactId   INT          NOT NULL,
+    saleDate    DATE         NOT NULL,
+    taxRate     SMALLINT     NOT NULL,
 
-    updateCount INT         NOT NULL,
-    created     TIMESTAMP   NOT NULL,
-    updated     TIMESTAMP   NOT NULL,
+    updateCount INT          NOT NULL,
+    created     TIMESTAMP(6) NOT NULL,
+    updated     TIMESTAMP(6) NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -92,10 +92,10 @@ CREATE TABLE Sale (
 -- SaleItem
 DROP TABLE IF EXISTS SaleItem;
 CREATE TABLE SaleItem (
-    saleId      INT         NOT NULL,
-    itemIndex   SMALLINT    NOT NULL,
-    productId   INT         NOT NULL,
-    quantity    SMALLINT    NOT NULL,
+    saleId      INT          NOT NULL,
+    itemIndex   SMALLINT     NOT NULL,
+    productId   INT          NOT NULL,
+    quantity    SMALLINT     NOT NULL,
 
     PRIMARY KEY(saleId, itemIndex)
 );
@@ -124,15 +124,7 @@ CREATE TABLE Various (
     bigIntValue      BIGINT                  ,
     floatValue       FLOAT                   ,
     doubleValue      DOUBLE PRECISION        ,
-
     decimalValue     DECIMAL(12,2)           ,
-
-    dateValue        DATE                    ,
-    timeValue        TIME                    ,
-    timeTZValue      TIME WITH TIME ZONE     ,
-    dateTimeValue    TIMESTAMP               , -- instead of DATETIME type
-    timestampValue   TIMESTAMP               ,
-    timestampTZValue TIMESTAMP WITH TIME ZONE,
 
     longDate         BIGINT                  , -- since 1.8.0
     longTime         BIGINT                  , -- since 1.8.0
@@ -158,8 +150,21 @@ CREATE TABLE Various (
     decimals         DECIMAL(12,2)    ARRAY  ,
     texts            TEXT             ARRAY  ,
     dates            DATE             ARRAY  ,
-    times            TIME             ARRAY  ,
-    timestamps       TIMESTAMP        ARRAY  ,
+    times            TIME     (6)     ARRAY  ,
+    timestamps       TIMESTAMP(6)     ARRAY  ,
+
+    PRIMARY KEY(id)
+);
+
+-- DateAndTime since 3.0.0
+DROP TABLE IF EXISTS DateAndTime;
+CREATE TABLE DateAndTime (
+    id               INT                NOT NULL,
+
+    dateValue        DATE                       ,
+    timeValue        TIME     (6)               ,
+    timestampValue   TIMESTAMP(6)               ,
+    timestampTZValue TIMESTAMP(6) WITH TIME ZONE,
 
     PRIMARY KEY(id)
 );

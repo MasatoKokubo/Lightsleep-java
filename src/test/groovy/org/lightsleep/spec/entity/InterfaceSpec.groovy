@@ -34,8 +34,8 @@ class InterfaceSpec extends SpecCommon {
 
 	// PreStore PostLoad
 	def "InterfaceSpec PreStore PostLoad #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-	/**/DebugTrace.enter()
-	/**/DebugTrace.print('connectionSupplier', connectionSupplier.toString())
+		DebugTrace.enter() // for Debugging
+		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		when:
 			def contact = new Contact2()
 			contact.name.first = 'firstName'
@@ -74,7 +74,7 @@ class InterfaceSpec extends SpecCommon {
 				assert contactOpt.get().postLoadCount == 1
 			}
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			connectionSupplier << connectionSuppliers
 	}

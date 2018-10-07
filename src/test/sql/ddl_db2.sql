@@ -21,8 +21,8 @@ CREATE TABLE Contact (
     addressId   INTEGER            NULL,
 
     updateCount INTEGER        NOT NULL,
-    created     TIMESTAMP      NOT NULL,
-    updated     TIMESTAMP      NOT NULL,
+    created     TIMESTAMP(9)   NOT NULL,
+    updated     TIMESTAMP(9)   NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -38,8 +38,8 @@ CREATE TABLE Address (
     address4    VARGRAPHIC(20)     NULL,
 
     updateCount INTEGER        NOT NULL,
-    created     TIMESTAMP      NOT NULL,
-    updated     TIMESTAMP      NOT NULL,
+    created     TIMESTAMP(9)   NOT NULL,
+    updated     TIMESTAMP(9)   NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -52,8 +52,8 @@ CREATE TABLE Phone (
     phoneNumber VARCHAR   (12) NOT NULL,
 
     updateCount INTEGER        NOT NULL,
-    created     TIMESTAMP      NOT NULL,
-    updated     TIMESTAMP      NOT NULL,
+    created     TIMESTAMP(9)   NOT NULL,
+    updated     TIMESTAMP(9)   NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -68,8 +68,8 @@ CREATE TABLE Product (
     color       VARGRAPHIC(20)     NULL,
 
     updateCount INTEGER        NOT NULL,
-    created     TIMESTAMP      NOT NULL,
-    updated     TIMESTAMP      NOT NULL,
+    created     TIMESTAMP(9)   NOT NULL,
+    updated     TIMESTAMP(9)   NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -83,8 +83,8 @@ CREATE TABLE Sale (
     taxRate     SMALLINT       NOT NULL,
 
     updateCount INTEGER        NOT NULL,
-    created     TIMESTAMP      NOT NULL,
-    updated     TIMESTAMP      NOT NULL,
+    created     TIMESTAMP(9)   NOT NULL,
+    updated     TIMESTAMP(9)   NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -99,6 +99,7 @@ CREATE TABLE SaleItem (
 
     PRIMARY KEY(saleId, itemIndex)
 );
+
 
 
 
@@ -124,19 +125,11 @@ CREATE TABLE Various (
     bigIntValue      BIGINT        ,
     floatValue       REAL          ,
     doubleValue      DOUBLE        ,
-
     decimalValue     DECIMAL (12,2),
 
-    dateValue        DATE          ,
-    timeValue        TIME          ,
-    timeTZValue      TIME          , -- instead of TIME WITH TIME ZONE type
-    dateTimeValue    TIMESTAMP     , -- instead of DATETIME type
-    timestampValue   TIMESTAMP     ,
-    timestampTZValue TIMESTAMP     , -- instead of TIMESTAMP WITH TIME ZONE type
-
-    longDate         BIGINT        ,
-    longTime         BIGINT        ,
-    longTimestamp    BIGINT        ,
+    longDate         BIGINT        , -- since 1.8.0
+    longTime         BIGINT        , -- since 1.8.0
+    longTimestamp    BIGINT        , -- since 1.8.0
 
     charValue        GRAPHIC   (20),
     varCharValue     VARGRAPHIC(40),
@@ -147,6 +140,19 @@ CREATE TABLE Various (
     textValue        CLOB     (16M),
     blobValue        BLOB     (16M),
     jsonValue        CLOB     (16M),
+
+    PRIMARY KEY(id)
+);
+
+-- DateAndTime since 3.0.0
+DROP TABLE DateAndTime;
+CREATE TABLE DateAndTime (
+    id               INTEGER NOT NULL,
+
+    dateValue        DATE        ,
+    timeValue        TIME        ,
+    timestampValue   TIMESTAMP(9),
+    timestampTZValue TIMESTAMP(9),
 
     PRIMARY KEY(id)
 );

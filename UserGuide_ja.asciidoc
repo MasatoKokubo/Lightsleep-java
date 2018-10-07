@@ -1,4 +1,4 @@
-= Lightsleep ユーザー･ガイド
+= Lightsleep 3.0.0 ユーザーガイド
 
 link:UserGuide.asciidoc[English]
 
@@ -60,6 +60,13 @@ link:UserGuide.asciidoc[English]
 5-4-3. <<ExecuteSQL-delete-Condition,DELETE 指定条件>> +
 5-4-4. <<ExecuteSQL-delete-all,DELETE 全行>> +
 6. <<Expression,式の変換処理>> +
+7. <<DateTime,日時型おけるJava型とカラム型の対応>> +
+7-1. <<DateTime-DB2,DB2>> +
+7-2. <<DateTime-MySQL,MySQL>> +
+7-3. <<DateTime-Oracle,Oracle>> +
+7-4. <<DateTime-PostgreSQL,PostgreSQL>> +
+7-5. <<DateTime-SQLite,SQLite>> +
+7-6. <<DateTime-SQLServer,SQL Server>> +
 
 [[Package]]
 
@@ -237,7 +244,7 @@ public class Contact1 extends Contact {
 }
 ----
 
-`@Table("super")`を指定した場合は、スーパークラスのクラス名がテーブル名となります。
+`@Table("super")` を指定した場合は、スーパークラスのクラス名がテーブル名となります。
 
 [source,java]
 .Java
@@ -317,14 +324,14 @@ String last
 .Java
 ----
 @ColumnType(Long.class)
-public Date birthday;
+public LocalDate birthday;
 ----
 
 [source,groovy]
 .Groovy
 ----
 @ColumnType(Long)
-Date birthday
+LocalDate birthday
 ----
 
 [[Entity-NonColumn]]
@@ -362,18 +369,18 @@ List<Address> addresses
 .Java
 ----
 @NonSelect
-public Timestamp createdTime;
+public LocalDateTime createdTime;
 @NonSelect
-public Timestamp updatedTime;
+public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
 .Groovy
 ----
 @NonSelect
-Timestamp createdTime
+LocalDateTime createdTime
 @NonSelect
-Timestamp updatedTime
+LocalDateTime updatedTime
 ----
 
 [[Entity-NonInsert]]
@@ -385,18 +392,18 @@ Timestamp updatedTime
 .Java
 ----
 @NonInsert
-public Timestamp createdTime;
+public LocalDateTime createdTime;
 @NonInsert
-public Timestamp updatedTime;
+public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
 .Groovy
 ----
 @NonInsert
-Timestamp createdTime
+LocalDateTime createdTime
 @NonInsert
-Timestamp updatedTime
+LocalDateTime updatedTime
 ----
 
 [[Entity-NonUpdate]]
@@ -408,14 +415,14 @@ Timestamp updatedTime
 .Java
 ----
 @NonUpdate
-public Timestamp createdTime;
+public LocalDateTime createdTime;
 ----
 
 [source,groovy]
 .Groovy
 ----
 @NonUpdate
-Timestamp createdTime
+LocalDateTime createdTime
 ----
 
 [[Entity-Select]]
@@ -452,18 +459,18 @@ INSERT SQLの挿入値の式を示します。
 .Java
 ----
 @Insert("CURRENT_TIMESTAMP")
-public Timestamp createdTime;
+public LocalDateTime createdTime;
 @Insert("CURRENT_TIMESTAMP")
-public Timestamp updatedTime;
+public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
 .Groovy
 ----
 @Insert('CURRENT_TIMESTAMP')
-Timestamp createdTime
+LocalDateTime createdTime
 @Insert('CURRENT_TIMESTAMP')
-Timestamp updatedTime
+LocalDateTime updatedTime
 ----
 
 [[Entity-Update]]
@@ -478,7 +485,7 @@ UPDATE SQLの更新値の式を示します。
 @Update("{updateCount}+1")
 public int updateCount;
 @Update("CURRENT_TIMESTAMP")
-public Timestamp updatedTime;
+public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
@@ -487,7 +494,7 @@ public Timestamp updatedTime;
 @Update('{updateCount}+1')
 int updateCount
 @Update('CURRENT_TIMESTAMP')
-Timestamp updatedTime
+LocalDateTime updatedTime
 ----
 
 [[Entity-XxxxxProperty]]
@@ -498,7 +505,7 @@ Timestamp updatedTime
 ===== 2-1-12. @KeyProperty, @ColumnProperty, ... @UpdateProperty
 これらのアノテーションは、スーパークラスで定義されているフィールドに対して指定する場合に使用します。
 指定された内容はサブクラスにも影響しますが、サブクラスでの指定が優先されます。
-`value=false`, `column=""`, `type=Void.class`, `expression=""`を指定すると、スーパークラスでの指定が打ち消されます。
+`value=false`, `column=""`, `type=Void.class`, `expression=""` を指定すると、スーパークラスでの指定が打ち消されます。
 
 [source,java]
 .Java
@@ -527,8 +534,8 @@ class Child extends ChildKey {
 <<TOC_,目次へ>>
 
 ==== 2-2-1. PreInsertインターフェース
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql クラス`の`insert`メソッドで、INSERT SQL実行前に`preInsert`メソッドがコールされます。
-`preInsert`メソッドでは、プライマリー･キーの採番の実装等を行います。
+エンティティ･クラスがこのインターフェースを実装している場合、`Sql` クラスの `insert` メソッドで、INSERT SQL実行前に `preInsert` メソッドがコールされます。
+`preInsert` メソッドでは、プライマリー･キーの採番の実装等を行います。
 
 [source,java]
 .Java
@@ -551,8 +558,8 @@ public abstract class Common implements PreInsert {
 <<TOC_,目次へ>>
 
 ==== 2-2-2. Compositeインターフェース
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql`クラスの`select`, `insert`, `update`または`delete`メソッドで、各 SQLの実行後にエンティティ･クラスの`postSelect`, `postInsert`, `postUpdate` または`postDelete`メソッドがコールされます。
-ただし `update`, `delete`メソッドで、引数にエンティティがない場合は、コールされません。
+エンティティ･クラスがこのインターフェースを実装している場合、`Sql` クラスの `select`, `insert`, `update` または `delete` メソッドで、各 SQLの実行後にエンティティ･クラスの `postSelect`, `postInsert`, `postUpdate` または `postDelete` メソッドがコールされます。
+ただし `update`, `delete` メソッドで、引数にエンティティがない場合は、コールされません。
 エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、内包するエンティティへの SQL 処理を連動して行う事ができるようになります。
 
 [source,java]
@@ -625,12 +632,12 @@ public class ContactComposite extends Contact implements Composite {
 <<TOC_,目次へ>>
 
 ==== 2-2-3. PreStoreインターフェース
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql`クラスの`insert`および`update`メソッドで、各SQLが実行される前にエンティティ･クラスの`preStore`メソッドがコールされます。
+エンティティ･クラスがこのインターフェースを実装している場合、`Sql` クラスの `insert` および `update` メソッドで、各SQLが実行される前にエンティティ･クラスの `preStore` メソッドがコールされます。
 
 [[Entity-PostLoad]]
 
 ==== 2-2-4. PostLoadインターフェース
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql`クラスの`select`メソッドでSELECT SQLが実行されエンティティにデータベースから取得した値が設定された後にエンティティ･クラスの`postLoad`メソッドがコールされます。
+エンティティ･クラスがこのインターフェースを実装している場合、`Sql` クラスの `select` メソッドでSELECT SQLが実行されエンティティにデータベースから取得した値が設定された後にエンティティ･クラスの `postLoad` メソッドがコールされます。
 
 [source,java]
 .Java
@@ -663,7 +670,7 @@ public class Contact implements PreStore, PostLoad {
 === 3. lightsleep.propertiesの定義
 
 lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイルで、以下の内容を指定できます。 +
-*(バージョン2.0.0まで存在した`Database`プロパティは、バージョン2.1.0で削除されました。データベース･ハンドラは、JDBC URLから自動的に決定されます。)*
+*(バージョン2.0.0まで存在した `Database` プロパティは、バージョン2.1.0で削除されました。データベース･ハンドラは、JDBC URLから自動的に決定されます。)*
 
 [options="header", width="80%"]
 |===
@@ -678,8 +685,8 @@ lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイ�
 
 |`url`                   |JDBC URL|なし
 |`urls`                  |JDBC URL(複数)|なし
-|`dataSource`            |`Jndi`を使用した場合のデータソース名|なし
-|`dataSources`           |`Jndi`を使用した場合のデータソース名(複数)|なし
+|`dataSource`            |`Jndi` を使用した場合のデータソース名|なし
+|`dataSources`           |`Jndi` を使用した場合のデータソース名(複数)|なし
 |`maxStringLiteralLength`|SQLが生成される時の文字列リテラルの最大長|128
 |`maxBinaryLiteralLength`|SQLが生成される時のバイナリ列リテラルの最大長|128
 |`maxLogStringLength`    |ログに出力する文字列値の最大長|200
@@ -689,7 +696,7 @@ lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイ�
 
 |`connectionLogFormat` +
 *(バージョン2.2.0~)*
-|`ConnectionSupplier`のログ出力フォーマット +
+|`ConnectionSupplier` のログ出力フォーマット +
 *文字列の置換:* +
 *{0}*: データベース･ハンドラのクラス名 +
 *{1}*: コネクション･サプライヤのクラス名 +
@@ -697,7 +704,7 @@ lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイ�
 |`[{0}/{1}]`
 |===
 
-`lightsleep.properties`ファイルは、クラス･パスのいずれかに置いてください。あるいはシステム･プロパティ `lightsleep.resource`でファイル･パスを指定する事もできます。*(java -Dlightsleep.resource=...)* +
+`lightsleep.properties` ファイルは、クラス･パスのいずれかに置いてください。あるいはシステム･プロパティ `lightsleep.resource` でファイル･パスを指定する事もできます。*(java -Dlightsleep.resource=...)* +
 上記以外にもコネクション･プール･ライブラリが使用するプロパティを定義します。
 
 lightsleep.propertiesの例: +
@@ -714,9 +721,9 @@ initialSize = 10
 maxTotal    = 100
 ----
 
-`urls`プロパティにカンマ区切りで複数のJDBC URLを指定できます。*(バージョン2.1.0~)* +
+`urls` プロパティにカンマ区切りで複数のJDBC URLを指定できます。*(バージョン2.1.0~)* +
 1つのプロパティを複数行で定義する場合は、最後の行以外の行末にバックスラッシュ(`\`)を付加します。 +
-`urls`を指定した場合は、`url`の指定は無効になります。
+`urls` を指定した場合は、`url` の指定は無効になります。
 
 [source,properties]
 .lightsleep.properties - 複数のJDBC URLを指定する場合
@@ -750,9 +757,9 @@ initialSize = 10
 maxTotal    = 100
 ----
 
-URL毎にコネクション･サプライヤを指定する場合は、URLの先頭の`[]`内に記述します。*(バージョン2.1.0~)* +
-この形式の指定は、`ConnectionSupplier`プロパティの指定よりも優先されます。 +
-`username`, `jdbcUrl`プロパティは、`user`, `url`プロパティで指定する事ができますが、それら以外はコネクション･プール･ライブラリ固有のプロパティ名で指定してください。
+URL毎にコネクション･サプライヤを指定する場合は、URLの先頭の `[]` 内に記述します。*(バージョン2.1.0~)* +
+この形式の指定は、`ConnectionSupplier` プロパティの指定よりも優先されます。 +
+`username`, `jdbcUrl` プロパティは、`user`, `url` プロパティで指定する事ができますが、それら以外はコネクション･プール･ライブラリ固有のプロパティ名で指定してください。
 
 [source,properties]
 .lightsleep.properties - URL毎にコネクション･サプライヤを指定する場合
@@ -809,7 +816,7 @@ Loggerプロパティの値は以下から選択してください。
 |`Std$Err$Fatal`|_同上_          |fatal|－
 |===
 
-指定がない場合は、`Std$Out$Info`が選択されます。
+指定がない場合は、`Std$Out$Info` が選択されます。
 
 [[Database]]
 
@@ -817,7 +824,7 @@ Loggerプロパティの値は以下から選択してください。
 
 ==== 3-2. データベース･ハンドラ･クラス
 
-データベース･ハンドラ･クラスは、`url`または`urls`プロパティで指定されたJDBC URLの内容から自動的に選択されます。*(バージョン2.1.0~)*
+データベース･ハンドラ･クラスは、`url` または `urls` プロパティで指定されたJDBC URLの内容から自動的に選択されます。*(バージョン2.1.0~)*
 
 [options="header", width="60%"]
 |===
@@ -830,7 +837,7 @@ Loggerプロパティの値は以下から選択してください。
 |`sqlserver` |`SQLServer` |link:https://www.microsoft.com/ja-jp/sql-server/sql-server-2016[Microsoft SQL Server]
 |===
 
-JDBC URLに上記の文字列のいずれもが含まれていない場合、`Standard`クラスが選択されます。
+JDBC URLに上記の文字列のいずれもが含まれていない場合、`Standard` クラスが選択されます。
 
 [[ConnectionSupplier]]
 
@@ -838,7 +845,7 @@ JDBC URLに上記の文字列のいずれもが含まれていない場合、`St
 
 ==== 3-3. コネクションを供給するクラスの指定
 
-ConnectionSupplierプロパティの値は以下から選択してください。JDBC URLの先頭の`[]`内で指定する事もできます。
+ConnectionSupplierプロパティの値は以下から選択してください。JDBC URLの先頭の `[]` 内で指定する事もできます。
 
 [options="header", width="60%"]
 |===
@@ -851,9 +858,9 @@ ConnectionSupplierプロパティの値は以下から選択してください�
 |`Jdbc`    |`DriverManager#getConnection(String url, Properties info)` メソッド
 |===
 
-`C3p0`, `Dbcp 2`, `HikariCP`, `TomcatCP`クラスは、それぞれ対応するコネクション･プール･ライブラリを使用してデータベース･コネクションを取得します。 +
-`Jndi`クラスは、JNDI (Java Naming and Directory Interface)を使用して取得したデータソース(`javax.sql.DataSource`)からデータベース･コネクションを取得します。 +
-`Jdbc`クラスは、`java.sql.DriverManager.getConnection`メソッドを使用してデータベース･コネクションを取得します。 +
+`C3p0`, `Dbcp 2`, `HikariCP`, `TomcatCP` クラスは、それぞれ対応するコネクション･プール･ライブラリを使用してデータベース･コネクションを取得します。 +
+`Jndi` クラスは、JNDI (Java Naming and Directory Interface)を使用して取得したデータソース(`javax.sql.DataSource`)からデータベース･コネクションを取得します。 +
+`Jdbc` クラスは、`java.sql.DriverManager.getConnection` メソッドを使用してデータベース･コネクションを取得します。 +
 コネクション･プール･ライブラリが必要する情報もlightsleep.propertiesファイルに定義してください。
 以下のlightsleep.propertiesの定義例のConnectionSupplierより下(url ~)は、コネクション･プール･ライブラリに渡す内容です。
 
@@ -937,9 +944,9 @@ dataSource         = example
 
 === 4. トランザクション
 
-`Transaction.execute`メソッドの実行が1つのトランザクションの実行に相当します。
-トランザクションの内容を引数`transaction`(ラムダ式) で定義してください。
-ラムダ式は、`Transaction.executeBody`メソッドの内容に相当し、このメソッドの引数は、`ConnectionWrapper`です。
+`Transaction.execute` メソッドの実行が1つのトランザクションの実行に相当します。
+トランザクションの内容を引数 `transaction`(ラムダ式) で定義してください。
+ラムダ式は、`Transaction.executeBody` メソッドの内容に相当し、このメソッドの引数は、`ConnectionWrapper` です。
 
 [source,java]
 .Java
@@ -969,7 +976,7 @@ Transaction.execute {
 }
 ----
 
-複数のJDBC URLを`lightsleep.properties`に定義した場合は、どのURLに対してトランザクションの実行を行うかを指定する必要があります。`ConnectionSupplier.find`メソッドは、引数の文字列配列のすべてが含まれるJDBC URLを検索します。
+複数のJDBC URLを `lightsleep.properties` に定義した場合は、どのURLに対してトランザクションの実行を行うかを指定する必要があります。 `ConnectionSupplier.find` メソッドは、引数の文字列配列のすべてが含まれるJDBC URLを検索します。
 複数見つかった場合または見つからない場合は例外がスローされます。
 
 [source,java]
@@ -1006,15 +1013,15 @@ Transaction.execute(supplier1) {
 }
 ----
 
-トランザクション中に例外がスローされた場合は、`Transaction.rollback`メソッドが実行され、
-そうでなければ `Transaction.commit`メソッドが実行されます。
+トランザクション中に例外がスローされた場合は、`Transaction.rollback` メソッドが実行され、
+そうでなければ `Transaction.commit` メソッドが実行されます。
 
 [[ExecuteSQL]]
 
 <<TOC_,目次へ>>
 
 === 5. SQLの実行
-SQLの実行は、`Sql`クラスの各種メソッドを使用し、`Transaction.execute`メソッドの引数のラムダ式内に定義します。
+SQLの実行は、`Sql` クラスの各種メソッドを使用し、`Transaction.execute` メソッドの引数のラムダ式内に定義します。
 
 [[ExecuteSQL-select]]
 
@@ -2048,11 +2055,11 @@ DELETE FROM Phone
 
 SQL を生成する時に、以下の文字列を式として評価し、変換処理を行います。
 
-- `@Select`, `@Insert`, `@Update`アノテーションの値
+- `@Select`, `@Insert`, `@Update` アノテーションの値
 
-- `@SelectProperty`, `@InsertProperty`, `@UpdateProperty`アノテーションの`expression`の値
+- `@SelectProperty`, `@InsertProperty`, `@UpdateProperty` アノテーションの `expression` の値
 
-- `Sql`クラスの以下のメソッドの引数
+- `Sql` クラスの以下のメソッドの引数
     - `where(String content, Object... arguments)`
     - `where(String content, Sql<SE> subSql)`
     - `and(String content, Object... arguments)`
@@ -2064,7 +2071,7 @@ SQL を生成する時に、以下の文字列を式として評価し、変換�
     - `having(String content, Sql<SE> subSql)`
     - `orderBy(String content, Object... arguments)`
 
-- `Condition`インターフェースの以下のメソッドの引数
+- `Condition` インターフェースの以下のメソッドの引数
     - `of(String content, Object... arguments)`
     - `of(String content, Sql<E> outerSql, Sql<SE> subSql)`
     - `and(String content, Object... arguments)`
@@ -2072,7 +2079,7 @@ SQL を生成する時に、以下の文字列を式として評価し、変換�
     - `or(String content, Object... arguments)`
     - `or(String content, Sql<E> outerSql, Sql<SE> subSql)`
 
-- `Expression`クラスの以下のコンストラクタの引数
+- `Expression` クラスの以下のコンストラクタの引数
     - `Expression(String content, Object... arguments)`
 
 式の変換には以下があります。
@@ -2080,11 +2087,132 @@ SQL を生成する時に、以下の文字列を式として評価し、変換�
 [options="header", width="80%"]
 |===
 |書式|変換内容
-|`{}`     |出現順に`arguments`の要素
-|`{xxx}`  |`xxx`プロパティに関連するカラム名
-|`{A.xxx}`|`"A."` + `xxx`プロパティに関連するカラム名(`A` はテーブル別名)
-|`{A_xxx}`|テーブル別名`A`と`xxx`プロパティに関連するカラム別名
-|`{#xxx}` |`Sql`オブジェクトに設定されたエンティティ(または`Sql#insert`, `Sql#update`メソッドのエンティティ引数)の`xxx`プロパティの値
+|`{}`     |出現順に `arguments` の要素
+|`{xxx}`  |`xxx` プロパティに関連するカラム名
+|`{A.xxx}`|`"A."` + `xxx` プロパティに関連するカラム名(`A` はテーブル別名)
+|`{A_xxx}`|テーブル別名 `A` と `xxx` プロパティに関連するカラム別名
+|`{#xxx}` |`Sql` オブジェクトに設定されたエンティティ(または `Sql#insert`, `Sql#update` メソッドのエンティティ引数)の `xxx` プロパティの値
+|===
+
+[[DateTime]]
+
+<<TOC_,目次へ>>
+
+
+=== 7. 日時型おけるJava型とカラム型の対応
+
+[[DateTime-DB2]]
+
+===== 7.1 DB2
+
+[options="header", width="65%", cols=",^,^,^"]
+|===
+|                          |`DATE`|`TIME`|`TIMESTAMP(9)`
+|`java.util.Date`          |✓     |      |
+|`java.sql.Date`           |✓     |      |
+|`java.sql.Time`           |      |✓ (秒)|
+|`java.sql.Timestamp`      |✓     |      |✓ (10^9^ 秒)
+|`java.time.LocalDate`     |      |      |
+|`java.time.LocalTime`     |      |✓ (秒)|
+|`java.time.LocalDateTime` |      |      |✓ (10^9^ 秒)
+|`java.time.OffsetDateTime`|      |      |
+|`java.time.ZonedDateTime` |      |      |
+|`java.time.Instant`       |      |      |
+|===
+
+[[DateTime-MySQL]]
+
+===== 7.2 MySQL
+
+[options="header", width="80%", cols=",^,^,^,^"]
+|===
+|                          |`DATE`|`TIME`      |`DATETIME`  |`TIMESTAMP`
+|`java.util.Date`          |✓     |            |            |
+|`java.sql.Date`           |✓     |            |            |
+|`java.sql.Time`           |      |✓ (10^3^ 秒)|            |
+|`java.sql.Timestamp`      |✓     |            |✓ (10^6^ 秒)|✓ (10^6^ 秒)
+|`java.time.LocalDate`     |      |            |            |
+|`java.time.LocalTime`     |      |✓ (10^6^ 秒)|            |
+|`java.time.LocalDateTime` |      |            |✓ (10^6^ 秒)|✓ (10^6^ 秒)
+|`java.time.OffsetDateTime`|      |            |            |
+|`java.time.ZonedDateTime` |      |            |            |
+|`java.time.Instant`       |      |            |            |
+|===
+
+[[DateTime-Oracle]]
+
+===== 7.3 Oracle
+
+[options="header", width="80%", cols=",^,^,^,^"]
+|===
+|                          |`DATE`|`TIMESTAMP(9)`|`TIMESTAMP(9) WITH TIME ZONE`|`TIMESTAMP(9) WITH LOCAL TIME ZONE`
+|`java.util.Date`          |✓     |              |                             |
+|`java.sql.Date`           |✓     |              |                             |
+|`java.sql.Time`           |✓ (秒)|              |                             |
+|`java.sql.Timestamp`      |✓ (秒)|✓ (10^9^ 秒)  |                             |✓ (10^9^ 秒)
+|`java.time.LocalDate`     |✓ (秒)|              |                             |
+|`java.time.LocalTime`     |✓ (秒)|              |                             |
+|`java.time.LocalDateTime` |✓ (秒)|✓ (10^9^ 秒)  |                             |✓ (10^9^ 秒)
+|`java.time.OffsetDateTime`|      |              |✓ (10^9^ 秒)                 |
+|`java.time.ZonedDateTime` |      |              |✓ (10^9^ 秒)                 |
+|`java.time.Instant`       |      |              |✓ (10^9^ 秒)                 |
+|===
+
+[[DateTime-PostgreSQL]]
+
+===== 7.4 PostgreSQL
+
+[options="header", width="80%", cols=",^,^,^,^"]
+|===
+|                          |`DATE`|`TIME(6)`   |`TIMESTAMP(6)`|`TIMESTAMP(6) WITH TIME ZONE`
+|`java.util.Date`          |✓     |            |              |
+|`java.sql.Date`           |✓     |            |              |
+|`java.sql.Time`           |      |✓ (10^3^ 秒)|              |
+|`java.sql.Timestamp`      |✓     |            |✓ (10^6^ 秒)  |
+|`java.time.LocalDate`     |      |            |              |
+|`java.time.LocalTime`     |      |✓ (10^6^ 秒)|              |
+|`java.time.LocalDateTime` |      |            |✓ (10^6^ 秒)  |
+|`java.time.OffsetDateTime`|      |            |              |✓ (10^6^ 秒)
+|`java.time.ZonedDateTime` |      |            |              |
+|`java.time.Instant`       |      |            |              |✓ (10^6^ 秒)
+|===
+
+[[DateTime-SQLite]]
+
+===== 7.5 SQLite
+
+[options="header", width="40%", cols=",^"]
+|===
+|                          |`DATE`, `TIME`, `DATETIME`, `TEXT`
+|`java.util.Date`          |✓
+|`java.sql.Date`           |✓
+|`java.sql.Time`           |✓ (10^3^ 秒)
+|`java.sql.Timestamp`      |✓ (10^9^ 秒)
+|`java.time.LocalDate`     |✓ (10^9^ 秒)
+|`java.time.LocalTime`     |✓ (10^9^ 秒)
+|`java.time.LocalDateTime` |✓ (10^9^ 秒)
+|`java.time.OffsetDateTime`|✓ (10^9^ 秒)
+|`java.time.ZonedDateTime` |✓ (10^9^ 秒)
+|`java.time.Instant`       |✓ (10^9^ 秒)
+|===
+
+[[DateTime-SQLServer]]
+
+===== 7.6 SQL Server
+
+[options="header", width="80%", cols=",^,^,^,^"]
+|===
+|                          |`DATE`|`TIME(7)`   |`DATETIME2(7)`|`DATETIMEOFFSET(7)`
+|`java.util.Date`          |✓     |            |              |
+|`java.sql.Date`           |✓     |            |              |
+|`java.sql.Time`           |      |✓ (10^3^ 秒)|              |
+|`java.sql.Timestamp`      |✓     |            |✓ (10^7^ 秒)  |
+|`java.time.LocalDate`     |      |            |              |
+|`java.time.LocalTime`     |      |✓ (10^3^ 秒)|              |
+|`java.time.LocalDateTime` |      |            |✓ (10^7^ 秒)  |
+|`java.time.OffsetDateTime`|      |            |              |✓ (10^7^ 秒)
+|`java.time.ZonedDateTime` |      |            |              |
+|`java.time.Instant`       |      |            |              |✓ (10^7^ 秒)
 |===
 
 <<TOC_,目次へ>>

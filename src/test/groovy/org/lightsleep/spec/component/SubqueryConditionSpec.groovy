@@ -16,7 +16,7 @@ import spock.lang.*
 class SubqueryConditionSpec extends Specification {
 	// SubqueryCondition
 	def "SqlStringSpec 01 of subquery"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when:def condition = Condition.of("EXISTS", new Sql<>(Contact, "C"),
 				new Sql<>(Address, "A").where("{A.postCode}={}", "1234567"))
@@ -25,11 +25,11 @@ class SubqueryConditionSpec extends Specification {
 		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == "EXISTS (SELECT * FROM Address A WHERE A.postCode='1234567')"
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "SqlStringSpec 02 AND subquery"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: def condition = Condition.EMPTY.and("EXISTS", new Sql<>(Contact, "C"),
 				new Sql<>(Address, "A").where("{A.postCode}={}", "1234567"))
@@ -38,11 +38,11 @@ class SubqueryConditionSpec extends Specification {
 		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == "EXISTS (SELECT * FROM Address A WHERE A.postCode='1234567')"
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "SqlStringSpec 03 OR subquery"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: def condition = Condition.EMPTY.or("EXISTS", new Sql<>(Contact, "C"),
 				new Sql<>(Address, "A").where("{A.postCode}={}", "1234567"))
@@ -51,33 +51,33 @@ class SubqueryConditionSpec extends Specification {
 		when: def string = condition.toString(Standard.instance, new Sql<>(Contact), new ArrayList<Object>())
 		then: string == "EXISTS (SELECT * FROM Address A WHERE A.postCode='1234567')"
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "SqlStringSpec 04 exception - null content"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: new SubqueryCondition<>(null, new Sql<>(Contact), new Sql<>(Contact))
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "SqlStringSpec 05 exception - null argument [0]"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: new SubqueryCondition<>(new Expression(""), null, new Sql<>(Contact))
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	def "SqlStringSpec 06 exception - null argument [1]"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: new SubqueryCondition<>(new Expression(""), new Sql<>(Contact), null)
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 }

@@ -69,7 +69,7 @@ class ColumnSpec extends Specification {
 	}
 
 	def "@Column #method #no"(String method, int no, Class<?> entityClass, String expectedSql) {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		setup:
 			def entity = entityClass.getDeclaredConstructor().newInstance()
 			def sql = new Sql<>(entityClass)
@@ -80,12 +80,12 @@ class ColumnSpec extends Specification {
 				method == 'select' ? Standard.instance.selectSql(sql, []) :
 				method == 'insert' ? Standard.instance.insertSql(sql, []) :
 				method == 'update' ? Standard.instance.updateSql(sql, []) : ''
-		/**/DebugTrace.print('createdSql', createdSql)
+			DebugTrace.print('createdSql', createdSql) // for Debugging
 
 		then:
 			createdSql == expectedSql
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 		where:
 			method  |no|entityClass|expectedSql
 			'select'|1 |Entity1    |'SELECT key, c0, C1, C2, C3 FROM Entity1 WHERE key=-1'

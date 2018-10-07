@@ -17,7 +17,7 @@ public class Jdk implements Logger {
 	 *
 	 * @param name 名前
 	 *
-	 * @throws NullPointerException <b>name</b>がnullの場合
+	 * @throws NullPointerException <b>name</b>が<b>null</b>の場合
 	 */
 	public Jdk(String name) {
 	}

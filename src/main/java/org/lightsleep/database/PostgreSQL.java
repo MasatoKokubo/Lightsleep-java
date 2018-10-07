@@ -3,8 +3,16 @@
 
 package org.lightsleep.database;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.time.LocalTime;
+
+import org.lightsleep.RuntimeSQLException;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
+import org.lightsleep.helper.Utils;
 
 /**
  * A database handler for
@@ -17,10 +25,28 @@ import org.lightsleep.helper.TypeConverter;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source Data Type</th><th>Destination Data Type</th><th>Conversion Contents</th></tr>
- *   <tr><td>String </td><td rowspan="2">SqlString</td><td><code>'...'</code><br>Converts control characters to escape sequence.<br><code>E'...'</code> if the converted string contains escape sequences<br><code>?</code> <i>(SQL parameter)</i> if the string is long</td></tr>
- *   <tr><td>byte[] </td><td><code>E'\\x...'</code><br><code>?</code> <i>(SQL parameter)</i> if the byte array is long</td></tr>
+ *   <caption><span>Additional contents of the TypeConverter map</span></caption>
+ *   <tr><th colspan="2">Key: Data Types</th><th rowspan="2">Value: Conversion Function</th></tr>
+ *   <tr><th>Source</th><th>Destination</th></tr>
+ *
+ *   <tr><td>String </td><td rowspan="2">SqlString</td>
+ *     <td>
+ *       <b>new SqlString("'" + source + "'")</b><br>
+ *       <span class="comment">Converts a single quote in the source string to two consecutive single quotes
+ *       and converts control characters to escape sequences ( \b, \t, \n, \f, \r, \\ ).</span><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString("E'" + source + "'")</b> <span class="comment">if the converted string contains escape sequences</span><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">if the source string is too long</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>byte[] </td>
+ *     <td>
+ *       <b>new SqlString("E'\\x" + hexadecimal string + "'")</b><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">if the source byte array is too long</span>
+ *     </td>
+ *   </tr>
  * </table>
  *
  * @since 1.0.0
@@ -49,20 +75,6 @@ public class PostgreSQL extends Standard {
 	 * @since 2.1.0
 	 */
 	public static final PostgreSQL instance = new PostgreSQL();
-
-	/**
-	 * Returns the only instance of this class.
-	 *
-	 * <p>
-	 * @deprecated As of release 2.1.0, instead use {@link #instance}
-	 * </p>
-	 *
-	 * @return the only instance of this class
-	 */
-	@Deprecated
-	public static Database instance() {
-		return instance;
-	}
 
 	/**
 	 * Constructs a new <b>PostgreSQL</b>.
@@ -108,12 +120,9 @@ public class PostgreSQL extends Standard {
 		// byte[].class -> SqlString.class
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(byte[].class, SqlString.class,
-				TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function()
-					.andThen(object ->
-						object.parameters().length > 0
-							? object
-							: new SqlString("E'\\\\x" + object.content().substring(2)) // X'...' -> E'\\x...'
-					)
+				TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function(),
+				object -> object.parameters().length > 0
+					? object : new SqlString("E'\\\\x" + object.content().substring(2)) // X'...' -> E'\\x...'
 			)
 		);
 	}
@@ -134,5 +143,31 @@ public class PostgreSQL extends Standard {
 	@Override
 	public String maskPassword(String jdbcUrl) {
 		return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0.0
+	 */
+	@Override
+	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+		Object object = super.getObject(connection, resultSet, columnLabel);
+
+		if (object instanceof Time) {
+			// Time (for get microseconds)
+			try {
+				object = resultSet.getObject(columnLabel, LocalTime.class);
+
+				if (logger.isDebugEnabled())
+					logger.debug("  -> PostgreSQL.getObject: columnLabel: " + columnLabel
+						+ ", getted object: " + Utils.toLogString(object));
+			}
+			catch (SQLException e) {
+				throw new RuntimeSQLException(e);
+			}
+		}
+
+		return object;
 	}
 }

@@ -68,17 +68,17 @@ class AccessorSpec extends Specification {
 
 	// constructor
 	def constructor() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 
 		when: new Accessor<>((Class<Entity1>)null)
 		then: thrown NullPointerException
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// setValue, getValue
 	def "AccessorSpec setValue getValue"() {
-	/**/DebugTrace.enter()
+		DebugTrace.enter() // for Debugging
 		setup:
 			Entity3 entity3 = new Entity3()
 
@@ -115,18 +115,18 @@ class AccessorSpec extends Specification {
 		when: entity3Accessor.setValue(entity3, 'entity1.value4', 123456789L)
 		then:
 			def e = thrown MissingPropertyException
-		/**/DebugTrace.print('e', e)
+			DebugTrace.print('e', e) // for Debugging
 			e.message.indexOf(Entity3.name) >= 0
 			e.message.indexOf('entity1.value4') >= 0
 
 		when: entity3Accessor.getValue(entity3, 'entity1.value4')
 		then:
 			e = thrown MissingPropertyException
-		/**/DebugTrace.print('e', e)
+			DebugTrace.print('e', e) // for Debugging
 			e.message.indexOf(Entity3.name) >= 0
 			e.message.indexOf('entity1.value4') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 	// propertyNames, valuePropertyNames, getField, getType, 
@@ -168,18 +168,18 @@ class AccessorSpec extends Specification {
 		when: entity3Accessor.getField('entity1.entityX')
 		then:
 			def e = thrown MissingPropertyException
-		/**/DebugTrace.print('e', e)
+			DebugTrace.print('e', e) // for Debugging
 			e.message.indexOf(Entity3.name) >= 0
 			e.message.indexOf('entity1.entityX') >= 0
 
 		when: entity3Accessor.getType('entity1.entityX')
 		then:
 			e = thrown MissingPropertyException
-		/**/DebugTrace.print('e', e)
+			DebugTrace.print('e', e) // for Debugging
 			e.message.indexOf(Entity3.name) >= 0
 			e.message.indexOf('entity1.entityX') >= 0
 
-	/**/DebugTrace.leave()
+		DebugTrace.leave() // for Debugging
 	}
 
 }

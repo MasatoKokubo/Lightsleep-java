@@ -20,7 +20,7 @@ public class Or extends LogicalCondition {
 	 *
 	 * @param conditionStream 条件ストリーム
 	 *
-	 * @throws NullPointerException <b>conditionStream</b>または<b>conditionStream</b>の要素がnullの場合
+	 * @throws NullPointerException <b>conditionStream</b>または<b>conditionStream</b>の要素が<b>null</b>の場合
 	 */
 	public Or(Stream<Condition> conditionStream) {
 		super(Operator.OR, conditionStream);
@@ -31,7 +31,7 @@ public class Or extends LogicalCondition {
 	 *
 	 * @param conditions 条件コレクション
 	 *
-	 * @throws NullPointerException <b>conditions</b>または<b>conditions</b>の要素がnullの場合
+	 * @throws NullPointerException <b>conditions</b>または<b>conditions</b>の要素が<b>null</b>の場合
 	 */
 	public Or(Collection<Condition> conditions) {
 		super(Operator.OR, Objects.requireNonNull(conditions, "Collection<Condition> conditions").stream());
@@ -42,7 +42,7 @@ public class Or extends LogicalCondition {
 	 *
 	 * @param conditions 条件配列
 	 *
-	 * @throws NullPointerException <b>conditions</b>または<b>conditions</b>の要素がnullの場合
+	 * @throws NullPointerException <b>conditions</b>または<b>conditions</b>の要素が<b>null</b>の場合
 	 */
 	public Or(Condition... conditions) {
 		super(Operator.OR, Arrays.stream(Objects.requireNonNull(conditions, "Condition[] conditions")));

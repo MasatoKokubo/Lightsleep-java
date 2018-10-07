@@ -125,48 +125,24 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 
 			// urls
 			String urlStr = null;
-		// 2.2.0
-		//	String urlsStr = properties.getProperty("urls");
 			String urlsStr = properties.getProperty(URLS);
-		////
 			if (urlsStr != null) {
-			// 2.2.0
-			//	properties.remove("urls");
 				properties.remove(URLS);
-			////
 			} else {
 				// dataSources for Jndi
-			// 2.2.0
-			//	urlsStr = properties.getProperty("dataSources");
 				urlsStr = properties.getProperty(DATA_SOURCES);
-			////
 				if (urlsStr != null) {
-				// 2.2.0
-				//	properties.remove("dataSources");
 					properties.remove(DATA_SOURCES);
-				////
 				} else {
 					// url
-				// 2.2.0
-				//	urlStr = properties.getProperty("url");
 					urlStr = properties.getProperty(URL);
-				////
 					if (urlStr != null) {
-					// 2.2.0
-					//	properties.remove("url");
 						properties.remove(URL);
-					////
 					} else {
 						// dataSource for Jndi
-					// 2.2.0
-					//	urlStr = properties.getProperty("dataSource");
 						urlStr = properties.getProperty(DATA_SOURCE);
-					////
 						if (urlStr != null)
-						// 2.2.0
-						//	properties.remove("dataSource");
 							properties.remove(DATA_SOURCE);
-						////
 					}
 				}
 			}
@@ -189,36 +165,21 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 							int braIndex = url.indexOf(']');
 							if (braIndex > 0) {
 								// Get a ConnectionSupplier class name
-							// 2.2.0
-							//	supplierProperties.put("url", url.substring(braIndex + 1).trim());
 								supplierProperties.put(URL, url.substring(braIndex + 1).trim());
-							////
 								supplier = ConnectionSupplier.of(url.substring(1, braIndex).trim(), supplierProperties);
 							}
 						}
 						if (supplier == null) {
-						// 2.2.0
-						//	supplierProperties.put("url", url);
 							supplierProperties.put(URL, url);
-						////
 							supplier = ConnectionSupplier.of(supplierName, supplierProperties);
-						// 2.2.0
-						//	logger.info("ConnectionSupplier.initClass: url: \"" + url + '"');
 							logger.info("AbstractConnectionSupplier.initClass: url: \"" + supplier.getDatabase().maskPassword(url) + '"');
-						////
 						}
 						ConnectionSupplier beforeSupplier = supplierMap.put(url, supplier);
 						if (beforeSupplier != null)
-						// 2.2.0
-						//	logger.warn(MessageFormat.format(messageMultipleUrlsDefined, url));
 							logger.warn(MessageFormat.format(messageMultipleUrlsDefined, supplier.getDatabase().maskPassword(url)));
-						////
 					}
 					catch (Exception e) {
-					// 2.2.0
-					//	logger.error("AbstractConnectionSupplier.initClass: url: \"" + url + "\", exception: " + e);
 						logger.error("AbstractConnectionSupplier.initClass: url: \"" + url + '"', e);
-					////
 					}
 				});
 		}
@@ -255,15 +216,9 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 
 		if (!(this instanceof Jndi)) {
 			// not Jndi
-		// 2.2.0
-		//	String url = jdbcProperties.getProperty("url");
 			String url = jdbcProperties.getProperty(URL);
-		////
 			if (url == null)
-			// 2.2.0
-			//	url = jdbcProperties.getProperty("dataSource");
 				url = jdbcProperties.getProperty(DATA_SOURCE);
-			////
 			try {
 				database = Database.getInstance(url);
 			}
@@ -272,10 +227,7 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 			}
 			if (logger.isInfoEnabled())
 				logger.info(getClass().getSimpleName()
-				// 2.2.0
-				//	+ ".<init>: url: \"" + url
 					+ ".<init>: url: \"" + database.maskPassword(url)
-				////
 					+ "\", database handler: " + database.getClass().getSimpleName());
 		}
 	}
@@ -315,10 +267,7 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 							logger.warn(e.toString());
 						}
 						logger.info(() -> getClass().getSimpleName()
-						// 2.2.0
-						//	+ ".get: connection.metaData.url: \"" + url
 							+ ".get: connection.metaData.url: \"" + getDatabase().maskPassword(url)
-						////
 							+ "\", database handler: " + database.getClass().getSimpleName());
 					} else {
 						logger.warn(() -> getClass().getSimpleName() + ".get: connection.metaData.url: null");
@@ -341,10 +290,7 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 				+ ", connection.transactionIsolation: " + isolationLevelsMap.getOrDefault(transactionIsolation, "unknow")
 			);
 
-		// 2.2.0
-		//	return new ConnectionWrapper(connection, database);
 			return new ConnectionWrapper(connection, this);
-		////
 		}
 		catch (SQLException e) {
 			throw new RuntimeSQLException(getUrl(), e);
@@ -368,10 +314,7 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 */
 	@Override
 	public String getUrl() {
-	// 2.2.0
-	//	return jdbcProperties.getProperty("url");
 		return jdbcProperties.getProperty(URL);
-	////
 	}
 
 	/**
@@ -381,8 +324,6 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 */
 	@Override
 	public String toString() {
-	// 2.2.0
-	//	return getDatabase().getClass().getSimpleName() + '/' + getClass().getSimpleName();
 		String url = "";
 		if (connectionLogFormat.indexOf("{2}") >= 0) {
 			// has the parameter of the jdbc URL
@@ -399,6 +340,5 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 		}
 		return MessageFormat.format(connectionLogFormat,
 			getDatabase().getClass().getSimpleName(), getClass().getSimpleName(), url);
-	////
 	}
 }

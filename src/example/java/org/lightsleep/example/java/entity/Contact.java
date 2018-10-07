@@ -3,9 +3,8 @@
 
 package org.lightsleep.example.java.entity;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.lightsleep.database.Database;
 import org.lightsleep.entity.Insert;
@@ -20,7 +19,7 @@ import org.lightsleep.entity.Update;
 public class Contact extends ContactKey {
 	public String firstName;
 	public String lastName;
-	public Date birthday;
+	public LocalDate birthday;
 
 	@Insert("0")
 	@Update("{updateCount}+1")
@@ -28,11 +27,11 @@ public class Contact extends ContactKey {
 
 	@Insert("CURRENT_TIMESTAMP")
 	@NonUpdate
-	public Timestamp createdTime;
+	public LocalDateTime createdTime;
 
 	@Insert("CURRENT_TIMESTAMP")
 	@Update("CURRENT_TIMESTAMP")
-	public Timestamp updatedTime;
+	public LocalDateTime updatedTime;
 
 	public Contact() {
 	}
@@ -53,10 +52,7 @@ public class Contact extends ContactKey {
 	}
 
 	public void setBirthday(int year, int month, int day) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.clear();
-		calendar.set(year, month - 1, day, 0, 0, 0);
-		birthday = new Date(calendar.getTimeInMillis());
+		birthday = LocalDate.of(year, month, day);
 	}
 
 	// Contact.Ex

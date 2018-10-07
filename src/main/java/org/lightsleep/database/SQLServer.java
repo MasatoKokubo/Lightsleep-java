@@ -3,16 +3,27 @@
 
 package org.lightsleep.database;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.lightsleep.Sql;
 import org.lightsleep.component.Expression;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
+import org.lightsleep.helper.Utils;
 
 /**
  * A database handler for
@@ -25,16 +36,70 @@ import org.lightsleep.helper.TypeConverter;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>Registered TypeConverter objects</span></caption>
- *   <tr><th>Source data type</th><th>Destination data type</th><th>Conversion Contents</th></tr>
- *   <tr><td>Boolean      </td><td rowspan="6">SqlString</td><td>false -&gt; <code>0</code><br>true -&gt; <code>1</code></td></tr>
- *   <tr><td>java.sql.Date</td><td><code>CAST('yyyy:MM:dd' AS DATE)</code></td></tr>
- *   <tr><td>Time         </td><td><code>CAST('HH:mm:ss' AS DATE)</code></td></tr>
- *   <tr><td>Timestamp    </td><td><code>CAST('yyyy-MM-dd HH:mm:ss.SSS' AS DATETIME2)</code></td></tr>
-*   <tr><td>String       </td><td><code>'...'</code><br>Converts control characters to <code>'...'+CHAR(n)+'...'</code>.<br><code>?</code> <i>(SQL parameter)</i> if the string is long</td></tr>
- *   <tr><td>byte[]</td><td><code>?</code> <i>(SQL parameter)</i></td></tr>
+ *   <caption><span>Additional contents of the TypeConverter map</span></caption>
+ *   <tr><th colspan="2">Key: Data Types</th><th rowspan="2">Value: Conversion Function</th></tr>
+ *   <tr><th>Source</th><th>Destination</th></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="13">SqlString</td>
+ *     <td>
+ *       <b>new SqlString("0")</b> <span class="comment">if the source value is <b>false</b></span><br>
+ *       <b>new SqlString("1")</b> <span class="comment">if the source value is <b>true</b></span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>String        </td>
+ *     <td>
+ *       <b>new SqlString("'" + source + "'")</b><br>
+ *       <span class="comment">Converts a single quote in the source string to two consecutive single quotes
+ *       and converts control characters to </span><b>'...'+CHAR(character code)+'...'</b>.<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">if the source string is too long</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>java.util.Date</td>
+ *     <td rowspan="3">
+ *       (<b>java.util.Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalDate</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("CAST('" + string + "' AS DATE)")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>Date          </td>
+ *   <tr><td>LocalDate     </td></tr>
+ *   <tr><td>Time          </td>
+ *     <td>
+ *       <b>Time</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> <img src="../../../../images/arrow-right.gif" alt="->"><br>
+ *       <b>new SqlString("CAST('" + string + "' AS TIME)")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>LocalTime     </td>
+ *     <td>
+ *       <b>LocalTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> <img src="../../../../images/arrow-right.gif" alt="->"><br>
+ *       <b>new SqlString("CAST('" + string + "' AS TIME)")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>Timestamp     </td>
+ *     <td rowspan="2">
+ *       (<b>Timestamp</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("CAST('" + string + "' AS DATETIME2)")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>LocalDateTime </td></tr>
+ *   <tr><td>OffsetDateTime</td>
+ *     <td rowspan="3">
+ *       (<b>OffsetDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>ZonedDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> or<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Instant</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("CAST('" + string + "' AS DATETIMEOFFSET)")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>ZonedDateTime </td></tr>
+ *   <tr><td>Instant       </td></tr>
+ *   <tr><td>byte[]</td><td><b>new SqlString(SqlString.PARAMETER, source)</b></td></tr>
  * </table>
-
+ *
  * @since 1.0.0
  * @author Masato Kokubo
  * @see org.lightsleep.helper.TypeConverter
@@ -62,27 +127,15 @@ public class SQLServer extends Standard {
 	public static final SQLServer instance = new SQLServer();
 
 	/**
-	 * Returns the only instance of this class.
-	 *
-	 * <p>
-	 * @deprecated As of release 2.1.0, instead use {@link #instance}
-	 * </p>
-	 *
-	 * @return the only instance of this class
-	 */
-	@Deprecated
-	public static Database instance() {
-		return instance;
-	}
-
-	/**
 	 * Constructs a new <b>SQLServer</b>.
 	 */
 	protected SQLServer() {
 		// boolean -> 0, 1
-		TypeConverter.put(typeConverterMap, booleanToSql01Converter);
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
+		);
 
-		// String.class -> SqlString.class
+		// String -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(String.class, SqlString.class, object -> {
 				if (object.length() > maxStringLiteralLength)
@@ -119,29 +172,94 @@ public class SQLServer extends Standard {
 			})
 		);
 
-		// Date.class -> SqlString.class
+		Function<String, SqlString> toDateSqlString         = string -> new SqlString("CAST('" + string + "' AS DATE)");
+		Function<String, SqlString> toTimeSqlString         = string -> new SqlString("CAST('" + string + "' AS TIME)");
+		Function<String, SqlString> toTimestampSqlString    = string -> new SqlString("CAST('" + string + "' AS DATETIME2)");
+		Function<String, SqlString> toTimestampWTZSqlString = string -> new SqlString("CAST('" + string + "' AS DATETIMEOFFSET)");
+
+		// java.util.Date -> String -> SqlString (since 3.0.0)
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<Date, SqlString>(Date.class, SqlString.class, object ->
-				new SqlString("CAST('" + object + "' AS DATE)"))
+			new TypeConverter<>(java.util.Date.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function(),
+				toDateSqlString
+			)
 		);
 
-		// Time.class -> SqlString.class
+		// java.sql.Date -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<Time, SqlString>(Time.class, SqlString.class, object ->
-				new SqlString("CAST('" + object + "' AS TIME)"))
+			new TypeConverter<>(Date.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Date.class, String.class).function(),
+				toDateSqlString
+			)
 		);
 
-		// Timestamp.class -> SqlString.class
+		// Time -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<Timestamp, SqlString>(Timestamp.class, SqlString.class, object ->
-				new SqlString("CAST('" + object + "' AS DATETIME2)"))
+			new TypeConverter<>(Time.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
+				toTimeSqlString
+			)
 		);
 
-		// 1.7.0
-		// byte[] -> SqlString
+		// Timestamp -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[].class, SqlString.class, object ->
-				new SqlString(SqlString.PARAMETER, object))
+			new TypeConverter<>(Timestamp.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function(),
+				toTimestampSqlString
+			)
+		);
+
+		// LocalDate -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(LocalDate.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, LocalDate.class, String.class).function(),
+				toDateSqlString
+			)
+		);
+
+		// LocalTime -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(LocalTime.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
+				toTimeSqlString
+			)
+		);
+
+		// LocalDateTime -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(LocalDateTime.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, LocalDateTime.class, String.class).function(),
+				toTimestampSqlString
+			)
+		);
+
+		// OffsetDateTime -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(OffsetDateTime.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, OffsetDateTime.class, String.class).function(),
+				toTimestampWTZSqlString
+			)
+		);
+
+		// ZonedDateTime -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(ZonedDateTime.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, ZonedDateTime.class, String.class).function(),
+				toTimestampWTZSqlString
+			)
+		);
+
+		// Instant -> String -> SqlString (since 3.0.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(Instant.class, SqlString.class,
+				TypeConverter.get(typeConverterMap, Instant.class, String.class).function(),
+				toTimestampWTZSqlString
+			)
+		);
+
+		// byte[] -> SqlString (since 1.7.0)
+		TypeConverter.put(typeConverterMap,
+			new TypeConverter<>(byte[].class, SqlString.class, object -> new SqlString(SqlString.PARAMETER, object))
 		);
 	}
 
@@ -281,5 +399,27 @@ public class SQLServer extends Standard {
 	@Override
 	public String maskPassword(String jdbcUrl) {
 		return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0.0
+	 */
+	@Override
+	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+		Object object = super.getObject(connection, resultSet, columnLabel);
+		if (object instanceof microsoft.sql.DateTimeOffset) {
+			// microsoft.sql.DateTimeOffset
+			LocalDateTime localDateTime = ((microsoft.sql.DateTimeOffset)object).getTimestamp().toLocalDateTime();
+			ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds(((microsoft.sql.DateTimeOffset)object).getMinutesOffset() * 60);
+			object = OffsetDateTime.of(localDateTime, zoneOffset);
+
+			if (logger.isDebugEnabled())
+				logger.debug("  -> SQLServer.getObject: columnLabel: " + columnLabel
+					+ ", getted object: " + Utils.toLogString(object));
+		}
+
+		return object;
 	}
 }

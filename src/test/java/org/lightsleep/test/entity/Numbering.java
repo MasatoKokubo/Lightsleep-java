@@ -34,10 +34,9 @@ public class Numbering {
 		EntityInfo<E> entityInfo = Sql.getEntityInfo(entityClass);
 		String tableName = entityInfo.tableName();
 
-		Optional<Numbering> numberingOpt = new Sql<>(Numbering.class)
+		Optional<Numbering> numberingOpt = new Sql<>(Numbering.class).connection(conn)
 			.where("{tableName}={}", tableName)
-			.doIf(!(conn.getDatabase() instanceof SQLite), Sql::forUpdate)
-			.connection(conn)
+			.doNotIf(conn.getDatabase() instanceof SQLite, Sql::forUpdate)
 			.select();
 
 		int id[] = new int[1];

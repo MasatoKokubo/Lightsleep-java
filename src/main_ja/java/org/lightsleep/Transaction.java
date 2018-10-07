@@ -75,7 +75,7 @@ public interface Transaction {
 	 *
 	 * @param transaction <b>Transaction</b>オブジェクト
 	 *
-	 * @throws NullPointerException <b>transaction</b>がnullの場合
+	 * @throws NullPointerException <b>transaction</b>が<b>null</b>の場合
 	 * @throws RuntimeSQLException データベースのアクセス中に<b>SQLException</b>がスローされた場合
 	 */
 	static void execute(Transaction transaction) {
@@ -102,7 +102,7 @@ public interface Transaction {
 	 * @param connectionSupplier <b>ConnectionSupplier</b>オブジェクト
 	 * @param transaction <b>Transaction</b>オブジェクト
 	 *
-	 * @throws NullPointerException <b>connectionSupplier</b>または<b>transaction</b>がnullの場合
+	 * @throws NullPointerException <b>connectionSupplier</b>または<b>transaction</b>が<b>null</b>の場合
 	 * @throws RuntimeSQLException データベースのアクセス中に<b>SQLException</b>がスローされた場合
 	 *
 	 * @since 1.5.0

@@ -48,7 +48,7 @@ public class Utils {
 	 * @param type 型(null可)
 	 * @return <b>type</b>が値型場合は<b>true</b>、そうでなければ<b>false</b>
 	 *
-	 * @throws NullPointerException <b>type</b>がnullの場合
+	 * @throws NullPointerException <b>type</b>が<b>null</b>の場合
 	 */
 	public static boolean isValueType(Class<?> type) {
 		return false;
@@ -60,7 +60,7 @@ public class Utils {
 	 * @param clazz クラス
 	 * @return パッケージなしのクラス
 	 *
-	 * @throws NullPointerException <b>clazz</b>がnullの場合
+	 * @throws NullPointerException <b>clazz</b>が<b>null</b>の場合
 	 */
 	public static String nameWithoutPackage(Class<?> clazz) {
 		return null;
@@ -75,7 +75,7 @@ public class Utils {
 	 * @param length 配列のサイズ
 	 * @return elementType 型の配列
 	 *
-	 * @throws NullPointerException <b>elementType</b>がnullの場合	 *
+	 * @throws NullPointerException <b>elementType</b>が<b>null</b>の場合	 *
 	 * @throws IndexOutOfBoundsException <b>length </b>&lt; 0 の場合	 *
 	 * @throws RuntimeException インスタンスの生成が失敗した場合(<b>InstantiationException)</b>かコンストラクタにアクセスできない場合(<b>IllegalAccessException</b>)
 	 */
@@ -181,7 +181,7 @@ public class Utils {
 	 * @param annotationClass アノテーションクラス
 	 * @return アノテーションのリスト
 	 *
-	 * @throws NullPointerException <b>clazz</b>または<b>annotationClass</b>がnullの場合
+	 * @throws NullPointerException <b>clazz</b>または<b>annotationClass</b>が<b>null</b>の場合
 	 *
 	 * @since 1.5.1
 	 */

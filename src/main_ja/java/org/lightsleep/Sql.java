@@ -56,54 +56,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 */
 	public static final int FOREVER = Integer.MAX_VALUE;
 
-// 2.1.0
-//	/**
-//	 * 現在のデータベース･ハンドラを返します。
-//	 *
-//	 * @return データベース･ハンドラ
-//	 *
-//	 * @see #setDatabase(Database)
-//	 */
-//	public static Database getDatabase() {
-//		return null;
-//	}
-//
-//	/**
-//	 * 現在のデータベース･ハンドラを設定します。
-//	 *
-//	 * @param database データベース･ハンドラ
-//	 *
-//	 * @throws NullPointerException <b>database</b>がnullの場合
-//	 *
-//	 * @see #getDatabase()
-//	 */
-//	public static void setDatabase(Database database) {
-//	}
-//
-//	/**
-//	 * 現在のコネクション･サプライヤを返します。
-//	 *
-//	 * @return コネクション･サプライヤ
-//	 *
-//	 * @see #setConnectionWrapperSupplier(ConnectionWrapperSupplier)
-//	 */
-//	public static ConnectionWrapperSupplier getConnectionWrapperSupplier() {
-//		return null;
-//	}
-//
-//	/**
-//	 * 現在のコネクション･サプライヤを設定します。
-//	 *
-//	 * @param supplier コネクション･サプライヤ
-//	 *
-//	 * @throws NullPointerException <b>supplier</b>がnullの場合
-//	 *
-//	 * @see #getConnectionWrapperSupplier()
-//	 */
-//	public static void setConnectionWrapperSupplier(ConnectionWrapperSupplier supplier) {
-//	}
-////
-
 	/**
 	 * 指定のエンティティ･クラスのエンティティ情報を返します。
 	 *
@@ -111,7 +63,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entityClass エンティティ･クラス
 	 * @return エンティティ情報
 	 *
-	 * @throws NullPointerException <b>entityClass</b>がnullの場合
+	 * @throws NullPointerException <b>entityClass</b>が<b>null</b>の場合
 	 *
 	 * @see #entityInfo()
 	 */
@@ -134,7 +86,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @param entityClass エンティティ･クラス
 	 *
-	 * @throws NullPointerException <b>entityClass</b>がnullの場合
+	 * @throws NullPointerException <b>entityClass</b>が<b>null</b>の場合
 	 */
 	public Sql(Class<E> entityClass) {
 	}
@@ -155,7 +107,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entityClass エンティティ･クラス
 	 * @param tableAlias テーブルの別名
 	 *
-	 * @throws NullPointerException <b>entityClass</b>または<b>tableAlias</b>がnullの場合
+	 * @throws NullPointerException <b>entityClass</b>または<b>tableAlias</b>が<b>null</b>の場合
 	 */
 	public Sql(Class<E> entityClass, String tableAlias) {
 	}
@@ -303,7 +255,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param propertyNames カラムに関連するプロパティ名の配列
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>columns</b>または<b>columns</b>の要素がnull の場合
+	 * @throws NullPointerException <b>columns</b>または<b>columns</b>の要素が<b>null</b> の場合
 	 *
 	 * @see #getColumns()
 	 * @see #setColumns(Set)
@@ -330,7 +282,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param propertyNames プロパティ名のセット
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>columns</b>がnullの場合
+	 * @throws NullPointerException <b>columns</b>が<b>null</b>の場合
 	 *
 	 * @since 1.8.4
 	 *
@@ -346,7 +298,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * このプロパティ名のセットは、SELECT SQLおよびUPDATE SQLのカラムの生成時に使用されます。
 	 *
 	 * <p>
-	 * <i>このメソッドは {@link #selectAs(Class, Consumer)}および{@link #selectAs(Class)}</i> からコールされます。
+	 * <i>このメソッドは {@link #selectAs(Class, Consumer)}および{@link #selectAs(Class)}からコールされます。</i>
 	 * </p>
 	 *
 	 * @param <R> <b>resultClass</b>の型
@@ -396,7 +348,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param expression 式
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>propertyName</b>または<b>expression</b>がnullの場合
+	 * @throws NullPointerException <b>propertyName</b>または<b>expression</b>が<b>null</b>の場合
 	 *
 	 * @see #getExpression(String)
 	 */
@@ -416,7 +368,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments 式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>propertyName</b>, <b>content</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>propertyName</b>, <b>content</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see #getExpression(String)
 	 * @see Expression#Expression(String, Object...)
@@ -435,7 +387,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param propertyName プロパティ名
 	 * @return プロパティ名に関連する式または<b>Expression.EMPTY</b>
 	 *
-	 * @throws NullPointerException <b>propertyName</b>がnullの場合
+	 * @throws NullPointerException <b>propertyName</b>が<b>null</b>の場合
 	 *
 	 * @see #expression(String, Expression)
 	 * @see #expression(String, String, Object...)
@@ -477,7 +429,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param on 結合条件式
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>または<b>on</b>がnullの場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>または<b>on</b>が<b>null</b>の場合
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -496,7 +448,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments 結合条件式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -538,7 +490,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param on 結合条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -558,7 +510,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments 結合条件式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -600,7 +552,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param on 結合条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -619,7 +571,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments 結合条件式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>entityClass</b>, <b>tableAlias</b>, <b>on</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -672,7 +624,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param condition 条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>condition</b>がnullの場合
+	 * @throws NullPointerException <b>condition</b>が<b>null</b>の場合
 	 *
 	 * @see #getWhere()
 	 */
@@ -710,7 +662,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments 式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>content</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see #getWhere()
 	 * @see Condition#of(String, Object...)
@@ -794,7 +746,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b>または<b>subSql</b>がnullの場合
+	 * @throws NullPointerException <b>content</b>または<b>subSql</b>が<b>null</b>の場合
 	 *
 	 * @see #getWhere()
 	 * @see Condition#of(String, Sql, Sql)
@@ -825,7 +777,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param condition 条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>condition</b>がnullの場合
+	 * @throws NullPointerException <b>condition</b>が<b>null</b>の場合
 	 *
 	 * @see Condition#and(Condition)
 	 */
@@ -865,7 +817,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments 式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>content</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see Condition#and(String, Object...)
 	 */
@@ -897,7 +849,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param condition 条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>condition</b>がnullの場合
+	 * @throws NullPointerException <b>condition</b>が<b>null</b>の場合
 	 *
 	 * @see Condition#or(Condition)
 	 */
@@ -937,7 +889,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments 式の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>content</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see Condition#or(String, Object...)
 	 */
@@ -954,7 +906,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b>または<b>subSql</b>がnullの場合
+	 * @throws NullPointerException <b>content</b>または<b>subSql</b>が<b>null</b>の場合
 	 *
 	 * @see Condition#or(Condition)
 	 * @see Condition#of(String, Sql, Sql)
@@ -971,7 +923,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments <b>Expression</b>の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>content</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see #getGroupBy()
 	 * @see #setGroupBy(GroupBy)
@@ -1015,7 +967,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param condition 条件
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>condition</b>がnullの場合
+	 * @throws NullPointerException <b>condition</b>が<b>null</b>の場合
 	 *
 	 * @see #getHaving()
 	 */
@@ -1030,7 +982,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments <b>Expression</b>の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>content</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see #getHaving()
 	 * @see Condition#of(String, Object...)
@@ -1100,7 +1052,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments <b>OrderBy.Element</b>の引数
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>content</b>または<b>arguments</b>がnullの場合
+	 * @throws NullPointerException <b>content</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
 	 * @see #asc()
 	 * @see #desc()
@@ -1434,7 +1386,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	}
 
 	/**
-	 * 生成された SQLを返します。
+	 * 生成されたSQLを返します。
 	 *
 	 * @return 生成された SQL
 	 *
@@ -1447,18 +1399,18 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * アクションを実行します。
 	 *
-	 * @param action 実行されるアクション
+	 * @param action 実行するアクション
 	 * @return このオブジェクト
 	 *
 	 * @since 2.0.0
-	 * @see #doIf
+	 * @see #doIf(boolean, Consumer)
 	 */
 	public Sql<E> doAlways(Consumer<Sql<E>> action) {
 		return null;
 	}
 
 	/**
-	 * 実行条件がtrueならアクションを実行します。
+	 * 実行条件が<b>true</b>ならアクションを実行します。
 	 *
 	 * <div class="exampleTitle"><span>使用例/Java</span></div>
 	 * <div class="exampleCode"><pre>
@@ -1483,7 +1435,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * </pre></div>
 	 *
 	 * @param condition 実行条件
-	 * @param action 実行条件がtrue の場合に実行されるアクション
+	 * @param action 実行条件が<b>true</b> の場合に実行するアクション
 	 * @return このオブジェクト
 	 */
 	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action) {
@@ -1491,13 +1443,73 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	}
 
 	/**
-	 * 実行条件がtrueなら<b>action</b>を実行し、そうでなければ<b>elseAction</b>を実行します。
+	 * 実行条件が<b>false</b>ならアクションを実行します。
+	 *
+	 * <div class="exampleTitle"><span>使用例/Java</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = new ArrayList&lt;&gt;();
+	 * Transaction.execute(conn -&gt; {
+	 *     new Sql&lt;&gt;(Contact.class, "C")
+	 *         .connection(conn)
+	 *         <b>.doNotIf(Sql.getDatabase() instanceof SQLite, Sql::forUpdate)</b>
+	 *         .select(contacts::add);
+	 * });
+	 * </pre></div>
+	 *
+	 * <div class="exampleTitle"><span>使用例/Groovy</span></div>
+	 * <div class="exampleCode"><pre>
+	 * List&lt;Contact&gt; contacts = []
+	 * Transaction.execute {
+	 *     new Sql&lt;&gt;(Contact, 'C')
+	 *         .connection(it)
+	 *         <b>.doNotIf(Sql.getDatabase() instanceof SQLite) {it.forUpdate}</b>
+	 *         .select({contacts &lt;&lt; it})
+	 * }
+	 * </pre></div>
 	 *
 	 * @param condition 実行条件
-	 * @param action 実行条件がtrue の場合に実行されるアクション
-	 * @param elseAction 実行条件がfalse の場合に実行されるアクション
+	 * @param action 実行するアクション
+	 * @return このオブジェクト
+	 *
+	 * @since 3.0.0
+	 * @see #doIf(boolean, Consumer)
+	 * @see #doElse(Consumer)
+	 * @see #doAlways(Consumer)
+	 */
+	public Sql<E> doNotIf(boolean condition, Consumer<Sql<E>> action) {
+		return null;
+	}
+
+	/**
+	 * このメソッドより前に実行された<b>doIf</b>の実行条件が<b>false</b>または
+	 * <b>doNotIf</b>の実行条件が<b>true</b>ならアクションを実行します。
+	 *
+	 * @param elseAction an action
+	 * @return this object
+	 *
+	 * @since 3.0.0
+	 * @see #doIf(boolean, Consumer)
+	 * @see #doNotIf(boolean, Consumer)
+	 * @see #doAlways(Consumer)
+	 */
+	public Sql<E> doElse(Consumer<Sql<E>> elseAction) {
+		return null;
+	}
+
+	/**
+	 * 実行条件が<b>true</b>なら<b>action</b>を実行し、そうでなければ<b>elseAction</b>を実行します。
+	 *
+	 * <p>
+	 * @deprecated リリース 3.0.0 より。
+	 * 代わりに{@link #doIf(boolean, Consumer)}と{@link #doElse(Consumer)}を使用してください。
+	 * </p>
+	 *
+	 * @param condition 実行条件
+	 * @param action 実行条件が<b>true</b> の場合に実行するアクション
+	 * @param elseAction 実行条件が<b>false</b> の場合に実行するアクション
 	 * @return このオブジェクト
 	 */
+	@Deprecated
 	public Sql<E> doIf(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction) {
 		return null;
 	}
@@ -1512,7 +1524,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param tableAlias テーブル別名
 	 * @return SqlEntityInfo オブジェクト
 	 *
-	 * @throws NullPointerException <b>tableAlias</b>がnullの場合
+	 * @throws NullPointerException <b>tableAlias</b>が<b>null</b>の場合
 	 */
 	public SqlEntityInfo<?> getSqlEntityInfo(String tableAlias) {
 		return null;
@@ -1528,25 +1540,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param sqlEntityInfo SqlEntityInfo オブジェクト
 	 */
 	public void addSqlEntityInfo(SqlEntityInfo<?> sqlEntityInfo) {
-	}
-
-	/**
-	 * テーブルを結合しないSELECT SQLを生成して実行します。<br>
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)} と{@link #select(Consumer)} を使用してください。
-	 * </p>
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @param consumer 取得した行から生成されたエンティティのコンシューマ
-	 *
-	 * @throws NullPointerException <b>connection</b>または<b>consumer</b>がnullの場合
-	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public void select(ConnectionWrapper connection, Consumer<? super E> consumer) {
 	}
 
 	/**
@@ -1590,7 +1583,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @param consumer 取得した行から生成されたエンティティのコンシューマ
 	 *
-	 * @throws NullPointerException <b>consumer</b>がnullの場合
+	 * @throws NullPointerException <b>consumer</b>が<b>null</b>の場合
 	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 *
@@ -1643,7 +1636,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param resultClass コンシューマの引数のクラス
 	 * @param consumer 取得した行から生成されたエンティティのコンシューマ
 	 *
-	 * @throws NullPointerException <b>consumer</b>がnullの場合
+	 * @throws NullPointerException <b>consumer</b>が<b>null</b>の場合
 	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 *
@@ -1651,30 +1644,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @see #select(Consumer)
 	 */
 	public <R> void selectAs(Class<R> resultClass, Consumer<? super R> consumer) {
-	}
-
-	/**
-	 * 1つのテーブルを結合する SELECT SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)} と{@link #select(Consumer, Consumer)} を使用してください。
-	 * </p>
-	 *
-	 * @param <JE1> 結合テーブル1のエンティティの型
-	 * @param connection コネクション･ラッパー
-	 * @param consumer 取得した行から生成されたメイン･テーブルのエンティティのコンシューマ
-	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
-	 *
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>または<b>consumer1</b>がnullの場合
-	 * @throws IllegalStateException 結合テーブル情報がない場合
-	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public <JE1> void select(ConnectionWrapper connection,
-		Consumer<? super E> consumer,
-		Consumer<? super JE1> consumer1) {
 	}
 
 	/**
@@ -1725,7 +1694,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param consumer 取得した行から生成されたメイン･テーブルのエンティティのコンシューマ
 	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
 	 *
-	 * @throws NullPointerException <b>consumer</b>または<b>consumer1</b>がnullの場合
+	 * @throws NullPointerException <b>consumer</b>または<b>consumer1</b>が<b>null</b>の場合
 	 * @throws IllegalStateException 結合テーブル情報がない場合
 	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
@@ -1735,33 +1704,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	public <JE1> void select(
 		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1) {
-	}
-
-	/**
-	 * 2つのテーブルを結合する SELECT SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)} と{@link #select(Consumer, Consumer, Consumer)} を使用してください。
-	 * </p>
-	 *
-	 * @param <JE1> 結合テーブル1のエンティティの型
-	 * @param <JE2> 結合テーブル2のエンティティの型
-	 * @param connection コネクション･ラッパー
-	 * @param consumer 取得した行から生成されたメイン･テーブルのエンティティのコンシューマ
-	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
-	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
-	 *
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>または<b>consumer2</b>がnullの場合
-	 * @throws IllegalStateException 結合テーブル情報が2より少ない場合
-	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public <JE1, JE2> void select(ConnectionWrapper connection,
-		Consumer<? super  E > consumer,
-		Consumer<? super JE1> consumer1,
-		Consumer<? super JE2> consumer2) {
 	}
 
 	/**
@@ -1819,7 +1761,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
 	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
 	 *
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>または<b>consumer2</b>がnullの場合
+	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>または<b>consumer2</b>が<b>null</b>の場合
 	 * @throws IllegalStateException 結合テーブル情報が2より少ない場合
 	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
@@ -1830,36 +1772,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		Consumer<? super  E > consumer,
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2) {
-	}
-
-	/**
-	 * 3つのテーブルを結合する SELECT SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)} と{@link #select(Consumer, Consumer, Consumer, Consumer)} を使用してください。
-	 * </p>
-	 *
-	 * @param <JE1> 結合テーブル1のエンティティの型
-	 * @param <JE2> 結合テーブル2のエンティティの型
-	 * @param <JE3> 結合テーブル3のエンティティの型
-	 * @param connection コネクション･ラッパー
-	 * @param consumer 取得した行から生成されたメイン･テーブルのエンティティのコンシューマ
-	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
-	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
-	 * @param consumer3 取得した行から生成された結合テーブル3のエンティティのコンシューマ
-	 *
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>または<b>consumer3</b>がnullの場合
-	 * @throws IllegalStateException 結合テーブル情報が3より少ない場合
-	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public <JE1, JE2, JE3> void select(ConnectionWrapper connection,
-			Consumer<? super  E > consumer,
-			Consumer<? super JE1> consumer1,
-			Consumer<? super JE2> consumer2,
-			Consumer<? super JE3> consumer3) {
 	}
 
 	/**
@@ -1926,7 +1838,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
 	 * @param consumer3 取得した行から生成された結合テーブル3のエンティティのコンシューマ
 	 *
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>または<b>consumer3</b>がnullの場合
+	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>または<b>consumer3</b>が<b>null</b>の場合
 	 * @throws IllegalStateException 結合テーブル情報が3より少ない場合
 	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
@@ -1936,39 +1848,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 			Consumer<? super JE1> consumer1,
 			Consumer<? super JE2> consumer2,
 			Consumer<? super JE3> consumer3) {
-	}
-
-	/**
-	 * 4つのテーブルを結合する SELECT SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)} と{@link #select(Consumer, Consumer, Consumer, Consumer, Consumer)} を使用してください。
-	 * </p>
-	 *
-	 * @param <JE1> 結合テーブル1のエンティティの型
-	 * @param <JE2> 結合テーブル2のエンティティの型
-	 * @param <JE3> 結合テーブル3のエンティティの型
-	 * @param <JE4> 結合テーブル4のエンティティの型
-	 * @param connection コネクション･ラッパー
-	 * @param consumer 取得した行から生成されたメイン･テーブルのエンティティのコンシューマ
-	 * @param consumer1 取得した行から生成された結合テーブル1のエンティティのコンシューマ
-	 * @param consumer2 取得した行から生成された結合テーブル2のエンティティのコンシューマ
-	 * @param consumer3 取得した行から生成された結合テーブル3のエンティティのコンシューマ
-	 * @param consumer4 取得した行から生成された結合テーブル4のエンティティのコンシューマ
-	 *
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b>または<b>consumer4</b>がnullの場合
-	 * @throws IllegalStateException 結合テーブル情報が4より少ない場合
-	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public <JE1, JE2, JE3, JE4> void select(ConnectionWrapper connection,
-		Consumer<? super  E > consumer,
-		Consumer<? super JE1> consumer1,
-		Consumer<? super JE2> consumer2,
-		Consumer<? super JE3> consumer3,
-		Consumer<? super JE4> consumer4) {
 	}
 
 	/**
@@ -2044,7 +1923,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param consumer3 取得した行から生成された結合テーブル3のエンティティのコンシューマ
 	 * @param consumer4 取得した行から生成された結合テーブル4のエンティティのコンシューマ
 	 *
-	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b>または<b>consumer4</b>がnullの場合
+	 * @throws NullPointerException <b>connection</b>, <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b>または<b>consumer4</b>が<b>null</b>の場合
 	 * @throws IllegalStateException 結合テーブル情報が4より少ない場合
 	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
@@ -2055,28 +1934,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		Consumer<? super JE2> consumer2,
 		Consumer<? super JE3> consumer3,
 		Consumer<? super JE4> consumer4) {
-	}
-
-	/**
-	 * SELECT SQLを生成して実行します。
-	 * 取得されない場合は、<b>Optional.empty()</b>を返します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)} と{@link #select()} を使用してください。
-	 * </p>
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @return 取得した行から生成されたエンティティ、取得されない場合は<b>Optional.empty()</b>
-	 *
-	 * @throws NullPointerException <b>connection</b>がnullの場合
-	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 * @throws ManyRowsException 複数行が検索された場合
-	 */
-	@Deprecated
-	public Optional<E> select(ConnectionWrapper connection) {
-		return null;
 	}
 
 	/**
@@ -2113,7 +1970,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @return 取得した行から生成されたエンティティ、取得されない場合は<b>Optional.empty()</b>
 	 *
-	 * @throws NullPointerException <b>connection</b>がnullの場合
+	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
 	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 * @throws ManyRowsException 複数行が検索された場合
@@ -2158,7 +2015,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param resultClass 戻り値のエンティティの型のクラス
 	 * @return 取得した行から生成されたエンティティ、取得されない場合は<b>Optional.empty()</b>
 	 *
-	 * @throws NullPointerException <b>connection</b>がnullの場合
+	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
 	 * @throws IllegalStateException カラムのないSELECT SQLが生成された場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 * @throws ManyRowsException 複数行が検索された場合
@@ -2168,25 +2025,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 */
 	public <R> Optional<R> selectAs(Class<R> resultClass) {
 		return null;
-	}
-
-	/**
-	 * SELECT COUNT(*) SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)}と{@link #select()} を使用してください。
-	 * </p>
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @return 実行結果行数
-	 *
-	 * @throws NullPointerException connectionがnullの場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public int selectCount(ConnectionWrapper connection) {
-		return 0;
 	}
 
 	/**
@@ -2220,30 +2058,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @return 実行結果行数
 	 *
-	 * @throws NullPointerException connectionがnullの場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
+	 *
+	 * @since 2.0.0
 	 */
 	public int selectCount() {
-		return 0;
-	}
-
-	/**
-	 * INSERT SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)}と{@link #insert(Object)} を使用してください。
-	 * </p>
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @param entity 挿入対象のエンティティ
-	 * @return 挿入した行数
-	 *
-	 * @throws NullPointerException <b>connection</b>または<b>entity</b>がnullの場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public int insert(ConnectionWrapper connection, E entity) {
 		return 0;
 	}
 
@@ -2279,32 +2098,12 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entity 挿入対象のエンティティ
 	 * @return 挿入した行数
 	 *
-	 * @throws NullPointerException <b>entity</b>がnullの場合
+	 * @throws NullPointerException <b>entity</b>が<b>null</b>の場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 *
 	 * @since 2.0.0
 	 */
 	public int insert(E entity) {
-		return 0;
-	}
-
-	/**
-	 * <b>entities</b>の各要素毎に INSERT SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)}と{@link #insert(Iterable)} を使用してください。
-	 * </p>
-	 *
-	 * @param connection コネクション･ラッパー
- 	 * @param entities 挿入対象のエンティティの<b>Iterable</b>
-	 * @return 挿入した行数
-	 *
-	 * @throws NullPointerException <b>connection</b>, <b>entities</b>または<b>entities</b>の要素のいずれかがnullの場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public int insert(ConnectionWrapper connection, Iterable<? extends E> entities) {
 		return 0;
 	}
 
@@ -2348,32 +2147,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
  	 * @param entities 挿入対象のエンティティの<b>Iterable</b>
 	 * @return 挿入した行数
 	 *
-	 * @throws NullPointerException <b>entities</b>または<b>entities</b>の要素のいずれかがnullの場合
+	 * @throws NullPointerException <b>entities</b>または<b>entities</b>の要素のいずれかが<b>null</b>の場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 */
 	public int insert(Iterable<? extends E> entities) {
-		return 0;
-	}
-
-	/**
-	 * UPDATE SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)}と{@link #update(Object)} を使用してください。
-	 * </p>
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @param entity 更新対象のエンティティ
-	 * @return 更新した行数
-	 *
-	 * @throws NullPointerException <b>connection</b>または<b>entity</b>がnullの場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 *
-	 * @see org.lightsleep.component.Condition#ALL
-	 */
-	@Deprecated
-	public int update(ConnectionWrapper connection, E entity) {
 		return 0;
 	}
 
@@ -2414,32 +2191,12 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entity 更新対象のエンティティ
 	 * @return 更新した行数
 	 *
-	 * @throws NullPointerException <b>entity</b>がnullの場合
+	 * @throws NullPointerException <b>entity</b>が<b>null</b>の場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 *
 	 * @see org.lightsleep.component.Condition#ALL
 	 */
 	public int update(E entity) {
-		return 0;
-	}
-
-	/**
-	 * <b>entities</b>の各要素毎に UPDATE SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)}と{@link #update(Iterable)} を使用してください。
-	 * </p>
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @param entities 更新対象のエンティティの<b>Iterable</b>
-	 * @return 更新した行数
-	 *
-	 * @throws NullPointerException <b>connection</b>, <b>entityStream</b>または<b>entityStream</b>の要素のいずれかがnull の場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public int update(ConnectionWrapper connection, Iterable<? extends E> entities) {
 		return 0;
 	}
 
@@ -2487,31 +2244,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entities 更新対象のエンティティの<b>Iterable</b>
 	 * @return 更新した行数
 	 *
-	 * @throws NullPointerException <b>entityStream</b>または<b>entityStream</b>の要素のいずれかがnull の場合
+	 * @throws NullPointerException <b>entityStream</b>または<b>entityStream</b>の要素のいずれかが<b>null</b> の場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 */
 	public int update(Iterable<? extends E> entities) {
-		return 0;
-	}
-
-	/**
-	 * DELETE SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)}と{@link #delete()} を使用してください。
-	 * </p>
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @return 削除した行数
-	 *
-	 * @throws NullPointerException <b>connection</b>がnullの場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 *
-	 * @see org.lightsleep.component.Condition#ALL
-	 */
-	@Deprecated
-	public int delete(ConnectionWrapper connection) {
 		return 0;
 	}
 
@@ -2564,26 +2300,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * DELETE SQLを生成して実行します。
 	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)}と{@link #delete(Object)} を使用してください。
-	 * </p>
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @param entity 削除対象のエンティティ
-	 * @return 削除した行数
-	 *
-	 * @throws NullPointerException <b>connection</b>または<b>entity</b>がnullの場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public int delete(ConnectionWrapper connection, E entity) {
-		return 0;
-	}
-
-	/**
-	 * DELETE SQLを生成して実行します。
-	 *
 	 * <div class="exampleTitle"><span>使用例/Java</span></div>
 	 * <div class="exampleCode"><pre>
 	 * int[] count = new int[1];
@@ -2613,30 +2329,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entity 削除対象のエンティティ
 	 * @return 削除した行数
 	 *
-	 * @throws NullPointerException <b>entity</b>がnullの場合
+	 * @throws NullPointerException <b>entity</b>が<b>null</b>の場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 */
 	public int delete(E entity) {
-		return 0;
-	}
-
-	/**
-	 * <b>entities</b>の各要素毎にDELETE SQLを生成して実行します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.0.0 より。
-	 * 代わりに{@link #connection(ConnectionWrapper)}と{@link #delete(Iterable)} を使用してください。
-	 * </p>
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @param entities 削除対象のエンティティの<b>Iterable</b>
-	 * @return 削除した行数
-	 *
-	 * @throws NullPointerException <b>connection</b>, <b>entityStream</b>または<b>entityStream</b>の要素のいずれかがnullの場合
-	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
-	 */
-	@Deprecated
-	public int delete(ConnectionWrapper connection, Iterable<? extends E> entities) {
 		return 0;
 	}
 
@@ -2666,11 +2362,24 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entities 削除対象のエンティティの<b>Iterable</b>
 	 * @return 削除した行数
 	 *
-	 * @throws NullPointerException <b>entityStream</b>または<b>entityStream</b>の要素のいずれかがnullの場合
+	 * @throws NullPointerException <b>entityStream</b>または<b>entityStream</b>の要素のいずれかが<b>null</b>の場合
 	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
 	 */
 	public int delete(Iterable<? extends E> entities) {
 		return 0;
+	}
+
+	/**
+	 * SQLを実行します。
+	 *
+	 * @param sql 実行するSQL
+	 *
+	 * @throws NullPointerException <b>sql</b>が<b>null</b>の場合
+	 * @throws RuntimeSQLException データベース･アクセス･エラーが発生した場合
+	 *
+	 * @since 3.0.0
+	 */
+	public void executeUpdate(String sql) {
 	}
 
 	/**

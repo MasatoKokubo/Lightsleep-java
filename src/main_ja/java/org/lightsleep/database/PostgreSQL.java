@@ -3,6 +3,9 @@
 
 package org.lightsleep.database;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+
 /**
  * <a href="http://www.postgresql.org/" target="PostgreSQL">PostgreSQL</a>
  * 用のデータベース･ハンドラです。
@@ -13,10 +16,28 @@ package org.lightsleep.database;
  * </p>
  *
  * <table class="additional">
- *   <caption><span>追加されるTypeConverterオブジェクト</span></caption>
- *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
- *   <tr><td>String </td><td rowspan="2">SqlString</td><td><code>'...'</code><br>制御文字は エスケープ･シーケンスに変換<br>変換された文字列がエスケープ･シーケンスを含む場合はE'...'<br>長い文字列の場合は<code>?</code><i>(SQLパラメータ)</i></td></tr>
- *   <tr><td>byte[] </td><td><code>E'\\x...'</code><br>長いバイト配列の場合は<code>?</code><i>(SQLパラメータ)</i></td></tr>
+ *   <caption><span>TypeConverterマップへの追加内容</span></caption>
+ *   <tr><th colspan="2">キー: データ型</th><th rowspan="2">値: 変換関数</th></tr>
+ *   <tr><th>変換元</th><th>変換先</th></tr>
+ *
+ *   <tr><td>String </td><td rowspan="2">SqlString</td>
+ *     <td>
+ *       <b>new SqlString("'" + source + "'")</b><br>
+ *       <span class="comment">変換元の文字列中のシングルクォートは、連続する2個のシングルクォートに変換、<br>
+ *       また制御文字はエスケープシーケンスに変換 ( \b, \t, \n, \f, \r, \\ )</span><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString("E'" + source + "'")</b> <span class="comment">変換後の文字列がエスケープシーケンスを含む場合</span><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">変換元の文字列が長すぎる場合</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>byte[] </td>
+ *     <td>
+ *       <b>new SqlString("E'\\x" + hexadecimal string + "'")</b><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">変換元のバイト配列が長すぎる場合</span>
+ *     </td>
+ *   </tr>
  * </table>
  *
  * @since 1.0.0
@@ -40,22 +61,6 @@ public class PostgreSQL extends Standard {
 	public static final PostgreSQL instance = new PostgreSQL();
 
 	/**
-	 * このクラスの唯一のインスタンスを返します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.1.0 より。代わりに{@link #instance}を使用してください。
-	 * </p>
-	 *
-	 * @return このクラスの唯一のインスタンス
-	 */
-// 2.1.0
-	@Deprecated
-////
-	public static Database instance() {
-		return null;
-	}
-
-	/**
 	 * <b>PostgreSQL</b>を構築します。
 	 */
 	protected PostgreSQL() {
@@ -76,6 +81,16 @@ public class PostgreSQL extends Standard {
 	 */
 	@Override
 	public String maskPassword(String jdbcUrl) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0.0
+	 */
+	@Override
+	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
 		return null;
 	}
 }

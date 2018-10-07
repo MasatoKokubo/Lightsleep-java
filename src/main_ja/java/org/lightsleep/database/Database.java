@@ -3,6 +3,8 @@
 
 package org.lightsleep.database;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -119,7 +121,23 @@ public interface Database {
 	 *
 	 * @since 2.2.0
 	 */
-	String maskPassword(String jdbcUrl);
+	default String maskPassword(String jdbcUrl) {
+		return null;
+	}
+
+	/**
+	 * <b>resultSet</b>から値を取得して返します。
+	 *
+	 * @param connection <b>Connection</b>オブジェクト
+	 * @param resultSet the <b>ResultSet</b>オブジェクト
+	 * @param columnLabel the label カラムのラベル
+	 * @return the column value
+	 *
+	 * @since 3.0.0
+	 */
+	default Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+		return null;
+	}
 
 	/**
 	 * <b>jdbcUrl</b>に関連するデータベース･ハンドラを返します。

@@ -3,13 +3,6 @@
 
 package org.lightsleep.database;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.List;
-
-import org.lightsleep.Sql;
-
 /**
  * <a href="https://www.sqlite.org/index.html" target="SQLite">SQLite</a>
  * 用のデータベース･ハンドラです。<br>
@@ -18,15 +11,57 @@ import org.lightsleep.Sql;
  * <br>
  *
  * <table class="additional">
- *   <caption><span>追加されるTypeConverterオブジェクト</span></caption>
- *   <tr><th>変換元データ型</th><th>変換先データ型</th><th>変換内容</th></tr>
- *   <tr><td>Boolean       </td><td rowspan="7">SqlString</td><td>false ➔ <code>0</code><br>true ➔ <code>1</code></td></tr>
- *   <tr><td>String        </td><td><code>'...'</code><br>長い文字列の場合は<code>?</code><i>(SQLパラメータ)</i></td></tr>
- *   <tr><td>java.util.Date</td><td rowspan="2"><code>'yyyy-MM-dd'</code></td></tr>
- *   <tr><td>java.sql.Date </td></tr>
- *   <tr><td>Time          </td><td><code>'HH:mm:ss'</code></td></tr>
- *   <tr><td>Timestamp     </td><td><code>'yyyy-MM-dd HH:mm:ss.SSS'</code></td></tr>
- *   <tr><td>byte[]        </td><td><code>?</code><i>(SQLパラメータ)</i></td></tr>
+ *   <caption><span>TypeConverterマップへの追加内容</span></caption>
+ *   <tr><th colspan="2">キー: データ型</th><th rowspan="2">値: 変換関数</th></tr>
+ *   <tr><th>変換元</th><th>変換先</th></tr>
+ *
+ *   <tr><td>Boolean       </td><td rowspan="13">SqlString</td>
+ *     <td>
+ *       <b>new SqlString("0")</b> <span class="comment">変換元の値が<b>false</b>の場合</span><br>
+ *       <b>new SqlString("1")</b> <span class="comment">変換元の値が<b>true</b>の場合</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>String        </td>
+ *     <td>
+ *       <b>new SqlString("'" + source + "'")</b><br>
+ *       <span class="comment">変換元の文字列中のシングルクォートは、連続する2個のシングルクォートに変換</span><br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>new SqlString(SqlString.PARAMETER, source)</b> <span class="comment">変換元の文字列が長すぎる場合</span>
+ *     </td>
+ *   </tr>
+ *   <tr><td>java.util.Date</td>
+ *     <td rowspan="10">
+ *       (<b>java.util.Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Date</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalDate</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Time</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Timestamp</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>LocalDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>OffsetDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>ZonedDateTime</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b> または<br>
+ *       <div class="blankline">&nbsp;</div>
+ *       <b>Instant</b> <img src="../../../../images/arrow-right.gif" alt="->"> <b>String</b>) <img src="../../../../images/arrow-right.gif" alt="->"> <b>new SqlString("'" + string + "'")</b>
+ *     </td>
+ *   </tr>
+ *   <tr><td>Date          </td></tr>
+ *   <tr><td>LocalDate     </td></tr>
+ *   <tr><td>Time          </td></tr>
+ *   <tr><td>LocalTime     </td></tr>
+ *   <tr><td>Timestamp     </td></tr>
+ *   <tr><td>LocalDateTime </td></tr>
+ *   <tr><td>OffsetDateTime</td></tr>
+ *   <tr><td>ZonedDateTime </td></tr>
+ *   <tr><td>Instant       </td></tr>
+ *   <tr><td>byte[]</td><td><b>new SqlString(SqlString.PARAMETER, source)</b></td></tr>
  * </table>
  *
  * @since 1.7.0
@@ -41,22 +76,6 @@ public class SQLite extends Standard {
 	 * @since 2.1.0
 	 */
 	public static final SQLite instance = new SQLite();
-
-	/**
-	 * このクラスの唯一のインスタンスを返します。
-	 *
-	 * <p>
-	 * @deprecated リリース 2.1.0 より。代わりに{@link #instance}を使用してください。
-	 * </p>
-	 *
-	 * @return このクラスの唯一のインスタンス
-	 */
-// 2.1.0
-	@Deprecated
-////
-	public static Database instance() {
-		return null;
-	}
 
 	/**
 	 * <b>SQLite</b>を構築します。
