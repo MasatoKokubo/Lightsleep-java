@@ -68,7 +68,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
     ** `instance()`
 
   * `org.lightsleep.helper.TypeConverter` Class
-  ** `**TypeConverter**(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2)`
+    ** `**TypeConverter**(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2)`
 
 [[ReleaseNote2.2.1]]
 
