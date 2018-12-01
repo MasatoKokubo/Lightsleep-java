@@ -323,54 +323,54 @@ class StandardSpec extends Specification {
 			title|sourceValue|expectedString
 
 		//	title           |sourceValue             |expectedString
-			'int'           |0                       |"0"
-			'boolean false' |false                   |"FALSE"
-			'boolean true'  |true                    |"TRUE"
-			'char'          |'A' as char             |"'A'"
-			'String 1'      |'ABC'                   |"'ABC'"
-			'String 2'      |"'A'B'C'"               |"'''A''B''C'''"
-			'String 3'      |"A\nB\tC"               |"'A'||CHR(10)||'B'||CHR(9)||'C'"
-			'String 4'      |"\rA\nB\tC\f"           |"''||CHR(13)||'A'||CHR(10)||'B'||CHR(9)||'C'||CHR(12)"
-			'BigDecimal'    |new BigDecimal('123.45')|"123.45"
+			'int           '|0                       |"0"
+			'boolean false '|false                   |"FALSE"
+			'boolean true  '|true                    |"TRUE"
+			'char          '|'A' as char             |"'A'"
+			'String 1      '|'ABC'                   |"'ABC'"
+			'String 2      '|"'A'B'C'"               |"'''A''B''C'''"
+			'String 3      '|"A\nB\tC"               |"'A'||CHR(10)||'B'||CHR(9)||'C'"
+			'String 4      '|"\rA\nB\tC\f"           |"''||CHR(13)||'A'||CHR(10)||'B'||CHR(9)||'C'||CHR(12)"
+			'BigDecimal    '|new BigDecimal('123.45')|"123.45"
 			'java.uitl.Date'|utilDate1               |"DATE'"      + date1String           + "'"
-			'Date'          |sqlDate1                |"DATE'"      + date1String           + "'"
-			'Time'          |time1                   |"TIME'"      + time1String           + "'"
-			'Timestamp'     |timeStamp1              |"TIMESTAMP'" + timeStamp1String      + "'"
-			'LocalDateTime' |localDateTime1          |"TIMESTAMP'" + localDateTime1String  + "'"
-			'LocalDate'     |localDate1              |"DATE'"      + localDate1String      + "'"
-			'LocalTime'     |localTime1              |"TIME'"      + localTime1String      + "'"
+			'Date          '|sqlDate1                |"DATE'"      + date1String           + "'"
+			'Time          '|time1                   |"TIME'"      + time1String           + "'"
+			'Timestamp     '|timeStamp1              |"TIMESTAMP'" + timeStamp1String      + "'"
+			'LocalDateTime '|localDateTime1          |"TIMESTAMP'" + localDateTime1String  + "'"
+			'LocalDate     '|localDate1              |"DATE'"      + localDate1String      + "'"
+			'LocalTime     '|localTime1              |"TIME'"      + localTime1String      + "'"
 			'OffsetDateTime'|offsetDateTime1         |"TIMESTAMP'" + offsetDateTime1String + "'"
-			'ZonedDateTime' |zonedDateTime1          |"TIMESTAMP'" + zonedDateTime1String  + "'"
-			'Instant'       |instant1                |"TIMESTAMP'" + instant1String        + "'"
-			'enum XS'       |Size.XS                 |"'XS'"
-			'enum M'        |Size.M                  |"'M'"
-			'enum XL'       |Size.XL                 |"'XL'"
+			'ZonedDateTime '|zonedDateTime1          |"TIMESTAMP'" + zonedDateTime1String  + "'"
+			'Instant       '|instant1                |"TIMESTAMP'" + instant1String        + "'"
+			'enum XS       '|Size.XS                 |"'XS'"
+			'enum M        '|Size.M                  |"'M'"
+			'enum XL       '|Size.XL                 |"'XL'"
 
 		//	title      |sourceValue                       |expectedString
 			'boolean[]'|[true , false, true ] as boolean[]|'ARRAY[TRUE,FALSE,TRUE]'
-			'char[]'   |['A'  , 'B'  , 'C'  ] as    char[]|"ARRAY['A','B','C']"
-			'byte[]'   |[0x7F , 0x80 ,  0xFF] as    byte[]|"X'7F80FF'"
-			'short[]'  |[-1   ,  0   ,  1   ] as   short[]|'ARRAY[-1,0,1]'
-			'int[]'    |[-1   ,  0   ,  1   ] as     int[]|'ARRAY[-1,0,1]'
-			'long[]'   |[-1L  ,  0L  ,  1L  ] as    long[]|'ARRAY[-1,0,1]'
-			'float[]'  |[-1.5F,  0.0F,  1.5F] as   float[]|'ARRAY[-1.5,0.0,1.5]'
-			'double[]' |[-1.5D,  0.0D,  1.5D] as  double[]|'ARRAY[-1.5,0.0,1.5]'
-			'String[]' |['ABC', 'abc', '123'] as  String[]|"ARRAY['ABC','abc','123']"
+			'char[]   '|['A'  , 'B'  , 'C'  ] as    char[]|"ARRAY['A','B','C']"
+			'byte[]   '|[0x7F , 0x80 ,  0xFF] as    byte[]|"X'7F80FF'"
+			'short[]  '|[-1   ,  0   ,  1   ] as   short[]|'ARRAY[-1,0,1]'
+			'int[]    '|[-1   ,  0   ,  1   ] as     int[]|'ARRAY[-1,0,1]'
+			'long[]   '|[-1L  ,  0L  ,  1L  ] as    long[]|'ARRAY[-1,0,1]'
+			'float[]  '|[-1.5F,  0.0F,  1.5F] as   float[]|'ARRAY[-1.5,0.0,1.5]'
+			'double[] '|[-1.5D,  0.0D,  1.5D] as  double[]|'ARRAY[-1.5,0.0,1.5]'
+			'String[] '|['ABC', 'abc', '123'] as  String[]|"ARRAY['ABC','abc','123']"
 
 		//	title         |sourceValue                                                                             |expectedString
 			'BigDecimal[]'|[new BigDecimal('-123.456'), BigDecimal.ZERO, new BigDecimal('123.456')] as BigDecimal[]|'ARRAY[-123.456,0,123.456]'
 
 		//	title             |sourceValue                                                            |expectedString
 			'java.uitl.Date[]'|[utilDate1      , utilDate2      , utilDate3      ] as java.util.Date[]|"ARRAY[DATE'"      + date1String           + "',DATE'"      + date2String           + "',DATE'"      + date3String           + "']"
-			'Date[]'          |[sqlDate1       , sqlDate2       , sqlDate3       ] as Date[]          |"ARRAY[DATE'"      + date1String           + "',DATE'"      + date2String           + "',DATE'"      + date3String           + "']"
-			'Time[]'          |[time1          , time2          , time3          ] as Time[]          |"ARRAY[TIME'"      + time1String           + "',TIME'"      + time2String           + "',TIME'"      + time3String           + "']"
-			'Timestamp[]'     |[timeStamp1     , timeStamp2     , timeStamp3     ] as Timestamp[]     |"ARRAY[TIMESTAMP'" + timeStamp1String      + "',TIMESTAMP'" + timeStamp2String      + "',TIMESTAMP'" + timeStamp3String      + "']"
-			'LocalDateTime[]' |[localDateTime1 , localDateTime2 , localDateTime3 ] as LocalDateTime[] |"ARRAY[TIMESTAMP'" + localDateTime1String  + "',TIMESTAMP'" + localDateTime2String  + "',TIMESTAMP'" + localDateTime3String  + "']"
-			'LocalDate[]'     |[localDate1     , localDate2     , localDate3     ] as LocalDate[]     |"ARRAY[DATE'"      + localDate1String      + "',DATE'"      + localDate2String      + "',DATE'"      + localDate3String      + "']"
-			'LocalTime[]'     |[localTime1     , localTime2     , localTime3     ] as LocalTime[]     |"ARRAY[TIME'"      + localTime1String      + "',TIME'"      + localTime2String      + "',TIME'"      + localTime3String      + "']"
+			'Date[]          '|[sqlDate1       , sqlDate2       , sqlDate3       ] as Date[]          |"ARRAY[DATE'"      + date1String           + "',DATE'"      + date2String           + "',DATE'"      + date3String           + "']"
+			'Time[]          '|[time1          , time2          , time3          ] as Time[]          |"ARRAY[TIME'"      + time1String           + "',TIME'"      + time2String           + "',TIME'"      + time3String           + "']"
+			'Timestamp[]     '|[timeStamp1     , timeStamp2     , timeStamp3     ] as Timestamp[]     |"ARRAY[TIMESTAMP'" + timeStamp1String      + "',TIMESTAMP'" + timeStamp2String      + "',TIMESTAMP'" + timeStamp3String      + "']"
+			'LocalDateTime[] '|[localDateTime1 , localDateTime2 , localDateTime3 ] as LocalDateTime[] |"ARRAY[TIMESTAMP'" + localDateTime1String  + "',TIMESTAMP'" + localDateTime2String  + "',TIMESTAMP'" + localDateTime3String  + "']"
+			'LocalDate[]     '|[localDate1     , localDate2     , localDate3     ] as LocalDate[]     |"ARRAY[DATE'"      + localDate1String      + "',DATE'"      + localDate2String      + "',DATE'"      + localDate3String      + "']"
+			'LocalTime[]     '|[localTime1     , localTime2     , localTime3     ] as LocalTime[]     |"ARRAY[TIME'"      + localTime1String      + "',TIME'"      + localTime2String      + "',TIME'"      + localTime3String      + "']"
 			'OffsetDateTime[]'|[offsetDateTime1, offsetDateTime2, offsetDateTime3] as OffsetDateTime[]|"ARRAY[TIMESTAMP'" + offsetDateTime1String + "',TIMESTAMP'" + offsetDateTime2String + "',TIMESTAMP'" + offsetDateTime3String + "']"
-			'ZonedDateTime[]' |[zonedDateTime1 , zonedDateTime2 , zonedDateTime3 ] as ZonedDateTime[] |"ARRAY[TIMESTAMP'" + zonedDateTime1String  + "',TIMESTAMP'" + zonedDateTime2String  + "',TIMESTAMP'" + zonedDateTime3String  + "']"
-			'Instant[]'       |[instant1       , instant2       , instant3       ] as Instant[]       |"ARRAY[TIMESTAMP'" + instant1String        + "',TIMESTAMP'" + instant2String        + "',TIMESTAMP'" + instant3String        + "']"
+			'ZonedDateTime[] '|[zonedDateTime1 , zonedDateTime2 , zonedDateTime3 ] as ZonedDateTime[] |"ARRAY[TIMESTAMP'" + zonedDateTime1String  + "',TIMESTAMP'" + zonedDateTime2String  + "',TIMESTAMP'" + zonedDateTime3String  + "']"
+			'Instant[]       '|[instant1       , instant2       , instant3       ] as Instant[]       |"ARRAY[TIMESTAMP'" + instant1String        + "',TIMESTAMP'" + instant2String        + "',TIMESTAMP'" + instant3String        + "']"
 
 		//	title |sourceValue              |expectedString
 			'List'|['ABC', 123, false, 1.2D]|"('ABC',123,FALSE,1.2)"

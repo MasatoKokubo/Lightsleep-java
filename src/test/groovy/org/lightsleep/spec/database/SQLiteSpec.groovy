@@ -51,10 +51,11 @@ class SQLiteSpec extends Specification {
 		where:
 			title|sourceValue|expectedString
 
-		//	title          |sourceValue|expectedString
-			'Boolean false'|false      |'0'
-			'Boolean true '|true       |'1'
-			'String \'A\' '|"'A'"      |"'''A'''"
+		//	title               |sourceValue          |expectedString
+			'Boolean false'     |false                |'0'
+			'Boolean true '     |true                 |'1'
+			'String \'A\' '     |"'A'"                |"'''A'''"
+			'byte[] {0,1,-2,-1}'|[0,1,-2,-1] as byte[]|"X'0001FEFF'" // since 3.0.1
 
 		//	title           |sourceValue                                                                                  |expectedString
 			'java.utl.Date '|new java.util.Date(0L)                                                                       |"'1970-01-01'"

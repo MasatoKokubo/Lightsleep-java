@@ -87,7 +87,7 @@ public class MySQL extends Standard {
 			new TypeConverter<>(String.class, SqlString.class, object -> {
 				if (object.length() > maxStringLiteralLength)
 					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
-	
+
 				StringBuilder buff = new StringBuilder(object.length() + 2);
 				buff.append('\'');
 				for (char ch : object.toCharArray()) {

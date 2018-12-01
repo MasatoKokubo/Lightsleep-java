@@ -5,8 +5,8 @@
 -- Numbering
 DROP TABLE Numbering;
 CREATE TABLE Numbering (
-    tableName   VARCHAR (32) NOT NULL,
-    nextId      INT          NOT NULL,
+    tableName   VARCHAR (32)  NOT NULL,
+    nextId      INT           NOT NULL,
 
     PRIMARY KEY(tableName)
 );
@@ -14,15 +14,15 @@ CREATE TABLE Numbering (
 -- Contact
 DROP TABLE Contact;
 CREATE TABLE Contact (
-    id          INT          NOT NULL,
-    firstName   VARCHAR (40) NOT NULL, -- 2 times
-    lastName    VARCHAR (40) NOT NULL, -- 2 times
-    birthday    DATE             NULL,
-    addressId   INT              NULL,
+    id          INT           NOT NULL,
+    firstName   NVARCHAR(20)  NOT NULL,
+    lastName    NVARCHAR(20)  NOT NULL,
+    birthday    DATE              NULL,
+    addressId   INT               NULL,
 
-    updateCount INT          NOT NULL,
-    created     DATETIME2(7) NOT NULL,
-    updated     DATETIME2(7) NOT NULL,
+    updateCount INT           NOT NULL,
+    created     DATETIME2(7)  NOT NULL,
+    updated     DATETIME2(7)  NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -32,10 +32,10 @@ DROP TABLE Address;
 CREATE TABLE Address (
     id          INT          NOT NULL,
     postCode    VARCHAR (10)     NULL,
-    address1    VARCHAR (40)     NULL, -- 2 times
-    address2    VARCHAR (40)     NULL, -- 2 times
-    address3    VARCHAR (40)     NULL, -- 2 times
-    address4    VARCHAR (40)     NULL, -- 2 times
+    address1    NVARCHAR(20)     NULL,
+    address2    NVARCHAR(20)     NULL,
+    address3    NVARCHAR(20)     NULL,
+    address4    NVARCHAR(20)     NULL,
 
     updateCount INT          NOT NULL,
     created     DATETIME2(7) NOT NULL,
@@ -62,10 +62,10 @@ CREATE TABLE Phone (
 DROP TABLE Product;
 CREATE TABLE Product (
     id          INT          NOT NULL,
-    productName VARCHAR (40) NOT NULL, -- 2 times
+    productName NVARCHAR(20) NOT NULL,
     price       INT          NOT NULL,
     productSize CHAR     (2) NULL,
-    color       VARCHAR (20) NULL,
+    color       NVARCHAR(20) NULL,
 
     updateCount INT          NOT NULL,
     created     DATETIME2(7) NOT NULL,
@@ -108,7 +108,7 @@ CREATE TABLE Various (
     id               INT                   NOT NULL,
 
     booleanPValue    BIT       DEFAULT 0   NOT NULL,
-    char1PValue      CHAR(2)   DEFAULT ' ' NOT NULL, -- 2 times
+    char1PValue      NCHAR(1)  DEFAULT ' ' NOT NULL,
     tinyIntPValue    TINYINT   DEFAULT 0   NOT NULL,
     smallIntPValue   SMALLINT  DEFAULT 0   NOT NULL,
     intPValue        INT       DEFAULT 0   NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE Various (
     doublePValue     FLOAT(53) DEFAULT 0   NOT NULL,
 
     booleanValue     BIT              ,
-    char1Value       CHAR          (2), -- 2 times
+    char1Value       NCHAR         (1),
     tinyIntValue     TINYINT          ,
     smallIntValue    SMALLINT         ,
     intValue         INT              ,
@@ -130,15 +130,15 @@ CREATE TABLE Various (
     longTime         BIGINT           , -- since 1.8.0
     longTimestamp    BIGINT           , -- since 1.8.0
 
-    charValue        CHAR         (40), -- 2 times
-    varCharValue     VARCHAR      (80), -- 2 times
+    charValue        NCHAR        (20),
+    varCharValue     NVARCHAR     (40),
 
     binaryValue      BINARY       (20),
     varBinaryValue   VARBINARY    (40),
 
-    textValue        TEXT             ,
+    textValue        NTEXT            ,
     blobValue        IMAGE            ,
-    jsonValue        TEXT             ,
+    jsonValue        NTEXT            ,
 
     PRIMARY KEY(id)
 );

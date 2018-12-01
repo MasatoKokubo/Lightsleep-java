@@ -219,11 +219,11 @@ public class Standard implements Database {
 	 */
 	public final int maxBinaryLiteralLength = Resource.getGlobal().getInt("maxBinaryLiteralLength", 128);
 
-	/**
-	 * <b>TypeConverter</b> object to convert
-	 * from <b>Boolean</b> to <b>SqlString</b> (0 or 1)
-	 */
 // 3.0.0
+//	/**
+//	 * <b>TypeConverter</b> object to convert
+//	 * from <b>Boolean</b> to <b>SqlString</b> (0 or 1)
+//	 */
 //	protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
 //		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"));
 ////
@@ -269,6 +269,13 @@ public class Standard implements Database {
 	 */
 	@SuppressWarnings("unchecked")
 	protected Standard() {
+	// 3.0.1
+		if (logger.isDebugEnabled()) {
+			logger.debug(getClass().getSimpleName() + ": maxStringLiteralLength = " + maxStringLiteralLength);
+			logger.debug(getClass().getSimpleName() + ": maxBinaryLiteralLength = " + maxBinaryLiteralLength);
+		}
+	////
+
 		// Clob -> String
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Clob.class, String.class, object -> {
@@ -456,8 +463,11 @@ public class Standard implements Database {
 		// Character -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Character.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Character.class, String.class).function(),
-				TypeConverter.get(typeConverterMap, String.class, SqlString.class).function()
+			// 3.0.1
+			//	TypeConverter.get(typeConverterMap, Character.class, String.class).function(),
+			//	TypeConverter.get(typeConverterMap, String.class, SqlString.class).function()
+				object -> TypeConverter.get(typeConverterMap, String.class, SqlString.class).function().apply(object.toString())
+			////
 			)
 		);
 

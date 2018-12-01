@@ -142,32 +142,69 @@ public class SQLServer extends Standard {
 					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
 
 				StringBuilder buff = new StringBuilder(object.length() + 2);
+			// 3.0.1
+			//	buff.append('\'');
+			//	boolean inLiteral = true;
+				int literalIndex = buff.length();
 				buff.append('\'');
-				boolean inLiteral = true;
+				boolean hasNChar = false;
+			////
+
 				for (char ch : object.toCharArray()) {
 					if (ch >= ' ' && ch != '\u007F') {
 						// Literal representation
-						if (!inLiteral) {
+					// 3.0.1
+						if (ch >= '\u0080')
+							hasNChar = true;
+					////
+					// 3.0.1
+					//	if (!inLiteral) {
+						if (literalIndex < 0) {
+					////
 							// Outside of the literal
-							buff.append("+'");
-							inLiteral = true;
+						// 3.0.1
+						//	buff.append("+'");
+						//	inLiteral = true;
+							buff.append('+');
+							literalIndex = buff.length();
+							buff.append('\'');
+						////
 						}
 						if (ch == '\'') buff.append("''");
 						else buff.append(ch);
 					} else {
 						// Functional representation
-						if (inLiteral) {
+					// 3.0.1
+					//	if (inLiteral) {
+						if (literalIndex >= 0) {
+							// Inside of the literal
+							if (hasNChar) {
+								buff.insert(literalIndex, 'N');
+								hasNChar = false;
+							}
+					////
 							// Inside of the literal
 							buff.append('\'');
-							inLiteral = false;
+						// 3.0.1
+						//	inLiteral = false;
+							literalIndex = -1;
+						////
 						}
 						buff.append("+CHAR(").append((int)ch).append(')');
 					}
 				}
-	
-				if (inLiteral)
+
+			// 3.0.1
+			//	if (inLiteral)
+				if (literalIndex >= 0) {
+					if (hasNChar)
+						buff.insert(literalIndex, 'N');
+			////
 					buff.append('\'');
-	
+			// 3.0.1
+				}
+			////
+
 				return new SqlString(buff.toString());
 			})
 		);

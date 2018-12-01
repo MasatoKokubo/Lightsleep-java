@@ -70,15 +70,15 @@ class SelectSpec extends SpecCommon {
 			contact.birthday = new Date(calendar.timeInMillis)
 			calendar.add(Calendar.DAY_OF_MONTH, 1)
 
-			contact.address.postCode = '1310045'
-			contact.address.address1 = 'Tokyo'
-			contact.address.address2 = 'Sumida-ku'
+			contact.address.postCode = '1500002'
+			contact.address.address1 = '東京'
+			contact.address.address2 = '渋谷区'
 
 			// 0-0-0 Oshiage ..., 0-0-9 Oshiage,
 			// 0-1-0 Oshiage ..., 0-1-9 Oshiage,
 			//   ...,
 			// 0-9-0 Oshiage ..., 0-9-9 Oshiage
-			contact.address.address3 =  ((index / 100) as int) + '-' + (((index / 10) as int) % 10) + '-' + (index % 10) + ' Oshiage'
+			contact.address.address3 =  '神宮前' + ((index / 100) as int) + '-' + (((index / 10) as int) % 10) + '-' + (index % 10)
 
 			// index =  0 : []
 			// index =  1 : [09000010000]
@@ -134,7 +134,7 @@ class SelectSpec extends SpecCommon {
 			// 1000, 1010, ... 1990
 			product.price = 1000 + index * 10
 
-			// XS, S, M, L, XL, XS, S, M, L, XL, ....
+			// XS, S, M, L, XL
 			product.productSize =
 				sizeIndex == 0 ? Size.XS :
 				sizeIndex == 1 ? Size.S  :

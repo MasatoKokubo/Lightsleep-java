@@ -63,7 +63,7 @@ public class DB2 extends Standard {
 	protected DB2() {
 		// byte[] -> SqlString
 		TypeConverter.put(typeConverterMap,
-			new TypeConverter<byte[], SqlString>(byte[].class, SqlString.class,
+			new TypeConverter<>(byte[].class, SqlString.class,
 				TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function(),
 				object -> object.parameters().length > 0
 					? object : new SqlString('B' + object.content()) // X'...' -> BX'...'

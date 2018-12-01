@@ -76,7 +76,7 @@ class VariousTypeSpce extends SpecCommon {
 			various1.id               = 1
 
 			various1.booleanPValue    = true
-			various1.char1PValue      = 'あ' as char
+			various1.char1PValue      = '¢' as char // \u00A2
 			various1.tinyIntPValue    = 0x7F
 			various1.smallIntPValue   = 0x7FFF
 			various1.intPValue        = 0x7FFF_FFFF
@@ -85,7 +85,7 @@ class VariousTypeSpce extends SpecCommon {
 			various1.doublePValue     = 1232456.123456
 
 			various1.booleanValue     = true
-			various1.char1Value       = 'い' as char
+			various1.char1Value       = '£' as char // \u00A3
 			if (connectionSupplier.database instanceof SQLServer)
 				various1.tinyIntValue = 0x00
 			else
@@ -99,8 +99,8 @@ class VariousTypeSpce extends SpecCommon {
 			various1.longDate         = new Date     (dayCal .timeInMillis)
 			various1.longTime         = new Time     (timeCal.timeInMillis)
 			various1.longTimestamp    = new Timestamp(timestampCal.timeInMillis + (int)(timestampNano / 1000_000))
-			various1.charValue        = "0123456789_\b\t\n\f\r'\\"
-			various1.varCharValue     = "0123456789_\b\t\n\f\r'\\"
+			various1.charValue        = "¢0123456789_\b\t\n\f\r'\\" // contains \u00A2
+			various1.varCharValue     = "0123456789¢_\b\t\n\f\r'\\" // contains \u00A2
 			various1.binaryValue      = [0x00, 0x01, 0x7F, 0x80, 0xFE, 0xFF] as byte[]
 			various1.varBinaryValue   = [0x00, 0x01, 0x7E, 0x7F, 0x80, 0x81, 0xFE, 0xFF] as byte[]
 			various1.textValue        = readTextFile  (new File('testdata/text.html'))
@@ -288,7 +288,7 @@ class VariousTypeSpce extends SpecCommon {
 			VariousString various1 = new VariousString()
 			various1.id               = 3
 
-			various1.char1PValue      = 'あ' as char
+			various1.char1PValue      = '¢' as char // \u00A2
 			various1.tinyIntPValue    = '' + (byte )0x7F
 			various1.smallIntPValue   = '' + (short)0x7FFF
 			various1.intPValue        = '' + (int  )0x7FFF_FFFF
@@ -296,7 +296,7 @@ class VariousTypeSpce extends SpecCommon {
 			various1.floatPValue      = '' + 123.123F
 			various1.doublePValue     = '' + 1232456.123456
 
-			various1.char1Value       = 'い'
+			various1.char1Value       = '£' as char // \u00A3
 			if (connectionSupplier.database instanceof SQLServer)
 				various1.tinyIntValue = '' + (byte)0x00
 			else
@@ -308,8 +308,8 @@ class VariousTypeSpce extends SpecCommon {
 			various1.doubleValue      = '' + -123456.123456
 
 			various1.decimalValue     = '' + new BigDecimal('1234567890.99')
-			various1.charValue        = "0123456789_\b\t\n\f\r'\\"
-			various1.varCharValue     = "0123456789_\b\t\n\f\r'\\"
+			various1.charValue        = "¢0123456789_\b\t\n\f\r'\\" // contains \u00A2
+			various1.varCharValue     = "0123456789¢_\b\t\n\f\r'\\" // contains \u00A2
 			various1.textValue        = "0123456789_\b\t\n\f\r'\\"
 
 		when:

@@ -105,40 +105,40 @@ CREATE TABLE SaleItem (
 -- Various
 DROP TABLE Various;
 CREATE TABLE Various (
-    id               NUMBER (9)      NOT NULL,
+    id               NUMBER  (9)      NOT NULL,
 
-    booleanPValue    NUMBER (1)      DEFAULT 0   NOT NULL ,
-    char1PValue      CHAR   (1 CHAR) DEFAULT ' ' NOT NULL ,
-    tinyIntPValue    NUMBER (3)      DEFAULT 0   NOT NULL ,
-    smallIntPValue   NUMBER (5)      DEFAULT 0   NOT NULL ,
-    intPValue        NUMBER(10)      DEFAULT 0   NOT NULL ,
-    bigIntPValue     NUMBER(19)      DEFAULT 0   NOT NULL ,
-    floatPValue      BINARY_FLOAT    DEFAULT 0   NOT NULL ,
-    doublePValue     BINARY_DOUBLE   DEFAULT 0   NOT NULL ,
+    booleanPValue    NUMBER  (1)      DEFAULT 0   NOT NULL ,
+    char1PValue      CHAR    (1 CHAR) DEFAULT ' ' NOT NULL ,
+    tinyIntPValue    NUMBER  (3)      DEFAULT 0   NOT NULL ,
+    smallIntPValue   NUMBER  (5)      DEFAULT 0   NOT NULL ,
+    intPValue        NUMBER (10)      DEFAULT 0   NOT NULL ,
+    bigIntPValue     NUMBER (19)      DEFAULT 0   NOT NULL ,
+    floatPValue      BINARY_FLOAT     DEFAULT 0   NOT NULL ,
+    doublePValue     BINARY_DOUBLE    DEFAULT 0   NOT NULL ,
 
-    booleanValue     NUMBER (1)     ,
-    char1Value       CHAR   (1 CHAR),
-    tinyIntValue     NUMBER (3)     ,
-    smallIntValue    NUMBER (5)     ,
-    intValue         NUMBER(10)     ,
-    bigIntValue      NUMBER(19)     ,
-    floatValue       BINARY_FLOAT   ,
-    doubleValue      BINARY_DOUBLE  ,
-    decimalValue     NUMBER(12,2)   ,
+    booleanValue     NUMBER  (1)       ,
+    char1Value       CHAR    (1 CHAR)  ,
+    tinyIntValue     NUMBER  (3)       ,
+    smallIntValue    NUMBER  (5)       ,
+    intValue         NUMBER (10)       ,
+    bigIntValue      NUMBER (19)       ,
+    floatValue       BINARY_FLOAT      ,
+    doubleValue      BINARY_DOUBLE     ,
+    decimalValue     NUMBER (12,2)     ,
 
-    longDate         NUMBER  (19)   , -- since 1.8.0
-    longTime         NUMBER  (19)   , -- since 1.8.0
-    longTimestamp    NUMBER  (19)   , -- since 1.8.0
+    longDate         NUMBER   (19)     , -- since 1.8.0
+    longTime         NUMBER   (19)     , -- since 1.8.0
+    longTimestamp    NUMBER   (19)     , -- since 1.8.0
 
-    charValue        CHAR    (20)   ,
-    varCharValue     VARCHAR2(40)   ,
+    charValue        CHAR     (20 CHAR),
+    varCharValue     VARCHAR2 (40 CHAR),
 
-    binaryValue      BLOB           , -- instead of BINARY   (20) type
-    varBinaryValue   BLOB           , -- instead of VARBINARY(40) type
+    binaryValue      BLOB              , -- instead of BINARY   (20) type
+    varBinaryValue   BLOB              , -- instead of VARBINARY(40) type
 
-    textValue        CLOB           ,
-    blobValue        BLOB           ,
-    jsonValue        CLOB           ,
+    textValue        CLOB              ,
+    blobValue        BLOB              ,
+    jsonValue        CLOB              ,
 
     PRIMARY KEY(id)
 );

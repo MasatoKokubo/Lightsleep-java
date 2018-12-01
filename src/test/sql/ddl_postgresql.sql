@@ -130,8 +130,8 @@ CREATE TABLE Various (
     longTime         BIGINT                  , -- since 1.8.0
     longTimestamp    BIGINT                  , -- since 1.8.0
 
-    charValue        CHAR   (20)             ,
-    varCharValue     VARCHAR(40)             ,
+    charValue        CHAR    (20)            ,
+    varCharValue     VARCHAR (40)            ,
 
     binaryValue      BYTEA                   , -- instead of BINARY   (20) type
     varBinaryValue   BYTEA                   , -- instead of VARBINARY(40) type

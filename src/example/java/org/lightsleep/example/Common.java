@@ -14,6 +14,10 @@ import org.lightsleep.logger.LoggerFactory;
 
 // Common
 public class Common {
+	static {
+		System.getProperties().setProperty("lightsleep.resource", "example/lightsleep");
+	}
+
 	public Common () {
 		LoggerFactory.getLogger(Common.class).info(getClass().getName());
 
