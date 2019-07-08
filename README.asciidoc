@@ -143,6 +143,6 @@ link:Tutorial.asciidoc[Tutorial]
 
 link:UserGuide.asciidoc[User's Guide]
 
-http://masatokokubo.github.io/Lightsleep/javadoc/index.html[API Specification]
+http://masatokokubo.github.io/Lightsleep-java/javadoc/index.html[API Specification]
 
 http://lightsleep.hatenablog.com/[BLOG @Hatena]

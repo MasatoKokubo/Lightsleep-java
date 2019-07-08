@@ -143,7 +143,7 @@ link:Tutorial_ja.asciidoc[チュートリアル]
 
 link:UserGuide_ja.asciidoc[ユーザー･ガイド]
 
-http://masatokokubo.github.io/Lightsleep/javadoc_ja/index.html[API仕様]
+http://masatokokubo.github.io/Lightsleep-java/javadoc_ja/index.html[API仕様]
 
 === Qiita記事
 
