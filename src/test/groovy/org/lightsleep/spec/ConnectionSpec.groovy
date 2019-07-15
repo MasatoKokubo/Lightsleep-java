@@ -19,7 +19,7 @@ import spock.lang.*
 
 // ConnectionSpec
 @Unroll
-public class ConnectionSpec extends SpecCommon {
+public class ConnectionSpec extends Base {
 	private static final int THREAD_COUNT        =   50
 	private static final long SLEEP_TIME1        =   10 // ms
 	private static final long SLEEP_TIME2        = 1000 // ms

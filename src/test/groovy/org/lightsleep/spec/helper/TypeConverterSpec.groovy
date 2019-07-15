@@ -293,6 +293,7 @@ class TypeConverterSpec extends Specification {
 	// Boolean -> Byte
 	def "TypeConverterSpec Boolean -> Byte"() {
 		DebugTrace.enter() // for Debugging
+		expect:
 			TypeConverter.convert(map, false, Byte) == (byte)0
 			TypeConverter.convert(map, true , Byte) == (byte)1
 		DebugTrace.leave() // for Debugging
@@ -756,8 +757,8 @@ class TypeConverterSpec extends Specification {
 			DebugTrace.print('e', e) // for Debugging
 
 		expect:
-			TypeConverter.convert(map, -9223372036854775808.0F, Long) == -9223372036854775808L
-			TypeConverter.convert(map,  9223372036854775807.0F, Long) ==  9223372036854775807L
+			TypeConverter.convert(map, -9223372036854775808.0F, Long) == (long)(float)(-9223372036854775807L-1L)
+			TypeConverter.convert(map,  9223372036854775807.0F, Long) == (long)(float)  9223372036854775807L
 
 		when: TypeConverter.convert(map, 9223373000000000000.0F, Long)
 		then: e = thrown ConvertException
@@ -773,8 +774,8 @@ class TypeConverterSpec extends Specification {
 			DebugTrace.print('e', e) // for Debugging
 
 		expect:
-			TypeConverter.convert(map, -9223372036854775808.0D, Long) == -9223372036854775808L
-			TypeConverter.convert(map,  9223372036854775807.0D, Long) ==  9223372036854775807L
+			TypeConverter.convert(map, -9223372036854775808.0D, Long) == (long)(double)(-9223372036854775807L-1L)
+			TypeConverter.convert(map,  9223372036854775807.0D, Long) == (long)(double)  9223372036854775807L
 
 		when: TypeConverter.convert(map, 9223372036854780000.0D, Long)
 		then: e = thrown ConvertException
@@ -790,8 +791,8 @@ class TypeConverterSpec extends Specification {
 			DebugTrace.print('e', e) // for Debugging
 
 		expect:
-			TypeConverter.convert(map, BigDecimal.valueOf(-9223372036854775808L), Long) == -9223372036854775808L
-			TypeConverter.convert(map, BigDecimal.valueOf( 9223372036854775807L), Long) ==  9223372036854775807L
+			TypeConverter.convert(map, new BigDecimal('-9223372036854775808'), Long) == (-9223372036854775807L-1L)
+			TypeConverter.convert(map, new BigDecimal( '9223372036854775807'), Long) ==   9223372036854775807L
 
 		when: TypeConverter.convert(map, new BigDecimal('9223372036854775808'), Long)
 		then: e = thrown ConvertException
@@ -820,8 +821,8 @@ class TypeConverterSpec extends Specification {
 			DebugTrace.print('e', e) // for Debugging
 
 		expect:
-			TypeConverter.convert(map, '-9223372036854775808', Long) == -9223372036854775808L
-			TypeConverter.convert(map,  '9223372036854775807', Long) ==  9223372036854775807L
+			TypeConverter.convert(map, '-9223372036854775808', Long) == (-9223372036854775807L-1L)
+			TypeConverter.convert(map,  '9223372036854775807', Long) ==   9223372036854775807L
 
 		when: TypeConverter.convert(map, '9223372036854775808', Long)
 		then: e = thrown ConvertException
@@ -1057,8 +1058,8 @@ class TypeConverterSpec extends Specification {
 	def "TypeConverterSpec Long -> BigDecimal"() {
 		DebugTrace.enter() // for Debugging
 		expect:
-			TypeConverter.convert(map, -9223372036854775808L, BigDecimal) == BigDecimal.valueOf(-9223372036854775808L)
-			TypeConverter.convert(map,  9223372036854775807L, BigDecimal) == BigDecimal.valueOf( 9223372036854775807L)
+			TypeConverter.convert(map, -9223372036854775807L-1L, BigDecimal) == new BigDecimal("-9223372036854775808")
+			TypeConverter.convert(map,  9223372036854775807L   , BigDecimal) == new BigDecimal( "9223372036854775807")
 		DebugTrace.leave() // for Debugging
 	}
 
@@ -1291,7 +1292,8 @@ class TypeConverterSpec extends Specification {
 	def "TypeConverterSpec Long -> String"() {
 		DebugTrace.enter() // for Debugging
 		expect:
-			TypeConverter.convert(map, -9223372036854775808L, String) == '-9223372036854775808'
+		//	TypeConverter.convert(map, -9223372036854775808L, String) == '-9223372036854775808'
+			TypeConverter.convert(map, -9223372036854775807L, String) == '-9223372036854775807'
 			TypeConverter.convert(map,  9223372036854775807L, String) ==  '9223372036854775807'
 		DebugTrace.leave() // for Debugging
 	}

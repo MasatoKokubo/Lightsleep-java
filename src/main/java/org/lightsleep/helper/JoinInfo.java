@@ -69,7 +69,7 @@ public class JoinInfo<JE> implements SqlEntityInfo<JE> {
 	 * @param tableAlias the alias of the joined table
 	 * @param on the join condition
 	 *
-	 * @throws NullPointerException if <b>joinType</b>, <b>entityInfo</b>, <b>tableAlias</b> or <b>on</b> is null
+	 * @throws NullPointerException if <b>joinType</b>, <b>entityInfo</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
 	 */
 	public JoinInfo(JoinType joinType, EntityInfo<JE> entityInfo, String tableAlias, Condition on) {
 		this.joinType   = Objects.requireNonNull(joinType  , "joinType");

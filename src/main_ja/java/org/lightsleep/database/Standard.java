@@ -342,6 +342,32 @@ public class Standard implements Database {
 	}
 
 	/**
+	 * SELECT SQLのカラム別名を<b>buff</b>に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b>オブジェクト
+	 * @param parameters SQLのパラメータを格納するリスト
+	 *
+	 * @since 3.1.0
+	 */
+	protected <E> void appendSelectColumnAliases(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	}
+
+	/**
+	 * SELECT SQLのカラム名を<b>buff</b>に追加します。
+	 *
+	 * @param <E> エンティティの型
+	 * @param buff 追加される文字列バッファ
+	 * @param sql <b>Sql</b>オブジェクト
+	 * @param parameters SQLのパラメータを格納するリスト
+	 *
+	 * @since 3.1.0
+	 */
+	protected <E> void appendSelectColumns(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+	}
+
+	/**
 	 * 挿入するカラム名と値を<b>buff</b>に追加します。
 	 *
 	 * @param <E> エンティティの型

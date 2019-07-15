@@ -33,7 +33,7 @@ public class GroupBy implements SqlComponent, Cloneable {
 	 * @param expression an element to be added
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>expression</b> is null
+	 * @throws NullPointerException if <b>expression</b> is <b>null</b>
 	 */
 	public GroupBy add(Expression expression) {
 		elements.add(Objects.requireNonNull(expression, "expression"));
@@ -47,7 +47,7 @@ public class GroupBy implements SqlComponent, Cloneable {
 	 * @param arguments the arguments of the expression
 	 * @return this object
 	 *
-	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @since 1.9.1
 	 */

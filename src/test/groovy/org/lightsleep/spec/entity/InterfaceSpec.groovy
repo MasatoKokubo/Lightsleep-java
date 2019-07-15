@@ -15,7 +15,7 @@ import spock.lang.*
 
 // AnnotationSpec
 @Unroll
-class InterfaceSpec extends SpecCommon {
+class InterfaceSpec extends Base {
 	@Table("super")
 	static class Contact2 extends Contact implements PreStore, PostLoad {
 		@NonColumn public int preStoreCount

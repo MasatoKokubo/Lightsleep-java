@@ -118,7 +118,7 @@ public class Utils {
 	 * @param clazz the class
 	 * @return a class name without the package name
 	 *
-	 * @throws NullPointerException if <b>clazz</b> is null
+	 * @throws NullPointerException if <b>clazz</b> is <b>null</b>
 	 */
 	public static String nameWithoutPackage(Class<?> clazz) {
 		String className = null;
@@ -146,7 +146,7 @@ public class Utils {
 	 * @param length the length of the array
 	 * @return elementType a new array of <b>elementType</b>
 	 *
-	 * @throws NullPointerException if <b>elementType</b> is null
+	 * @throws NullPointerException if <b>elementType</b> is <b>null</b>
 	 * @throws IndexOutOfBoundsException if <b>length </b>&lt; 0
 	 * @throws RuntimeException if <b>InstantiationException</b> or <b>IllegalAccessException</b> has been thrown
 	 */
@@ -260,7 +260,7 @@ public class Utils {
 	 * @param type the type of the object (permit null)
 	 * @return a string representation for the log output
 	 *
-	 * @throws NullPointerException if <b>type</b> is null
+	 * @throws NullPointerException if <b>type</b> is <b>null</b>
 	 */
 	@SuppressWarnings("rawtypes")
 	private static String toLogString(Object object, Class<?> type) {
@@ -382,7 +382,7 @@ public class Utils {
 	 * @param value a value to be appended (permit null)
 	 * @return the string buffer
 	 *
-	 * @throws NullPointerException if <b>buff</b> or <b>type</b> is null
+	 * @throws NullPointerException if <b>buff</b> or <b>type</b> is <b>null</b>
 	 */
 	@SuppressWarnings("rawtypes")
 	private static StringBuilder appendType(StringBuilder buff, Class<?> type, Object value) {
@@ -424,7 +424,7 @@ public class Utils {
 	 * @param ch a character
 	 * @return the string buffer
 	 *
-	 * @throws NullPointerException if <b>buff</b> is null
+	 * @throws NullPointerException if <b>buff</b> is <b>null</b>
 	 */
 	private static StringBuilder appendChar(StringBuilder buff, char ch) {
 		if (ch >= ' ' && ch != '\u007F') {
@@ -456,7 +456,7 @@ public class Utils {
 	 * @param string the string
 	 * @return the string buffer
 	 *
-	 * @throws NullPointerException if <b>buff</b> or <b>string</b> is null
+	 * @throws NullPointerException if <b>buff</b> or <b>string</b> is <b>null</b>
 	 */
 	private static StringBuilder appendString(StringBuilder buff, String string) {
 		buff.append('"');
@@ -479,7 +479,7 @@ public class Utils {
 	 * @param chars an array of characters
 	 * @return the string buffer
 	 *
-	 * @throws NullPointerException if <b>buff</b> or <b>chars</b> is null
+	 * @throws NullPointerException if <b>buff</b> or <b>chars</b> is <b>null</b>
 	 */
 	private static StringBuilder appendChars(StringBuilder buff, char[] chars) {
 		buff.append('"');
@@ -502,7 +502,7 @@ public class Utils {
 	 * @param bytes an array of bytes
 	 * @return the string buffer
 	 *
-	 * @throws NullPointerException if <b>buff</b> or <b>bytes</b> is null
+	 * @throws NullPointerException if <b>buff</b> or <b>bytes</b> is <b>null</b>
 	 */
 	private static StringBuilder appendBytes(StringBuilder buff, byte[] bytes) {
 		buff.append('[');
@@ -535,7 +535,7 @@ public class Utils {
 	 * @param array an array
 	 * @return the string buffer
 	 *
-	 * @throws NullPointerException if <b>buff</b> or <b>array</b> is null
+	 * @throws NullPointerException if <b>buff</b> or <b>array</b> is <b>null</b>
 	 */
 	private static StringBuilder appendArray(StringBuilder buff, Object array) {
 		Class<?> componentType = array.getClass().getComponentType();
@@ -567,7 +567,7 @@ public class Utils {
 	 * @param iterable an <b>Iterable</b>
 	 * @return the string buffer
 	 *
-	 * @throws NullPointerException if <b>buff</b> or <b>iterable</b> is null
+	 * @throws NullPointerException if <b>buff</b> or <b>iterable</b> is <b>null</b>
 	 */
 	private static StringBuilder appendIterable(StringBuilder buff, Iterable<?> iterable) {
 		Iterator<?> iter = iterable.iterator();
@@ -594,7 +594,7 @@ public class Utils {
 	 * @param map a <b>Map</b>
 	 * @return the string buffer
 	 *
-	 * @throws NullPointerException if <b>buff</b> or <b>map</b> is null
+	 * @throws NullPointerException if <b>buff</b> or <b>map</b> is <b>null</b>
 	 */
 	private static <K,V> StringBuilder appendMap(StringBuilder buff, Map<K,V> map) {
 		Iterator<Map.Entry<K,V>> iter = map.entrySet().iterator();
@@ -623,7 +623,7 @@ public class Utils {
 	 * @param annotationClass the annotation class
 	 * @return a list of annotations
 	 *
-	 * @throws NullPointerException if <b>clazz</b> or <b>annotationClass</b> is null
+	 * @throws NullPointerException if <b>clazz</b> or <b>annotationClass</b> is <b>null</b>
 	 *
 	 * @since 1.5.1
 	 */

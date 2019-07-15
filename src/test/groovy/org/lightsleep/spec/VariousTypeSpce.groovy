@@ -32,7 +32,7 @@ import spock.lang.*
 
 // VariousTypeSpce
 @Unroll
-class VariousTypeSpce extends SpecCommon {
+class VariousTypeSpce extends Base {
 	def setup() {
 		deleteAllTables()
 	}
@@ -99,8 +99,8 @@ class VariousTypeSpce extends SpecCommon {
 			various1.longDate         = new Date     (dayCal .timeInMillis)
 			various1.longTime         = new Time     (timeCal.timeInMillis)
 			various1.longTimestamp    = new Timestamp(timestampCal.timeInMillis + (int)(timestampNano / 1000_000))
-			various1.charValue        = "¢0123456789_\b\t\n\f\r'\\" // contains \u00A2
-			various1.varCharValue     = "0123456789¢_\b\t\n\f\r'\\" // contains \u00A2
+			various1.charValue        = "¢0123456789😀_\b\t\n\f\r'\\" // contains \u00A2 and \uD83D \uDE00
+			various1.varCharValue     = "😀0123456789¢_\b\t\n\f\r'\\" // contains \uD83D \uDE00 and \u00A2
 			various1.binaryValue      = [0x00, 0x01, 0x7F, 0x80, 0xFE, 0xFF] as byte[]
 			various1.varBinaryValue   = [0x00, 0x01, 0x7E, 0x7F, 0x80, 0x81, 0xFE, 0xFF] as byte[]
 			various1.textValue        = readTextFile  (new File('testdata/text.html'))
@@ -308,9 +308,9 @@ class VariousTypeSpce extends SpecCommon {
 			various1.doubleValue      = '' + -123456.123456
 
 			various1.decimalValue     = '' + new BigDecimal('1234567890.99')
-			various1.charValue        = "¢0123456789_\b\t\n\f\r'\\" // contains \u00A2
-			various1.varCharValue     = "0123456789¢_\b\t\n\f\r'\\" // contains \u00A2
-			various1.textValue        = "0123456789_\b\t\n\f\r'\\"
+			various1.charValue        = "¢0123456789😀_\b\t\n\f\r'\\" // contains \u00A2 and \uD83D \uDE00
+			various1.varCharValue     = "😀0123456789¢_\b\t\n\f\r'\\" // contains \uD83D \uDE00 and \u00A2
+			various1.textValue        = "0123456789¢_\b\t\n\f\r'\\😀" // contains \u00A2 and \uD83D \uDE00
 
 		when:
 			VariousString various2

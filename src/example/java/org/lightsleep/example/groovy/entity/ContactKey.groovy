@@ -5,14 +5,14 @@ package org.lightsleep.example.groovy.entity
 
 import org.lightsleep.entity.Key
 
-class ContactKey {
+public class ContactKey {
 	@Key
-	int id
+	public int id
 
-	ContactKey() {
+	public ContactKey() {
 	}
 
-	ContactKey(int id) {
+	public ContactKey(int id) {
 		this.id = id
 	}
 }

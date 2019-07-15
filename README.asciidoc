@@ -11,8 +11,8 @@ Lightsleep is a lightweight Object-Relational (O/R) mapping library and is avail
 - It is applicable because J2EE is unnecessary: there is no library that depends on Java Runtime and JDBC driver other than.
 - It does not need a definition file for mapping tables and Java classes with XML files.
 - Learning is easy because the library is compact.
-- Connectable to various DBMS simultaneously. **(since 2.1.0)**
-- Various connection pool libraries can be used simultaneously. **(since 2.1.0)**
+- Connectable to various DBMS simultaneously.
+- Various connection pool libraries can be used simultaneously.
 - You can select from various logging libraries when outputting internal logs.
 
 === Supported DBMS
@@ -35,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.lightsleep:lightsleep:3.0.0'
+    compile 'org.lightsleep:lightsleep:3.1.0'
 }
 ----
 
@@ -76,20 +76,20 @@ import java.sql.Timestamp
 import org.lightsleep.entity.*
 
 class Contact {
-	@Key
-	int    id
-	String lastName
-	String firstName
-	Date   birthday
+    @Key
+    int       id
+    String    lastName
+    String    firstName
+    LocalDate birthday
 
-	@Insert('0') @Update('{updateCount}+1')
-	int updateCount
+    @Insert('0') @Update('{updateCount}+1')
+    int updateCount
 
-	@Insert('CURRENT_TIMESTAMP') @NonUpdate
-	Timestamp createdTime
+    @Insert('CURRENT_TIMESTAMP') @NonUpdate
+    Timestamp createdTime
 
-	@Insert('CURRENT_TIMESTAMP') @Update('CURRENT_TIMESTAMP')
-	Timestamp updatedTime
+    @Insert('CURRENT_TIMESTAMP') @Update('CURRENT_TIMESTAMP')
+    Timestamp updatedTime
 }
 ----
 
@@ -100,11 +100,12 @@ class Contact {
 ----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn ->
-    new Sql<>(Contact.class).connection(conn)
+    new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
         .or   ("{lastName}={}", "Orange")
         .orderBy("{lastName}")
         .orderBy("{firstName}")
+        .connection(conn)
         .select(contacts::add)
 );
 ----
@@ -114,11 +115,12 @@ Transaction.execute(conn ->
 ----
 List<Contact> contacts = []
 Transaction.execute {
-    new Sql<>(Contact).connection(it)
+    new Sql<>(Contact)
         .where('{lastName}={}', 'Apple')
         .or   ('{lastName}={}', 'Orange')
         .orderBy('{lastName}')
         .orderBy('{firstName}')
+        .connection(it)
         .select({contacts << it})
 }
 ----
@@ -126,7 +128,10 @@ Transaction.execute {
 [source,sql]
 .Generated SQL
 ----
-SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange' ORDER BY lastName ASC, firstName ASC
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
+  FROM Contact
+  WHERE lastName='Apple' OR lastName='Orange'
+  ORDER BY lastName ASC, firstName ASC
 ----
 
 === License

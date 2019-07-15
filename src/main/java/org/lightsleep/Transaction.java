@@ -79,7 +79,7 @@ public interface Transaction {
 	 *
 	 * @param transaction the <b>Transaction</b> object
 	 *
-	 * @throws NullPointerException if <b>transaction</b> is null
+	 * @throws NullPointerException if <b>transaction</b> is <b>null</b>
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
 	static void execute(Transaction transaction) {
@@ -107,7 +107,7 @@ public interface Transaction {
 	 * @param connectionSupplier a <b>ConnectionSupplier</b> object
 	 * @param transaction the <b>Transaction</b> object
 	 *
-	 * @throws NullPointerException if <b>connectionSupplier</b> or <b>transaction</b> is null
+	 * @throws NullPointerException if <b>connectionSupplier</b> or <b>transaction</b> is <b>null</b>
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 *
 	 * @since 1.5.0

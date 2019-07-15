@@ -164,7 +164,7 @@ class AnnotationSpec extends Specification {
 		then:
 			selectSql1.startsWith("SELECT ")
 			selectSql1.indexOf("FROM TestEntity1") >= 0
-			selectSql1.indexOf("key, c1, c2, _c3_, c4 * 4 AS c4, c6, c7, c9") >= 0
+			selectSql1.indexOf("key, c1, c2, _c3_, c4 * 4 c4, c6, c7, c9") >= 0
 
 		when: def insertSql1 = Standard.instance.insertSql(sql1, new ArrayList<Object>())
 		then:
@@ -198,7 +198,7 @@ class AnnotationSpec extends Specification {
 		then:
 			selectSql.startsWith("SELECT ")
 			selectSql.indexOf("FROM TestEntity1") >= 0
-			selectSql.indexOf("key, c1, c2, _c3_, c4 * 4 AS c4, c6, c7, c9, key2, c11, c12, _c13_, c14 * 14 AS c14, c16, c17, c19") >= 0
+			selectSql.indexOf("key, c1, c2, _c3_, c4 * 4 c4, c6, c7, c9, key2, c11, c12, _c13_, c14 * 14 c14, c16, c17, c19") >= 0
 
 		when: def insertSql = Standard.instance.insertSql(sql, new ArrayList<Object>())
 		then:
@@ -226,7 +226,7 @@ class AnnotationSpec extends Specification {
 		then:
 			selectSql.startsWith("SELECT ")
 			selectSql.indexOf("FROM TestEntity1") >= 0
-			selectSql.indexOf("key, c1, c2, _c3_, c4 * 4 AS c4, c6, c7, c9, key2, key3, c11, c12, _c13_, c14 * 14 AS c14, c16, c17, c19, c21, c22, _c23_, c24 * 24 AS c24, c26, c27, c29") >= 0
+			selectSql.indexOf("key, c1, c2, _c3_, c4 * 4 c4, c6, c7, c9, key2, key3, c11, c12, _c13_, c14 * 14 c14, c16, c17, c19, c21, c22, _c23_, c24 * 24 c24, c26, c27, c29") >= 0
 
 		when: def insertSql = Standard.instance.insertSql(sql, new ArrayList<Object>())
 		then:

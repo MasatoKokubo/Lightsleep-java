@@ -39,7 +39,7 @@ public interface PreInsert {
 	 * @param conn the connection wrapper
 	 * @return the number of inserted rows
 	 *
-	 * @throws NullPointerException if <b>conn</b> is null
+	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
 	 */
 	int preInsert(ConnectionWrapper conn);
 }

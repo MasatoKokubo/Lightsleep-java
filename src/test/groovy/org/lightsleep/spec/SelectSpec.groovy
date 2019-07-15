@@ -18,7 +18,7 @@ import spock.lang.*
 
 // SelectSpec
 @Unroll
-class SelectSpec extends SpecCommon {
+class SelectSpec extends Base {
 	@Shared Calendar birthdayStart
 	@Shared Calendar saleDateStart
 
@@ -125,8 +125,8 @@ class SelectSpec extends SpecCommon {
 		(0..<100).each {index ->
 			Product product = new Product()
 
-			int sizeIndex = index % 5
-			int colorIndex = index % colors.size()
+			def sizeIndex = index % 5
+			def colorIndex = index % colors.size()
 
 			// Product0, Product1, ... Product99
 			product.productName = 'Product' + index

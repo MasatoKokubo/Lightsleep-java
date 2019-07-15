@@ -131,7 +131,7 @@ public class Resource {
 	 * @param propertyKey the key of resource property
 	 * @return the string value of resource property
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> is <b>null</b>
 	 * @throws MissingResourceException if the property dose not found
 	 */
 	private String get(String propertyKey) {
@@ -221,7 +221,7 @@ public class Resource {
 	 * @param valueConverter function to convert string to return value
 	 * @return the value of resource property
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> or <b>valueConverter</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> or <b>valueConverter</b> is <b>null</b>
 	 * @throws MissingResourceException if the property dose not found
 	 *
 	 * @since 1.8.6
@@ -239,7 +239,7 @@ public class Resource {
 	 * @param defaultValue the default value
 	 * @return the value of resource property (or defaultValue if not found in properties file)
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> or <b>valueConverter</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> or <b>valueConverter</b> is <b>null</b>
 	 *
 	 * @since 1.8.6
 	 */
@@ -258,7 +258,7 @@ public class Resource {
 	 * @param propertyKey the key of resource property
 	 * @return the string value of resource property (or defaultValue if not found in properties file)
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> is <b>null</b>
 	 * @throws MissingResourceException if the property dose not found
 	 *
 	 * @since 1.8.6
@@ -274,7 +274,7 @@ public class Resource {
 	 * @param defaultValue the default value
 	 * @return the string value of resource property (or defaultValue if not found in properties file)
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> is <b>null</b>
 	 *
 	 * @since 1.8.6
 	 */
@@ -288,7 +288,7 @@ public class Resource {
 	 * @param propertyKey the key of resource property
 	 * @return the int value of resource property
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> is <b>null</b>
 	 * @throws MissingResourceException if the property dose not found
 	 * @throws NumberFormatException if the value can not convert to int
 	 *
@@ -305,7 +305,7 @@ public class Resource {
 	 * @param defaultValue the default value
 	 * @return the int value of resource property (or defaultValue if not found in properties file)
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> is <b>null</b>
 	 * @throws NumberFormatException if the value can not convert to int
 	 *
 	 * @since 1.8.6
@@ -323,7 +323,7 @@ public class Resource {
 	 * @param valueConverter the function to convert string to element type
 	 * @return a created list (or an empty list)
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> or <b>valueConverter</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> or <b>valueConverter</b> is <b>null</b>
 	 *
 	 * @since 1.8.6
 	 */
@@ -351,7 +351,7 @@ public class Resource {
 	 * @param propertyKey the key of resource property
 	 * @return a created string list (or an empty list)
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> is <b>null</b>
 	 *
 	 * @since 1.8.6
 	 */
@@ -369,7 +369,7 @@ public class Resource {
 	 * @param valueConverter the function that converts string to the value type of the map
 	 * @return a created map (or an empty map)
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b>, <b>keyConverter</b> or <b>valueConverter</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b>, <b>keyConverter</b> or <b>valueConverter</b> is <b>null</b>
 	 *
 	 * @since 1.8.6
 	 */
@@ -403,7 +403,7 @@ public class Resource {
 	 * @param propertyKey the key of resource property
 	 * @return a created map (or an empty map)
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> is <b>null</b>
 	 * @throws NumberFormatException if the value can not convert to int
 	 *
 	 * @since 1.8.6
@@ -419,7 +419,7 @@ public class Resource {
 	 * @param propertyKey the key of resource property
 	 * @return a created map (or an empty map)
 	 *
-	 * @throws NullPointerException if <b>propertyKey</b> is null
+	 * @throws NullPointerException if <b>propertyKey</b> is <b>null</b>
 	 *
 	 * @since 1.8.6
 	 */

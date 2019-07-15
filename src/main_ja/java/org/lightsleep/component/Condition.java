@@ -61,9 +61,29 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException <b>content</b>, <b>outerSql</b>または<b>subSql</b>が<b>null</b>の場合
 	 *
+	 * @see #of(Sql, Sql, String)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	static <E, SE> Condition of(String content, Sql<E> outerSql, Sql<SE> subSql) {
+		return null;
+	}
+
+	/**
+	 * サブクエリ条件を生成して返します。
+	 *
+	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
+	 * @param <SE> サブクエリの対象テーブルに対応するエンティティの型
+	 * @param outerSql 外側のSqlオブジェクト
+	 * @param content サブクエリのSELECT 文より左部分の式の文字列内容
+	 * @param subSql サブクエリ用のSqlオブジェクト
+	 * @return サブクエリ条件
+	 *
+	 * @throws NullPointerException <b>outerSql</b>, <b>subSql</b>または<b>content</b>が<b>null</b>の場合
+	 *
+	 * @see #of(String, Sql, Sql)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
+	 */
+	static <E, SE> Condition of(Sql<E> outerSql, Sql<SE> subSql, String content) {
 		return null;
 	}
 
@@ -113,6 +133,24 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
+	 * (この条件 AND 指定のエンティティ条件)を返します。
+	 *
+	 * @param <K> エンティティの型
+	 * @param entity エンティティ条件のエンティティ
+	 *
+	 * @return この条件 AND 指定の条件
+	 *
+	 * @throws NullPointerException <b>entity</b>が<b>null</b>の場合
+	 *
+	 * @since 3.1.0
+	 * @see And#And(Condition...)
+	 * @see EntityCondition#EntityCondition(Object)
+	 */
+	default <K> Condition and(K entity) {
+		return null;
+	}
+
+	/**
 	 * (この条件 AND 指定の条件)を返します。
 	 *
 	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
@@ -124,12 +162,36 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException <b>content</b>, <b>outerSql</b>または<b>subSql</b>が<b>null</b>の場合
 	 *
+	 * @see #and(Sql, Sql, String)
 	 * @see And#And(Condition...)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 * @see Expression#Expression(String, Object...)
 	 * @see LogicalCondition#optimized()
 	 */
 	default <E, SE> Condition and(String content, Sql<E> outerSql, Sql<SE> subSql) {
+		return null;
+	}
+
+	/**
+	 * (この条件 AND 指定の条件)を返します。
+	 *
+	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
+	 * @param <SE> サブクエリの対象テーブルに対応するエンティティの型
+	 * @param outerSql 外側のSqlオブジェクト
+	 * @param subSql サブクエリ用のSqlオブジェクト
+	 * @param content サブクエリのSELECT 文より右部分の式の文字列内容
+	 * @return この条件 AND 指定の条件
+	 *
+	 * @throws NullPointerException <b>content</b>, <b>outerSql</b>または<b>subSql</b>が<b>null</b>の場合
+	 *
+	 * @since 3.1.0
+	 * @see #and(String, Sql, Sql)
+	 * @see And#And(Condition...)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
+	 * @see Expression#Expression(String, Object...)
+	 * @see LogicalCondition#optimized()
+	 */
+	default <E, SE> Condition and(Sql<E> outerSql, Sql<SE> subSql, String content) {
 		return null;
 	}
 
@@ -166,6 +228,24 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
+	 * (この条件 OR 指定のエンティティ条件)を返します。
+	 *
+	 * @param <K> エンティティの型
+	 * @param entity エンティティ条件のエンティティ
+	 *
+	 * @return この条件 AND 指定の条件
+	 *
+	 * @throws NullPointerException <b>entity</b>が<b>null</b>の場合
+	 *
+	 * @since 3.1.0
+	 * @see Or#Or(Condition...)
+	 * @see EntityCondition#EntityCondition(Object)
+	 */
+	default <K> Condition or(K entity) {
+		return null;
+	}
+
+	/**
 	 * (この条件 OR 指定の条件)を返します。
 	 *
 	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
@@ -177,12 +257,36 @@ public interface Condition extends SqlComponent {
 	 *
 	 * @throws NullPointerException <b>content</b>, <b>outerSql</b>または<b>subSql</b>が<b>null</b>の場合
 	 *
+	 * @see #or(Sql, Sql, String)
 	 * @see Or#Or(Condition...)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 * @see Expression#Expression(String, Object...)
 	 * @see LogicalCondition#optimized()
 	 */
 	default <E, SE> Condition or(String content, Sql<E> outerSql, Sql<SE> subSql) {
+		return null;
+	}
+
+	/**
+	 * (この条件 OR 指定の条件)を返します。
+	 *
+	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
+	 * @param <SE> サブクエリの対象テーブルに対応するエンティティの型
+	 * @param outerSql 外側のSqlオブジェクト
+	 * @param subSql サブクエリ用のSqlオブジェクト
+	 * @param content サブクエリのSELECT 文より右部分の式の文字列内容
+	 * @return この条件 OR 指定の条件
+	 *
+	 * @throws NullPointerException <b>outerSql</b>, <b>subSql</b>または<b>content</b>が<b>null</b>の場合
+	 *
+	 * @since 3.1.0
+	 * @see #or(String, Sql, Sql)
+	 * @see Or#Or(Condition...)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
+	 * @see Expression#Expression(String, Object...)
+	 * @see LogicalCondition#optimized()
+	 */
+	default <E, SE> Condition or(Sql<E> outerSql, Sql<SE> subSql, String content) {
 		return null;
 	}
 

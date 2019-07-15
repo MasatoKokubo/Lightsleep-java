@@ -6,14 +6,14 @@ package org.lightsleep.example.groovy.entity2
 import org.lightsleep.entity.Key
 
 // PersonKey
-class PersonKey {
+public class PersonKey {
 	@Key
-	int id
+	public int id
 
-	PersonKey() {
+	public PersonKey() {
 	}
 
-	PersonKey(int id) {
+	public PersonKey(int id) {
 		this.id = id
 	}
 }

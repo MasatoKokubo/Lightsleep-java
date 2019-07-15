@@ -202,7 +202,8 @@ public class Example1 {
         try {
             List<Contact> contacts = new ArrayList<>();
             Transaction.execute(conn -> {
-                new Sql<>(Contact.class).connection(conn)
+                new Sql<>(Contact.class)
+                    .connection(conn)
                     .select(contacts::add);
             });
 

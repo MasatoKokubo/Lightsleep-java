@@ -39,7 +39,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 		 * @param content the content of the expression
 		 * @param arguments arguments embedded in the expression
 		 *
-		 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
+		 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
 		 */
 		public Element(String content, Object... arguments) {
 			super(content, arguments);
@@ -114,7 +114,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 	 * @param element an element to be added
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>element</b> is null
+	 * @throws NullPointerException if <b>element</b> is <b>null</b>
 	 */
 	public OrderBy add(Element element) {
 		elements.add(Objects.requireNonNull(element, "element"));
@@ -128,7 +128,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 	 * @param arguments the arguments of the expression
 	 * @return this object
 	 *
-	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @since 1.9.1
 	 */

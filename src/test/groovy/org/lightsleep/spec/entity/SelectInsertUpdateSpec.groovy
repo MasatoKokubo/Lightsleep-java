@@ -110,10 +110,10 @@ class SelectInsertUpdateSpec extends Specification {
 		DebugTrace.leave() // for Debugging
 		where:
 			type    |no|entityClass|expectedSql
-			'Select'|1 |Entity1    |'SELECT key, c0, 1+10 AS c1, 2+20 AS c2, 3+20 AS c3 FROM Entity1 WHERE key=-1'
-			'Select'|2 |Entity2    |'SELECT key, c0, 1+10 AS c1, 2+20 AS c2, 3+20 AS c3 FROM Entity2 WHERE key=-1'
-			'Select'|3 |Entity3    |'SELECT key, c0, 1+10 AS c1 FROM Entity3 WHERE key=-1'
-			'Select'|4 |Entity4    |'SELECT key, c0, 1+20 AS c1 FROM Entity4 WHERE key=-1'
+			'Select'|1 |Entity1    |'SELECT key, c0, 1+10 c1, 2+20 c2, 3+20 c3 FROM Entity1 WHERE key=-1'
+			'Select'|2 |Entity2    |'SELECT key, c0, 1+10 c1, 2+20 c2, 3+20 c3 FROM Entity2 WHERE key=-1'
+			'Select'|3 |Entity3    |'SELECT key, c0, 1+10 c1 FROM Entity3 WHERE key=-1'
+			'Select'|4 |Entity4    |'SELECT key, c0, 1+20 c1 FROM Entity4 WHERE key=-1'
 			'Select'|5 |Entity5    |'SELECT key, c0, c1 FROM Entity5 WHERE key=-1'
 
 			'Insert'|1 |Entity1    |'INSERT INTO Entity1 (key, c0, c1, c2, c3) VALUES (-1, 0, 1-10, 2-20, 3-20)'

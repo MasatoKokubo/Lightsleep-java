@@ -7,21 +7,21 @@ import java.sql.Date
 import java.sql.Timestamp
 
 // PersonBase
-class PersonBase extends PersonKey {
-	static class Name {
-		String first
-		String last
+public class PersonBase extends PersonKey {
+	public static class Name {
+		private String first
+		private String last
 	}
-	final Name name = new Name()
-	Date birthday
-	int updateCount
-	Timestamp createdTime
-	Timestamp updatedTime
+	private final Name name = new Name()
+	private Date birthday
+	private int updateCount
+	private Timestamp createdTime
+	private Timestamp updatedTime
 
-	PersonBase() {
+	public PersonBase() {
 	}
 
-	PersonBase(int id) {
+	public PersonBase(int id) {
 		super(id)
 	}
 }

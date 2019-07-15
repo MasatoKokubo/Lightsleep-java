@@ -131,7 +131,8 @@ CREATE TABLE Various (
     longTime         BIGINT        , -- since 1.8.0
     longTimestamp    BIGINT        , -- since 1.8.0
 
-    charValue        GRAPHIC   (20),
+--  charValue        GRAPHIC   (20),
+    charValue        GRAPHIC   (21),
     varCharValue     VARGRAPHIC(40),
 
     binaryValue      BLOB      (20), -- instead of BINARY   (20) type

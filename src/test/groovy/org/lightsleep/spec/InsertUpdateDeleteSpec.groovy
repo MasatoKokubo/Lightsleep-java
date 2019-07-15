@@ -18,7 +18,7 @@ import spock.lang.*
 
 // InsertUpdateDeleteSpec
 @Unroll
-class InsertUpdateDeleteSpec extends SpecCommon {
+class InsertUpdateDeleteSpec extends Base {
 	def setup() {
 		deleteAllTables()
 	}

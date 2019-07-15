@@ -45,21 +45,24 @@ class SqlSpec extends Specification {
 	}
 
 	// Sql.getEntityInfo(Class<E>)
-	def "SqlSpec getEntityInfo - exception"() {
+	def "SqlSpec getEntityInfo - NullPointerException"() {
 		DebugTrace.enter() // for Debugging
 		when: Sql.getEntityInfo(null)
-		then: thrown NullPointerException
+		then: def e = thrown NullPointerException
+			DebugTrace.print("e", e)
 		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.Sql(Class<E>), Sql.Sql(Sql)
-	def "SqlSpec constructor - exception"() {
+	def "SqlSpec constructor - NullPointerException"() {
 		DebugTrace.enter() // for Debugging
 		when: new Sql<>(null as Class<Contact>)
-		then: thrown NullPointerException
+		then: def e = thrown NullPointerException
+			DebugTrace.print("e", e)
 
 		when: new Sql<>(Contact, null)
-		then: thrown NullPointerException
+		then: e = thrown NullPointerException
+			DebugTrace.print("e", e)
 		DebugTrace.leave() // for Debugging
 	}
 
@@ -96,7 +99,7 @@ class SqlSpec extends Specification {
 			new Sql<>(Contact).distinct().isDistinct()
 
 		when: def selectSql = database.selectSql(new Sql<>(Contact).distinct(), [])
-			DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql) // for Debugging
+			DebugTrace.print(database.getClass().simpleName + ': ', selectSql) // for Debugging
 		then: selectSql.startsWith('SELECT DISTINCT id,')
 
 		DebugTrace.leave() // for Debugging
@@ -105,74 +108,520 @@ class SqlSpec extends Specification {
 			databaseName = database.getClass().simpleName
 	}
 
+	// 3.1.0
+	// Sql tableAlias from, union
+	def "SqlSpec tableAlias from, union"() {
+		DebugTrace.enter() // for Debugging
+		def sql = null as Sql<Contact>
+
+		// tableAlias from(from)
+		when:
+			sql = new Sql<>(Contact).from(new Sql<>(Contact).from(new Sql<>(Contact)))
+		then:
+			sql.tableAlias()           == ''
+			sql.from.tableAlias()      == ''
+			sql.from.from.tableAlias() == ''
+
+		// tableAlias from(from)
+		when:
+			sql = new Sql<>(Contact, 'C').from(new Sql<>(Contact).from(new Sql<>(Contact)))
+		then:
+			sql.tableAlias()           == 'C'
+			sql.from.tableAlias()      == 'C'
+			sql.from.from.tableAlias() == 'C'
+
+		// from tableAlias(from)
+		when:
+			sql = new Sql<>(Contact).from(new Sql<>(Contact, 'C').from(new Sql<>(Contact)))
+		then:
+			sql.tableAlias()           == 'C'
+			sql.from.tableAlias()      == 'C'
+			sql.from.from.tableAlias() == 'C'
+
+		// from(from tableAlias)
+		when:
+			sql = new Sql<>(Contact).from(new Sql<>(Contact).from(new Sql<>(Contact, 'C')))
+		then:
+			sql.tableAlias()           == 'C'
+			sql.from.tableAlias()      == 'C'
+			sql.from.from.tableAlias() == 'C'
+
+		// union(union)
+		when:
+			sql = new Sql<>(Contact)
+				.union(new Sql<>(Contact)
+					.union(new Sql<>(Contact))
+					.union(new Sql<>(Contact))
+				)
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+				)
+		then:
+			sql.tableAlias()                           == ''
+			sql.unionSqls[0].tableAlias()              == ''
+			sql.unionSqls[0].unionSqls[0].tableAlias() == ''
+			sql.unionSqls[0].unionSqls[1].tableAlias() == ''
+			sql.unionSqls[1].tableAlias()              == ''
+			sql.unionSqls[1].unionSqls[0].tableAlias() == ''
+			sql.unionSqls[1].unionSqls[1].tableAlias() == ''
+
+		// tableAlias union(union)
+		when:
+			sql = new Sql<>(Contact, 'C')
+				.union(new Sql<>(Contact)
+					.union(new Sql<>(Contact))
+					.union(new Sql<>(Contact))
+				)
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+				)
+		then:
+			sql.tableAlias()                           == 'C'
+			sql.unionSqls[0].tableAlias()              == 'C'
+			sql.unionSqls[0].unionSqls[0].tableAlias() == 'C'
+			sql.unionSqls[0].unionSqls[1].tableAlias() == 'C'
+			sql.unionSqls[1].tableAlias()              == 'C'
+			sql.unionSqls[1].unionSqls[0].tableAlias() == 'C'
+			sql.unionSqls[1].unionSqls[1].tableAlias() == 'C'
+
+		// union tableAlias(union)
+		when:
+			sql = new Sql<>(Contact)
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+				)
+				.union(new Sql<>(Contact, 'C')
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+				)
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+				)
+		then:
+			sql.tableAlias()                           == 'C'
+			sql.unionSqls[0].tableAlias()              == 'C'
+			sql.unionSqls[0].unionSqls[0].tableAlias() == 'C'
+			sql.unionSqls[0].unionSqls[1].tableAlias() == 'C'
+			sql.unionSqls[0].unionSqls[2].tableAlias() == 'C'
+			sql.unionSqls[1].tableAlias()              == 'C'
+			sql.unionSqls[1].unionSqls[0].tableAlias() == 'C'
+			sql.unionSqls[1].unionSqls[1].tableAlias() == 'C'
+			sql.unionSqls[1].unionSqls[2].tableAlias() == 'C'
+			sql.unionSqls[2].tableAlias()              == 'C'
+			sql.unionSqls[2].unionSqls[0].tableAlias() == 'C'
+			sql.unionSqls[2].unionSqls[1].tableAlias() == 'C'
+			sql.unionSqls[2].unionSqls[2].tableAlias() == 'C'
+
+		// union tableAlias(union)
+		when:
+			sql = new Sql<>(Contact)
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+				)
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact, 'C'))
+					.unionAll(new Sql<>(Contact))
+				)
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+					.unionAll(new Sql<>(Contact))
+				)
+		then:
+			sql.tableAlias()                           == 'C'
+			sql.unionSqls[0].tableAlias()              == 'C'
+			sql.unionSqls[0].unionSqls[0].tableAlias() == 'C'
+			sql.unionSqls[0].unionSqls[1].tableAlias() == 'C'
+			sql.unionSqls[0].unionSqls[2].tableAlias() == 'C'
+			sql.unionSqls[1].tableAlias()              == 'C'
+			sql.unionSqls[1].unionSqls[0].tableAlias() == 'C'
+			sql.unionSqls[1].unionSqls[1].tableAlias() == 'C'
+			sql.unionSqls[1].unionSqls[2].tableAlias() == 'C'
+			sql.unionSqls[2].tableAlias()              == 'C'
+			sql.unionSqls[2].unionSqls[0].tableAlias() == 'C'
+			sql.unionSqls[2].unionSqls[1].tableAlias() == 'C'
+			sql.unionSqls[2].unionSqls[2].tableAlias() == 'C'
+
+		DebugTrace.leave() // for Debugging
+	}
+
+	// 3.1.0
 	// Sql.columns(String...)
 	// Sql.getColumns()
-	def "SqlSpec columns getColumns 1"() {
+	def "SqlSpec columns from getColumns"() {
 		DebugTrace.enter() // for Debugging
-		expect:
-			new Sql<>(Contact).columns == [] as Set
+		def sql = null as Sql<Contact>
 
-			new Sql<>(Contact)
-				.columns('name.last', 'name.first')
-				.columns == ['name.last', 'name.first'] as Set
+		// getColumns()
+		when:
+			sql = new Sql<>(Contact)
+		then:
+			sql.columns == [] as Set
 
-		when: new Sql<>(Contact).columns((String[])null)
-		then: thrown NullPointerException
+		// columns
+		// from(from)
+		when:
+			sql = new Sql<>(Contact)
+				.columns('name.first', 'name.last')
+				.from(new Sql<>(Contact).from(new Sql<>(Contact)))
+		then:
+			sql.columns           == ['name.first', 'name.last'] as Set
+			sql.from.columns      == ['name.first', 'name.last'] as Set
+			sql.from.from.columns == ['name.first', 'name.last'] as Set
+
+		// from(from)
+		// columns
+		when:
+			sql = new Sql<>(Contact)
+				.from(new Sql<>(Contact).from(new Sql<>(Contact)))
+				.columns('name.first', 'name.last')
+		then:
+			sql.columns           == ['name.first', 'name.last'] as Set
+			sql.from.columns      == ['name.first', 'name.last'] as Set
+			sql.from.from.columns == ['name.first', 'name.last'] as Set
+
+		// from(columns, from)
+		when:
+			sql = new Sql<>(Contact)
+				.from(new Sql<>(Contact)
+					.columns('name.first', 'name.last')
+					.from(new Sql<>(Contact))
+				)
+		then:
+			sql.columns           == ['name.first', 'name.last'] as Set
+			sql.from.columns      == ['name.first', 'name.last'] as Set
+			sql.from.from.columns == ['name.first', 'name.last'] as Set
+
+		// from(from, columns)
+		when:
+			sql = new Sql<>(Contact)
+				.from(new Sql<>(Contact)
+					.from(new Sql<>(Contact))
+					.columns('name.first', 'name.last')
+				)
+		then:
+			sql.columns           == ['name.first', 'name.last'] as Set
+			sql.from.columns      == ['name.first', 'name.last'] as Set
+			sql.from.from.columns == ['name.first', 'name.last'] as Set
+
+		// from(from(columns)
+		when:
+			sql = new Sql<>(Contact)
+				.from(new Sql<>(Contact)
+					.from(new Sql<>(Contact)
+						.columns('name.first', 'name.last')
+					)
+				)
+		then:
+			sql.columns           == ['name.first', 'name.last'] as Set
+			sql.from.columns      == ['name.first', 'name.last'] as Set
+			sql.from.from.columns == ['name.first', 'name.last'] as Set
+
+		DebugTrace.leave() // for Debugging
+	}
+
+	// 3.1.0
+	// Sql.columns(String...)
+	// Sql.getColumns()
+	def "SqlSpec columns union(), unionAll, getColumns"() {
+		DebugTrace.enter() // for Debugging
+		def sql = null as Sql<Contact>
+
+		// union(union(from), union(from))
+		// columns
+		// union(unionAll(from), unionAll(from))
+		when:
+			sql = new Sql<>(Contact)
+				.union(new Sql<>(Contact)
+					.union(new Sql<>(Contact).from(new Sql<>(Contact)))
+					.union(new Sql<>(Contact).from(new Sql<>(Contact)))
+				)
+				.columns('name.first', 'name.last')
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact).from(new Sql<>(Contact)))
+					.unionAll(new Sql<>(Contact).from(new Sql<>(Contact)))
+				)
+		then:
+			sql.columns                                == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].columns                   == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[0].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[0].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[1].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[1].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].columns                   == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[0].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[0].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[1].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[1].from.columns == ['name.first', 'name.last'] as Set
+
+		// union(union(from), columns, union)(from)
+		// union(unionAll(from), unionAll(from))
+		when:
+			sql = new Sql<>(Contact)
+				.union(new Sql<>(Contact)
+					.union(new Sql<>(Contact).from(new Sql<>(Contact)))
+					.columns('name.first', 'name.last')
+					.union(new Sql<>(Contact).from(new Sql<>(Contact)))
+				)
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact).from(new Sql<>(Contact)))
+					.unionAll(new Sql<>(Contact).from(new Sql<>(Contact)))
+				)
+		then:
+			sql.columns                                == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].columns                   == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[0].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[0].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[1].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[1].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].columns                   == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[0].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[0].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[1].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[1].from.columns == ['name.first', 'name.last'] as Set
+
+		// union(union(from), union)(from)
+		// union(unionAll(from), unionAll(from, column))
+		when:
+			sql = new Sql<>(Contact)
+				.union(new Sql<>(Contact)
+					.union(new Sql<>(Contact).from(new Sql<>(Contact)))
+					.union(new Sql<>(Contact).from(new Sql<>(Contact)))
+				)
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact).from(new Sql<>(Contact)))
+					.unionAll(new Sql<>(Contact).from(new Sql<>(Contact)).columns('name.first', 'name.last'))
+				)
+		then:
+			sql.columns                                == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].columns                   == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[0].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[0].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[1].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[1].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].columns                   == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[0].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[0].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[1].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[1].from.columns == ['name.first', 'name.last'] as Set
+
+		// union(union(from), union)(from)
+		// union(unionAll(from), unionAll(from(column)))
+		when:
+			sql = new Sql<>(Contact)
+				.union(new Sql<>(Contact)
+					.union(new Sql<>(Contact).from(new Sql<>(Contact)))
+					.union(new Sql<>(Contact).from(new Sql<>(Contact)))
+				)
+				.union(new Sql<>(Contact)
+					.unionAll(new Sql<>(Contact).from(new Sql<>(Contact)))
+					.unionAll(new Sql<>(Contact).from(new Sql<>(Contact).columns('name.first', 'name.last')))
+				)
+		then:
+			sql.columns                                == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].columns                   == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[0].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[0].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[1].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[0].unionSqls[1].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].columns                   == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[0].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[0].from.columns == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[1].columns      == ['name.first', 'name.last'] as Set
+			sql.unionSqls[1].unionSqls[1].from.columns == ['name.first', 'name.last'] as Set
+
+		DebugTrace.leave() // for Debugging
+	}
+
+	// 3.1.0
+	// Sql.columns from - NullPointerException
+	def "SqlSpec columns - NullPointerException"() {
+		DebugTrace.enter() // for Debugging
+		// Sql.columns(String...)
+		when: new Sql<>(Contact).columns(null as String[])
+		then: def e = thrown NullPointerException
+			DebugTrace.print("e", e)
+
+		// Sql.columns(null as Collection)
+		when: new Sql<>(Contact).columns(null as Collection<String>)
+		then: e = thrown NullPointerException
+			DebugTrace.print("e", e)
+	}
+
+	// 3.1.0
+	// Sql.columns from - IllegalStateException
+	def "SqlSpec columns from - IllegalStateException"() {
+		DebugTrace.enter() // for Debugging
+		// Sql.columns, from(columns)
+		when: new Sql<>(Contact)
+			.columns('first', 'last')
+			.from(new Sql<>(Contact).columns('first'))
+		then: def e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
+		// Sql.from(columns) columns
+		when: new Sql<>(Contact)
+			.from(new Sql<>(Contact).columns('first'))
+			.columns('first', 'last')
+		then: e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
+		// Sql.columns from(from(columns))
+		when: new Sql<>(Contact)
+			.columns('first', 'last')
+			.from(new Sql<>(Contact)
+				.from(new Sql<>(Contact).columns('first'))
+			)
+		then: e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
+		// Sql.from(from(columns)) columns
+		when: new Sql<>(Contact)
+			.from(new Sql<>(Contact)
+				.from(new Sql<>(Contact).columns('first'))
+			)
+			.columns('first', 'last')
+		then: e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
+		// Sql.from(columns from(columns))
+		when: new Sql<>(Contact)
+			.from(new Sql<>(Contact)
+				.columns('first', 'last')
+				.from(new Sql<>(Contact).columns('first'))
+			)
+		then: e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
+		// Sql.from(from(columns) columns)
+		when: new Sql<>(Contact)
+			.from(new Sql<>(Contact)
+				.from(new Sql<>(Contact).columns('first'))
+				.columns('first', 'last')
+			)
+		then: e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
+		DebugTrace.leave() // for Debugging
+	}
+
+	// 3.1.0
+	// Sql.columns union IllegalStateException
+	def "SqlSpec columns union - IllegalStateException"() {
+		DebugTrace.enter() // for Debugging
+
+		// columns, union(columns)
+		when: new Sql<>(Contact)
+			.columns('first', 'last')
+			.union(new Sql<>(Contact))
+			.union(new Sql<>(Contact).columns('first'))
+		then: def e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
+		// union(columns) columns
+		when: new Sql<>(Contact)
+			.union(new Sql<>(Contact).columns('first'))
+			.union(new Sql<>(Contact))
+			.columns('first', 'last')
+		then: e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
+		// columns, union(from(columns))
+		when: new Sql<>(Contact)
+			.columns('first', 'last')
+			.union(new Sql<>(Contact).from(new Sql<>(Contact)))
+			.union(new Sql<>(Contact).from(new Sql<>(Contact).columns('first')))
+		then: e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
+		// union(from(columns)), columns
+		when: new Sql<>(Contact)
+			.union(new Sql<>(Contact).from(new Sql<>(Contact).columns('first')))
+			.union(new Sql<>(Contact).from(new Sql<>(Contact)))
+			.columns('first', 'last')
+		then: e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
 		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.columns(String...)
+	// Sql.columns(Collection)
 	// Sql.columns()
-	def "SqlSpec columns getColumns 2 - #databaseName"(Database database, String databaseName) {
+	def "SqlSpec columns getColumns - #databaseName"(Database database, String databaseName) {
 		DebugTrace.enter() // for Debugging
 
 		setup:
 			String selectSql = null
 
+		// Sql.columns(String...)
 		when:
 			selectSql = database.selectSql(
 				new Sql<>(Contact)
-					.columns('birthday')
-					.columns('name.last', 'name.first')
+					.columns('name.first', 'name.last', 'birthday')
 				, [])
-			DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql) // for Debugging
+			DebugTrace.print(database.getClass().simpleName + ': ', selectSql) // for Debugging
 
 		then:
 			selectSql.startsWith('SELECT firstName, lastName, birthday FROM Contact ')
 
+		// Sql.columns(Collection)
+		when:
+			selectSql = database.selectSql(
+				new Sql<>(Contact)
+					.columns(['name.first', 'name.last', 'birthday'])
+				, [])
+			DebugTrace.print(database.getClass().simpleName + ': ', selectSql) // for Debugging
+
+		then:
+			selectSql.startsWith('SELECT firstName, lastName, birthday FROM Contact ')
+
+		// Sql.columns(String...)
 		when:
 			selectSql = database.selectSql(
 				new Sql<>(Contact)
 					.columns('*')
 				, [])
-			DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql) // for Debugging
+			DebugTrace.print(database.getClass().simpleName + ': ', selectSql) // for Debugging
 
 		then:
 			selectSql.startsWith('SELECT id, updateCount, created, updated, firstName, lastName, birthday, addressId FROM Contact ')
 
+		// Sql.columns(String...)
 		when:
 			selectSql = database.selectSql(
 				new Sql<>(Contact, 'C')
 					.innerJoin(Phone, 'P', '{P.contactId} = {C.id}')
 					.columns('C.id', 'P.id')
 				, [])
-			DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql) // for Debugging
+			DebugTrace.print(database.getClass().simpleName + ': ', selectSql) // for Debugging
 
 		then:
-			selectSql.startsWith('SELECT C.id AS C_id, P.id AS P_id FROM Contact ')
+			selectSql.startsWith('SELECT C.id C_id, P.id P_id FROM Contact ')
 
+		// Sql.columns(String...)
 		when:
 			selectSql = database.selectSql(
 				new Sql<>(Contact, 'C')
 					.innerJoin(Phone, 'P', '{P.contactId} = {C.id}')
 					.columns('P.*')
 				, [])
-			DebugTrace.print(database.getClass().getSimpleName() + ': ', selectSql) // for Debugging
+			DebugTrace.print(database.getClass().simpleName + ': ', selectSql) // for Debugging
 
 		then:
-			selectSql.indexOf(' P.id AS P_id, ') >= 0
-			selectSql.indexOf(' P.contactId AS P_contactId, P.phoneNumber AS P_phoneNumber FROM Contact ') >= 0
-			selectSql.indexOf('AS C_') == -1
+			selectSql.indexOf(' P.id P_id, ') >= 0
+			selectSql.indexOf(' P.contactId P_contactId, P.phoneNumber P_phoneNumber FROM Contact ') >= 0
+			selectSql.indexOf(' C_') == -1
 
 		DebugTrace.leave() // for Debugging
 		where:
@@ -180,27 +629,21 @@ class SqlSpec extends Specification {
 			databaseName = database.getClass().simpleName
 	}
 
-	// Sql.columns(String...)
 	// Sql.getColumns()
 	// Sql.setColumns(Set)
 	def "SqlSpec setColumns(Set)"() {
 		DebugTrace.enter() // for Debugging
 
+		// Sql.setColumns(Set)
+		// Sql.columns(String...)
 		when:
 			def sql = new Sql<>(Contact)
-				.columns('birthday')
-				.columns('name.last', 'name.first')
-			sql.columns.clear()
-		then: sql.columns == ['birthday', 'name.last', 'name.first'] as Set
-
-		when:
-			sql = new Sql<>(Contact)
 				.setColumns(new LinkedHashSet<String>())
-				.columns('birthday')
-				.columns('name.last', 'name.first')
-		then: sql.columns == ['birthday', 'name.last', 'name.first'] as Set
+				.columns('name.first', 'name.last', 'birthday')
+		then: sql.columns == ['name.first', 'name.last', 'birthday'] as Set
 
-		when: sql = new Sql<>(Contact) .setColumns(['name.first', 'name.last'] as Set)
+		// Sql.setColumns(Set)
+		when: sql = new Sql<>(Contact).setColumns(['name.first', 'name.last'] as Set)
 		then: sql.columns == ['name.first', 'name.last'] as Set
 
 		DebugTrace.leave() // for Debugging
@@ -228,7 +671,7 @@ class SqlSpec extends Specification {
 		DebugTrace.enter() // for Debugging
 		expect:
 			new Sql<>(Contact).setColumns(ContactBirthday).columns == ['birthday'] as Set
-			new Sql<>(Contact).setColumns(ContactName).columns == ['name.last', 'name.first'] as Set
+			new Sql<>(Contact).setColumns(ContactName).columns == ['name.first', 'name.last'] as Set
 			new Sql<>(Contact).setColumns(Nothing).columns.empty
 			new Sql<>(Contact, 'C').setColumns(ContactBirthday).columns == ['C.birthday'] as Set
 			new Sql<>(Contact, 'C').setColumns(ContactName).columns == ['C.name.last', 'C.name.first'] as Set
@@ -356,7 +799,7 @@ class SqlSpec extends Specification {
 
 	// Sql.expression(String, Expression)
 	// Sql.expression(String, String, Object...)
-	def "SqlSpec expression - exception #caseNo"(
+	def "SqlSpec NullPointerException #caseNo"(
 		String caseNo, String property, Class<?> expressionType, Object expression, Class<? extends Exception> exception) {
 		DebugTrace.enter() // for Debugging
 		when:
@@ -367,7 +810,8 @@ class SqlSpec extends Specification {
 				new Sql<>(Contact).expression(property, (String)expression)
 
 		then:
-			thrown exception
+			def e = thrown exception
+			DebugTrace.print("e", e)
 
 		DebugTrace.leave() // for Debugging
 		where:
@@ -379,11 +823,12 @@ class SqlSpec extends Specification {
 	}
 
 	// Sql.getExpression(String)
-	def "SqlSpec getExpression - exception #caseNo"(
+	def "SqlSpec getExpression - NullPointerException #caseNo"(
 		String caseNo, String property, Class<? extends Exception> exception) {
 		DebugTrace.enter() // for Debugging
 		when: new Sql<>(Contact).getExpression(property)
-		then: thrown exception
+		then: def e = thrown exception
+			DebugTrace.print("e", e)
 
 		DebugTrace.leave() // for Debugging
 		where:
@@ -477,19 +922,24 @@ class SqlSpec extends Specification {
 				.limit == 2
 
 		when: new Sql<>(Contact).doAlways(null)
-		then: thrown NullPointerException
+		then: def e = thrown NullPointerException
+			DebugTrace.print("e", e)
 
 		when: new Sql<>(Contact).doIf(true, null)
-		then: thrown NullPointerException
+		then: e = thrown NullPointerException
+			DebugTrace.print("e", e)
 
 		when: new Sql<>(Contact).doIf(true, null, {})
-		then: thrown NullPointerException
+		then: e = thrown NullPointerException
+			DebugTrace.print("e", e)
 
 		when: new Sql<>(Contact).doIf(false, {}, null)
-		then: thrown NullPointerException
+		then: e = thrown NullPointerException
+			DebugTrace.print("e", e)
 
 		when: new Sql<>(Contact).doIf(false, {}).doElse(null)
-		then: thrown NullPointerException
+		then: e = thrown NullPointerException
+			DebugTrace.print("e", e)
 
 		DebugTrace.leave() // for Debugging
 	}
@@ -600,7 +1050,8 @@ class SqlSpec extends Specification {
 	// Sql.where(Condition)
 	// Sql.where(String, Object...)
 	// Sql.where(E)
-	// Sql.where(String, Sql<SE>)
+	// Sql.where(String, Sql<?>)
+	// Sql.where(Sql<?>, String)
 	// Sql.where()
 	def "SqlSpec where getWhere"() {
 		DebugTrace.enter() // for Debugging
@@ -610,18 +1061,22 @@ class SqlSpec extends Specification {
 			new Sql<>(Contact).where("{id} = 1").where instanceof Expression
 			new Sql<>(Contact).where(new Contact()).where instanceof EntityCondition
 			new Sql<>(Contact).where('', new Sql<>(Address)).where instanceof SubqueryCondition
+			new Sql<>(Contact).where(new Sql<>(Address), '').where instanceof SubqueryCondition // since 3.1.0
 
 		when: new Sql<>(Contact).where((Condition)null)
-		then: thrown NullPointerException
+		then: def e = thrown NullPointerException
+			DebugTrace.print("e", e)
 		DebugTrace.leave() // for Debugging
 	}
 
 	// Sql.and(Condition)
 	// Sql.and(String, Object...)
-	// Sql.and(String, Sql<SE>)
+	// Sql.and(String, Sql<?>)
+	// Sql.and(Sql<?>, String)
 	// Sql.or(Condition)
 	// Sql.or(String, Object...)
-	// Sql.or(String, Sql<SE>)
+	// Sql.or(String, Sql<?>)
+	// Sql.or(Sql<?>, String)
 	def "SqlSpec and or"() {
 		DebugTrace.enter() // for Debugging
 		expect:
@@ -630,6 +1085,7 @@ class SqlSpec extends Specification {
 				.and(Condition.of('B'))
 				.and('C')
 				.and('D', new Sql<>(Address))
+				.and(new Sql<>(Address), 'E') // since 3.1.0
 				.where instanceof And
 
 			new Sql<>(Contact)
@@ -637,6 +1093,7 @@ class SqlSpec extends Specification {
 				.or(Condition.of('B'))
 				.or('C')
 				.or('D', new Sql<>(Address))
+				.or(new Sql<>(Address), 'E') // since 3.1.0
 				.where instanceof Or
 
 			new Sql<>(Contact)
@@ -644,6 +1101,7 @@ class SqlSpec extends Specification {
 				.and(Condition.of('B'))
 				.and('C', 1, 2, 3)
 				.and('D', new Sql<>(Address))
+				.and(new Sql<>(Address), 'E') // since 3.1.0
 				.having instanceof And
 
 			new Sql<>(Contact)
@@ -651,13 +1109,16 @@ class SqlSpec extends Specification {
 				.or(Condition.of('B'))
 				.or('C', 1, 2, 3)
 				.or('D', new Sql<>(Address))
+				.or(new Sql<>(Address), 'E') // since 3.1.0
 				.having instanceof Or
 
 		when: new Sql<>(Contact).where('A').and((Condition)null)
-		then: thrown NullPointerException
+		then: def e = thrown NullPointerException
+			DebugTrace.print("e", e)
 
 		when: new Sql<>(Contact).where('A').or((Condition)null)
-		then: thrown NullPointerException
+		then: e = thrown NullPointerException
+			DebugTrace.print("e", e)
 
 		DebugTrace.leave() // for Debugging
 	}
@@ -676,7 +1137,7 @@ class SqlSpec extends Specification {
 			sql.groupBy.add('A')
 
 		then:
-			sql.groupBy == new GroupBy()
+			sql.groupBy == new GroupBy().add('A')
 
 		expect:
 			sql.setGroupBy(new GroupBy().add('A')).groupBy == new GroupBy().add('A')
@@ -688,6 +1149,7 @@ class SqlSpec extends Specification {
 	// Sql.having(Condition)
 	// Sql.having(String, Object...)
 	// Sql.having(String, Sql<SE>)
+	// Sql.having(Sql<SE>, String)
 	// Sql.getHaving()
 	def 'SqlSpec having, getHaving'() {
 		DebugTrace.enter() // for Debugging
@@ -696,12 +1158,81 @@ class SqlSpec extends Specification {
 			new Sql<>(Contact).having(Condition.ALL).having ==  Condition.ALL
 			new Sql<>(Contact).having("{id} = 1").having  instanceof Expression
 			new Sql<>(Contact).having('', new Sql<>(Address)).having instanceof SubqueryCondition
+			new Sql<>(Contact).having(new Sql<>(Address), '').having instanceof SubqueryCondition // 3.1.0
 
 		when:
 			new Sql<>(Contact).having((Condition)null)
 
 		then:
-			thrown NullPointerException
+			def e = thrown NullPointerException
+			DebugTrace.print("e", e)
+
+		DebugTrace.leave() // for Debugging
+	}
+
+	// 3.1.0
+	// Sql.union(Sql<UE>)
+	// Sql.unionAll(Sql<UE>)
+	// Sql.getUnionSqls()
+	// Sql.isUnionAll()
+	def 'SqlSpec union, unionAll, getUnionSqls, isUnionAll'() {
+		DebugTrace.enter() // for Debugging
+		expect:
+			new Sql<>(Contact).unionSqls.empty
+
+			new Sql<>(Contact)
+				.union(new Sql<>(Contact))
+				.unionSqls.size() == 1
+
+			new Sql<>(Contact)
+				.unionAll(new Sql<>(Contact))
+				.unionSqls.size() == 1
+
+			new Sql<>(Contact)
+				.union(new Sql<>(Contact))
+				.union(new Sql<>(Contact))
+				.unionSqls.size() == 2
+
+			new Sql<>(Contact)
+				.unionAll(new Sql<>(Contact))
+				.unionAll(new Sql<>(Contact))
+				.unionSqls.size() == 2
+
+			new Sql<>(Contact).unionAll == false
+
+			new Sql<>(Contact)
+				.union(new Sql<>(Contact))
+				.unionAll == false
+
+			new Sql<>(Contact)
+				.unionAll(new Sql<>(Contact))
+				.unionAll == true
+		DebugTrace.leave() // for Debugging
+	}
+
+	// 3.1.0
+	// Sql.union(Sql<UE>)
+	// Sql.unionAll(Sql<UE>)
+	// Exception
+	def 'SqlSpec union, unionAll - exception'() {
+		DebugTrace.enter() // for Debugging
+		when:
+			new Sql<>(Contact)
+				.union(new Sql<>(Contact))
+				.unionAll(new Sql<>(Contact))
+
+		then:
+			def e = thrown IllegalStateException
+			DebugTrace.print("e", e)
+
+		when:
+			new Sql<>(Contact)
+				.unionAll(new Sql<>(Contact))
+				.union(new Sql<>(Contact))
+
+		then:
+			e = thrown IllegalStateException
+			DebugTrace.print("e", e) 
 
 		DebugTrace.leave() // for Debugging
 	}
@@ -720,7 +1251,7 @@ class SqlSpec extends Specification {
 			sql.orderBy.add('A')
 
 		then:
-			sql.orderBy == new OrderBy()
+			sql.orderBy == new OrderBy().add('A')
 
 		expect:
 			sql.setOrderBy(new OrderBy().add('A')).orderBy == new OrderBy().add('A')
@@ -819,8 +1350,7 @@ class SqlSpec extends Specification {
 						.innerJoin(Phone, 'P', '{P.contactId} = {C.id}')
 						.where(contact)
 						.setEntity(contact)
-						.columns('name.first')
-						.columns('updateCount')
+						.columns('name.first', 'updateCount')
 				, [])
 			DebugTrace.print(database.getClass().simpleName + ': ', updateSql) // for Debugging
 
@@ -848,7 +1378,7 @@ class SqlSpec extends Specification {
 				new Sql<>(Contact)
 					.where(Condition.ALL)
 				, [])
-			DebugTrace.print(database.getClass().getSimpleName() + ": ", deleteSql) // for Debugging
+			DebugTrace.print(database.getClass().simpleName + ": ", deleteSql) // for Debugging
 
 		then:
 			deleteSql == "DELETE FROM Contact"
@@ -859,7 +1389,7 @@ class SqlSpec extends Specification {
 					.innerJoin(Phone, "P", "{P.contactId} = {id}")
 					.where("{P.phoneNumber} LIKE {}", "080%")
 				, [])
-			DebugTrace.print(database.getClass().getSimpleName() + ": ", deleteSql) // for Debugging
+			DebugTrace.print(database.getClass().simpleName + ": ", deleteSql) // for Debugging
 
 		then:
 			deleteSql == "DELETE Contact FROM Contact INNER JOIN Phone P ON P.contactId = id WHERE P.phoneNumber LIKE '080%'"
@@ -870,7 +1400,7 @@ class SqlSpec extends Specification {
 					.innerJoin(Phone, "P", "{P.contactId} = {C.id}")
 					.where("{P.phoneNumber} LIKE {}", "080%")
 				, [])
-			DebugTrace.print(database.getClass().getSimpleName() + ": ", deleteSql) // for Debugging
+			DebugTrace.print(database.getClass().simpleName + ": ", deleteSql) // for Debugging
 
 		then:
 			deleteSql == "DELETE C FROM Contact C INNER JOIN Phone P ON P.contactId = C.id WHERE P.phoneNumber LIKE '080%'"

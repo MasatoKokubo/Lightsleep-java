@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,6 +97,8 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 
 	// Class resources
 	private static final Resource resource = new Resource(Sql.class);
+	private static final String messageUnionCalled      = resource.getString("messageUnionCalled"); // since 3.1.0
+	private static final String messageUnionAllCalled   = resource.getString("messageUnionAllCalled"); // since 3.1.0
 	private static final String messageNoWhereCondition = resource.getString("messageNoWhereCondition");
 	private static final String messageNoConnection     = resource.getString("messageNoConnection");
 	private static final String messageSelect0Rows = resource.getString("messageSelect0Rows");
@@ -134,6 +137,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	// The expression map (property name : expression)
 	private final Map<String, Expression> expressionMap = new HashMap<>();
 
+// 3.1.0
+	private Sql<?> fromSql = null;
+////
+
 	// The join informations
 	private List<JoinInfo<?>> joinInfos = new ArrayList<>();
 
@@ -148,6 +155,12 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 
 	// The HAVING condition
 	private Condition having = Condition.EMPTY;
+
+// 3.1.0
+	private List<Sql<?>> unionSqls = new ArrayList<>();
+
+	private boolean unionAll = false;
+////
 
 	// The ORDER BY information
 	private OrderBy orderBy = new OrderBy();
@@ -180,7 +193,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entityClass the entity class
 	 * @return the information of the entity
 	 *
-	 * @throws NullPointerException if <b>entityClass</b> is null
+	 * @throws NullPointerException if <b>entityClass</b> is <b>null</b>
 	 *
 	 * @see #entityInfo()
 	 */
@@ -202,7 +215,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *     new Sql&lt;&gt;(Contact)
 	 * </pre></div>
 	 *
-	 * @throws NullPointerException if <b>entityClass</b> is null
+	 * @throws NullPointerException if <b>entityClass</b> is <b>null</b>
 	 *
 	 * @param entityClass an entity class
 	 */
@@ -226,12 +239,15 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entityClass an entity class
 	 * @param tableAlias a table alias
 	 *
-	 * @throws NullPointerException if <b>entityClass</b> or <b>tableAlias</b> is null
+	 * @throws NullPointerException if <b>entityClass</b> or <b>tableAlias</b> is <b>null</b>
 	 */
 	public Sql(Class<E> entityClass, String tableAlias) {
 		entityInfo = getEntityInfo(Objects.requireNonNull(entityClass, "entityClass"));
-		this.tableAlias = Objects.requireNonNull(tableAlias, "tableAlias");
-		addSqlEntityInfo(this);
+	// 3.1.0
+	//	this.tableAlias = Objects.requireNonNull(tableAlias, "tableAlias");
+	//	addSqlEntityInfo(this);
+		tableAlias(tableAlias);
+	////
 	}
 
 	/**
@@ -241,20 +257,33 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	public Sql<E> clone() {
 		Sql<E> sql = new Sql<>(entityClass(), tableAlias());
 
-		sql.entity       = entity        ;
-		sql.distinct     = distinct      ;
-		sql.columns      = getColumns  ();
-		sql.joinInfos    = getJoinInfos();
-		sql.where        = where         ;
-		sql.groupBy      = getGroupBy  ();
-		sql.having       = having        ;
-		sql.orderBy      = getOrderBy  ();
-		sql.limit        = limit         ;
-		sql.offset       = offset        ;
-		sql.forUpdate    = forUpdate     ;
-		sql.waitTime     = waitTime      ;
-		sql.connection   = connection    ;
-		sql.generatedSql = generatedSql  ;
+		sql.entity       = entity;
+		sql.distinct     = distinct;
+	// 3.1.0
+	//	sql.columns      = getColumns();
+	//	sql.joinInfos    = getJoinInfos();
+		sql.columns  .addAll(columns);
+		sql.fromSql      = fromSql;
+		sql.joinInfos.addAll(joinInfos);
+	////
+		sql.where        = where;
+	// 3.1.0
+	//	sql.groupBy      = getGroupBy();
+		sql.groupBy      = groupBy.clone();
+	////
+		sql.having       = having;
+	// 3.1.0
+	//	sql.orderBy      = getOrderBy();
+		sql.unionSqls.addAll(unionSqls);
+		sql.unionAll     = unionAll;
+		sql.orderBy      = orderBy.clone();
+	////
+		sql.limit        = limit;
+		sql.offset       = offset;
+		sql.forUpdate    = forUpdate;
+		sql.waitTime     = waitTime;
+		sql.connection   = connection;
+		sql.generatedSql = generatedSql;
 
 		expressionMap.entrySet()
 			.forEach(entry -> sql.expressionMap.put(entry.getKey(), entry.getValue()));
@@ -281,6 +310,21 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 */
 	public Class<E> entityClass() {
 		return entityInfo.entityClass();
+	}
+
+	/**
+	 * Sets the table alias.
+	 *
+	 * @param tableAlias the table alias
+	 * @return this object
+	 *
+	 * @since 3.1.0
+	 */
+	private Sql<E> tableAlias(String tableAlias) {
+		sqlEntityInfoMap.remove(this.tableAlias);
+		this.tableAlias = Objects.requireNonNull(tableAlias, "tableAlias");
+		addSqlEntityInfo(this);
+		return this;
 	}
 
 	/**
@@ -340,7 +384,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	}
 
 	/**
-	 * Specifies the property names related to the generated SELECT and UPDATE SQL columns.
+	 * Sets target columns of generated SELECT and UPDATE SQL.
+	 *
+	 * <p>
+	 * Also sets them if they are not set in <b>Sql</b> objects set by the <b>from</b>, <b>union</b> or <b>unionAll</b> methods,
+	 * </p>
 	 *
 	 * <p>
 	 * You can also be specified <b>"*"</b> or <b>"<i>&lt;table alias&gt;</i>.*"</b>.
@@ -398,81 +446,178 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * </pre></div>
 	 *
 	 * @param propertyNames an array of property names related to the columns
-	 *
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>columns</b> or any of <b>columns</b> is null
+	 * @throws NullPointerException if <b>propertyNames</b> or any element of <b>propertyNames</b> is <b>null</b>
 	 *
+	 * @see #columns(Collection)
+	 * @see #columns(Class)
 	 * @see #getColumns()
-	 * @see #setColumns(Set)
 	 */
 	public Sql<E> columns(String... propertyNames) {
-		Arrays.stream(Objects.requireNonNull(propertyNames, "propertyNames"))
-			.forEach(this.columns::add);
+	// 3.1.0
+	//	Arrays.stream(Objects.requireNonNull(propertyNames, "propertyNames"))
+	//		.forEach(this.columns::add);
+	//	return this;
+		return columns(Arrays.stream(Objects.requireNonNull(propertyNames, "propertyNames")));
+	////
+	}
+
+	/**
+	 * Sets target columns of generated SELECT and UPDATE SQL.
+	 *
+	 * <p>
+	 * Also sets them if they are not set in <b>Sql</b> objects set by the <b>from</b>, <b>union</b> or <b>unionAll</b> methods,
+	 * </p>
+	 *
+	 * <p>
+	 * You can also be specified <b>"*"</b> or <b>"<i>&lt;table alias&gt;</i>.*"</b>.
+	 * If this method is not called it will be in the same as <b>"*"</b> is specified.
+	 * </p>
+	 *
+	 * @param propertyNames a collection of property names related to the columns
+	 * @return this object
+	 *
+	 * @throws NullPointerException if <b>propertyNames</b> or any element of <b>propertyNames</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see #columns(String...)
+	 * @see #columns(Class)
+	 * @see #getColumns()
+	 */
+	public Sql<E> columns(Collection<String> propertyNames) {
+		return columns(Objects.requireNonNull(propertyNames, "propertyNames").stream());
+	}
+
+	/**
+	 * Sets target columns of generated SELECT and UPDATE SQL.
+	 *
+	 * @param <RE> the type of the result entity
+	 * @param resultClass a entity class containing set of property names to specify
+	 * @return this object
+	 *
+	 * @since 3.1.0
+	 * @see #columns(String...)
+	 * @see #columns(Collection)
+	 * @see #getColumns()
+	 */
+	public <RE> Sql<E> columns(Class<RE> resultClass) {
+		List<String> propertyNames = getEntityInfo(resultClass).accessor().valuePropertyNames();
+		return tableAlias.isEmpty()
+			? columns(propertyNames)
+			: columns(
+				propertyNames.stream()
+					.map(propertyName -> tableAlias + '.' + propertyName));
+	}
+
+	/**
+	 * Sets target columns of generated SELECT and UPDATE SQL.
+	 *
+	 * <p>
+	 * Also sets them if they are not set in <b>Sql</b> objects set by the <b>from</b>, <b>union</b> or <b>unionAll</b> methods,
+	 * </p>
+	 *
+	 * <p>
+	 * You can also be specified <b>"*"</b> or <b>"<i>&lt;table alias&gt;</i>.*"</b>.
+	 * If this method is not called it will be in the same as <b>"*"</b> is specified.
+	 * </p>
+	 *
+	 * @param propertyNamesStream a stream of property names related to the columns
+	 * @return this object
+	 *
+	 * @throws NullPointerException if <b>propertyNames</b> or any element of <b>propertyNames</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see #columns(String...)
+	 * @see #columns(Collection)
+	 * @see #columns(Class)
+	 * @see #getColumns()
+	 */
+	private Sql<E> columns(Stream<String> propertyNamesStream) {
+		columns.clear();
+		propertyNamesStream.forEach(columns::add);
+
+		// synchronize columns with from Sql and union Sql
+		synchronizeColumns();
+
 		return this;
 	}
 
 	/**
-	 * Returns a set of property names related to the generated SELECT and UPDATE SQL columns.
+	 * Returns property names related target columns of generated SELECT and UPDATE SQL.
 	 *
 	 * @return a set of property names
 	 *
 	 * @see #columns(String...)
+	 * @see #columns(Collection)
 	 * @see #setColumns(Set)
+	 * @see #setColumns(Class)
 	 */
 	public Set<String> getColumns() {
-		try {
-			return (Set<String>)columns.getClass().getMethod("clone").invoke(columns);
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	// 3.1.0
+	//	try {
+	//		return (Set<String>)columns.getClass().getMethod("clone").invoke(columns);
+	//	}
+	//	catch (Exception e) {
+	//		throw new RuntimeException(e);
+	//	}
+		return columns;
+	////
 	}
 
 	/**
-	 * Sets a set of property names related to the generated SELECT and UPDATE SQL columns.
+	 * Sets target columns of generated SELECT and UPDATE SQL.
+	 *
+	 * <p>
+	 * @deprecated As of release 3.1.0,
+	 * instead use {@link #columns(Collection)}
+	 * </p>
 	 *
 	 * @param propertyNames a set of property names
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>columns</b> is null
+	 * @throws NullPointerException if <b>propertyNames</b> is <b>null</b>
 	 *
 	 * @since 1.8.4
-	 *
-	 * @see #columns(String...)
-	 * @see #getColumns()
+	 * @see #columns(Collection)
 	 */
+	@Deprecated
 	public Sql<E> setColumns(Set<String> propertyNames) {
-		this.columns = Objects.requireNonNull(propertyNames, "propertyNames");
-		return this;
+	// 3.1.0
+	//	this.columns = Objects.requireNonNull(propertyNames, "propertyNames");
+	//	return this;
+		return columns(propertyNames);
+	////
 	}
 
 	/**
-	 * Sets the set of property names included in the specified class.
-	 * They are used when generating SELECT and UPDATE SQL columns.
+	 * Sets target columns of generated SELECT and UPDATE SQL.
 	 *
 	 * <p>
-	 * <i>This method called from {@link #selectAs(Class, Consumer)} and {@link #selectAs(Class)}.</i>
+	 * @deprecated As of release 3.1.0,
+	 * instead use {@link #columns(Class)}
 	 * </p>
 	 *
-	 * @param <R> the type of <b>resultClass</b>
-	 * @param resultClass a class containing a set of property names to specify
+	 * @param resultClass a entity class containing set of property names to specify
 	 * @return this object
 	 *
 	 * @since 2.0.0
-	 * @see #columns(String...)
-	 * @see #getColumns()
+	 * @see #columns(Class)
 	 */
-	public <R> Sql<E> setColumns(Class<R> resultClass) {
-		List<String> propertyNames = getEntityInfo(resultClass).accessor().valuePropertyNames();
-		if (!tableAlias.isEmpty())
-			propertyNames = propertyNames.stream()
-				.map(propertyName -> tableAlias + '.' + propertyName)
-				.collect(Collectors.toList());
-
-		columns = new HashSet<String>(propertyNames);
-
-		return this;
+	@Deprecated
+	public Sql<E> setColumns(Class<?> resultClass) {
+	// 3.1.0
+	//	List<String> propertyNames = getEntityInfo(resultClass).accessor().valuePropertyNames();
+	//	if (!tableAlias.isEmpty())
+	//		propertyNames = propertyNames.stream()
+	//			.map(propertyName -> tableAlias + '.' + propertyName)
+	//			.collect(Collectors.toList());
+	//
+	//	columns = new HashSet<String>(propertyNames);
+	//
+	//	return this;
+		return columns(resultClass);
+	////
 	}
 
 	/**
@@ -510,7 +655,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param expression an expression
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>propertyName</b> or <b>expression</b> is null
+	 * @throws NullPointerException if <b>propertyName</b> or <b>expression</b> is <b>null</b>
 	 *
 	 * @see #getExpression(String)
 	 */
@@ -538,7 +683,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments arguments of the expression
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>propertyName</b>, <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>propertyName</b>, <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see #getExpression(String)
 	 * @see Expression#Expression(String, Object...)
@@ -553,7 +698,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param propertyName the property name
 	 * @return the expression associated <b>propertyName</b> or <b>Expression.EMPTY</b>
 	 *
-	 * @throws NullPointerException if <b>propertyName</b> is null
+	 * @throws NullPointerException if <b>propertyName</b> is <b>null</b>
 	 *
 	 * @see #expression(String, Expression)
 	 * @see #expression(String, String, Object...)
@@ -562,6 +707,42 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		Objects.requireNonNull(propertyName, "propertyName");
 
 		return expressionMap.getOrDefault(propertyName, Expression.EMPTY);
+	}
+
+	/**
+	 * Specifies the FROM clause of SELECT SQL as a subquery.
+	 *
+	 * @param fromSql <b>Sql</b> object to generate the FROM clause
+	 * @return this object
+	 *
+	 * @throws NullPointerException if <b>fromSql</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 */
+	public Sql<E> from(Sql<?> fromSql) {
+		this.fromSql = Objects.requireNonNull(fromSql);
+
+		// synchronize table aliases with from Sql and union Sqls
+		synchronizeTableAliases();
+
+		// synchronize columns with from Sql and union Sqls
+		synchronizeColumns();
+
+		if (fromSql.where.isEmpty())
+			fromSql.where = Condition.ALL;
+
+		return this;
+	}
+
+	/**
+	 * Returns <b>Sql</b> object to generate a FROM clause of SELECT SQL or <b>null </b> if not specified.
+	 *
+	 * @return <b>Sql</b> object to generate a FROM clause of SELECT SQL or <b>null</b>
+	 *
+	 * @since 3.1.0
+	 */
+	public Sql<?> getFrom() {
+		return fromSql;
 	}
 
 	/**
@@ -597,7 +778,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param on the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is null
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -616,7 +797,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments the arguments of the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -658,7 +839,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param on the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is null
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -677,7 +858,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments the arguments of the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -719,7 +900,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param on the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is null
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -738,7 +919,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments the arguments of the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>entityClass</b>, <b>tableAlias</b>, <b>on</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see #getJoinInfos()
 	 * @see JoinInfo#JoinInfo(JoinInfo.JoinType, EntityInfo, String, Condition)
@@ -758,7 +939,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param on the join condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>joinType</b>, <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is null
+	 * @throws NullPointerException if <b>joinType</b>, <b>entityClass</b>, <b>tableAlias</b> or <b>on</b> is <b>null</b>
 	 */
 	private <JE> Sql<E> join(JoinInfo.JoinType joinType, Class<JE> entityClass, String tableAlias, Condition on) {
 		EntityInfo<JE> entityInfo = getEntityInfo(entityClass);
@@ -781,7 +962,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @see #rightJoin(Class, String, String, Object...)
 	 */
 	public List<JoinInfo<?>> getJoinInfos() {
-		return new ArrayList<>(joinInfos);
+	// 3.1.0
+	//	return new ArrayList<>(joinInfos);
+		return joinInfos;
+	////
 	}
 
 	/**
@@ -812,7 +996,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param condition a condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>condition</b> is null
+	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
 	 *
 	 * @see #getWhere()
 	 */
@@ -851,7 +1035,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see #getWhere()
 	 * @see Condition#of(String, Object...)
@@ -892,7 +1076,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entity the entity of the EntityCondition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>entity</b> is null
+	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
 	 *
 	 * @see #getWhere()
 	 * @see Condition#of(Object)
@@ -940,14 +1124,36 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param subSql the <b>Sql</b> object for the subquery
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
 	 *
+	 * @see #where(Sql, String)
 	 * @see #getWhere()
 	 * @see Condition#of(String, Sql, Sql)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> where(String content, Sql<SE> subSql) {
 		where = Condition.of(content, this, subSql);
+		return this;
+	}
+
+	/**
+	 * Specifies the condition of the <b>WHERE</b> clause by a SubqueryCondition.
+	 *
+	 * @param <SE> the type of the entity related to the subquery
+	 * @param subSql the <b>Sql</b> object for the subquery
+	 * @param content the right part from the SELECT statement of a subquery
+	 * @return this object
+	 *
+	 * @throws NullPointerException if <b>subSql</b> or <b>content</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see #where(String, Sql)
+	 * @see #getWhere()
+	 * @see Condition#of(Sql, Sql, String)
+	 * @see SubqueryCondition#SubqueryCondition(Sql, Sql, Expression)
+	 */
+	public <SE> Sql<E> where(Sql<SE> subSql, String content) {
+		where = Condition.of(this, subSql, content);
 		return this;
 	}
 
@@ -973,8 +1179,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param condition a condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>condition</b> is null
+	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
 	 *
+	 * @see #and(String, Object...)
+	 * @see #and(String, Sql)
+	 * @see #and(Sql, String)
 	 * @see Condition#and(Condition)
 	 */
 	public Sql<E> and(Condition condition) {
@@ -1020,8 +1229,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments the arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
+	 * @see #and(Condition)
+	 * @see #and(String, Sql)
+	 * @see #and(Sql, String)
 	 * @see Condition#and(Condition)
 	 * @see Condition#of(String, Object...)
 	 */
@@ -1039,14 +1251,42 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param subSql the <b>Sql</b> object for the subquery
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
 	 *
+	 * @see #and(Condition)
+	 * @see #and(String, Object...)
+	 * @see #and(Sql, String)
+	 * @see Condition#and(String, Sql, Sql)
 	 * @see Condition#and(Condition)
 	 * @see Condition#of(String, Sql, Sql)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> and(String content, Sql<SE> subSql) {
 		return and(Condition.of(content, this, subSql));
+	}
+
+	/**
+	 * Adds a <b>SubqueryCondition</b> using <b>AND</b> to the condition of the <b>HAVING</b> clause
+	 * if after you invoke <b>having</b> method, 
+	 * to the condition of the <b>WHERE</b> clause otherwise.
+	 *
+	 * @param <SE> the type of the entity related to the subquery
+	 * @param subSql the <b>Sql</b> object for the subquery
+	 * @param content the right part from the SELECT statement of the subquery
+	 * @return this object
+	 *
+	 * @throws NullPointerException if <b>subSql</b> or <b>content</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see #and(Condition)
+	 * @see #and(String, Object...)
+	 * @see #and(String, Sql)
+	 * @see Condition#and(Condition)
+	 * @see Condition#of(Sql, Sql, String)
+	 * @see SubqueryCondition#SubqueryCondition(Sql, Sql, Expression)
+	 */
+	public <SE> Sql<E> and(Sql<SE> subSql, String content) {
+		return and(Condition.of(this, subSql, content));
 	}
 
 	/**
@@ -1057,8 +1297,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param condition a condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>condition</b> is null
+	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
 	 *
+	 * @see #or(String, Object...)
+	 * @see #or(String, Sql)
+	 * @see #or(Sql, String)
 	 * @see Condition#or(Condition)
 	 */
 	public Sql<E> or(Condition condition) {
@@ -1104,8 +1347,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
+	 * @see #or(Condition)
+	 * @see #or(String, Sql)
+	 * @see #or(Sql, String)
 	 * @see Condition#or(String, Object...)
 	 */
 	public Sql<E> or(String content, Object... arguments) {
@@ -1122,8 +1368,12 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param subSql the <b>Sql</b> object for the subquery
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
 	 *
+	 * @see #or(Condition)
+	 * @see #or(String, Object...)
+	 * @see #or(Sql, String)
+	 * @see Condition#or(String, Sql, Sql)
 	 * @see Condition#or(Condition)
 	 * @see Condition#of(String, Sql, Sql)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
@@ -1133,13 +1383,38 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	}
 
 	/**
+	 * Adds a <b>SubqueryCondition</b> using <b>OR</b> to the condition of the <b>HAVING</b> clause
+	 * if after you invoke <b>having</b> method, 
+	 * to the condition of the <b>WHERE</b> clause otherwise.
+	 *
+	 * @param <SE> the type of the entity related to the subquery
+	 * @param content the left part from the SELECT statement of the subquery
+	 * @param subSql the <b>Sql</b> object for the subquery
+	 * @return this object
+	 *
+	 * @throws NullPointerException if <b>subSql</b> or <b>content</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see #or(Condition)
+	 * @see #or(String, Object...)
+	 * @see #or(String, Sql)
+	 * @see Condition#or(Sql, Sql, String)
+	 * @see Condition#or(Condition)
+	 * @see Condition#of(Sql, Sql, String)
+	 * @see SubqueryCondition#SubqueryCondition(Sql, Sql, Expression)
+	 */
+	public <SE> Sql<E> or(Sql<SE> subSql, String content) {
+		return or(Condition.of(this, subSql, content));
+	}
+
+	/**
 	 * Specifies an element of the <b>GROUP BY</b> clause.
 	 *
 	 * @param content the content of the <b>Expression</b>
 	 * @param arguments arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see #getGroupBy()
 	 * @see #setGroupBy(GroupBy)
@@ -1158,7 +1433,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @return this object
 	 *
 	 * @since 1.9.1
-	 *
 	 * @see #groupBy(String, Object...)
 	 * @see #getGroupBy()
 	 */
@@ -1176,7 +1450,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @see #setGroupBy(GroupBy)
 	 */
 	public GroupBy getGroupBy() {
-		return groupBy.clone();
+	// 3.1.0
+	//	return groupBy.clone();
+		return groupBy;
+	////
 	}
 
 	/**
@@ -1185,7 +1462,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param condition the condition
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>condition</b> is null
+	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
 	 *
 	 * @see #getHaving()
 	 */
@@ -1201,7 +1478,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments arguments of the <b>Expression</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see #getHaving()
 	 * @see Condition#of(String, Object...)
@@ -1219,13 +1496,34 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param subSql the <b>Sql</b> object for the subquery
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
 	 *
+	 * @see #having(Sql, String)
 	 * @see #getHaving()
 	 * @see Condition#of(String, Sql, Sql)
 	 */
 	public <SE> Sql<E> having(String content, Sql<SE> subSql) {
 		having = Condition.of(content, this, subSql);
+		return this;
+	}
+
+	/**
+	 * Specifies the condition of the <b>HAVING</b> clause by a <b>SubqueryCondition</b>.
+	 *
+	 * @param <SE> the type of the entity related to the subquery
+	 * @param subSql the <b>Sql</b> object for the subquery
+	 * @param content the right part from the SELECT statement of the subquery
+	 * @return this object
+	 *
+	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see #having(String, Sql)
+	 * @see #getHaving()
+	 * @see Condition#of(Sql, Sql, String)
+	 */
+	public <SE> Sql<E> having(Sql<SE> subSql, String content) {
+		having = Condition.of(this, subSql, content);
 		return this;
 	}
 
@@ -1240,6 +1538,92 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 */
 	public Condition getHaving() {
 		return having;
+	}
+
+	/**
+	 * Adds the <b>Sql</b> object that generate a SELECT SQL for a UNION SQL component.
+	 *
+	 * @param <UE> the type of the entity related to the UNION SQL component
+	 * @param unionSql the <b>Sql</b> object that generate a SELECT SQL for a UNION SQL component
+	 * @return this object
+	 *
+	 * @throws IllegalStateException <b>unionAll</b> method has already been called
+	 *
+	 * @since 3.1.0
+	 * @see #unionAll(Sql)
+	 */
+	public <UE> Sql<E> union(Sql<UE> unionSql) {
+		return unionOrUnionAll(unionSql, false);
+	}
+
+	/**
+	 * Adds the <b>Sql</b> object that generate a SELECT SQL for a UNION ALL SQL component.
+	 *
+	 * @param <UE> the type of the entity related to the UNION SQL component
+	 * @param unionSql the <b>Sql</b> object that generate a SELECT SQL for a UNION ALL SQL component
+	 * @return this object
+	 *
+	 * @throws IllegalStateException <b>union</b> method has already been called
+	 *
+	 * @since 3.1.0
+	 * @see #union(Sql)
+	 */
+	public <UE> Sql<E> unionAll(Sql<UE> unionSql) {
+		return unionOrUnionAll(unionSql, true);
+	}
+
+	/**
+	 * Adds the <b>Sql</b> object that generate a SELECT SQL for a UNION or UNION ALL SQL component.
+	 *
+	 * @param <UE> the type of the entity related to the UNION sql component
+	 * @param unionSql the <b>Sql</b> object that generatw a SELECT SQL for a UNION or UNION ALL SQL component
+	 * @return this object
+	 *
+	 * @throws IllegalStateException if both <b>union</b> and <b>unionAll</b> are called.
+	 *
+	 * @since 3.1.0
+	 */
+	private <UE> Sql<E> unionOrUnionAll(Sql<UE> unionSql, boolean unionAll) {
+		if (unionSqls.size() == 0) {
+			this.unionAll = unionAll;
+		} else {
+			if (this.unionAll != unionAll)
+				throw new IllegalStateException(
+					MessageFormat.format(unionAll ? messageUnionCalled : messageUnionAllCalled,
+						entityInfo.entityClass().getName()));
+		}
+
+		unionSqls.add(Objects.requireNonNull(unionSql, "unionSql"));
+
+		// synchronize table aliases with from Sql and union Sqls
+		synchronizeTableAliases();
+
+		// synchronize columns with from Sql and union Sqls
+		synchronizeColumns();
+
+		return this;
+	}
+
+	/**
+	 * Returns a list of <b>Sql</b> objects that generate SELECT SQL for a UNION or UNION ALL SQL component.
+	 *
+	 * @return all Sql objects to generate UNION or UNION ALL SQL
+	 *
+	 * @since 3.1.0
+	 */
+	public List<Sql<?>> getUnionSqls() {
+		return unionSqls;
+	}
+
+	/**
+	 * Returns <b>true</b> if generates UNION ALL SQL, <b>false</b> if generates UNION SQL.
+	 *
+	 * @return <b>true</b> if generates UNION ALL SQL, <b>false</b> if generates UNION SQL
+	 *
+	 * @since 3.1.0
+	 */
+	public boolean isUnionAll() {
+		return unionAll;
 	}
 
 	/**
@@ -1273,7 +1657,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param arguments the arguments of the <b>OrderBy.Element</b>
 	 * @return this object
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see #asc()
 	 * @see #desc()
@@ -1369,7 +1753,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @return this object
 	 *
 	 * @since 1.9.1
-	 *
 	 * @see #orderBy(java.lang.String, java.lang.Object...)
 	 * @see #getOrderBy()
 	 */
@@ -1387,7 +1770,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @see #setOrderBy(OrderBy)
 	 */
 	public OrderBy getOrderBy() {
-		return orderBy.clone();
+	// 3.1.0
+	//	return orderBy.clone();
+		return orderBy;
+	////
 	}
 
 	/**
@@ -1527,7 +1913,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @return this object
 	 *
 	 * @since 1.9.0
-	 *
 	 * @see #noWait()
 	 * @see #getWaitTime()
 	 * @see #isNoWait()
@@ -1544,7 +1929,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @return the wait time (seccond)
 	 *
 	 * @since 1.9.0
-	 *
 	 * @see #noWait()
 	 * @see #wait(int)
 	 * @see #isNoWait()
@@ -1574,7 +1958,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @return <b>true</b> if appends neither <b>NOWAIT</b> nor <b>WAIT n</b>, <b>false</b> otherwise
 	 *
 	 * @since 1.9.0
-	 *
 	 * @see #noWait()
 	 * @see #wait(int)
 	 * @see #getWaitTime()
@@ -1774,7 +2157,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param tableAlias a table alias
 	 * @return the SqlEntityInfo objcet
 	 *
-	 * @throws NullPointerException if <b>tableAlias</b> is null
+	 * @throws NullPointerException if <b>tableAlias</b> is <b>null</b>
 	 */
 	public SqlEntityInfo<?> getSqlEntityInfo(String tableAlias) {
 		return sqlEntityInfoMap.get(tableAlias);
@@ -1790,13 +2173,16 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param sqlEntityInfo the SqlEntityInfo object
 	 */
 	public void addSqlEntityInfo(SqlEntityInfo<?> sqlEntityInfo) {
-		sqlEntityInfoMap.putIfAbsent(sqlEntityInfo.tableAlias(), sqlEntityInfo);
-
-		if (sqlEntityInfo instanceof Sql) {
-			((Sql<?>)sqlEntityInfo).sqlEntityInfoMap.values().stream()
-				.filter(sqlEntityInfo2 -> sqlEntityInfo2 != sqlEntityInfo)
-				.forEach(this::addSqlEntityInfo);
-		}
+	// 3.1.0
+	//	sqlEntityInfoMap.putIfAbsent(sqlEntityInfo.tableAlias(), sqlEntityInfo);
+	//
+	//	if (sqlEntityInfo instanceof Sql) {
+	//		((Sql<?>)sqlEntityInfo).sqlEntityInfoMap.values().stream()
+	//			.filter(sqlEntityInfo2 -> sqlEntityInfo2 != sqlEntityInfo)
+	//			.forEach(this::addSqlEntityInfo);
+	//	}
+		sqlEntityInfoMap.put(sqlEntityInfo.tableAlias(), sqlEntityInfo);
+	////
 	}
 
 	/**
@@ -1839,7 +2225,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @param consumer a consumer of the entities created from the <b>ResultSet</b>
 	 *
-	 * @throws NullPointerException if <b>consumer</b> is null
+	 * @throws NullPointerException if <b>consumer</b> is <b>null</b>
 	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 *
@@ -1888,20 +2274,24 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
-	 * @param <R> the type of <b>resultClass</b>
+	 * @param <RE> the type of the result entity
 	 * @param resultClass the class of the argumrnt of <b>consumer</b>
 	 * @param consumer a consumer of the entities created from the <b>ResultSet</b>
 	 *
-	 * @throws NullPointerException if <b>resultClass</b> or <b>consumer</b> is null
+	 * @throws NullPointerException if <b>resultClass</b> or <b>consumer</b> is <b>null</b>
 	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 *
 	 * @since 2.0.0
 	 * @see #select(Consumer)
 	 */
-	public <R> void selectAs(Class<R> resultClass, Consumer<? super R> consumer) {
+	public <RE> void selectAs(Class<RE> resultClass, Consumer<? super RE> consumer) {
 		Objects.requireNonNull(resultClass, "resultClass");
 		Objects.requireNonNull(consumer, "consumer");
+	// 3.1.0
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
+	////
 
 		Sql<E> sql = this;
 
@@ -1924,8 +2314,8 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		List<Object> parameters = new ArrayList<>();
 		generatedSql = connection.getDatabase().selectSql(sql, parameters);
 
-		SqlEntityInfo<R> sqlEntityInfo = resultClass == sql.entityInfo.entityClass()
-			? (SqlEntityInfo<R>) sql
+		SqlEntityInfo<RE> sqlEntityInfo = resultClass == sql.entityInfo.entityClass()
+			? (SqlEntityInfo<RE>)sql
 			: newSqlEntityInfo(resultClass, sql.tableAlias);
 
 		sql.executeQuery(generatedSql, parameters, sql.getRowConsumer(sqlEntityInfo, consumer));
@@ -2014,7 +2404,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param consumer a consumer of the entities related to the main table created from the <b>ResultSet</b>
 	 * @param consumer1 a consumer of the entities related to the joined table created from the <b>ResultSet</b>
 	 *
-	 * @throws NullPointerException if <b>consumer</b> or <b>consumer1</b> is null
+	 * @throws NullPointerException if <b>consumer</b> or <b>consumer1</b> is <b>null</b>
 	 * @throws IllegalStateException if joinInfo information is less than 1
 	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
@@ -2025,6 +2415,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		Consumer<? super E> consumer,
 		Consumer<? super JE1> consumer1) {
 		if (joinInfos.size() < 1) throw new IllegalStateException("joinInfos.size < 1");
+	// 3.1.0
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
+	////
+
 
 		Sql<E> sql = this;
 
@@ -2102,7 +2497,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param consumer1 a consumer of the entities related to the 1st joined table created from the <b>ResultSet</b>
 	 * @param consumer2 a consumer of the entities related to the 2nd joined table created from the <b>ResultSet</b>
 	 *
-	 * @throws NullPointerException if <b>consumer</b>, <b>consumer1</b> or <b>consumer2</b> is null
+	 * @throws NullPointerException if <b>consumer</b>, <b>consumer1</b> or <b>consumer2</b> is <b>null</b>
 	 * @throws IllegalStateException if join information is less than 2
 	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
@@ -2114,6 +2509,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		Consumer<? super JE1> consumer1,
 		Consumer<? super JE2> consumer2) {
 		if (joinInfos.size() < 2) throw new IllegalStateException("joinInfos.size < 2");
+	// 3.1.0
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
+	////
+
 
 		Sql<E> sql = this;
 
@@ -2202,7 +2602,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param consumer2 a consumer of the entities related to the 2nd joined table created from the <b>ResultSet</b>
 	 * @param consumer3 a consumer of the entities related to the 3rd joined table created from the <b>ResultSet</b>
 	 *
-	 * @throws NullPointerException if <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> or <b>consumer3</b> is null
+	 * @throws NullPointerException if <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b> or <b>consumer3</b> is <b>null</b>
 	 * @throws IllegalStateException if join information is less than 3
 	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
@@ -2215,6 +2615,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		Consumer<? super JE2> consumer2,
 		Consumer<? super JE3> consumer3) {
 		if (joinInfos.size() < 3) throw new IllegalStateException("joinInfos.size < 3");
+	// 3.1.0
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
+	////
+
 
 		Sql<E> sql = this;
 
@@ -2314,7 +2719,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param consumer3 a consumer of the entities related to the 3rd join table created from the <b>ResultSet</b>
 	 * @param consumer4 a consumer of the entities related to the 4th join table created from the <b>ResultSet</b>
 	 *
-	 * @throws NullPointerException if <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> or <b>consumer4</b> is null
+	 * @throws NullPointerException if <b>consumer</b>, <b>consumer1</b>, <b>consumer2</b>, <b>consumer3</b> or <b>consumer4</b> is <b>null</b>
 	 * @throws IllegalStateException if join information is less than 4
 	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
@@ -2328,6 +2733,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		Consumer<? super JE3> consumer3,
 		Consumer<? super JE4> consumer4) {
 		if (joinInfos.size() < 4) throw new IllegalStateException("joinInfos.size < 4");
+	// 3.1.0
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
+	////
+
 
 		Sql<E> sql = this;
 
@@ -2432,11 +2842,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * Call {@link #connection(ConnectionWrapper)} method to specify the connection wrapper before calling this method.
 	 * </p>
 	 *
-	 * @param <R> the type of <b>resultClass</b>
+	 * @param <RE> the type of the result entity
 	 * @param resultClass the class of entity to as a return value
 	 * @return an <b>Optional</b> of the entity if searched, <b>Optional.empty()</b> otherwise
 	 *
-	 * @throws NullPointerException <b>resultClass</b> is null
+	 * @throws NullPointerException <b>resultClass</b> is <b>null</b>
 	 * @throws IllegalStateException if a SELECT SQL without columns was generated
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 * @throws ManyRowsException if more than one row searched
@@ -2444,8 +2854,8 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @since 2.0.0
 	 * @see #select()
 	 */
-	public <R> Optional<R> selectAs(Class<R> resultClass) {
-		List<R> entities = new ArrayList<>();
+	public <RE> Optional<RE> selectAs(Class<RE> resultClass) {
+		List<RE> entities = new ArrayList<>();
 		selectAs(resultClass, entity -> {
 			if (entities.size() > 0)
 				throw new ManyRowsException(generatedSql);
@@ -2489,6 +2899,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @since 2.0.0
 	 */
 	public int selectCount() {
+	// 3.1.0
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
+	////
+
 		Sql<E> sql = this;
 
 		if (sql.where.isEmpty()) {
@@ -2540,14 +2955,15 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entity the entity to be inserted
 	 * @return the number of rows inserted
 	 *
-	 * @throws NullPointerException if <b>entity</b> is null
+	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 *
 	 * @since 2.0.0
 	 */
 	public int insert(E entity) {
 		Objects.requireNonNull(entity, "entity");
-		if (connection == null) throw new IllegalStateException(messageNoConnection);
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
 
 		if (entity instanceof PreStore)
 			((PreStore)entity).preStore();
@@ -2611,7 +3027,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the number of rows inserted
 	 *
-	 * @throws NullPointerException if <b>entities</b> or any element of <b>entities</b> is null
+	 * @throws NullPointerException if <b>entities</b> or any element of <b>entities</b> is <b>null</b>
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 *
 	 * @since 2.0.0
@@ -2659,12 +3075,17 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entity the entity to be updated
 	 * @return the number of rows updated
 	 *
-	 * @throws NullPointerException if <b>entity</b> is null
+	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 *
 	 * @since 2.0.0
 	 */
 	public int update(E entity) {
+	// 3.1.0
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
+	////
+
 		this.entity = Objects.requireNonNull(entity, "entity");
 
 		if (entity instanceof PreStore)
@@ -2732,7 +3153,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the number of rows updated
 	 *
-	 * @throws NullPointerException if <b>entities</b> or any element of <b>entities</b> is null
+	 * @throws NullPointerException if <b>entities</b> or any element of <b>entities</b> is <b>null</b>
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 *
 	 * @since 2.0.0
@@ -2793,8 +3214,13 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @since 2.0.0
 	 */
 	public int delete() {
+	// 3.1.0
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
+	////
+
 		if (where.isEmpty()) {
-			logger.warn(messageNoWhereCondition);
+			logger.warn(MessageFormat.format(messageNoWhereCondition, entityInfo.entityClass().getName()));
 			return 0;
 		}
 
@@ -2834,12 +3260,17 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entity the entity to be deleted
 	 * @return the number of rows deleted
 	 *
-	 * @throws NullPointerException if <b>entity</b> is null
+	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 *
 	 * @since 2.0.0
 	 */
 	public int delete(E entity) {
+	// 3.1.0
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
+	////
+
 		Sql<E> sql = clone();
 		sql.where = Condition.of(Objects.requireNonNull(entity, "entity"));
 
@@ -2885,7 +3316,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param entities an <b>Iterable</b> of entities
 	 * @return the number of rows deleted
 	 *
-	 * @throws NullPointerException if <b>entities</b> or any element of <b>entities</b> is null
+	 * @throws NullPointerException if <b>entities</b> or any element of <b>entities</b> is <b>null</b>
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 *
 	 * @since 2.0.0
@@ -2988,7 +3419,8 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 		Objects.requireNonNull(sql, "sql");
 		Objects.requireNonNull(parameters, "parameters");
 		Objects.requireNonNull(consumer, "consumer");
-		if (connection == null) throw new IllegalStateException(messageNoConnection);
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
 
 		int sqlNo = Sql.sqlNo++;
 		if (logger.isInfoEnabled())
@@ -3077,7 +3509,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @param sql the SQL
 	 *
-	 * @throws NullPointerException if <b>entity</b> is null
+	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 *
 	 * @since 3.0.0
@@ -3097,7 +3529,8 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	private int executeUpdate(String sql, List<Object> parameters) {
 		Objects.requireNonNull(sql, "sql");
 		Objects.requireNonNull(parameters, "parameters");
-		if (connection == null) throw new IllegalStateException(messageNoConnection);
+		if (connection == null)
+			throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
 
 		int sqlNo = Sql.sqlNo++;
 		if (logger.isInfoEnabled())
@@ -3186,5 +3619,140 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	public Stream<SqlColumnInfo> selectedJoinSqlColumnInfoStream() {
 		return Stream.concat(Stream.of(this), joinInfos.stream())
 			.flatMap(sqlEntityInfo -> sqlEntityInfo.selectedSqlColumnInfoStream(columns));
+	}
+
+	/**
+	 * Synchronizes table aliases with from Sql and union Sqls.
+	 *
+	 * @since 3.1.0
+	 */
+	private void synchronizeTableAliases() {
+		// synchronize table aliases with from Sql
+		if (fromSql != null) {
+			if (!tableAlias.isEmpty()) {
+				if (!fromSql.tableAlias.isEmpty()) {
+					 if (!tableAlias.equals(fromSql.tableAlias))
+						throw new IllegalStateException(
+							"tableAlias(" + tableAlias + ") <> fromSql.tableAlias(" + fromSql.tableAlias + ")");
+				} else {
+					// tableAlias -> fromSql.tableAlias
+					fromSql.tableAlias(tableAlias);
+					fromSql.synchronizeTableAliases();
+				}
+			} else {
+				if (!fromSql.tableAlias.isEmpty()) {
+					// tableAlias <- fromSql.tableAlias
+					tableAlias(fromSql.tableAlias);
+					synchronizeTableAliases();
+				}
+			}
+		}
+
+		// synchronize table aliases with union Sqls
+		int index = 0;
+		for (Sql<?> unionSql : unionSqls) {
+			if (!tableAlias.isEmpty()) {
+				if (!unionSql.tableAlias.isEmpty()) {
+					 if (!tableAlias.equals(unionSql.tableAlias))
+						throw new IllegalStateException(
+							"tableAlias(" + tableAlias + ") <> unionSqls[" + index + "].tableAlias(" + unionSql.tableAlias + ")");
+				} else {
+					// tableAlias -> unionSql.tableAlias
+					unionSql.tableAlias(tableAlias);
+					unionSql.synchronizeTableAliases();
+				}
+			} else {
+				if (!unionSql.tableAlias.isEmpty()) {
+					// tableAlias <- unionSql.tableAlias
+					tableAlias(unionSql.tableAlias);
+					synchronizeTableAliases();
+				}
+			}
+			++index;
+		}
+	}
+
+	/**
+	 * Synchronize columns with from Sql and union Sqls.
+	 *
+	 * @since 3.1.0
+	 */
+	private void synchronizeColumns() {
+		// synchronize columns with from Sql
+		if (fromSql != null) {
+			if (!columns.isEmpty()) {
+				if (!fromSql.columns.isEmpty()) {
+					 if (!equals(columns, fromSql.columns))
+						throw new IllegalStateException(
+							"columns(" + toString(columns) + ") <> fromSql.columns(" + toString(fromSql.columns) + ")");
+				} else {
+					// column -> fromSql.columns
+					fromSql.columns(columns);
+					fromSql.synchronizeColumns();
+				}
+			} else {
+				if (!fromSql.columns.isEmpty()) {
+					// columns <- fromSql.column
+					columns(fromSql.columns);
+					synchronizeColumns();
+				}
+			}
+		}
+
+		// synchronize columns with union Sqls
+		int index = 0;
+		for (Sql<?> unionSql : unionSqls) {
+			if (!columns.isEmpty()) {
+				if (!unionSql.columns.isEmpty()) {
+					 if (!equals(columns, unionSql.columns))
+						throw new IllegalStateException(
+							"columns(" + toString(columns) + ") <> unionSqls[" + index + "].columns(" + toString(unionSql.columns) + ")");
+				} else {
+					// column -> unionSql.columns
+					unionSql.columns(columns);
+					unionSql.synchronizeColumns();
+				}
+			} else {
+				if (!unionSql.columns.isEmpty()) {
+					// columns <- unionSql.column
+					columns(unionSql.columns);
+					synchronizeColumns();
+				}
+			}
+			++index;
+		}
+	}
+
+	/**
+	 * Returns <b>true</b> if <b>set1</b> equals <b>set2</b>, <b>false</b> otherwise.
+	 *
+	 * @param set1 the set 1
+	 * @param set2 the set 2
+	 * @return <b>true</b> if <b>set1</b> equals <b>set2</b>, <b>false</b> otherwise
+	 *
+	 * @since 3.1.0
+	 */
+	private static <T> boolean equals(Set<T> set1, Set<T> set2) {
+		if (set1.size() != set2.size())
+			return false;
+
+		Set<T> set = new HashSet<T>();
+		set.addAll(set1);
+		set.addAll(set2);
+		return set.size() == set1.size();
+	}
+
+	/**
+	 * Returns a string representation of this object.
+	 *
+	 * @param set the set
+	 * @return a string representation of this object
+	 *
+	 * @since 3.1.0
+	 */
+	private static <T> String toString(Set<T> set) {
+		return set.stream()
+			.map(element -> element.toString())
+			.collect(Collectors.joining(", ", "[", "]"));
 	}
 }

@@ -47,7 +47,7 @@ public class Jndi extends AbstractConnectionSupplier {
 	 *
 	 * <p>
 	 * Looks up the data source uses the string of <b>"java:/comp/env/" + dataSourceName</b>.
-	 * If <b>dataSourceName</b> is null,
+	 * If <b>dataSourceName</b> is <b>null</b>,
 	 * uses the value that have been specified in the lightsleep.properties file.
 	 * </p>
 	 *

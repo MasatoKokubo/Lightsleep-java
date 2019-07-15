@@ -11,7 +11,7 @@ import org.lightsleep.connection.ConnectionWrapper;
  * 
  * <div class="exampleTitle"><span>使用例/Java</span></div>
  * <div class="exampleCode"><pre>
- * Transaction.execute(conn -&gt; {
+ * <b>Transaction.execute(conn -&gt; {</b>
  *     Optional&lt;Contact&gt; contactOpt = new Sql&lt;&gt;(Contact.class)
  *         .where("{id}={}", 1)
  *         .connection(conn)
@@ -22,12 +22,12 @@ import org.lightsleep.connection.ConnectionWrapper;
  *             .connection(conn)
  *             .update(contact);
  *     });
- * });
+ * <b>});</b>
  * </pre></div>
  *
  * <div class="exampleTitle"><span>使用例/Groovy</span></div>
  * <div class="exampleCode"><pre>
- * Transaction.execute {
+ * <b>Transaction.execute {</b>
  *     def contactOpt = new Sql&lt;&gt;(Contact)
  *         .where('{id}={}', 1)
  *         .connection(it)
@@ -38,7 +38,7 @@ import org.lightsleep.connection.ConnectionWrapper;
  *             .connection(it)
  *             .update(contact)
  *     }
- * }
+ * <b>}</b>
  * </pre></div>
  *
  * @since 1.0

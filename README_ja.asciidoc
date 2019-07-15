@@ -11,8 +11,8 @@ Lightsleepは、軽量のO/Rマッピング･ライブラリで、Java 8以降�
 - J2EEが不要(Java RuntimeとJDBCドライバー以外に依存するライブラリがない)なため、適用範囲が広い。
 - XMLファイル等によるテーブルとJavaクラスとのマッピング用の定義ファイルは不要。
 - ライブラリがコンパクトなため学習が容易。
-- 各種のDBMSに同時に接続可能。**(バージョン2.1.0~)**
-- 各種のコネクション･プール･ライブラリを同時に使用可能。**(バージョン2.1.0~)**
+- 各種のDBMSに同時に接続可能。
+- 各種のコネクション･プール･ライブラリを同時に使用可能。
 - 内部ログを各種のロギング･ライブラリから選択して出力可能。
 
 === 対応DBMS
@@ -35,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.lightsleep:lightsleep:3.0.0'
+    compile 'org.lightsleep:lightsleep:3.1.0'
 }
 ----
 
@@ -50,20 +50,20 @@ import java.sql.Timestamp;
 import org.lightsleep.entity.*;
 
 public class Contact {
-	@Key
+    @Key
     public int       id;
     public String    lastName;
     public String    firstName;
     public LocalDate birthday;
 
-	@Insert("0") @Update("{updateCount}+1")
-	public int updateCount;
+    @Insert("0") @Update("{updateCount}+1")
+    public int updateCount;
 
-	@Insert("CURRENT_TIMESTAMP") @NonUpdate
-	public LocalDateTime createdTime;
+    @Insert("CURRENT_TIMESTAMP") @NonUpdate
+    public LocalDateTime createdTime;
 
-	@Insert("CURRENT_TIMESTAMP") @Update("CURRENT_TIMESTAMP")
-	public LocalDateTime updatedTime;
+    @Insert("CURRENT_TIMESTAMP") @Update("CURRENT_TIMESTAMP")
+    public LocalDateTime updatedTime;
 }
 ----
 
@@ -100,11 +100,12 @@ class Contact {
 ----
 List<Contact> contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
-    new Sql<>(Contact.class).connection(conn)
+    new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
         .or   ("{lastName}={}", "Orange")
         .orderBy("{lastName}")
         .orderBy("{firstName}")
+        .connection(conn)
         .select(contacts::add)
 );
 ----
@@ -114,11 +115,12 @@ Transaction.execute(conn ->
 ----
 def contacts = []
 Transaction.execute {
-    new Sql<>(Contact).connection(it)
+    new Sql<>(Contact)
         .where('{lastName}={}', 'Apple')
         .or   ('{lastName}={}', 'Orange')
         .orderBy('{lastName}')
         .orderBy('{firstName}')
+        .connection(it)
         .select({contacts << it})
 }
 ----
@@ -126,7 +128,10 @@ Transaction.execute {
 [source,sql]
 .生成されるSQL
 ----
-SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime FROM Contact WHERE lastName='Apple' OR lastName='Orange' ORDER BY lastName ASC, firstName ASC
+SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
+  FROM Contact
+  WHERE lastName='Apple' OR lastName='Orange'
+  ORDER BY lastName ASC, firstName ASC
 ----
 
 === ライセンス

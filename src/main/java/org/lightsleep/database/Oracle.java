@@ -204,6 +204,7 @@ public class Oracle extends Standard {
 	@Override
 	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
 		Object object = super.getObject(connection, resultSet, columnLabel);
+
 		if (object instanceof oracle.sql.Datum) {
 			try {
 				if (object instanceof oracle.sql.TIMESTAMP)

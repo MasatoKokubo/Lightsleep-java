@@ -95,7 +95,7 @@ public interface Composite {
 	 *
 	 * @param conn the connection wrapper
 	 *
-	 * @throws NullPointerException if <b>conn</b> is null
+	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
 	 */
 	void postSelect(ConnectionWrapper conn);
 
@@ -105,7 +105,7 @@ public interface Composite {
 	 * @param conn the connection wrapper
 	 * @return the number of inserted rows
 	 *
-	 * @throws NullPointerException if <b>conn</b> is null
+	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
 	 */
 	int postInsert(ConnectionWrapper conn);
 
@@ -115,7 +115,7 @@ public interface Composite {
 	 * @param conn the connection wrapper
 	 * @return the number of updated rows
 	 *
-	 * @throws NullPointerException if <b>conn</b> is null
+	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
 	 */
 	int postUpdate(ConnectionWrapper conn);
 
@@ -125,7 +125,7 @@ public interface Composite {
 	 * @param conn the connection wrapper
 	 * @return the number of deleted rows
 	 *
-	 * @throws NullPointerException if <b>conn</b> is null
+	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
 	 */
 	int postDelete(ConnectionWrapper conn);
 }

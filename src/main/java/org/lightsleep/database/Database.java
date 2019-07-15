@@ -143,16 +143,17 @@ public interface Database {
 	 * @param columnLabel the label for the column
 	 * @return the column value
 	 *
-	 * @throws NullPointerException if <b>connection</b>, <b>resultSet</b> or <b>columnLabel</b> is null
+	 * @throws NullPointerException if <b>connection</b>, <b>resultSet</b> or <b>columnLabel</b> is <b>null</b>
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
 	 *
 	 * @since 3.0.0
 	 */
 	default Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
-		Objects.requireNonNull(connection, "connection");
-		Objects.requireNonNull(resultSet, "resultSet");
-		Objects.requireNonNull(columnLabel, "columnLabel");
-
+	// 3.1.0
+	//	Objects.requireNonNull(connection, "connection");
+	//	Objects.requireNonNull(resultSet, "resultSet");
+	//	Objects.requireNonNull(columnLabel, "columnLabel");
+	////
 		try {
 			Object object = resultSet.getObject(columnLabel);
 

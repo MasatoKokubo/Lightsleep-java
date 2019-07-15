@@ -47,7 +47,7 @@ public class Expression implements Condition {
 	 * @param content the content of the expression
 	 * @param arguments the arguments of the expression
 	 *
-	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is <b>null</b>
 	 */
 	public Expression(String content, Object... arguments) {
 		this.content = Objects.requireNonNull(content, "content");
@@ -263,7 +263,6 @@ public class Expression implements Condition {
 			: MessageFormat.format(messageMissingProperties,
 				entityInfo.entityClass().getName(), '[' + String.join(", ", propertyNames) + ']')
 		);
-	////
 	}
 
 	/**

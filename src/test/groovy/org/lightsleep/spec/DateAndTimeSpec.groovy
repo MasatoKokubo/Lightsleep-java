@@ -26,7 +26,7 @@ import spock.lang.*
 
 // DateAndTimeSpec
 @Unroll
-class DateAndTimeSpec extends SpecCommon {
+class DateAndTimeSpec extends Base {
 	@Shared TimeZone defaultTimeZone
 
 	def setupSpec() {

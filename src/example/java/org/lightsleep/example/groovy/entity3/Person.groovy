@@ -37,78 +37,77 @@ import org.lightsleep.entity.UpdateProperty
 	@NonInsertProperty(property='updatedTime')
 ])
 @NonUpdateProperty(property='createdTime')
-class Person extends PersonBase {
-	Person() {
+public class Person extends PersonBase {
+	public Person() {
 	}
 
-	Person(int id) {
+	public Person(int id) {
 		super(id)
 	}
 
-	Person(int id, String firstName, String lastName) {
+	public Person(int id, String firstName, String lastName) {
 		super(id)
 		name.first = firstName
 		name.last  = lastName
 	}
 
-	Person(int id, String firstName, String lastName, int year, int month, int day) {
+	public Person(int id, String firstName, String lastName, int year, int month, int day) {
 		this(id, firstName, lastName)
 		setBirthday(year, month, day)
 	}
 
-	void setBirthday(int year, int month, int day) {
+	public void setBirthday(int year, int month, int day) {
 		Calendar calendar = Calendar.instance
 		calendar.clear()
 		calendar.set(year, month - 1, day, 0, 0, 0)
 		birthday = new Date(calendar.timeInMillis)
 	}
 
-	// ChildKey
-	static class ChildKey {
+	// FeatureKey
+	public static class FeatureKey {
 		@Key
 		@Column('contactId')
-		int personId
+		private int personId
 
 		@Key
-		short childIndex
+		private short featureIndex
 
-		ChildKey() {
+		public FeatureKey() {
 		}
 
-		ChildKey(int personId, short childIndex) {
+		public FeatureKey(int personId, short featureIndex) {
 			this.personId = personId 
-			this.childIndex = childIndex
+			this.featureIndex = featureIndex
 		}
 	}
 
-	// Child
-	static abstract class Child extends ChildKey {
-		String label
-		String content
+	// Feature
+	public static abstract class Feature extends FeatureKey {
+		private String label
+		private String content
 
-		Child() {
+		Feature() {
 		}
 
-		Child(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex)
+		Feature(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex)
 			this.label   = label  
 			this.content = content
 		}
 	}
 
 	// Address
-	@ColumnProperty(property='content', column='content0')
-	static class Address extends Child {
-		String postCode
-		String content1
-		String content2
-		String content3
+	public static class Address extends Feature {
+		private String postCode
+		private String content1
+		private String content2
+		private String content3
 
 		Address() {
 		}
 
-		Address(int personId, short childIndex, String label, String postCode, String content, String content1, String content2, String content3) {
-			super(personId, childIndex, label, content)
+		Address(int personId, short featureIndex, String label, String postCode, String content, String content1, String content2, String content3) {
+			super(personId, featureIndex, label, content)
 			this.postCode = postCode
 			this.content1 = content1
 			this.content2 = content2
@@ -117,32 +116,32 @@ class Person extends PersonBase {
 	}
 
 	// Email
-	static class Email extends Child {
-		Email() {
+	public static class Email extends Feature {
+		public Email() {
 		}
 
-		Email(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex, label, content)
+		public Email(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex, label, content)
 		}
 	}
 
 	// Phone
-	static class Phone extends Child {
-		Phone() {
+	public static class Phone extends Feature {
+		public Phone() {
 		}
 
-		Phone(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex, label, content)
+		public Phone(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex, label, content)
 		}
 	}
 
 	// Url
-	static class Url extends Child {
-		Url() {
+	public static class Url extends Feature {
+		public Url() {
 		}
 
-		Url(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex, label, content)
+		public Url(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex, label, content)
 		}
 	}
 }

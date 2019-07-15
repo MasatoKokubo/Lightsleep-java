@@ -55,7 +55,7 @@ public abstract class LogicalCondition implements Condition {
 	 * @param operator the operator
 	 * @param conditionStream the stream of conditions
 	 *
-	 * @throws NullPointerException <b>operator</b>, <b>conditionStream</b> or any of <b>conditions</b> is null
+	 * @throws NullPointerException <b>operator</b>, <b>conditionStream</b> or any of <b>conditions</b> is <b>null</b>
 	 */
 	public LogicalCondition(Operator operator, Stream<Condition> conditionStream) {
 		this.operator = Objects.requireNonNull(operator, "operator");

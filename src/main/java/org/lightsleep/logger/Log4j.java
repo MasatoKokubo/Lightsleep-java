@@ -23,7 +23,7 @@ public class Log4j implements Logger {
 	 *
 	 * @param name the name
 	 *
-	 * @throws NullPointerException <b>name</b> is null
+	 * @throws NullPointerException <b>name</b> is <b>null</b>
 	 */
 	public Log4j(String name) {
 		logger = LogManager.getLogger(name);

@@ -11,9 +11,9 @@ CREATE TABLE Contact (
 	birthday    DATE             NULL,
 	birthday2   BIGINT           NULL,
 
-	updateCount INT          DEFAULT 0 NOT NULL,
-	createdTime TIMESTAMP(6) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	updatedTime TIMESTAMP(6) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	updateCount INT          NOT NULL,
+	createdTime TIMESTAMP(6) WITH TIME ZONE NOT NULL,
+	updatedTime TIMESTAMP(6) WITH TIME ZONE NOT NULL,
 
 	PRIMARY KEY(id)
 );
@@ -21,47 +21,47 @@ CREATE TABLE Contact (
 -- Phone
 DROP TABLE IF EXISTS Phone;
 CREATE TABLE Phone (
-	contactId   INT          NOT NULL,
-	childIndex  SMALLINT     NOT NULL,
-	label       VARCHAR( 10) NOT NULL,
-	content     VARCHAR( 20) NOT NULL,
+	contactId    INT          NOT NULL,
+	featureIndex SMALLINT     NOT NULL,
+	label        VARCHAR( 10) NOT NULL,
+	content      VARCHAR( 20) NOT NULL,
 
-	PRIMARY KEY(contactId, childIndex)
+	PRIMARY KEY(contactId, featureIndex)
 );
 
 -- E-Mail
 DROP TABLE IF EXISTS Email;
 CREATE TABLE Email (
-	contactId   INT          NOT NULL,
-	childIndex  SMALLINT     NOT NULL,
-	label       VARCHAR( 10) NOT NULL,
-	content     VARCHAR(256) NOT NULL,
+	contactId    INT          NOT NULL,
+	featureIndex SMALLINT     NOT NULL,
+	label        VARCHAR( 10) NOT NULL,
+	content      VARCHAR(256) NOT NULL,
 
-	PRIMARY KEY(contactId, childIndex)
+	PRIMARY KEY(contactId, featureIndex)
 );
 
 -- URL
 DROP TABLE IF EXISTS Url;
 CREATE TABLE Url (
-	contactId   INT          NOT NULL,
-	childIndex  SMALLINT     NOT NULL,
-	label       VARCHAR( 10) NOT NULL,
-	content     VARCHAR(256) NOT NULL,
+	contactId    INT          NOT NULL,
+	featureIndex SMALLINT     NOT NULL,
+	label        VARCHAR( 10) NOT NULL,
+	content      VARCHAR(256) NOT NULL,
 
-	PRIMARY KEY(contactId, childIndex)
+	PRIMARY KEY(contactId, featureIndex)
 );
 
 -- Address
 DROP TABLE IF EXISTS Address;
 CREATE TABLE Address (
-	contactId   INT          NOT NULL,
-	childIndex  SMALLINT     NOT NULL,
-	label       VARCHAR( 10) NOT NULL,
-	postCode    VARCHAR( 10)     NULL,
-	content0    VARCHAR( 40) NOT NULL,
-	content1    VARCHAR( 40)     NULL,
-	content2    VARCHAR( 40)     NULL,
-	content3    VARCHAR( 40)     NULL,
+	contactId    INT          NOT NULL,
+	featureIndex SMALLINT     NOT NULL,
+	label        VARCHAR( 10) NOT NULL,
+	postCode     VARCHAR( 10)     NULL,
+	content      VARCHAR( 40) NOT NULL,
+	content1     VARCHAR( 40)     NULL,
+	content2     VARCHAR( 40)     NULL,
+	content3     VARCHAR( 40)     NULL,
 
-	PRIMARY KEY(contactId, childIndex)
+	PRIMARY KEY(contactId, featureIndex)
 );

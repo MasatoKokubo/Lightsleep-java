@@ -27,7 +27,7 @@ public interface Condition extends SqlComponent {
 	 * @param arguments the arguments of the expression condition
 	 * @return a new expression condition
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see Expression#Expression(String, Object...)
 	 */
@@ -42,7 +42,7 @@ public interface Condition extends SqlComponent {
 	 * @param entity the entity of the entity condition
 	 * @return a new entity condition
 	 *
-	 * @throws NullPointerException if <b>entity</b> is null
+	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
 	 *
 	 * @see EntityCondition#EntityCondition(Object)
 	 */
@@ -63,12 +63,34 @@ public interface Condition extends SqlComponent {
 	 * @param subSql the <b>Sql</b> of the subquery condition.
 	 * @return a new subquery condition
 	 *
-	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is null
+	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
 	 *
+	 * @see #of(Sql, Sql, String)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
+//	static <E, SE> Condition of(String content, Sql<E> outerSql, Sql<SE> subSql) {
 	static <E, SE> Condition of(String content, Sql<E> outerSql, Sql<SE> subSql) {
 		return new SubqueryCondition<>(new Expression(content), outerSql, subSql);
+	}
+
+	/**
+	 * Returns a new subquery condition.
+	 *
+	 * @param <E> the type of the entity related to table of the outer sql.
+	 * @param <SE> the type of the entity related to table of the subquery.
+	 * @param outerSql the <b>Sql</b> object of the outer query
+	 * @param subSql the <b>Sql</b> of the subquery condition.
+	 * @param content the content of the subquery condition.
+	 * @return a new subquery condition
+	 *
+	 * @throws NullPointerException if <b>outerSql</b>, <b>subSql</b> or <b>content</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see #of(String, Sql, Sql)
+	 * @see SubqueryCondition#SubqueryCondition(Sql, Sql, Expression)
+	 */
+	static <E, SE> Condition of(Sql<E> outerSql, Sql<SE> subSql, String content) {
+		return new SubqueryCondition<>(outerSql, subSql, new Expression(content));
 	}
 
 	/**
@@ -89,7 +111,7 @@ public interface Condition extends SqlComponent {
 	 * @param condition the condition
 	 * @return an optimized (this AND <b>condition</b>)
 	 *
-	 * @throws NullPointerException if <b>condition</b> is null
+	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
 	 *
 	 * @see And#And(Condition...)
 	 * @see LogicalCondition#optimized()
@@ -105,7 +127,7 @@ public interface Condition extends SqlComponent {
 	 * @param arguments the arguments of the expression condition
 	 * @return an optimized (this AND the expression condition)
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see And#And(Condition...)
 	 * @see Expression#Expression(String, Object...)
@@ -113,6 +135,23 @@ public interface Condition extends SqlComponent {
 	 */
 	default Condition and(String content, Object... arguments) {
 		return new And(this, new Expression(content, arguments)).optimized();
+	}
+
+	/**
+	 * Returns an optimized (this AND the entity condition).
+	 *
+	 * @param <K> the type of the entity
+	 * @param entity the entity of the entity condition
+	 * @return an optimized (this AND the entity condition)
+	 *
+	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see And#And(Condition...)
+	 * @see EntityCondition#EntityCondition(Object)
+	 */
+	default <K> Condition and(K entity) {
+		return new And(this, entity instanceof String ? new Expression((String)entity) : new EntityCondition<K>(entity)).optimized();
 	}
 
 	/**
@@ -125,8 +164,9 @@ public interface Condition extends SqlComponent {
 	 * @param subSql the <b>Sql</b> of the subquery condition.
 	 * @return an optimized (this AND the subquery condition)
 	 *
-	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is null
+	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
 	 *
+	 * @see #and(Sql, Sql, String)
 	 * @see And#And(Condition...)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 * @see Expression#Expression(String, Object...)
@@ -137,12 +177,35 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
+	 * Returns an optimized (this AND the subquery condition).
+	 *
+	 * @param <E> the type of the entity related to table of the outer sql.
+	 * @param <SE> the type of the entity related to table of the subquery.
+	 * @param outerSql the <b>Sql</b> object of the outer query
+	 * @param subSql the <b>Sql</b> of the subquery condition.
+	 * @param content the content of the subquery condition.
+	 * @return an optimized (this AND the subquery condition)
+	 *
+	 * @throws NullPointerException if <b>outerSql</b>, <b>subSql</b> or <b>content</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see #and(String, Sql, Sql)
+	 * @see And#And(Condition...)
+	 * @see SubqueryCondition#SubqueryCondition(Sql, Sql, Expression)
+	 * @see Expression#Expression(String, Object...)
+	 * @see LogicalCondition#optimized()
+	 */
+	default <E, SE> Condition and(Sql<E> outerSql, Sql<SE> subSql, String content) {
+		return new And(this, new SubqueryCondition<>(outerSql, subSql, new Expression(content))).optimized();
+	}
+
+	/**
 	 * Returns an optimized (this OR <b>condition</b>).
 	 *
 	 * @param condition the condition
 	 * @return optimized (this OR <b>condition</b>)
 	 *
-	 * @throws NullPointerException if <b>condition</b> is null
+	 * @throws NullPointerException if <b>condition</b> is <b>null</b>
 	 *
 	 * @see Or#Or(Condition...)
 	 * @see LogicalCondition#optimized()
@@ -158,7 +221,7 @@ public interface Condition extends SqlComponent {
 	 * @param arguments the arguments of the expression condition
 	 * @return optimized (this OR the expression condition)
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is null
+	 * @throws NullPointerException if <b>content</b> or <b>arguments</b> is <b>null</b>
 	 *
 	 * @see Or#Or(Condition...)
 	 * @see Expression#Expression(String, Object...)
@@ -166,6 +229,23 @@ public interface Condition extends SqlComponent {
 	 */
 	default Condition or(String content, Object... arguments) {
 		return new Or(this, new Expression(content, arguments)).optimized();
+	}
+
+	/**
+	 * Returns an optimized (this OR the entity condition).
+	 *
+	 * @param <K> the type of the entity
+	 * @param entity the entity of the entity condition
+	 * @return an optimized (this OR the entity condition)
+	 *
+	 * @throws NullPointerException if <b>entity</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see Or#Or(Condition...)
+	 * @see EntityCondition#EntityCondition(Object)
+	 */
+	default <K> Condition or(K entity) {
+		return new Or(this, entity instanceof String ? new Expression((String)entity) : new EntityCondition<K>(entity)).optimized();
 	}
 
 	/**
@@ -178,8 +258,9 @@ public interface Condition extends SqlComponent {
 	 * @param subSql the <b>Sql</b> of the subquery condition.
 	 * @return an optimized (this OR the subquery condition)
 	 *
-	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is null
+	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
 	 *
+	 * @see #or(Sql, Sql, String)
 	 * @see Or#Or(Condition...)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 * @see Expression#Expression(String, Object...)
@@ -190,12 +271,35 @@ public interface Condition extends SqlComponent {
 	}
 
 	/**
+	 * Returns an optimized (this OR the subquery condition).
+	 *
+	 * @param <E> the type of the entity related to table of the outer sql.
+	 * @param <SE> the type of the entity related to table of the subquery.
+	 * @param outerSql the <b>Sql</b> object of the outer query
+	 * @param subSql the <b>Sql</b> of the subquery condition.
+	 * @param content the content of the subquery condition.
+	 * @return an optimized (this OR the subquery condition)
+	 *
+	 * @throws NullPointerException if <b>content</b>, <b>outerSql</b> or <b>subSql</b> is <b>null</b>
+	 *
+	 * @since 3.1.0
+	 * @see #or(String, Sql, Sql)
+	 * @see Or#Or(Condition...)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
+	 * @see Expression#Expression(String, Object...)
+	 * @see LogicalCondition#optimized()
+	 */
+	default <E, SE> Condition or(Sql<E> outerSql, Sql<SE> subSql, String content) {
+		return new Or(this, new SubqueryCondition<>(outerSql, subSql, new Expression(content))).optimized();
+	}
+
+	/**
 	 * Returns an optimized <b>new And(conditions)</b>.
 	 *
 	 * @param conditions a stream of conditions
 	 * @return an optimized <b>new And(conditions)</b>
 	 *
-	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
+	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is <b>null</b>
 	 *
 	 * @since 1.8.8
 	 *
@@ -212,7 +316,7 @@ public interface Condition extends SqlComponent {
 	 * @param conditions a collection of conditions
 	 * @return an optimized <b>new And(conditions)</b>
 	 *
-	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
+	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is <b>null</b>
 	 *
 	 * @since 1.8.8
 	 *
@@ -229,7 +333,7 @@ public interface Condition extends SqlComponent {
 	 * @param conditions an array of conditions
 	 * @return an optimized <b>new And(conditions)</b>
 	 *
-	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
+	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is <b>null</b>
 	 *
 	 * @since 1.8.8
 	 *
@@ -246,7 +350,7 @@ public interface Condition extends SqlComponent {
 	 * @param conditions a stream of conditions
 	 * @return an optimized <b>new Or(conditions)</b>
 	 *
-	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
+	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is <b>null</b>
 	 *
 	 * @since 1.8.8
 	 *
@@ -263,7 +367,7 @@ public interface Condition extends SqlComponent {
 	 * @param conditions a liat of conditions
 	 * @return an optimized <b>new Or(conditions)</b>
 	 *
-	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
+	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is <b>null</b>
 	 *
 	 * @since 1.8.8
 	 *
@@ -280,7 +384,7 @@ public interface Condition extends SqlComponent {
 	 * @param conditions an array of conditions
 	 * @return an optimized <b>new Or(conditions)</b>
 	 *
-	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is null
+	 * @throws NullPointerException if <b>conditions</b> or any element of <b>conditions</b> is <b>null</b>
 	 *
 	 * @since 1.8.8
 	 *

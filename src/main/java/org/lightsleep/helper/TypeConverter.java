@@ -616,7 +616,7 @@ public class TypeConverter<ST, DT> {
 	 * @param destinType the type of the destination
 	 * @return the key
 	 *
-	 * @throws NullPointerException <b>sourceType</b> or <b>destinType</b> is null
+	 * @throws NullPointerException <b>sourceType</b> or <b>destinType</b> is <b>null</b>
 	 */
 	public static String key(Class<?> sourceType, Class<?> destinType) {
 		sourceType = Utils.toClassType(Objects.requireNonNull(sourceType, "sourceType"));
@@ -637,7 +637,7 @@ public class TypeConverter<ST, DT> {
 	 * @param typeConverterMap the <b>TypeConverter</b> map
 	 * @param typeConverter the <b>TypeConverter</b>
 	 *
-	 * @throws NullPointerException <b>typeConverterMap</b> or <b>typeConverter</b> is null
+	 * @throws NullPointerException <b>typeConverterMap</b> or <b>typeConverter</b> is <b>null</b>
 	 */
 	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?> typeConverter) {
 		Objects.requireNonNull(typeConverterMap, "typeConverterMap");
@@ -671,7 +671,7 @@ public class TypeConverter<ST, DT> {
 	 * @param destinType the type of the destination
 	 * @return a <b>TypeConverter</b>
 	 *
-	 * @throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is null
+	 * @throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is <b>null</b>
 	 */
 	public static <ST, DT> TypeConverter<ST, DT> get(Map<String, TypeConverter<?, ?>> typeConverterMap,
 			Class<ST> sourceType, Class<DT> destinType) {
@@ -727,7 +727,7 @@ public class TypeConverter<ST, DT> {
 	 * @param destinType the type of the destination
 	 * @return a <b>TypeConverter</b>
 	 *
-	 * @throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is null
+	 * @throws NullPointerException <b>typeConverterMap</b>, s<b>ourceType</b> or <b>destinType</b> is <b>null</b>
 	 */
 	private static <ST, DT> TypeConverter<ST, DT> search(
 			Map<String, TypeConverter<?, ?>> typeConverterMap,
@@ -779,7 +779,7 @@ public class TypeConverter<ST, DT> {
 	 * @param destinType a destination type (other than primitive types)
 	 * @return a converted object (might be null)
 	 *
-	 * @throws NullPointerException if <b>typeConverterMap</b> or <b>destinType</b> is null
+	 * @throws NullPointerException if <b>typeConverterMap</b> or <b>destinType</b> is <b>null</b>
 	 * @throws ConvertException if can not find the converter or the accuracy is lowered in the conversion
 	 * @throws IllegalArgumentException if <b>destinType</b> is a primitive type
 	 */
@@ -867,7 +867,7 @@ public class TypeConverter<ST, DT> {
 	 * @param destinType the type of the destination
 	 * @param function the function for data converting
 	 *
-	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b> or <b>function</b> is null
+	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b> or <b>function</b> is <b>null</b>
 	 */
 // 3.0.0
 //	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<ST, DT> function) {
@@ -889,12 +889,15 @@ public class TypeConverter<ST, DT> {
 	 * @param function1 the first function for data converting
 	 * @param function2 the second function for data converting
 	 *
-	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b>, <b>function1</b> or <b>function2</b> is null
+	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b>, <b>function1</b> or <b>function2</b> is <b>null</b>
 	 *
 	 * @since 3.0.0
 	 */
 	public <MT> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
-			Function<? super ST, MT> function1, Function<? super MT, ? extends DT> function2) {
+		// 3.1.0
+		//	Function<? super ST, MT> function1, Function<? super MT, ? extends DT> function2) {
+			Function<? super ST, ? extends MT> function1, Function<? super MT, ? extends DT> function2) {
+		////
 		this(
 			sourceType,
 			destinType,
@@ -914,7 +917,7 @@ public class TypeConverter<ST, DT> {
 	 * @param function2 the second function for data converting
 	 * @param function3 the third function for data converting
 	 *
-	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b>, <b>function1</b>, <b>function2</b> or <b>function3</b> is null
+	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b>, <b>function1</b>, <b>function2</b> or <b>function3</b> is <b>null</b>
 	 *
 	 * @since 3.0.0
 	 */
@@ -944,12 +947,15 @@ public class TypeConverter<ST, DT> {
 	 * @param function3 the third function for data converting
 	 * @param function4 the 4ht function for data converting
 	 *
-	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b>, <b>function1</b>, <b>function2</b>, <b>function3</b> or <b>function4</b> is null
+	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b>, <b>function1</b>, <b>function2</b>, <b>function3</b> or <b>function4</b> is <b>null</b>
 	 *
 	 * @since 3.0.0
 	 */
 	public <MT1, MT2, MT3> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
-			Function<? super ST, MT1> function1,
+		// 3.1.0
+		//	Function<? super ST, MT1> function1,
+			Function<? super ST, ? extends MT1> function1,
+		////
 			Function<? super MT1, ? extends MT2> function2,
 			Function<? super MT2, ? extends MT3> function3,
 			Function<? super MT3, ? extends DT> function4) {
@@ -971,7 +977,7 @@ public class TypeConverter<ST, DT> {
 //	 * @param typeConverter1 the first TypeConverter
 //	 * @param typeConverter2 the second TypeConverter
 //	 *
-//	 * @throws NullPointerException if <b>typeConverter1</b> or <b>typeConverter2</b> is null
+//	 * @throws NullPointerException if <b>typeConverter1</b> or <b>typeConverter2</b> is <b>null</b>
 //	 *
 //	 * @since 1.8.0
 //	 */

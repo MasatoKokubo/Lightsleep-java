@@ -795,8 +795,25 @@ public class Standard implements Database {
 	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
-		// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-		buff.append(subSelectSql(sql, parameters));
+	// 3.1.0
+		if (sql.getUnionSqls().isEmpty()) {
+	////
+			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+			buff.append(subSelectSql(sql, parameters));
+	// 3.1.0
+		} else {
+			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+			// UNION or UNION ALL
+			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+			// ...
+			String delimiter = "";
+//			for (Sql<? extends E> unionSql : sql.getUnionSqls()) {
+			for (Sql<?> unionSql : sql.getUnionSqls()) {
+				buff.append(delimiter).append(subSelectSql(unionSql, parameters));
+				delimiter = sql.isUnionAll() ? " UNION ALL " : " UNION ";
+			}
+		}
+	////
 
 		// ORDER BY ...
 		appendOrderBy(buff, sql, parameters);
@@ -820,57 +837,72 @@ public class Standard implements Database {
 	 */
 	@Override
 	public <E> String subSelectSql(Sql<E> sql, List<Object> parameters) {
+	// 3.1.0
+	//	return subSelectSql(sql, () -> {
+	//		//  column name, ...
+	//		StringBuilder buff = new StringBuilder();
+	//		String[] delimiter = new String[] {""};
+	//
+	//		sql.selectedJoinSqlColumnInfoStream()
+	//			.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
+	//			.forEach(sqlColumnInfo -> {
+	//				buff.append(delimiter[0]);
+	//				delimiter[0] = ", ";
+	//
+	//				ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
+	//				String tableAlias  = sqlColumnInfo.tableAlias();
+	//				String columnName  = columnInfo.getColumnName(tableAlias);
+	//				String columnAlias = columnInfo.getColumnAlias(tableAlias);
+	//
+	//				// gets expression
+	//				Expression expression = sql.getExpression(columnInfo.propertyName());
+	//				if (expression.isEmpty())
+	//					expression = sql.getExpression(columnInfo.getPropertyName(tableAlias));
+	//
+	//				if (expression.isEmpty())
+	//					expression = columnInfo.selectExpression();
+	//
+	//				if (expression.isEmpty()) {
+	//					if (!sql.getGroupBy().isEmpty()) buff.append("MIN(");
+	//
+	//					// No expression ->  column name
+	//					buff.append(columnName);
+	//
+	//					if (!sql.getGroupBy().isEmpty()) buff.append(")");
+	//
+	//					// column alias
+	//					if (!columnAlias.equals(columnName))
+	//					// 3.1.0
+	//					//	buff.append(" AS ").append(columnAlias);
+	//						buff.append(" ").append(columnAlias);
+	//					////
+	//
+	//				} else {
+	//					// First expression
+	//					buff.append(expression.toString(this, sql, parameters));
+	//
+	//					// column alias
+	//				// 3.1.0
+	//				//	buff.append(" AS ").append(columnAlias);
+	//					buff.append(" ").append(columnAlias);
+	//				////
+	//				}
+	//			});
+	//		if (buff.length() == 0)
+	//			throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
+	//				sql.entityClass().getName(),
+	//				'[' + sql.getColumns().stream()
+	//					.map(name -> '"' + name + '"')
+	//					.collect(Collectors.joining(", ")) + ']'
+	//			));
+	//		return buff;
+	//	}, parameters);
 		return subSelectSql(sql, () -> {
-			//  column name, ...
 			StringBuilder buff = new StringBuilder();
-			String[] delimiter = new String[] {""};
-
-			sql.selectedJoinSqlColumnInfoStream()
-				.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
-				.forEach(sqlColumnInfo -> {
-					buff.append(delimiter[0]);
-					delimiter[0] = ", ";
-
-					ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
-					String tableAlias   = sqlColumnInfo.tableAlias();
-					String columnName   = columnInfo.getColumnName(tableAlias);
-					String columnAlias  = columnInfo.getColumnAlias(tableAlias);
-
-					// gets expression
-					Expression expression = sql.getExpression(columnInfo.propertyName());
-					if (expression.isEmpty())
-						expression = sql.getExpression(columnInfo.getPropertyName(tableAlias));
-
-					if (expression.isEmpty())
-						expression = columnInfo.selectExpression();
-
-					if (expression.isEmpty()) {
-						if (!sql.getGroupBy().isEmpty()) buff.append("MIN(");
-
-						// No expression ->  column name
-						buff.append(columnName);
-
-						if (!sql.getGroupBy().isEmpty()) buff.append(")");
-
-						// column alias
-						if (!columnAlias.equals(columnName))
-							buff.append(" AS ").append(columnAlias);
-
-					} else {
-						// First expression
-						buff.append(expression.toString(this, sql, parameters));
-
-						// column alias
-						buff.append(" AS ").append(columnAlias);
-					}
-				});
-			if (buff.length() == 0)
-				throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
-					sql.entityClass().getName(),
-					'[' + sql.getColumns().stream()
-						.map(name -> '"' + name + '"')
-						.collect(Collectors.joining(", ")) + ']'
-				));
+			if (sql.getFrom() == null)
+				appendSelectColumns(buff, sql, parameters);
+			else
+				appendSelectColumnAliases(buff, sql, parameters);
 			return buff;
 		}, parameters);
 	}
@@ -894,8 +926,21 @@ public class Standard implements Database {
 		// FROM
 		buff.append(" FROM");
 
-		// main table name and alias
-		appendMainTable(buff, sql);
+	// 3.1.0
+	//	// main table name and alias
+	//	appendMainTable(buff, sql);
+		if (sql.getFrom() == null) {
+			// main table name and alias
+			appendMainTable(buff, sql);
+
+		} else {
+			// (SELECT ...) table alias
+			buff.append(" (")
+				.append(subSelectSql(sql.getFrom(), parameters))
+				.append(") ")
+				.append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
+		}
+	////
 
 		// INNER / OUTER JOIN ...
 		appendJoinTables(buff, sql, parameters);
@@ -908,7 +953,6 @@ public class Standard implements Database {
 
 		// HAVING ...
 		appendHaving(buff, sql, parameters);
-	////
 
 		return buff.toString();
 	}
@@ -942,7 +986,7 @@ public class Standard implements Database {
 		// UPDATE table name
 		buff.append("UPDATE");
 
-		// main table name and alias
+		// table name and alias
 		appendMainTable(buff, sql);
 
 		// INNER / OUTER JOIN ...
@@ -977,7 +1021,7 @@ public class Standard implements Database {
 				.append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
 		buff.append(" FROM");
 
-		// main table name and alias
+		// table name and alias
 		appendMainTable(buff, sql);
 
 		// INNER / OUTER JOIN ...
@@ -1051,6 +1095,106 @@ public class Standard implements Database {
 			if (!joinInfo.on().isEmpty())
 				buff.append(" ON ").append(joinInfo.on().toString(this, sql, parameters));
 		});
+	}
+
+	/**
+	 * Appends SELECT column aliass<b>buff</b>.
+	 *
+	 * @param <E> the type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 * @param parameters a list to add the parameters of the SQL
+	 *
+	 * @since 3.1.0
+	 */
+	protected <E> void appendSelectColumnAliases(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+		// alias, ...
+		String[] delimiter = new String[] {""};
+
+		sql.selectedJoinSqlColumnInfoStream()
+			.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
+			.forEach(sqlColumnInfo -> {
+				buff.append(delimiter[0]);
+				delimiter[0] = ", ";
+
+				ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
+				String tableAlias  = sqlColumnInfo.tableAlias();
+				String columnAlias = columnInfo.getColumnAlias(tableAlias);
+
+				// column alias
+				buff.append(columnAlias);
+			});
+
+		if (buff.length() == 0)
+			throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
+				sql.entityClass().getName(),
+				'[' + sql.getColumns().stream()
+					.map(name -> '"' + name + '"')
+					.collect(Collectors.joining(", ")) + ']'
+			));
+	}
+
+	/**
+	 * Appends SELECT column names<b>buff</b>.
+	 *
+	 * @param <E> the type of the entity
+	 * @param buff the string buffer to be appended
+	 * @param sql a <b>Sql</b> object
+	 * @param parameters a list to add the parameters of the SQL
+	 *
+	 * @since 3.1.0
+	 */
+	protected <E> void appendSelectColumns(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+		// column name or expression alias, ...
+		String[] delimiter = new String[] {""};
+
+		sql.selectedJoinSqlColumnInfoStream()
+			.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
+			.forEach(sqlColumnInfo -> {
+				buff.append(delimiter[0]);
+				delimiter[0] = ", ";
+
+				ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
+				String tableAlias  = sqlColumnInfo.tableAlias();
+				String columnName  = columnInfo.getColumnName(tableAlias);
+				String columnAlias = columnInfo.getColumnAlias(tableAlias);
+
+				// gets expression
+				Expression expression = sql.getExpression(columnInfo.propertyName());
+				if (expression.isEmpty())
+					expression = sql.getExpression(columnInfo.getPropertyName(tableAlias));
+
+				if (expression.isEmpty())
+					expression = columnInfo.selectExpression();
+
+				if (expression.isEmpty()) {
+					if (!sql.getGroupBy().isEmpty()) buff.append("MIN(");
+
+					// No expression ->  column name
+					buff.append(columnName);
+
+					if (!sql.getGroupBy().isEmpty()) buff.append(")");
+
+					// column alias
+					if (!columnAlias.equals(columnName))
+						buff.append(" ").append(columnAlias);
+
+				} else {
+					// First expression
+					buff.append(expression.toString(this, sql, parameters));
+
+					// column alias
+					buff.append(" ").append(columnAlias);
+				}
+			});
+
+		if (buff.length() == 0)
+			throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
+				sql.entityClass().getName(),
+				'[' + sql.getColumns().stream()
+					.map(name -> '"' + name + '"')
+					.collect(Collectors.joining(", ")) + ']'
+			));
 	}
 
 	/**

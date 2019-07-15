@@ -307,8 +307,25 @@ public class SQLServer extends Standard {
 	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
 		StringBuilder buff = new StringBuilder();
 
-		// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-		buff.append(subSelectSql(sql, parameters));
+	// 3.1.0
+		if (sql.getUnionSqls().isEmpty()) {
+	////
+			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+			buff.append(subSelectSql(sql, parameters));
+	// 3.1.0
+		} else {
+			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+			// UNION or UNION ALL
+			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+			// ...
+			String delimiter = "";
+//			for (Sql<? extends E> unionSql : sql.getUnionSqls()) {
+			for (Sql<?> unionSql : sql.getUnionSqls()) {
+				buff.append(delimiter).append(subSelectSql(unionSql, parameters));
+				delimiter = sql.isUnionAll() ? " UNION ALL " : " UNION ";
+			}
+		}
+	////
 
 		// ORDER BY ...
 		appendOrderBy(buff, sql, parameters);
@@ -335,8 +352,21 @@ public class SQLServer extends Standard {
 		// FROM
 		buff.append(" FROM");
 
-		// main table name and alias
-		appendMainTable(buff, sql);
+	// 3.1.0
+	//	// main table name and alias
+	//	appendMainTable(buff, sql);
+		if (sql.getFrom() == null) {
+			// main table name and alias
+			appendMainTable(buff, sql);
+
+		} else {
+			// (SELECT ...) table alias
+			buff.append(" (")
+				.append(subSelectSql(sql.getFrom(), parameters))
+				.append(") ")
+				.append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
+		}
+	////
 
 		// FOR UPDATE
 		appendForUpdate(buff, sql);
@@ -369,7 +399,7 @@ public class SQLServer extends Standard {
 		StringBuilder buff = new StringBuilder();
 
 		Sql<E> sql2 = new Sql<>(sql.entityInfo().entityClass())
-			.setColumns(sql.getColumns())
+			.columns(sql.getColumns())
 			.setEntity(sql.entity());
 
 		// Sets expressions to sql2 from sql.
@@ -446,6 +476,7 @@ public class SQLServer extends Standard {
 	@Override
 	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
 		Object object = super.getObject(connection, resultSet, columnLabel);
+
 		if (object instanceof microsoft.sql.DateTimeOffset) {
 			// microsoft.sql.DateTimeOffset
 			LocalDateTime localDateTime = ((microsoft.sql.DateTimeOffset)object).getTimestamp().toLocalDateTime();

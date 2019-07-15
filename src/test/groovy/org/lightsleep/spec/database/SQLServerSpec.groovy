@@ -67,11 +67,9 @@ class SQLServerSpec extends Specification {
 			'String \'A\'      '|"'A'"      |"'''A'''"
 			'String \\         '|'\\'       |"'\\'"
 			'String A\\tB\\n\\r'|'A\tB\n\r' |"'A'+CHAR(9)+'B'+CHAR(10)+CHAR(13)"
-		// 3.0.1
 			'String nchar 1    '|'¢'                |"N'¢'"
 			'String nchar 2    '|'ABC¢'             |"N'ABC¢'"
 			'String nchar 3    '|'ABC¢\r\n¢ABC\nABC'|"N'ABC¢'+CHAR(13)+CHAR(10)+N'¢ABC'+CHAR(10)+'ABC'"
-		////
 
 		//	title           |sourceValue                                       |expectedString
 			'java.utl.Date '|new java.util.Date(0L)                            |"CAST('1970-01-01' AS DATE)"

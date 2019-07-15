@@ -3,11 +3,11 @@
 
 package org.lightsleep.example.java.entity;
 
-public class Url extends ContactChild {
+public class Url extends ContactFeature {
 	public Url() {
 	}
 
-	public Url(int contactId, short childIndex, String label, String content) {
-		super(contactId, childIndex, label, content);
+	public Url(int contactId, short featureIndex, String label, String content) {
+		super(contactId, featureIndex, label, content);
 	}
 }

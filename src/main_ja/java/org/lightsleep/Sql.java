@@ -3,6 +3,7 @@
 
 package org.lightsleep;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -195,7 +196,11 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	}
 
 	/**
-	 * 生成される SELECT SQLおよびUPDATE SQLのカラムに関連するプロパティ名を指定します。
+	 * 生成されるSELECT SQLおよびUPDATE SQLの対象カラムを指定します。
+	 *
+	 * <p>
+	 * <b>from</b>, <b>union</b>および<b>unionAll</b>メソッドで設定された<b>Sql</b>オブジェクトに対しても未設定であれば設定します。
+	 * </p>
 	 *
 	 * <p>
 	 * <b>"*"</b>または<b>"<i>テーブル別名</i>.*"</b>で指定する事もできます。
@@ -255,29 +260,81 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param propertyNames カラムに関連するプロパティ名の配列
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException <b>columns</b>または<b>columns</b>の要素が<b>null</b> の場合
+	 * @throws NullPointerException <b>propertyNames</b>または<b>propertyNames</b>の要素いずれかが<b>null</b> の場合
 	 *
+	 * @see #columns(Collection)
 	 * @see #getColumns()
 	 * @see #setColumns(Set)
+	 * @see #setColumns(Class)
 	 */
 	public Sql<E> columns(String... propertyNames) {
 		return null;
 	}
 
 	/**
-	 * 生成される SELECT SQLおよびUPDATE SQLのカラムに関連するプロパティ名のセットを返します。
+	 * 生成されるSELECT SQLおよびUPDATE SQLの対象カラムを指定します。
+	 *
+	 * <p>
+	 * <b>from</b>, <b>union</b>および<b>unionAll</b>メソッドで設定された<b>Sql</b>オブジェクトに対しても未設定であれば設定します。
+	 * </p>
+	 *
+	 * <p>
+	 * <b>"*"</b>または<b>"<i>テーブル別名</i>.*"</b>で指定する事もできます。
+	 * このメソッドがコールされない場合は、<b>"*"</b>が指定されたのと同様になります。
+	 * </p>
+	 *
+	 * @param propertyNames カラムに関連するプロパティ名のコレクション
+	 * @return このオブジェクト
+	 *
+	 * @throws NullPointerException <b>propertyNames</b>または<b>propertyNames</b>の要素いずれかが<b>null</b> の場合
+	 *
+	 * @since 3.1.0
+	 * @see #columns(String...)
+	 * @see #getColumns()
+	 * @see #setColumns(Set)
+	 * @see #setColumns(Class)
+	 */
+	public Sql<E> columns(Collection<String> propertyNames) {
+		return null;
+	}
+
+	/**
+	 * 生成されるSELECT SQLおよびUPDATE SQLの対象カラムを指定します。
+	 *
+	 * @param <RE>結果エンティティの型
+	 * @param resultClass プロパティ名のセットを含むエンティティクラス
+	 * @return このオブジェクト
+	 *
+	 * @since 3.1.0
+	 * @see #columns(String...)
+	 * @see #columns(Collection)
+	 * @see #getColumns()
+	 */
+	public <RE> Sql<E> columns(Class<RE> resultClass) {
+		return null;
+	}
+
+	/**
+	 * 生成されるSELECT SQLおよびUPDATE SQLのカラムに関連するプロパティ名のセットを返します。
 	 *
 	 * @return メソッドで指定されたプロパティ名のセット
 	 *
 	 * @see #columns(String...)
+	 * @see #columns(Collection)
 	 * @see #setColumns(Set)
+	 * @see #setColumns(Class)
 	 */
 	public Set<String> getColumns() {
 		return null;
 	}
 
 	/**
-	 * 生成される SELECT SQLおよびUPDATE SQLのカラムに関連するプロパティ名のセットを設定します。
+	 * 生成される SELECT SQLおよびUPDATE SQLのカラムに関連するプロパティ名のセットを指定します。
+	 *
+	 * <p>
+	 * @deprecated リリース 3.1.0 より。
+	 * 代わりに{@link #columns(Collection)}を使用してください。
+	 * </p>
 	 *
 	 * @param propertyNames プロパティ名のセット
 	 * @return このオブジェクト
@@ -285,31 +342,36 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @throws NullPointerException <b>columns</b>が<b>null</b>の場合
 	 *
 	 * @since 1.8.4
-	 *
 	 * @see #columns(String...)
+	 * @see #columns(Collection)
 	 * @see #getColumns()
+	 * @see #setColumns(Class)
 	 */
+	@Deprecated
 	public Sql<E> setColumns(Set<String> propertyNames) {
 		return null;
 	}
 
 	/**
-	 * 指定のクラスに含まれるプロパティ名のセットを設定します。
-	 * このプロパティ名のセットは、SELECT SQLおよびUPDATE SQLのカラムの生成時に使用されます。
+	 * 指定のクラスに含まれるプロパティ名のセットを指定します。
 	 *
 	 * <p>
-	 * <i>このメソッドは {@link #selectAs(Class, Consumer)}および{@link #selectAs(Class)}からコールされます。</i>
+	 * @deprecated リリース 3.1.0 より。
+	 * 代わりに{@link #columns(Class)}を使用してください。
 	 * </p>
 	 *
-	 * @param <R> <b>resultClass</b>の型
-	 * @param resultClass プロパティ名のセットを含むクラス
+	 * @param <RE>結果エンティティの型
+	 * @param resultClass プロパティ名のセットを含むエンティティクラス
 	 * @return このオブジェクト
 	 *
 	 * @since 2.0.0
 	 * @see #columns(String...)
+	 * @see #columns(Collection)
 	 * @see #getColumns()
+	 * @see #setColumns(Set)
 	 */
-	public <R> Sql<E> setColumns(Class<R> resultClass) {
+	@Deprecated
+	public <RE> Sql<E> setColumns(Class<RE> resultClass) {
 		return null;
 	}
 
@@ -393,6 +455,32 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @see #expression(String, String, Object...)
 	 */
 	public Expression getExpression(String propertyName) {
+		return null;
+	}
+
+	/**
+	 * SELECT SQLのFROM句をサブクエリで指定します。
+	 *
+	 * @param fromSql FROM句を生成するための<b>Sql</b> オブジェクト
+	 * @return このオブジェクト
+	 *
+	 * @throws NullPointerException <b>fromSql</b>が<b>null</b>の場合
+	 *
+	 * @since 3.1.0
+	 */
+	public Sql<E> from(Sql<?> fromSql) {
+		return null;
+	}
+
+	/**
+	 * SELECT SQLのFROM句を生成するための<b>Sql</b>オブジェクトを返します。
+	 * 指定されていなければ<b>null</b>を返します。
+	 *
+	 * @return SELECT SQLのFROM句のサブクエリまたは<b>null</b>
+	 *
+	 * @since 3.1.0
+	 */
+	public Sql<?> getFrom() {
 		return null;
 	}
 
@@ -741,18 +829,39 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * }
 	 * </pre></div>
 	 *
-	 * @param <SE> サブクエリの対象テーブルのエンティティの型
+	 * @param <SE> サブクエリに関連するエンティティの型
 	 * @param content サブクエリの SELECT 文の左部分
 	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b>または<b>subSql</b>が<b>null</b>の場合
 	 *
+	 * @see #where(Sql, String)
 	 * @see #getWhere()
 	 * @see Condition#of(String, Sql, Sql)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> where(String content, Sql<SE> subSql) {
+		return null;
+	}
+
+	/**
+	 * <b>WHERE</b>句の条件をサブクエリで指定します。
+	 *
+	 * @param <SE> サブクエリに関連するエンティティの型
+	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
+	 * @param content サブクエリの SELECT 文の右部分
+	 * @return このオブジェクト
+	 *
+	 * @throws NullPointerException <b>subSql</b>または<b>content</b>が<b>null</b>の場合
+	 *
+	 * @since 3.1.0
+	 * @see #where(String, Sql)
+	 * @see #getWhere()
+	 * @see Condition#of(String, Sql, Sql)
+	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
+	 */
+	public <SE> Sql<E> where(Sql<SE> subSql, String content) {
 		return null;
 	}
 
@@ -779,6 +888,9 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>condition</b>が<b>null</b>の場合
 	 *
+	 * @see #and(String, Object...)
+	 * @see #and(String, Sql)
+	 * @see #and(Sql, String)
 	 * @see Condition#and(Condition)
 	 */
 	public Sql<E> and(Condition condition) {
@@ -819,6 +931,10 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>content</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
+	 * @see #and(Condition)
+	 * @see #and(String, Sql)
+	 * @see #and(Sql, String)
+	 * @see Condition#and(Condition)
 	 * @see Condition#and(String, Object...)
 	 */
 	public Sql<E> and(String content, Object... arguments) {
@@ -829,16 +945,45 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * <b>having</b>メソッドのコール後であれば、<b>HAVING</b>句の条件に、
 	 * そうでなければ<b>WHERE</b>句の条件に<b>AND</b>でサブクエリ条件を追加します。
 	 *
-	 * @param <SE> サブクエリの対象テーブルのエンティティの型
+	 * @param <SE> サブクエリに関連するエンティティの型
 	 * @param content サブクエリの SELECT 文の左部分
 	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
 	 * @return このオブジェクト
 	 *
+	 * @throws NullPointerException <b>content</b>または<b>subSql</b>が<b>null</b>の場合
+	 *
+	 * @see #and(Condition)
+	 * @see #and(String, Object...)
+	 * @see #and(Sql, String)
+	 * @see Condition#and(String, Sql, Sql)
 	 * @see Condition#and(Condition)
 	 * @see Condition#of(String, Sql, Sql)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> and(String content, Sql<SE> subSql) {
+		return null;
+	}
+
+	/**
+	 * <b>having</b>メソッドのコール後であれば、<b>HAVING</b>句の条件に、
+	 * そうでなければ<b>WHERE</b>句の条件に<b>AND</b>でサブクエリ条件を追加します。
+	 *
+	 * @param <SE> サブクエリに関連するエンティティの型
+	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
+	 * @param content サブクエリの SELECT 文の右部分
+	 * @return このオブジェクト
+	 *
+	 * @throws NullPointerException <b>subSql</b>または<b>content</b>が<b>null</b>の場合
+	 *
+	 * @since 3.1.0
+	 * @see #and(Condition)
+	 * @see #and(String, Object...)
+	 * @see #and(String, Sql)
+	 * @see Condition#and(Condition)
+	 * @see Condition#of(Sql, Sql, String)
+	 * @see SubqueryCondition#SubqueryCondition(Sql, Sql, Expression)
+	 */
+	public <SE> Sql<E> and(Sql<SE> subSql, String content) {
 		return null;
 	}
 
@@ -851,6 +996,9 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>condition</b>が<b>null</b>の場合
 	 *
+	 * @see #or(String, Object...)
+	 * @see #or(String, Sql)
+	 * @see #or(Sql, String)
 	 * @see Condition#or(Condition)
 	 */
 	public Sql<E> or(Condition condition) {
@@ -891,6 +1039,9 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @throws NullPointerException <b>content</b>または<b>arguments</b>が<b>null</b>の場合
 	 *
+	 * @see #or(Condition)
+	 * @see #or(String, Sql)
+	 * @see #or(Sql, String)
 	 * @see Condition#or(String, Object...)
 	 */
 	public Sql<E> or(String content, Object... arguments) {
@@ -901,18 +1052,46 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * <b>having</b>メソッドのコール後であれば、<b>HAVING</b>句の条件に、
 	 * そうでなければ<b>WHERE</b>句の条件に<b>OR</b>でサブクエリ条件を追加します。
 	 *
-	 * @param <SE> サブクエリの対象テーブルのエンティティの型
+	 * @param <SE> サブクエリに関連するエンティティの型
 	 * @param content サブクエリの SELECT 文の左部分
 	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
 	 * @return このオブジェクト
 	 *
 	 * @throws NullPointerException <b>content</b>または<b>subSql</b>が<b>null</b>の場合
 	 *
+	 * @see #or(Condition)
+	 * @see #or(String, Object...)
+	 * @see #or(Sql, String)
+	 * @see Condition#or(String, Sql, Sql)
 	 * @see Condition#or(Condition)
 	 * @see Condition#of(String, Sql, Sql)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
 	public <SE> Sql<E> or(String content, Sql<SE> subSql) {
+		return null;
+	}
+
+	/**
+	 * <b>having</b>メソッドのコール後であれば、<b>HAVING</b>句の条件に、
+	 * そうでなければ<b>WHERE</b>句の条件に<b>OR</b>でサブクエリ条件を追加します。
+	 *
+	 * @param <SE> サブクエリに関連するエンティティの型
+	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
+	 * @param content サブクエリの SELECT 文の右部分
+	 * @return このオブジェクト
+	 *
+	 * @throws NullPointerException <b>subSql</b>または<b>content</b>が<b>null</b>の場合
+	 *
+	 * @since 3.1.0
+	 * @see #or(Condition)
+	 * @see #or(String, Object...)
+	 * @see #or(String, Sql)
+	 * @see Condition#or(Sql, Sql, String)
+	 * @see Condition#or(Condition)
+	 * @see Condition#of(Sql, Sql, String)
+	 * @see SubqueryCondition#SubqueryCondition(Sql, Sql, Expression)
+	 */
+	public <SE> Sql<E> or(Sql<SE> subSql, String content) {
 		return null;
 	}
 
@@ -994,17 +1173,37 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	/**
 	 * <b>SubqueryCondition</b>で<b>HAVING</b>句の条件を指定します。
 	 *
-	 * @param <SE> サブクエリに関連するテーブルのエンティティの型
+	 * @param <SE> サブクエリに関連するエンティティの型
 	 * @param content サブクエリの SELECT 文の左部分
 	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
 	 * @return このオブジェクト
 	 *
-	 * @throws NullPointerException if <b>content</b> or <b>subSql</b> is null
+	 * @throws NullPointerException if <b>content</b>または<b>subSql</b>が<b>null</b>の場合
 	 *
+	 * @see #having(Sql, String)
 	 * @see #getHaving()
 	 * @see Condition#of(String, Sql, Sql)
 	 */
 	public <SE> Sql<E> having(String content, Sql<SE> subSql) {
+		return null;
+	}
+
+	/**
+	 * <b>SubqueryCondition</b>で<b>HAVING</b>句の条件を指定します。
+	 *
+	 * @param <SE> サブクエリに関連するエンティティの型
+	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
+	 * @param content サブクエリの SELECT 文の右部分
+	 * @return このオブジェクト
+	 *
+	 * @throws NullPointerException if <b>subSql</b>または<b>content</b>が<b>null</b>の場合
+	 *
+	 * @since 3.1.0
+	 * @see #having(String, Sql)
+	 * @see #getHaving()
+	 * @see Condition#of(String, Sql, Sql)
+	 */
+	public <SE> Sql<E> having(Sql<SE> subSql, String content) {
 		return null;
 	}
 
@@ -1019,6 +1218,60 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 */
 	public Condition getHaving() {
 		return null;
+	}
+
+	/**
+	 * UNION SQLを構成要素の1つのSELECT SQLを生成する<b>Sql</b>オブジェクトを追加します。
+	 *
+	 * @param <UE> UNION SQLの構成要素に関連するエンティティの型
+	 * @param unionSql UNION SQLを構成要素の1つのSELECT SQLを生成する<b>Sql</b>オブジェクト
+	 * @return このオブジェクト
+	 *
+	 * @throws IllegalStateException <b>unionAll</b>メソッドがすでに呼ばれている場合
+	 *
+	 * @see #unionAll(Sql)
+	 * @since 3.1.0
+	 */
+	public <UE> Sql<E> union(Sql<UE> unionSql) {
+		return this;
+	}
+
+	/**
+	 * UNION ALL SQLを構成要素の1つのSELECT SQLを生成する<b>Sql</b>オブジェクトを追加します。
+	 *
+	 * @param <UE> UNION SQLの構成要素に関連するエンティティの型
+	 * @param unionSql UNION SQLを構成要素の1つのSELECT SQLを生成する<b>Sql</b>オブジェクト
+	 * @return このオブジェクト
+	 *
+	 * @throws IllegalStateException <b>union</b>メソッドがすでに呼ばれている場合
+	 *
+	 * @see #union(Sql)
+	 * @since 3.1.0
+	 */
+	public <UE> Sql<E> unionAll(Sql<UE> unionSql) {
+		return this;
+	}
+
+	/**
+	 * UNION SQLまたはUNION ALL SQLをの構成要素のSELECT SQLを生成する<b>Sql</b>オブジェクトのリストを返します。
+	 *
+	 * @return UNION SQLまたはUNION ALL SQLをの構成要素のSELECT SQLを生成する<b>Sql</b>オブジェクトのリスト
+	 *
+	 * @since 3.1.0
+	 */
+	public List<Sql<?>> getUnionSqls() {
+		return null;
+	}
+
+	/**
+	 * UNION ALL SQLを生成するなら<b>true</b>、UNION SQLを生成するなら<b>false</b>を返します。
+	 *
+	 * @return UNION ALL SQLを生成するなら<b>true</b>、UNION SQLを生成するなら<b>false</b>
+	 *
+	 * @since 3.1.0
+	 */
+	public boolean isUnionAll() {
+		return false;
 	}
 
 	/**
@@ -1632,7 +1885,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * {@link #connection(ConnectionWrapper)}メソッドをコールしてください。
 	 * </p>
 	 *
-	 * @param <R> コンシューマの引数の型
+	 * @param <RE> コンシューマの引数の型
 	 * @param resultClass コンシューマの引数のクラス
 	 * @param consumer 取得した行から生成されたエンティティのコンシューマ
 	 *
@@ -1643,7 +1896,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @since 2.0.0
 	 * @see #select(Consumer)
 	 */
-	public <R> void selectAs(Class<R> resultClass, Consumer<? super R> consumer) {
+	public <RE> void selectAs(Class<RE> resultClass, Consumer<? super RE> consumer) {
 	}
 
 	/**
@@ -2011,8 +2264,8 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * {@link #connection(ConnectionWrapper)}メソッドをコールしてください。
 	 * </p>
 	 *
-	 * @param <R> 戻りのエンティティの型
-	 * @param resultClass 戻り値のエンティティの型のクラス
+	 * @param <RE> 戻り値のエンティティの型
+	 * @param resultClass 戻り値のエンティティクラス
 	 * @return 取得した行から生成されたエンティティ、取得されない場合は<b>Optional.empty()</b>
 	 *
 	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
@@ -2023,7 +2276,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @since 2.0.0
 	 * @see #select()
 	 */
-	public <R> Optional<R> selectAs(Class<R> resultClass) {
+	public <RE> Optional<RE> selectAs(Class<RE> resultClass) {
 		return null;
 	}
 

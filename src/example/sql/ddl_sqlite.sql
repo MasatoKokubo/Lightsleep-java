@@ -11,9 +11,9 @@ CREATE TABLE Contact (
     birthday    TEXT        NULL,
 	birthday2   INTEGER     NULL,
 
-    updateCount INTEGER DEFAULT 0                 NOT NULL,
-    createdTime TEXT    DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updatedTime TEXT    DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updateCount INTEGER NOT NULL,
+    createdTime TEXT    NOT NULL,
+    updatedTime TEXT    NOT NULL,
 
     PRIMARY KEY(id)
 );
@@ -21,47 +21,47 @@ CREATE TABLE Contact (
 -- Phone
 DROP TABLE Phone;
 CREATE TABLE Phone (
-    contactId   INTEGER NOT NULL,
-    childIndex  INTEGER NOT NULL,
-    label       TEXT    NOT NULL,
-    content     TEXT    NOT NULL,
+    contactId    INTEGER NOT NULL,
+    featureIndex INTEGER NOT NULL,
+    label        TEXT    NOT NULL,
+    content      TEXT    NOT NULL,
 
-    PRIMARY KEY(contactId, childIndex)
+    PRIMARY KEY(contactId, featureIndex)
 );
 
 -- E-Mail
 DROP TABLE IF EXISTS Email;
 CREATE TABLE Email (
-    contactId   INTEGER NOT NULL,
-    childIndex  INTEGER NOT NULL,
-    label       TEXT    NOT NULL,
-    content     TEXT    NOT NULL,
+    contactId    INTEGER NOT NULL,
+    featureIndex INTEGER NOT NULL,
+    label        TEXT    NOT NULL,
+    content      TEXT    NOT NULL,
 
-	PRIMARY KEY(contactId, childIndex)
+	PRIMARY KEY(contactId, featureIndex)
 );
 
 -- URL
 DROP TABLE IF EXISTS Url;
 CREATE TABLE Url (
-    contactId   INTEGER NOT NULL,
-    childIndex  INTEGER NOT NULL,
-    label       TEXT    NOT NULL,
-    content     TEXT    NOT NULL,
+    contactId    INTEGER NOT NULL,
+    featureIndex INTEGER NOT NULL,
+    label        TEXT    NOT NULL,
+    content      TEXT    NOT NULL,
 
-	PRIMARY KEY(contactId, childIndex)
+	PRIMARY KEY(contactId, featureIndex)
 );
 
 -- Address
 DROP TABLE IF EXISTS Address;
 CREATE TABLE Address (
-	contactId   INTEGER NOT NULL,
-	childIndex  INTEGER NOT NULL,
-	label       TEXT    NOT NULL,
-	postCode    TEXT        NULL,
-	content0    TEXT    NOT NULL,
-	content1    TEXT        NULL,
-	content2    TEXT        NULL,
-	content3    TEXT        NULL,
+	contactId    INTEGER NOT NULL,
+	featureIndex INTEGER NOT NULL,
+	label        TEXT    NOT NULL,
+	postCode     TEXT        NULL,
+	content      TEXT    NOT NULL,
+	content1     TEXT        NULL,
+	content2     TEXT        NULL,
+	content3     TEXT        NULL,
 
-	PRIMARY KEY(contactId, childIndex)
+	PRIMARY KEY(contactId, featureIndex)
 );

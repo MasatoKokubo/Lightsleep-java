@@ -124,7 +124,7 @@ public class Accessor<T> {
 	 *
 	 * @param objectClass the class of access target object
 	 *
-	 * @throws NullPointerException if <b>objectClass</b> is null
+	 * @throws NullPointerException if <b>objectClass</b> is <b>null</b>
 	 * @throws IllegalArgumentException if <b>objectClass</b> is interface
 	 */
 	public Accessor(Class<T> objectClass) {
@@ -456,7 +456,7 @@ public class Accessor<T> {
 	 * @param propertyName the property name of the field
 	 * @return a value (might be null)
 	 *
-	 * @throws NullPointerException if <b>object</b> is null
+	 * @throws NullPointerException if <b>object</b> is <b>null</b>
 	 * @throws MissingPropertyException if the get method for the field that are specified by <b>propertyName</b> dose not exist
 	 * @throws RuntimeException if <b>IllegalAccessException</b> was thrown
 	 */
@@ -487,7 +487,7 @@ public class Accessor<T> {
 	 * @param propertyName the property name of the field
 	 * @param value a value to be set the field (permit null)
 	 *
-	 * @throws NullPointerException if <b>object</b> is null
+	 * @throws NullPointerException if <b>object</b> is <b>null</b>
 	 * @throws MissingPropertyException if the set method for the field that are specified by <b>propertyName</b> does not exist
 	 * @throws RuntimeException if <b>IllegalAccessException</b> or <b>InvocationTargetException</b> was thrown
 	 */

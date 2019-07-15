@@ -54,21 +54,21 @@ public class Person extends PersonBase {
 		setBirthday(new Date(calendar.getTimeInMillis()));
 	}
 
-	// ChildKey
-	public static class ChildKey {
+	// FeatureKey
+	public static class FeatureKey {
 		@Key
 		@Column("contactId")
 		private int personId;
 
 		@Key
-		private short childIndex;
+		private short featureIndex;
 
-		public ChildKey() {
+		public FeatureKey() {
 		}
 
-		public ChildKey(int personId, short childIndex) {
+		public FeatureKey(int personId, short featureIndex) {
 			this.personId = personId ;
-			this.childIndex = childIndex;
+			this.featureIndex = featureIndex;
 		}
 
 		public int getPersonId() {
@@ -79,25 +79,25 @@ public class Person extends PersonBase {
 			this.personId = personId;
 		}
 
-		public short getChildIndex() {
-			return childIndex;
+		public short getFeatureIndex() {
+			return featureIndex;
 		}
 
-		public void setChildIndex(short childIndex) {
-			this.childIndex = childIndex;
+		public void setFeatureIndex(short featureIndex) {
+			this.featureIndex = featureIndex;
 		}
 	}
 
-	// Child
-	public static abstract class Child extends ChildKey {
+	// Feature
+	public static abstract class Feature extends FeatureKey {
 		private String label;
 		private String content;
 
-		public Child() {
+		public Feature() {
 		}
 
-		public Child(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex);
+		public Feature(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex);
 			this.label   = label  ;
 			this.content = content;
 		}
@@ -121,7 +121,7 @@ public class Person extends PersonBase {
 
 	// Address
 	@ColumnProperty(property="content", column="content0")
-	public static class Address extends Child {
+	public static class Address extends Feature {
 		private String postCode;
 		private String content1;
 		private String content2;
@@ -130,8 +130,8 @@ public class Person extends PersonBase {
 		public Address() {
 		}
 
-		public Address(int personId, short childIndex, String label, String postCode, String content, String content1, String content2, String content3) {
-			super(personId, childIndex, label, content);
+		public Address(int personId, short featureIndex, String label, String postCode, String content, String content1, String content2, String content3) {
+			super(personId, featureIndex, label, content);
 			this.postCode = postCode;
 			this.content1 = content1;
 			this.content2 = content2;
@@ -172,32 +172,32 @@ public class Person extends PersonBase {
 	}
 
 	// Email
-	public static class Email extends Child {
+	public static class Email extends Feature {
 		public Email() {
 		}
 
-		public Email(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex, label, content);
+		public Email(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex, label, content);
 		}
 	}
 
 	// Phone
-	public static class Phone extends Child {
+	public static class Phone extends Feature {
 		public Phone() {
 		}
 
-		public Phone(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex, label, content);
+		public Phone(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex, label, content);
 		}
 	}
 
 	// Url
-	public static class Url extends Child {
+	public static class Url extends Feature {
 		public Url() {
 		}
 
-		public Url(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex, label, content);
+		public Url(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex, label, content);
 		}
 	}
 }

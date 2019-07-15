@@ -9,8 +9,8 @@ import java.util.Calendar;
 
 import org.lightsleep.database.Database;
 import org.lightsleep.entity.Column;
-import org.lightsleep.entity.ColumnProperty;
 import org.lightsleep.entity.ColumnType;
+import org.lightsleep.entity.Insert;
 import org.lightsleep.entity.Key;
 import org.lightsleep.entity.NonInsert;
 import org.lightsleep.entity.NonUpdate;
@@ -36,15 +36,15 @@ public class Person extends PersonKey {
 	@ColumnType(Long.class)
 	public Date birthday;
 
-	@NonInsert
+	@Insert("0")
 	@Update("{updateCount}+1")
 	public int updateCount;
 
-	@NonInsert
+	@Insert("CURRENT_TIMESTAMP")
 	@NonUpdate
 	public Timestamp createdTime;
 
-	@NonInsert
+	@Insert("CURRENT_TIMESTAMP")
 	@Update("CURRENT_TIMESTAMP")
 	public Timestamp updatedTime;
 
@@ -118,42 +118,41 @@ public class Person extends PersonKey {
 		}
 	}
 
-	// Person.ChildKey
-	public static class ChildKey {
+	// Person.FeatureKey
+	public static class FeatureKey {
 		@Key
 		@Column("contactId")
 		public int personId;
 
 		@Key
-		public short childIndex;
+		public short featureIndex;
 
-		public ChildKey() {
+		public FeatureKey() {
 		}
 
-		public ChildKey(int personId, short childIndex) {
+		public FeatureKey(int personId, short featureIndex) {
 			this.personId = personId ;
-			this.childIndex = childIndex;
+			this.featureIndex = featureIndex;
 		}
 	}
 
-	// Person.Child
-	public static abstract class Child extends ChildKey {
+	// Person.Feature
+	public static abstract class Feature extends FeatureKey {
 		public String label;
 		public String content;
 
-		public Child() {
+		public Feature() {
 		}
 
-		public Child(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex);
+		public Feature(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex);
 			this.label   = label  ;
 			this.content = content;
 		}
 	}
 
 	// Person.Address
-	@ColumnProperty(property="content", column="content0")
-	public static class Address extends Child {
+	public static class Address extends Feature {
 		public String postCode;
 		public String content1;
 		public String content2;
@@ -162,8 +161,8 @@ public class Person extends PersonKey {
 		public Address() {
 		}
 
-		public Address(int personId, short childIndex, String label, String postCode, String content, String content1, String content2, String content3) {
-			super(personId, childIndex, label, content);
+		public Address(int personId, short featureIndex, String label, String postCode, String content, String content1, String content2, String content3) {
+			super(personId, featureIndex, label, content);
 			this.postCode = postCode;
 			this.content1 = content1;
 			this.content2 = content2;
@@ -172,32 +171,32 @@ public class Person extends PersonKey {
 	}
 
 	// Person.Email
-	public static class Email extends Child {
+	public static class Email extends Feature {
 		public Email() {
 		}
 
-		public Email(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex, label, content);
+		public Email(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex, label, content);
 		}
 	}
 
 	// Person.Phone
-	public static class Phone extends Child {
+	public static class Phone extends Feature {
 		public Phone() {
 		}
 
-		public Phone(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex, label, content);
+		public Phone(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex, label, content);
 		}
 	}
 
 	// Person.Url
-	public static class Url extends Child {
+	public static class Url extends Feature {
 		public Url() {
 		}
 
-		public Url(int personId, short childIndex, String label, String content) {
-			super(personId, childIndex, label, content);
+		public Url(int personId, short featureIndex, String label, String content) {
+			super(personId, featureIndex, label, content);
 		}
 	}
 }

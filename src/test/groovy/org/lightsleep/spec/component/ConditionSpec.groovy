@@ -31,6 +31,7 @@ class ConditionSpec extends Specification {
 			Condition.of('{}', 'A') instanceof Expression
 			Condition.of(new Entity()) instanceof EntityCondition
 			Condition.of('A', new Sql<>(Entity), new Sql<>(Entity)) instanceof SubqueryCondition
+			Condition.of(new Sql<>(Entity), new Sql<>(Entity), 'A') instanceof SubqueryCondition // 3.1.0
 
 	}
 
@@ -45,6 +46,7 @@ class ConditionSpec extends Specification {
 			Condition.of('{}', 'A').not() instanceof Not
 			Condition.of(new Entity()).not() instanceof Not
 			Condition.of('A', new Sql<>(Entity), new Sql<>(Entity)).not() instanceof Not
+			Condition.of(new Sql<>(Entity), new Sql<>(Entity), 'A').not() instanceof Not // 3.1.0
 
 			Condition.EMPTY.not().not() == Condition.EMPTY
 			Condition.of('A').not().not() instanceof Expression
@@ -52,6 +54,7 @@ class ConditionSpec extends Specification {
 			Condition.of('{}', 'A').not().not() instanceof Expression
 			Condition.of(new Entity()).not().not() instanceof EntityCondition
 			Condition.of('A', new Sql<>(Entity), new Sql<>(Entity)).not().not() instanceof SubqueryCondition
+			Condition.of(new Sql<>(Entity), new Sql<>(Entity), 'A').not().not() instanceof SubqueryCondition // 3.1.0
 
 		when:
 			def condition1 = Condition.of('A')
@@ -67,25 +70,27 @@ class ConditionSpec extends Specification {
 			def sql = new Sql<>(Entity)
 
 		expect:
-			Condition.of('A').and(Condition.of('A')) instanceof And
-			Condition.of('A', 1).and(Condition.of('A', 1)) instanceof And
-			Condition.of('{}', 'A').and(Condition.of('{}', 'A')) instanceof And
-			Condition.of(new Entity()).and(Condition.of(new Entity())) instanceof And
-			Condition.of('A', new Sql<>(Entity), new Sql<>(Entity))
-				.and(Condition.of('A', new Sql<>(Entity), new Sql<>(Entity))) instanceof And
+			Condition.of('A').and('A') instanceof And
+			Condition.of('A', 1).and('A', 1) instanceof And
+			Condition.of('{}', 'A').and('{}', 'A') instanceof And
+			Condition.of(new Entity()).and(new Entity()) instanceof And
+			Condition.of('A', new Sql<>(Entity), new Sql<>(Entity)).and('A', new Sql<>(Entity), new Sql<>(Entity)) instanceof And
+			Condition.of(new Sql<>(Entity), new Sql<>(Entity), 'A').and(new Sql<>(Entity), new Sql<>(Entity), 'A') instanceof And // 3.1.0
 
 			Condition.EMPTY.and(Condition.EMPTY) == Condition.EMPTY
-			Condition.EMPTY.and(Condition.of('A')) instanceof Expression
-			Condition.EMPTY.and(Condition.of('A', 1)) instanceof Expression
-			Condition.EMPTY.and(Condition.of('{}', 'A')) instanceof Expression
-			Condition.EMPTY.and(Condition.of(new Entity())) instanceof EntityCondition
-			Condition.EMPTY.and(Condition.of('A', new Sql<>(Entity), new Sql<>(Entity))) instanceof SubqueryCondition
+			Condition.EMPTY.and('A') instanceof Expression
+			Condition.EMPTY.and('A', 1) instanceof Expression
+			Condition.EMPTY.and('{}', 'A') instanceof Expression
+			Condition.EMPTY.and(new Entity()) instanceof EntityCondition
+			Condition.EMPTY.and('A', new Sql<>(Entity), new Sql<>(Entity)) instanceof SubqueryCondition
+			Condition.EMPTY.and(new Sql<>(Entity), new Sql<>(Entity), 'A') instanceof SubqueryCondition // 3.1.0
 
 			Condition.of('A').and(Condition.EMPTY) instanceof Expression
 			Condition.of('A', 1).and(Condition.EMPTY) instanceof Expression
 			Condition.of('{}', 'A').and(Condition.EMPTY) instanceof Expression
 			Condition.of(new Entity()).and(Condition.EMPTY) instanceof EntityCondition
 			Condition.of('A', new Sql<>(Entity), new Sql<>(Entity)).and(Condition.EMPTY) instanceof SubqueryCondition
+			Condition.of(new Sql<>(Entity), new Sql<>(Entity), 'A').and(Condition.EMPTY) instanceof SubqueryCondition // 3.1.0
 
 		when:
 			def condition1 = Condition.of('A')
@@ -107,25 +112,27 @@ class ConditionSpec extends Specification {
 			def sql = new Sql<>(Entity)
 
 		expect:
-			Condition.of('A').or(Condition.of('A')) instanceof Or
-			Condition.of('A', 1).or(Condition.of('A', 1)) instanceof Or
-			Condition.of('{}', 'A').or(Condition.of('{}', 'A')) instanceof Or
-			Condition.of(new Entity()).or(Condition.of(new Entity())) instanceof Or
-			Condition.of('', new Sql<>(Entity), new Sql<>(Entity))
-				.or(Condition.of('', new Sql<>(Entity), new Sql<>(Entity))) instanceof Or
+			Condition.of('A').or('A') instanceof Or
+			Condition.of('A', 1).or('A', 1) instanceof Or
+			Condition.of('{}', 'A').or('{}', 'A') instanceof Or
+			Condition.of(new Entity()).or(new Entity()) instanceof Or
+			Condition.of('', new Sql<>(Entity), new Sql<>(Entity)).or('', new Sql<>(Entity), new Sql<>(Entity)) instanceof Or
+			Condition.of(new Sql<>(Entity), new Sql<>(Entity), '').or(new Sql<>(Entity), new Sql<>(Entity), '') instanceof Or // 3.1.0
 
 			Condition.EMPTY.or(Condition.EMPTY) == Condition.EMPTY
-			Condition.EMPTY.or(Condition.of('A')) instanceof Expression
-			Condition.EMPTY.or(Condition.of('A', 1)) instanceof Expression
-			Condition.EMPTY.or(Condition.of('{}', 'A')) instanceof Expression
-			Condition.EMPTY.or(Condition.of(new Entity())) instanceof EntityCondition
-			Condition.EMPTY.or(Condition.of('A', new Sql<>(Entity), new Sql<>(Entity))) instanceof SubqueryCondition
+			Condition.EMPTY.or('A') instanceof Expression
+			Condition.EMPTY.or('A', 1) instanceof Expression
+			Condition.EMPTY.or('{}', 'A') instanceof Expression
+			Condition.EMPTY.or(new Entity()) instanceof EntityCondition
+			Condition.EMPTY.or('A', new Sql<>(Entity), new Sql<>(Entity)) instanceof SubqueryCondition
+			Condition.EMPTY.or(new Sql<>(Entity), new Sql<>(Entity), 'A') instanceof SubqueryCondition // 3.1.0
 
 			Condition.of('A').or(Condition.EMPTY) instanceof Expression
 			Condition.of('A', 1).or(Condition.EMPTY) instanceof Expression
 			Condition.of('{}', 'A').or(Condition.EMPTY) instanceof Expression
 			Condition.of(new Entity()).or(Condition.EMPTY) instanceof EntityCondition
 			Condition.of('A', new Sql<>(Entity), new Sql<>(Entity)).or(Condition.EMPTY) instanceof SubqueryCondition
+			Condition.of(new Sql<>(Entity), new Sql<>(Entity), 'A').or(Condition.EMPTY) instanceof SubqueryCondition // 3.1.0
 
 		when:
 			def condition1 = Condition.of('A')

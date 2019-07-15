@@ -47,7 +47,7 @@ public class EntityInfo<E> {
 	 *
 	 * @param entityClass the entity class
 	 *
-	 * @throws NullPointerException if <b>entityClass</b> is null
+	 * @throws NullPointerException if <b>entityClass</b> is <b>null</b>
 	 * @throws IllegalArgumentException if <b>entityClass</b> is illegal
 	 */
 	public EntityInfo(Class<E> entityClass) {
@@ -294,7 +294,7 @@ public class EntityInfo<E> {
 	 * @param propertyName the property name
 	 * @return the column information
 	 *
-	 * @throws NullPointerException if <b>propertyName</b> is null
+	 * @throws NullPointerException if <b>propertyName</b> is <b>null</b>
 	 * @throws IllegalArgumentException if the column information related to <b>propertyName</b> can not be found
 	 */
 	public ColumnInfo getColumnInfo(String propertyName) {

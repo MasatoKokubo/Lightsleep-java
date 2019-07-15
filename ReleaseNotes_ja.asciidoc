@@ -5,6 +5,7 @@ link:ReleaseNotes.asciidoc[English]
 [[TOC_]]
 === 目次
 
+- <<ReleaseNote3.1.0,[.small]#バージョン# 3.1.0 [.small]#(2019-07-16)#>>
 - <<ReleaseNote3.0.1,[.small]#バージョン# 3.0.1 [.small]#(2018-12-01)#>>
 - <<ReleaseNote3.0.0,[.small]#バージョン# 3.0.0 [.small]#(2018-10-07)#>>
 - <<ReleaseNote2.2.1,[.small]#バージョン# 2.2.1 [.small]#(2018-02-12)#>>
@@ -12,6 +13,44 @@ link:ReleaseNotes.asciidoc[English]
 - <<ReleaseNote2.1.1,[.small]#バージョン# 2.1.1 [.small]#(2017-12-03)#>>
 - <<ReleaseNote2.1.0,[.small]#バージョン# 2.1.0 [.small]#(2017-11-12)#>>
 - <<ReleaseNote2.0.0,[.small]#バージョン# 2.0.0 [.small]#(2017-09-09)#>>
+
+[[ReleaseNote3.1.0]]
+
+=== [.small]#バージョン# 3.1.0
+
+1. **機能追加**
+  * **FROM句** に **サブクエリ** を使用したSELECT SQLの生成
+  * **UNION SQL**の生成
+
+1. **仕様変更**
+  * `Sql#columns(String ...)` メソッドを複数回呼び出した場合の仕様を変更しました。 +
+    **本バージョンより前:** 引数のカラム配列が累積される。 +
+    **本バージョン:** 引数のカラム配列に置き換えられる。
+
+1. **メソッドの追加**
+  * `org.lightsleep.**Sql**` クラス
+    ** `Sql<E> columns(Collection<String> propertyNames)`
+    ** `<RE> Sql<E> columns(Class<RE> resultClass)`
+    ** `Sql<E> from(Sql<?> fromSql)`
+    ** `Sql<?> getFrom()`
+    ** `<SE> Sql<E> where(Sql<SE> subSql, String content)`
+    ** `<SE> Sql<E> and(Sql<SE> subSql, String content)`
+    ** `<SE> Sql<E> or(Sql<SE> subSql, String content)`
+    ** `<SE> Sql<E> having(Sql<SE> subSql, String content)`
+    ** `<UE> Sql<E> union(Sql<UE> unionSql)`
+    ** `<UE> Sql<E> unionAll(Sql<UE> unionSql)`
+    ** `List<Sql<?>> getUnionSqls()`
+    ** `boolean isUnionAll()`
+
+  * `org.lightsleep.**Condition**` インターフェース
+    ** `static <E, SE> Condition of(Sql<E> outerSql, Sql<SE> subSql, String content)`
+    ** `default <K> Condition and(K entity)`
+    ** `default <E, SE> Condition and(Sql<E> outerSql, Sql<SE> subSql, String content)`
+    ** `default <K> Condition or(K entity)`
+    ** `default <E, SE> Condition or(Sql<E> outerSql, Sql<SE> subSql, String content)`
+
+  * `org.lightsleep.**SubqueryCondition**` クラス
+    ** `<E> SubqueryCondition(Sql<E> outerSql, Sql<SE> subSql, Expression expression)`
 
 [[ReleaseNote3.0.1]]
 

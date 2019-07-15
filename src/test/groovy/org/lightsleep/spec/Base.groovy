@@ -1,4 +1,4 @@
-// SpecCommon.groovy
+// Base.groovy
 // (C) 2016 Masato Kokubo
 
 package org.lightsleep.spec
@@ -17,9 +17,9 @@ import org.lightsleep.test.entity.*
 
 import spock.lang.*
 
-// SpecCommon
+// Base
 // @since 2.1.0
-public class SpecCommon extends Specification {
+public class Base extends Specification {
 	@Shared List<ConnectionSupplier> connectionSuppliers
 	@Shared ConnectionSupplier connectionSupplier
 
