@@ -43,17 +43,18 @@ dependencies {
 	compileOnly        'com.microsoft.sqlserver:mssql-jdbc:7.2.2.jre8'
 	testRuntimeOnly    'com.microsoft.sqlserver:mssql-jdbc:7.2.2.jre8'
 
-	implementation     'org.junit.jupiter:junit-jupiter-api:5.5.+'
+	testImplementation 'junit:junit:4.12'
+	testCompileOnly    'org.junit.jupiter:junit-jupiter-api:5.5.+'
 	testRuntimeOnly    'org.junit.vintage:junit-vintage-engine:5.5.+'
 	testImplementation 'org.codehaus.groovy:groovy-all:2.5.+'
-	testCompile        'org.spockframework:spock-core:1.3-groovy-2.5'
+	testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
 
 	testRuntimeOnly    'tomcat:naming-java:5.+'
 	testRuntimeOnly    'tomcat:naming-factory:5.+'
 	testRuntimeOnly    'tomcat:naming-resources:5.+'
 
 	compileOnly        'org.debugtrace:debugtrace:2.+'
-	testCompile        'org.debugtrace:debugtrace:2.+'
+	testImplementation 'org.debugtrace:debugtrace:2.+'
 }
 
 sourceCompatibility = '1.8'
