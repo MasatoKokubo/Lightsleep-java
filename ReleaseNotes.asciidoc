@@ -5,6 +5,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 [[TOC_]]
 === Table of Contents
 
+- <<ReleaseNote3.1.1,[.small]#version# 3.1.1 [.small]#(July     18, 2019)#>>
 - <<ReleaseNote3.1.0,[.small]#version# 3.1.0 [.small]#(July     16, 2019)#>>
 - <<ReleaseNote3.0.1,[.small]#version# 3.0.1 [.small]#(December  1, 2018)#>>
 - <<ReleaseNote3.0.0,[.small]#version# 3.0.0 [.small]#(October   7, 2018)#>>
@@ -13,6 +14,13 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 - <<ReleaseNote2.1.1,[.small]#version# 2.1.1 [.small]#(December  3, 2017)#>>
 - <<ReleaseNote2.1.0,[.small]#version# 2.1.0 [.small]#(November 12, 2017)#>>
 - <<ReleaseNote2.0.0,[.small]#version# 2.0.0 [.small]#(September 9, 2017)#>>
+
+[[ReleaseNote3.1.1]]
+
+=== [.small]#version# 3.1.1
+
+1. **Bug Fix**
+  * Can not refer to column names of the table joined to the main table from the subquery condition.
 
 [[ReleaseNote3.1.0]]
 
@@ -29,28 +37,34 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 1. **Added Methods**
   * `org.lightsleep.**Sql**` Class
-    ** `Sql<E> columns(Collection<String> propertyNames)`
-    ** `<RE> Sql<E> columns(Class<RE> resultClass)`
-    ** `Sql<E> from(Sql<?> fromSql)`
-    ** `Sql<?> getFrom()`
-    ** `<SE> Sql<E> where(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> and(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> or(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> having(Sql<SE> subSql, String content)`
-    ** `<UE> Sql<E> union(Sql<UE> unionSql)`
-    ** `<UE> Sql<E> unionAll(Sql<UE> unionSql)`
-    ** `List<Sql<?>> getUnionSqls()`
-    ** `boolean isUnionAll()`
+    ** `Sql<E> **columns**(Collection<String> propertyNames)`
+    ** `<RE> Sql<E> **columns**(Class<RE> resultClass)`
+    ** `Sql<E> **from**(Sql<?> fromSql)`
+    ** `Sql<?> **getFrom**()`
+    ** `<SE> Sql<E> **where**(Sql<SE> subSql, String content)`
+    ** `<SE> Sql<E> **and**(Sql<SE> subSql, String content)`
+    ** `<SE> Sql<E> **or**(Sql<SE> subSql, String content)`
+    ** `<SE> Sql<E> **having**(Sql<SE> subSql, String content)`
+    ** `<UE> Sql<E> **union**(Sql<UE> unionSql)`
+    ** `<UE> Sql<E> **unionAll**(Sql<UE> unionSql)`
+    ** `List<Sql<?>> **getUnionSqls**()`
+    ** `boolean **isUnionAll**()`
 
   * `org.lightsleep.**Condition**` Interface
-    ** `static <E, SE> Condition of(Sql<E> outerSql, Sql<SE> subSql, String content)`
-    ** `default <K> Condition and(K entity)`
-    ** `default <E, SE> Condition and(Sql<E> outerSql, Sql<SE> subSql, String content)`
-    ** `default <K> Condition or(K entity)`
-    ** `default <E, SE> Condition or(Sql<E> outerSql, Sql<SE> subSql, String content)`
+    ** `static <E, SE> Condition **of**(Sql<E> outerSql, Sql<SE> subSql, String content)`
+    ** `default <K> Condition **and**(K entity)`
+    ** `default <E, SE> Condition **and**(Sql<E> outerSql, Sql<SE> subSql, String content)`
+    ** `default <K> Condition **or**(K entity)`
+    ** `default <E, SE> Condition **or**(Sql<E> outerSql, Sql<SE> subSql, String content)`
 
   * `org.lightsleep.**SubqueryCondition**` Class
-    ** `<E> SubqueryCondition(Sql<E> outerSql, Sql<SE> subSql, Expression expression)`
+    ** `<E> **SubqueryCondition**(Sql<E> outerSql, Sql<SE> subSql, Expression expression)`
+
+1. **Deprecated Methods**
+  * `org.lightsleep.**Sql**` Class
+    ** `**setColumns**(Set<String> propertyNames)`
+    ** `**setColumns**(Class<?> resultClass)`
+
 
 [[ReleaseNote3.0.1]]
 
@@ -73,7 +87,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
     ** `java.time.ZonedDateTime`
     ** `java.time.Instant`
 
-1. **Added** methods and constructors
+1. **Added Methods and Constructors**
   * `org.lightsleep.**Sql**` Class
     ** `**doNotIf**(boolean condition, Consumer<Sql<E>> action)`
     ** `**doElse**(Consumer<Sql<E>> elseAction)`
@@ -90,7 +104,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
     ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType,Function<? super ST, ? extends MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends DT> function3)`
     ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends MT3> function3, Function<? super MT3, ? extends DT> function4)`
 
-1. **Deprecated** method
+1. **Deprecated Method**
   * `org.lightsleep.**Sql**` Class
     ** `**doIf**(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)`
 
@@ -122,7 +136,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 === [.small]#version# 2.2.1
 
-1. Bug fix
+1. **Bug fix**
   * [Fixed] Lightsleep does not work unless the Oracle JDBC driver jar is in the classpath.
 
 <<TOC_,To TOC>>
@@ -131,7 +145,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 === [.small]#version# 2.2.0
 
-1. Improvements
+1. **Improvements**
   * *Added* an option to include JDBC URL of the connection to SQL logs. +
     Example of use:::
     Add the following to `lightsleep.properties` file +
@@ -147,10 +161,10 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 === [.small]#version# 2.1.1
 
-1. Bug fix
+1. **Bug fix**
   * [Fixed] `Standard` database handler is always selected when connection supplier is `Jndi`.
 
-1. Other
+1. **Other**
   * Improve log messages
 
 <<TOC_,To TOC>>

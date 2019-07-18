@@ -1315,8 +1315,8 @@ class SqlSpec extends Specification {
 		DebugTrace.leave() // for Debugging
 	}
 
-	// Sql.getSqlEntityInfo(String)
-	def "SqlSpec getSqlEntityInfo"() {
+	// Sql.addSqlEntityInfo getSqlEntityInfo
+	def "SqlSpec addSqlEntityInfo getSqlEntityInfo"() {
 		DebugTrace.enter() // for Debugging
 
 		expect:
@@ -1331,6 +1331,17 @@ class SqlSpec extends Specification {
 			new Sql<>(Contact, 'C')
 				.innerJoin(Address, 'A', '{A.addressId} = {A.addressId}')
 				.getSqlEntityInfo('C').getClass() == Sql
+
+		when:
+			def parameters = []
+			def sql = Standard.instance.selectSql(
+				new Sql<>(Address, 'A')
+					.innerJoin(Contact, 'C', '{C.addressId} = {A.id}')
+					.where("EXISTS", new Sql(Phone, 'P').where('{P.contactId}={C.id}')),
+				[])
+
+		then:
+			sql.indexOf('P.contactId=C.id') >= 0
 
 		DebugTrace.leave() // for Debugging
 	}

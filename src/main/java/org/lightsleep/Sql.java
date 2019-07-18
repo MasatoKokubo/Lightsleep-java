@@ -550,8 +550,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 *
 	 * @see #columns(String...)
 	 * @see #columns(Collection)
-	 * @see #setColumns(Set)
-	 * @see #setColumns(Class)
+	 * @see #columns(Class)
 	 */
 	public Set<String> getColumns() {
 	// 3.1.0
@@ -2173,16 +2172,13 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param sqlEntityInfo the SqlEntityInfo object
 	 */
 	public void addSqlEntityInfo(SqlEntityInfo<?> sqlEntityInfo) {
-	// 3.1.0
-	//	sqlEntityInfoMap.putIfAbsent(sqlEntityInfo.tableAlias(), sqlEntityInfo);
-	//
-	//	if (sqlEntityInfo instanceof Sql) {
-	//		((Sql<?>)sqlEntityInfo).sqlEntityInfoMap.values().stream()
-	//			.filter(sqlEntityInfo2 -> sqlEntityInfo2 != sqlEntityInfo)
-	//			.forEach(this::addSqlEntityInfo);
-	//	}
-		sqlEntityInfoMap.put(sqlEntityInfo.tableAlias(), sqlEntityInfo);
-	////
+		sqlEntityInfoMap.putIfAbsent(sqlEntityInfo.tableAlias(), sqlEntityInfo);
+
+		if (sqlEntityInfo instanceof Sql) {
+			((Sql<?>)sqlEntityInfo).sqlEntityInfoMap.values().stream()
+				.filter(sqlEntityInfo2 -> sqlEntityInfo2 != sqlEntityInfo)
+				.forEach(this::addSqlEntityInfo);
+		}
 	}
 
 	/**
@@ -2307,7 +2303,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 				if (sql.joinInfos.size() > 0)
 					sql.columns.add(tableAlias + ".*");
 			} else {
-				sql.setColumns(resultClass);
+				sql.columns(resultClass);
 			}
 		}
 

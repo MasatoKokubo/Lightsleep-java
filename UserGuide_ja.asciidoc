@@ -1,4 +1,4 @@
-= Lightsleep 3.1.0 ユーザーガイド
+= Lightsleep 3.1.1 ユーザーガイド
 
 link:UserGuide.asciidoc[English]
 

@@ -5,6 +5,7 @@ link:ReleaseNotes.asciidoc[English]
 [[TOC_]]
 === 目次
 
+- <<ReleaseNote3.1.1,[.small]#バージョン# 3.1.1 [.small]#(2019-07-18)#>>
 - <<ReleaseNote3.1.0,[.small]#バージョン# 3.1.0 [.small]#(2019-07-16)#>>
 - <<ReleaseNote3.0.1,[.small]#バージョン# 3.0.1 [.small]#(2018-12-01)#>>
 - <<ReleaseNote3.0.0,[.small]#バージョン# 3.0.0 [.small]#(2018-10-07)#>>
@@ -13,6 +14,13 @@ link:ReleaseNotes.asciidoc[English]
 - <<ReleaseNote2.1.1,[.small]#バージョン# 2.1.1 [.small]#(2017-12-03)#>>
 - <<ReleaseNote2.1.0,[.small]#バージョン# 2.1.0 [.small]#(2017-11-12)#>>
 - <<ReleaseNote2.0.0,[.small]#バージョン# 2.0.0 [.small]#(2017-09-09)#>>
+
+[[ReleaseNote3.1.1]]
+
+=== [.small]#バージョン# 3.1.1
+
+1. **バグ修正**
+  * サブクエリ条件からメインテーブルに結合しているテーブルのカラム名が参照できない。
 
 [[ReleaseNote3.1.0]]
 
@@ -27,30 +35,35 @@ link:ReleaseNotes.asciidoc[English]
     **本バージョンより前:** 引数のカラム配列が累積される。 +
     **本バージョン:** 引数のカラム配列に置き換えられる。
 
-1. **メソッドの追加**
+1. **追加されたメソッド**
   * `org.lightsleep.**Sql**` クラス
-    ** `Sql<E> columns(Collection<String> propertyNames)`
-    ** `<RE> Sql<E> columns(Class<RE> resultClass)`
-    ** `Sql<E> from(Sql<?> fromSql)`
-    ** `Sql<?> getFrom()`
-    ** `<SE> Sql<E> where(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> and(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> or(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> having(Sql<SE> subSql, String content)`
-    ** `<UE> Sql<E> union(Sql<UE> unionSql)`
-    ** `<UE> Sql<E> unionAll(Sql<UE> unionSql)`
-    ** `List<Sql<?>> getUnionSqls()`
-    ** `boolean isUnionAll()`
+    ** `Sql<E> **columns**(Collection<String> propertyNames)`
+    ** `<RE> Sql<E> **columns**(Class<RE> resultClass)`
+    ** `Sql<E> **from**(Sql<?> fromSql)`
+    ** `Sql<?> **getFrom**()`
+    ** `<SE> Sql<E> **where**(Sql<SE> subSql, String content)`
+    ** `<SE> Sql<E> **and**(Sql<SE> subSql, String content)`
+    ** `<SE> Sql<E> **or**(Sql<SE> subSql, String content)`
+    ** `<SE> Sql<E> **having**(Sql<SE> subSql, String content)`
+    ** `<UE> Sql<E> **union**(Sql<UE> unionSql)`
+    ** `<UE> Sql<E> **unionAll**(Sql<UE> unionSql)`
+    ** `List<Sql<?>> **getUnionSqls**()`
+    ** `boolean **isUnionAll**()`
 
   * `org.lightsleep.**Condition**` インターフェース
-    ** `static <E, SE> Condition of(Sql<E> outerSql, Sql<SE> subSql, String content)`
-    ** `default <K> Condition and(K entity)`
-    ** `default <E, SE> Condition and(Sql<E> outerSql, Sql<SE> subSql, String content)`
-    ** `default <K> Condition or(K entity)`
-    ** `default <E, SE> Condition or(Sql<E> outerSql, Sql<SE> subSql, String content)`
+    ** `static <E, SE> Condition **of**(Sql<E> outerSql, Sql<SE> subSql, String content)`
+    ** `default <K> Condition **and**(K entity)`
+    ** `default <E, SE> Condition **and**(Sql<E> outerSql, Sql<SE> subSql, String content)`
+    ** `default <K> Condition **or**(K entity)`
+    ** `default <E, SE> Condition **or**(Sql<E> outerSql, Sql<SE> subSql, String content)`
 
   * `org.lightsleep.**SubqueryCondition**` クラス
-    ** `<E> SubqueryCondition(Sql<E> outerSql, Sql<SE> subSql, Expression expression)`
+    ** `<E> **SubqueryCondition**(Sql<E> outerSql, Sql<SE> subSql, Expression expression)`
+
+1. **非推奨になったメソッド**
+  * `org.lightsleep.**Sql**` クラス
+    ** `**setColumns**(Set<String> propertyNames)`
+    ** `**setColumns**(Class<?> resultClass)`
 
 [[ReleaseNote3.0.1]]
 
@@ -73,7 +86,7 @@ link:ReleaseNotes.asciidoc[English]
     ** `java.time.ZonedDateTime`
     ** `java.time.Instant`
 
-1. **追加**されたメソッドおよびコンストラクタ
+1. **追加されたメソッドおよびコンストラクタ**
   * `org.lightsleep.**Sql**` クラス
     ** `**doNotIf**(boolean condition, Consumer<Sql<E>> action)`
     ** `**doElse**(Consumer<Sql<E>> elseAction)`
@@ -90,7 +103,7 @@ link:ReleaseNotes.asciidoc[English]
     ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType,Function<? super ST, ? extends MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends DT> function3)`
     ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends MT3> function3, Function<? super MT3, ? extends DT> function4)`
 
-1. **非推奨**になったメソッド
+1. **非推奨になったメソッド**
   * `org.lightsleep.**Sql**` クラス
     ** `**doIf**(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)`
 
@@ -124,7 +137,7 @@ link:ReleaseNotes.asciidoc[English]
 
 === [.small]#バージョン# 2.2.1
 
-1. バグ修正
+1. **バグ修正**
   * [修正済] OracleのJDBCドライバjarがクラスパスにないと動作しない。
 
 <<TOC_,目次へ>>
@@ -133,7 +146,7 @@ link:ReleaseNotes.asciidoc[English]
 
 === [.small]#バージョン# 2.2.0
 
-1. 改善
+1. **改善**
   * SQLのログに接続先のJDBC URLを含めるオプションを *追加* しました。 +
     使用例:::
     `lightsleep.properties` ファイルに以下を追加 +
@@ -149,10 +162,10 @@ link:ReleaseNotes.asciidoc[English]
 
 === [.small]#バージョン# 2.1.1
 
-1. バグ修正
+1. **バグ修正**
   * [修正済] コネクション･サプライヤが `Jndi` の場合に常に `Standard` データベース･ハンドラが選択される。
 
-1. その他
+1. **その他**
   * ログメッセージの改善
 
 <<TOC_,目次へ>>
