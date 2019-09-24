@@ -109,18 +109,10 @@ public class PostgreSQL extends Standard {
 						break;
 					}
 				}
-			////
-			// 3.0.1
-			//	buff.append('\'');
-			//	String string = buff.toString();
-			//	if (escaped)
-			//		string = 'E' + string;
-			//	return new SqlString(string);
 				if (escaped)
 					buff.insert(0, 'E');
 				buff.append('\'');
 				return new SqlString(buff.toString());
-			////
 			})
 		);
 

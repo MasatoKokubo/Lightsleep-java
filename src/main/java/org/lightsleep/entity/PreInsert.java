@@ -7,11 +7,11 @@ import org.lightsleep.connection.ConnectionWrapper;
 
 /**
  * If an entity class implements this interface,
- * <b>insert</b> method of Sql class calls <b>preInsert</b> method
- * of the entity class before executing INSERT SQL.<br>
+ * <b>insert(E)</b> and <b>insert(Iterable)</b> methods of Sql&lt;E&gt; class invoke
+ * <b>preInsert</b> method of the entity class before executing INSERT SQL.
  *
  * <p>
- * In <b>preInsert method,</b> do the implementation of the numbering of the primary key or etc.
+ * You can implement primary key numbering using <b>preInsert</b> method.
  * </p>
  *
  * <div class="exampleTitle"><span>Java Example</span></div>
@@ -22,9 +22,8 @@ import org.lightsleep.connection.ConnectionWrapper;
  *     ...
  *
  *  {@literal @}Override
- *   <b>public int preInsert(Connection conn)</b> {
+ *   <b>public void preInsert(ConnectionWrapper conn)</b> {
  *     id = Numbering.getNewId(conn, getClass());
- *     return 0;
  *   }
  * }
  * </pre></div>
@@ -34,12 +33,14 @@ import org.lightsleep.connection.ConnectionWrapper;
  */
 public interface PreInsert {
 	/**
-	 * This method is execute before executing INSERT SQL.
+	 * Invoked before executing INSERT SQL.
 	 *
 	 * @param conn the connection wrapper
-	 * @return the number of inserted rows
 	 *
 	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
 	 */
-	int preInsert(ConnectionWrapper conn);
+// 3.2.0
+//	int preInsert(ConnectionWrapper conn);
+	public void preInsert(ConnectionWrapper conn);
+////
 }

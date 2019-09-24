@@ -204,14 +204,6 @@ public class SQLite extends Standard {
 				toSimpleSqlString
 			)
 		);
-
-	// 3.0.1
-	//	// byte[] -> SqlString
-	//	TypeConverter.put(typeConverterMap,
-	//		new TypeConverter<>(byte[].class, SqlString.class, object ->
-	//			new SqlString(SqlString.PARAMETER, object))
-	//	);
-	////
 	}
 
 	/**

@@ -1227,7 +1227,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param unionSql UNION SQLを構成要素の1つのSELECT SQLを生成する<b>Sql</b>オブジェクト
 	 * @return このオブジェクト
 	 *
-	 * @throws IllegalStateException <b>unionAll</b>メソッドがすでに呼ばれている場合
+	 * @throws IllegalStateException <b>unionAll</b>メソッドがすでに呼び出されている場合
 	 *
 	 * @see #unionAll(Sql)
 	 * @since 3.1.0
@@ -1243,7 +1243,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 	 * @param unionSql UNION SQLを構成要素の1つのSELECT SQLを生成する<b>Sql</b>オブジェクト
 	 * @return このオブジェクト
 	 *
-	 * @throws IllegalStateException <b>union</b>メソッドがすでに呼ばれている場合
+	 * @throws IllegalStateException <b>union</b>メソッドがすでに呼び出されている場合
 	 *
 	 * @see #union(Sql)
 	 * @since 3.1.0

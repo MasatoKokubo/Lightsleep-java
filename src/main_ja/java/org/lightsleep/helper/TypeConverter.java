@@ -396,7 +396,7 @@ import java.util.Objects;
  * @since 1.0
  * @author Masato Kokubo
  * @see org.lightsleep.database.Standard
- * @see org.lightsleep.database.DB2
+ * @see org.lightsleep.database.Db2
  * @see org.lightsleep.database.MySQL
  * @see org.lightsleep.database.Oracle
  * @see org.lightsleep.database.PostgreSQL
@@ -578,22 +578,6 @@ public class TypeConverter<ST, DT> {
 				.andThen(Objects.requireNonNull(function4, "function4"))
 		);
 	}
-
-// 3.0.0
-//	/**
-//	 * 2つの コンバータを合成して<b>TypeConverter</b>を構築します。
-//	 *
-//	 * @param <MT> 中間の型
-//	 * @param typeConverter1 コンバータ1
-//	 * @param typeConverter2 コンバータ2
-//	 *
-//	 * @throws NullPointerException <b>typeConverter1</b> または<b>typeConverter2</b>が<b>null</b>の場合
-//	 *
-//	 * @since 1.8.0
-//	 */
-//	public <MT> TypeConverter(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2) {
-//	}
-////
 
 	/**
 	 * 変換元の型を返します。

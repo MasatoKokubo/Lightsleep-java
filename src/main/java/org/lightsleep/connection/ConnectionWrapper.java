@@ -49,8 +49,8 @@ public class ConnectionWrapper implements Connection {
 	 * @since 2.2.0
 	 */
 	public ConnectionWrapper(Connection connection, ConnectionSupplier supplier) {
-		this.connection = Objects.requireNonNull(connection, "connection");
-		this.supplier = Objects.requireNonNull(supplier, "supplier");
+		this.connection = Objects.requireNonNull(connection, "connection is null");
+		this.supplier = Objects.requireNonNull(supplier, "supplier is null");
 	}
 
 	/**

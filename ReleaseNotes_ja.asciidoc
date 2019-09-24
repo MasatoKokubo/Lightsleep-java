@@ -1,30 +1,57 @@
-= Lightsleep [.small]#リリース･ノート#
+= Lightsleep [small]#リリース･ノート#
 
 link:ReleaseNotes.asciidoc[English]
 
 [[TOC_]]
 === 目次
 
-- <<ReleaseNote3.1.1,[.small]#バージョン# 3.1.1 [.small]#(2019-07-18)#>>
-- <<ReleaseNote3.1.0,[.small]#バージョン# 3.1.0 [.small]#(2019-07-16)#>>
-- <<ReleaseNote3.0.1,[.small]#バージョン# 3.0.1 [.small]#(2018-12-01)#>>
-- <<ReleaseNote3.0.0,[.small]#バージョン# 3.0.0 [.small]#(2018-10-07)#>>
-- <<ReleaseNote2.2.1,[.small]#バージョン# 2.2.1 [.small]#(2018-02-12)#>>
-- <<ReleaseNote2.2.0,[.small]#バージョン# 2.2.0 [.small]#(2018-02-04)#>>
-- <<ReleaseNote2.1.1,[.small]#バージョン# 2.1.1 [.small]#(2017-12-03)#>>
-- <<ReleaseNote2.1.0,[.small]#バージョン# 2.1.0 [.small]#(2017-11-12)#>>
-- <<ReleaseNote2.0.0,[.small]#バージョン# 2.0.0 [.small]#(2017-09-09)#>>
+- <<ReleaseNote3.2.0,[small]#バージョン# 3.2.0 [small]#- 2019-09-23#>>
+- <<ReleaseNote3.1.1,[small]#バージョン# 3.1.1 [small]#- 2019-07-18#>>
+- <<ReleaseNote3.1.0,[small]#バージョン# 3.1.0 [small]#- 2019-07-16#>>
+- <<ReleaseNote3.0.1,[small]#バージョン# 3.0.1 [small]#- 2018-12-01#>>
+- <<ReleaseNote3.0.0,[small]#バージョン# 3.0.0 [small]#- 2018-10-07#>>
+- <<ReleaseNote2.2.1,[small]#バージョン# 2.2.1 [small]#- 2018-02-12#>>
+- <<ReleaseNote2.2.0,[small]#バージョン# 2.2.0 [small]#- 2018-02-04#>>
+- <<ReleaseNote2.1.1,[small]#バージョン# 2.1.1 [small]#- 2017-12-03#>>
+- <<ReleaseNote2.1.0,[small]#バージョン# 2.1.0 [small]#- 2017-11-12#>>
+- <<ReleaseNote2.0.0,[small]#バージョン# 2.0.0 [small]#- 2017-09-09#>>
+
+[[ReleaseNote3.2.0]]
+
+=== [small]#バージョン# 3.2.0
+
+1. ** 追加したインタフェース **
+  * `org.lightsleep.entity.**PostDelete**`
+  * `org.lightsleep.entity.**PostInsert**`
+  * `org.lightsleep.entity.**PostSelect**`
+  * `org.lightsleep.entity.**PostUpdate**`
+  * `org.lightsleep.entity.**PreDelete**`
+  * `org.lightsleep.entity.**PreUpdate**`
+
+1. ** 追加したクラス **
+  * `org.lightsleep.database.**MariaDB**`
+  * `org.lightsleep.database.anchor.**mariadb**`
+
+1. ** 仕様変更 **
+  * `org.lightsleep.entity.**PreInsert**` インタフェースの `**preInsert**` メソッドの戻り値型を `**int**`  から `**void**` に変更しました。
+  * `org.lightsleep.entity.**Composite**` インタフェースの `**postInsert**`,  `**postUpdate**` および `**postDelete**` メソッドの戻り値型を `**int**`  から `**void**` に変更しました。
+  * `org.lightsleep.database.**DB2**` クラスを `**Db2**` に変更しました。
+
+1. ** 非推奨にしたインタフェース **
+  * `org.lightsleep.entity.**Composite**`
+  * `org.lightsleep.entity.**PostLoad**`
+  * `org.lightsleep.entity.**PreStore**`
 
 [[ReleaseNote3.1.1]]
 
-=== [.small]#バージョン# 3.1.1
+=== [small]#バージョン# 3.1.1
 
 1. **バグ修正**
   * サブクエリ条件からメインテーブルに結合しているテーブルのカラム名が参照できない。
 
 [[ReleaseNote3.1.0]]
 
-=== [.small]#バージョン# 3.1.0
+=== [small]#バージョン# 3.1.0
 
 1. **機能追加**
   * **FROM句** に **サブクエリ** を使用したSELECT SQLの生成
@@ -35,7 +62,7 @@ link:ReleaseNotes.asciidoc[English]
     **本バージョンより前:** 引数のカラム配列が累積される。 +
     **本バージョン:** 引数のカラム配列に置き換えられる。
 
-1. **追加されたメソッド**
+1. **追加したメソッド**
   * `org.lightsleep.**Sql**` クラス
     ** `Sql<E> **columns**(Collection<String> propertyNames)`
     ** `<RE> Sql<E> **columns**(Class<RE> resultClass)`
@@ -60,22 +87,22 @@ link:ReleaseNotes.asciidoc[English]
   * `org.lightsleep.**SubqueryCondition**` クラス
     ** `<E> **SubqueryCondition**(Sql<E> outerSql, Sql<SE> subSql, Expression expression)`
 
-1. **非推奨になったメソッド**
+1. **非推奨にしたメソッド**
   * `org.lightsleep.**Sql**` クラス
     ** `**setColumns**(Set<String> propertyNames)`
     ** `**setColumns**(Class<?> resultClass)`
 
 [[ReleaseNote3.0.1]]
 
-=== [.small]#バージョン# 3.0.1
+=== [small]#バージョン# 3.0.1
 
 1. **変更**
-  * `SQLServer` データベース･ハンドラを使用した場合、`U+0080` 以上の文字コードを含む文字列リテラルは、`N` プレフィックス付き(例 `N'漢字'`)で生成するようになりました。
-  * `SQLite` データベース･ハンドラを使用した場合、`byte[]` のリテラルは、`X'hhhhhh'` 形式で生成するようになりました。(配列長が `maxBinaryLiteralLength` を超えない場合)
+  * `SQLServer` データベース･ハンドラを使用した場合、`U+0080` 以上の文字コードを含む文字列リテラルは、`N` プレフィックス付き(例 `N'漢字'`)で生成するようにしました。
+  * `SQLite` データベース･ハンドラを使用した場合、`byte[]` のリテラルは、`X'hhhhhh'` 形式で生成するようにしました。(配列長が `maxBinaryLiteralLength` を超えない場合)
 
 [[ReleaseNote3.0.0]]
 
-=== [.small]#バージョン# 3.0.0
+=== [small]#バージョン# 3.0.0
 
 1. **改善**
   * 以下のデータ型をサポートしました。エンティティクラスのフィールド型として使用できます。
@@ -86,7 +113,7 @@ link:ReleaseNotes.asciidoc[English]
     ** `java.time.ZonedDateTime`
     ** `java.time.Instant`
 
-1. **追加されたメソッドおよびコンストラクタ**
+1. **追加したメソッドおよびコンストラクタ**
   * `org.lightsleep.**Sql**` クラス
     ** `**doNotIf**(boolean condition, Consumer<Sql<E>> action)`
     ** `**doElse**(Consumer<Sql<E>> elseAction)`
@@ -103,11 +130,11 @@ link:ReleaseNotes.asciidoc[English]
     ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType,Function<? super ST, ? extends MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends DT> function3)`
     ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends MT3> function3, Function<? super MT3, ? extends DT> function4)`
 
-1. **非推奨になったメソッド**
+1. **非推奨にしたメソッド**
   * `org.lightsleep.**Sql**` クラス
     ** `**doIf**(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)`
 
-1. **削除**されたメソッドおよびコンストラクタ
+1. **削除**したメソッドおよびコンストラクタ
   * `org.lightsleep.**Sql**` クラス
 
     ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer)`
@@ -135,7 +162,7 @@ link:ReleaseNotes.asciidoc[English]
 
 [[ReleaseNote2.2.1]]
 
-=== [.small]#バージョン# 2.2.1
+=== [small]#バージョン# 2.2.1
 
 1. **バグ修正**
   * [修正済] OracleのJDBCドライバjarがクラスパスにないと動作しない。
@@ -144,7 +171,7 @@ link:ReleaseNotes.asciidoc[English]
 
 [[ReleaseNote2.2.0]]
 
-=== [.small]#バージョン# 2.2.0
+=== [small]#バージョン# 2.2.0
 
 1. **改善**
   * SQLのログに接続先のJDBC URLを含めるオプションを *追加* しました。 +
@@ -160,7 +187,7 @@ link:ReleaseNotes.asciidoc[English]
 
 [[ReleaseNote2.1.1]]
 
-=== [.small]#バージョン# 2.1.1
+=== [small]#バージョン# 2.1.1
 
 1. **バグ修正**
   * [修正済] コネクション･サプライヤが `Jndi` の場合に常に `Standard` データベース･ハンドラが選択される。
@@ -172,13 +199,13 @@ link:ReleaseNotes.asciidoc[English]
 
 [[ReleaseNote2.1.0]]
 
-=== [.small]#バージョン# 2.1.0
+=== [small]#バージョン# 2.1.0
 
 バージョン番号はマイナー･リリースですが、**仕様変更があります**。
 
 1. `lightsleep.properties` ファイルに、複数のJDBC URLの定義を **可能** にしました。
 
-1. JDBC URLに対応するデータベース･ハンドラ･クラス **は自動的に判断** されるようになりました。これに伴い `lightsleep.properties` ファイルの `Database` プロパティを **無効** にしました。**(仕様変更)**
+1. JDBC URLに対応するデータベース･ハンドラ･クラス **は自動的に判断** するようにしました。これに伴い `lightsleep.properties` ファイルの `Database` プロパティを **無効** にしました。**(仕様変更)**
 
 1. 以下のメソッド/コンストラクタを **追加** しました。
   * `Sql` クラス
@@ -221,7 +248,7 @@ link:ReleaseNotes.asciidoc[English]
 
 [[ReleaseNote2.0.0]]
 
-=== [.small]#バージョン# 2.0.0
+=== [small]#バージョン# 2.0.0
 
 1. `org.lightsleep.Sql` クラスの型パラメータとは異なるエンティティ型でSELECT SQLの結果を取得する以下のメソッドを**追加**しました。
   * `public <R> Optional<R> selectAs(Class<R> resultClass)`

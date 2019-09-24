@@ -40,7 +40,7 @@ class DateAndTimeSpec extends Base {
 		DebugTrace.enter() // for Debugging
 		TimeZone.setDefault(defaultTimeZone);
 
-		if (connectionSupplier.database instanceof MySQL) {
+		if (connectionSupplier.database instanceof MariaDB || connectionSupplier.database instanceof MySQL) {
 			Transaction.execute(connectionSupplier) {
 				new Sql<>(Object).connection(it)
 					.executeUpdate("SET GLOBAL time_zone='${defaultTimeZone.getID()}'")
@@ -70,7 +70,7 @@ class DateAndTimeSpec extends Base {
 			TimeZone.setDefault(TimeZone.getTimeZone(timeZoneId));
 			DebugTrace.print('ZoneId.systemDefault', ZoneId.systemDefault()) // for Debugging
 
-			if (connectionSupplier.database instanceof MySQL) {
+			if (connectionSupplier.database instanceof MariaDB || connectionSupplier.database instanceof MySQL) {
 				Transaction.execute(connectionSupplier) {
 					new Sql<>(Object).connection(it)
 						.executeUpdate("SET GLOBAL time_zone='${timeZoneId}'")
@@ -92,7 +92,8 @@ class DateAndTimeSpec extends Base {
 
 			// truncated milli seconds of Time
 			def truncatedTimeMilli =
-				connectionSupplier.database instanceof DB2        ? 0 :
+				connectionSupplier.database instanceof Db2        ? 0 :
+				connectionSupplier.database instanceof MariaDB    ? timeMilli :
 				connectionSupplier.database instanceof MySQL      ? timeMilli :
 				connectionSupplier.database instanceof Oracle     ? 0 :
 				connectionSupplier.database instanceof PostgreSQL ? timeMilli :
@@ -102,7 +103,8 @@ class DateAndTimeSpec extends Base {
 
 			// truncated nano seconds of Time
 			def truncatedTimeNano =
-				connectionSupplier.database instanceof DB2        ? 0 :
+				connectionSupplier.database instanceof Db2        ? 0 :
+				connectionSupplier.database instanceof MariaDB    ? nanosecond - nanosecond % 1000 :
 				connectionSupplier.database instanceof MySQL      ? nanosecond - nanosecond % 1000 :
 				connectionSupplier.database instanceof Oracle     ? 0 :
 				connectionSupplier.database instanceof PostgreSQL ? nanosecond - nanosecond % 1000 :
@@ -113,7 +115,8 @@ class DateAndTimeSpec extends Base {
 
 			// truncated nano seconds of Timestamp
 			def truncatedNano =
-				connectionSupplier.database instanceof DB2        ? nanosecond :
+				connectionSupplier.database instanceof Db2        ? nanosecond :
+				connectionSupplier.database instanceof MariaDB    ? nanosecond - nanosecond % 1000 :
 				connectionSupplier.database instanceof MySQL      ? nanosecond - nanosecond % 1000 :
 				connectionSupplier.database instanceof Oracle     ? nanosecond :
 				connectionSupplier.database instanceof PostgreSQL ? nanosecond - nanosecond % 1000 :

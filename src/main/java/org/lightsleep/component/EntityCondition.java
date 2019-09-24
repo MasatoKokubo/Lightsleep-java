@@ -41,7 +41,7 @@ public class EntityCondition<K> implements Condition {
 	 */
 	@SuppressWarnings("unchecked")
 	public EntityCondition(K entity) {
-		this.entity = Objects.requireNonNull(entity, "entity");
+		this.entity = Objects.requireNonNull(entity, "entity is null");
 
 		entityInfo = Sql.getEntityInfo((Class<K>)entity.getClass());
 		if (entityInfo.keyColumnInfos().size() == 0)
@@ -61,7 +61,7 @@ public class EntityCondition<K> implements Condition {
 	 */
 	@Override
 	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
-		String tableAlias = Objects.requireNonNull(sql, "sql").tableAlias();
+		String tableAlias = Objects.requireNonNull(sql, "sql is null").tableAlias();
 		Accessor<K> accessor = entityInfo.accessor();
 
 		Condition[] condition = new Condition[] {Condition.EMPTY};

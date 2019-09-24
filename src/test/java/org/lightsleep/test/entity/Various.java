@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lightsleep.connection.ConnectionWrapper;
 import org.lightsleep.entity.*;
 
 /**
@@ -20,7 +21,7 @@ import org.lightsleep.entity.*;
  */
 //public class Various extends VariousBase {
 public class Various {
-	@Key()
+	@Key
 	/**     PRIMARY KEY          */   public int          id              ;
 
 	/** BOOLEAN  (NOT NULL)      */   public boolean      booleanPValue   ;
@@ -54,7 +55,8 @@ public class Various {
 	/** BLOB                     */   public byte[]       blobValue        ;
 
 	@Table("super")
-	public static class PostgreSQL extends Various implements PreStore, PostLoad {
+//	public static class PostgreSQL extends Various implements PreStore, PostLoad { // 3.2.0
+	public static class PostgreSQL extends Various implements PostSelect, PreInsert, PreUpdate {
 		/** JSON                */
 		@Insert("CAST({#jsonValue} AS JSON)")
 		@Update("CAST({#jsonValue} AS JSON)") public String jsonValue ;
@@ -87,7 +89,8 @@ public class Various {
 		public List<Short> shortList;
 
 		@Override
-		public void preStore() {
+//		public void preStore() { // 3.2.0
+		public void preInsert(ConnectionWrapper connection) {
 			if (shortList == null) {
 				shorts = null;
 			} else {
@@ -97,8 +100,15 @@ public class Various {
 			}
 		}
 
+		// 3.2.0
 		@Override
-		public void postLoad() {
+		public void preUpdate(ConnectionWrapper connection) {
+			preInsert(connection);
+		}
+
+		@Override
+//		public void postLoad() {
+		public void postSelect(ConnectionWrapper connection) {
 			if (shorts == null) {
 				shortList = null;
 			} else {

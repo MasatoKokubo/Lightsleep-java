@@ -50,8 +50,8 @@ public class Expression implements Condition {
 	 * @throws NullPointerException <b>content</b> or <b>arguments</b> is <b>null</b>
 	 */
 	public Expression(String content, Object... arguments) {
-		this.content = Objects.requireNonNull(content, "content");
-		this.arguments = Objects.requireNonNull(arguments, "arguments");
+		this.content = Objects.requireNonNull(content, "content is null");
+		this.arguments = Objects.requireNonNull(arguments, "arguments is null");
 	}
 
 	/**
@@ -116,9 +116,9 @@ public class Expression implements Condition {
 	 */
 	@Override
 	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
-		Objects.requireNonNull(database, "database");
-		Objects.requireNonNull(sql, "sql");
-		Objects.requireNonNull(parameters, "parameters");
+		Objects.requireNonNull(database, "database is null");
+		Objects.requireNonNull(sql, "sql is null");
+		Objects.requireNonNull(parameters, "parameters is null");
 		EntityInfo<E> entityInfo = sql.entityInfo();
 		E entity = sql.entity();
 		StringBuilder buff = new StringBuilder(content.length());
@@ -174,7 +174,7 @@ public class Expression implements Condition {
 
 						} else {
 							// Refers the entity value
-							Objects.requireNonNull(entity, "sql.entity");
+							Objects.requireNonNull(entity, "sql.entity is null");
 
 							value = entityInfo.accessor().getValue(entity, propertyName);
 							ColumnInfo columnInfo = entityInfo.getColumnInfo(propertyName);

@@ -64,7 +64,7 @@ public interface ConnectionSupplier extends Supplier<ConnectionWrapper> {
 	 */
 	@SuppressWarnings("unchecked")
 	static ConnectionSupplier of(String supplierName, Properties properties) {
-		Objects.requireNonNull(supplierName, "supplierName");
+		Objects.requireNonNull(supplierName, "supplierName is null");
 
 		if (supplierName.indexOf('.') < 0)
 			supplierName = ConnectionSupplier.class.getPackage().getName() + '.' + supplierName;
@@ -91,7 +91,7 @@ public interface ConnectionSupplier extends Supplier<ConnectionWrapper> {
 	 * @since 2.1.0
 	 */
 	static ConnectionSupplier find(String... urlWords) {
-		Objects.requireNonNull(urlWords);
+		Objects.requireNonNull(urlWords, "urlWords is null");
 
 		List<Entry<String, ConnectionSupplier>> suppliers =
 			AbstractConnectionSupplier.supplierMap.entrySet().stream()

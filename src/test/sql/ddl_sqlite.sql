@@ -2,19 +2,10 @@
 
 -- for SQLite
 
--- Numbering
-DROP TABLE IF EXISTS Numbering;
-CREATE TABLE Numbering (
-    tableName   TEXT    NOT NULL,
-    nextId      INTEGER NOT NULL,
-
-    PRIMARY KEY(tableName)
-);
-
 -- Contact
 DROP TABLE IF EXISTS Contact;
 CREATE TABLE Contact (
-    id          INTEGER NOT NULL,
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
     firstName   TEXT    NOT NULL,
     lastName    TEXT    NOT NULL,
     birthday    TEXT        NULL,
@@ -22,15 +13,13 @@ CREATE TABLE Contact (
 
     updateCount INTEGER NOT NULL,
     created     TEXT    NOT NULL,
-    updated     TEXT    NOT NULL,
-
-    PRIMARY KEY(id)
+    updated     TEXT    NOT NULL
 );
 
 -- Address
 DROP TABLE IF EXISTS Address;
 CREATE TABLE Address (
-    id          INTEGER NOT NULL,
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
     postCode    TEXT        NULL,
     address1    TEXT        NULL,
     address2    TEXT        NULL,
@@ -39,29 +28,25 @@ CREATE TABLE Address (
 
     updateCount INTEGER NOT NULL,
     created     TEXT    NOT NULL,
-    updated     TEXT    NOT NULL,
-
-    PRIMARY KEY(id)
+    updated     TEXT    NOT NULL
 );
 
 -- Phone
 DROP TABLE IF EXISTS Phone;
 CREATE TABLE Phone (
-    id          INTEGER NOT NULL,
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
     contactId   INTEGER NOT NULL,
     phoneNumber TEXT    NOT NULL,
 
     updateCount INTEGER NOT NULL,
     created     TEXT    NOT NULL,
-    updated     TEXT    NOT NULL,
-
-    PRIMARY KEY(id)
+    updated     TEXT    NOT NULL
 );
 
 -- Product
 DROP TABLE IF EXISTS Product;
 CREATE TABLE Product (
-    id          INTEGER NOT NULL,
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
     productName TEXT    NOT NULL,
     price       INTEGER NOT NULL,
     productSize TEXT        NULL,
@@ -69,24 +54,20 @@ CREATE TABLE Product (
 
     updateCount INTEGER NOT NULL,
     created     TEXT    NOT NULL,
-    updated     TEXT    NOT NULL,
-
-    PRIMARY KEY(id)
+    updated     TEXT    NOT NULL
 );
 
 -- Sale
 DROP TABLE IF EXISTS Sale;
 CREATE TABLE Sale (
-    id          INTEGER NOT NULL,
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
     contactId   INTEGER NOT NULL,
     saleDate    TEXT    NOT NULL,
     taxRate     INTEGER NOT NULL,
 
     updateCount INTEGER NOT NULL,
     created     TEXT    NOT NULL,
-    updated     TEXT    NOT NULL,
-
-    PRIMARY KEY(id)
+    updated     TEXT    NOT NULL
 );
 
 -- SaleItem
@@ -105,7 +86,7 @@ CREATE TABLE SaleItem (
 -- Various
 DROP TABLE IF EXISTS Various;
 CREATE TABLE Various (
-	id               INTEGER NOT NULL,
+	id               INTEGER PRIMARY KEY,
 
 	booleanPValue    INTEGER DEFAULT 0   NOT NULL,
 	char1PValue      TEXT    DEFAULT ' ' NOT NULL,
@@ -137,21 +118,17 @@ CREATE TABLE Various (
     varBinaryValue   BLOB   ,
 
     textValue        TEXT   ,
-    blobValue        BLOB   ,
-
-    PRIMARY KEY(id)
+    blobValue        BLOB
 );
 
 
 -- DateAndTime since 3.0.0
 DROP TABLE IF EXISTS DateAndTime;
 CREATE TABLE DateAndTime (
-    id               INT  NOT NULL,
+    id               INTEGER PRIMARY KEY,
 
-    dateValue        DATE,
-    timeValue        TIME,
+    dateValue        DATE    ,
+    timeValue        TIME    ,
     timestampValue   DATETIME,
-    timestampTZValue DATETIME,
-
-    PRIMARY KEY(id)
+    timestampTZValue DATETIME
 );

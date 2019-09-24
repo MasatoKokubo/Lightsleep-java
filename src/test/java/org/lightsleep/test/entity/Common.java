@@ -5,6 +5,7 @@ package org.lightsleep.test.entity;
 
 import java.sql.Timestamp;
 
+import org.lightsleep.Sql;
 import org.lightsleep.connection.ConnectionWrapper;
 import org.lightsleep.entity.*;
 
@@ -14,9 +15,10 @@ import org.lightsleep.entity.*;
  * @since 1.0
  * @author Masato Kokubo
  */
-public abstract class Common implements PreInsert {
+public abstract class Common implements PostInsert {
 	/** Identifier */
 	@Key
+	@NonInsert // 3.2.0
 	public int id;
 
 	/** Update count */
@@ -37,9 +39,20 @@ public abstract class Common implements PreInsert {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public int preInsert(ConnectionWrapper conn) {
-		id = Numbering.getNewId(conn, getClass());
-		return 0;
+	public void postInsert(ConnectionWrapper connection) {
+		Class<? extends Common> entityClass = getClass();
+		if (PostSelect.class.isAssignableFrom(entityClass))
+			entityClass = (Class<? extends Common>)entityClass.getSuperclass();
+		new Sql<>(entityClass)
+			.columns("id")
+			.where("id=",
+				new Sql<>(entityClass)
+					.columns("id")
+					.expression("id", "MAX({id})")
+			)
+			.connection(connection)
+			.select(entity -> id = entity.id);
 	}
 }

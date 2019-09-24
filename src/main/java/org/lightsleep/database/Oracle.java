@@ -103,66 +103,6 @@ public class Oracle extends Standard {
 			new TypeConverter<>(byte[].class, SqlString.class, object ->
 				new SqlString(SqlString.PARAMETER, object))
 		);
-
-	// 3.0.0
-	//	try {
-	//		Class<?> oracleTimestampClass = Class.forName("oracle.sql.TIMESTAMP");
-	//		Method dateValueMethod = oracleTimestampClass.getDeclaredMethod("dateValue");
-	//		Method timeValueMethod = oracleTimestampClass.getDeclaredMethod("timeValue");
-	//		Method timestampValueMethod = oracleTimestampClass.getDeclaredMethod("timestampValue");
-	//
-	//		// oracle.sql.TIMESTAMP -> java.util.Date (since 1.4.0)
-	//		TypeConverter.put(typeConverterMap,
-	//			new TypeConverter<>(oracleTimestampClass, java.util.Date.class, object -> {
-	//				try {
-	//					return new java.util.Date(((Date)dateValueMethod.invoke(object)).getTime());
-	//				}
-	//				catch (Exception e) {
-	//					throw new ConvertException(e);
-	//				}
-	//			})
-	//		);
-	//
-	//		// oracle.sql.TIMESTAMP -> java.sql.Date
-	//		TypeConverter.put(typeConverterMap,
-	//			new TypeConverter<>(oracleTimestampClass, Date.class, object -> {
-	//				try {
-	//					return (Date)dateValueMethod.invoke(object);
-	//				}
-	//				catch (Exception e) {
-	//					throw new ConvertException(e);
-	//				}
-	//			})
-	//		);
-	//
-	//		// oracle.sql.TIMESTAMP -> Time
-	//		TypeConverter.put(typeConverterMap,
-	//			new TypeConverter<>(oracleTimestampClass, Time.class, object -> {
-	//				try {
-	//					return (Time)timeValueMethod.invoke(object);
-	//				}
-	//				catch (Exception e) {
-	//					throw new ConvertException(e);
-	//				}
-	//			})
-	//		);
-	//
-	//		// oracle.sql.TIMESTAMP -> Timestamp
-	//		TypeConverter.put(typeConverterMap,
-	//			new TypeConverter<>(oracleTimestampClass, Timestamp.class, object -> {
-	//				try {
-	//					return (Timestamp)timestampValueMethod.invoke(object);
-	//				}
-	//				catch (Exception e) {
-	//					throw new ConvertException(e);
-	//				}
-	//			})
-	//		);
-	//	}
-	//	catch (ClassNotFoundException | NoSuchMethodException e) {
-	//		throw new RuntimeException(e);
-	//	}
-	////
 	}
 
 	/**

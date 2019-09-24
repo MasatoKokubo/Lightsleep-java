@@ -58,9 +58,9 @@ public abstract class LogicalCondition implements Condition {
 	 * @throws NullPointerException <b>operator</b>, <b>conditionStream</b> or any of <b>conditions</b> is <b>null</b>
 	 */
 	public LogicalCondition(Operator operator, Stream<Condition> conditionStream) {
-		this.operator = Objects.requireNonNull(operator, "operator");
-		conditions = Objects.requireNonNull(conditionStream, "conditionStream")
-			.map(condition -> Objects.requireNonNull(condition, "an element of conditions"))
+		this.operator = Objects.requireNonNull(operator, "operator is null");
+		conditions = Objects.requireNonNull(conditionStream, "conditionStream is null")
+			.map(condition -> Objects.requireNonNull(condition, "an element of conditions is null"))
 			.flatMap(condition -> condition instanceof LogicalCondition && ((LogicalCondition)condition).operator == operator
 				? ((LogicalCondition)condition).conditions().stream()
 				: Stream.of(condition))

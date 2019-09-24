@@ -7,7 +7,7 @@ Lightsleepは、軽量のO/Rマッピング･ライブラリで、Java 8以降�
 === 特徴
 
 - Java 8で追加された機能(関数型インタフェース、Optionalクラス)を使用したAPI 。
-- SQLを構築する際のメソッド名がSQLの予約語と同じため、直観的に理解しやすい。
+- SQLの構築で使用するメソッド名がSQLの予約語と同じため、直観的に理解しやすい。
 - J2EEが不要(Java RuntimeとJDBCドライバー以外に依存するライブラリがない)なため、適用範囲が広い。
 - XMLファイル等によるテーブルとJavaクラスとのマッピング用の定義ファイルは不要。
 - ライブラリがコンパクトなため学習が容易。
@@ -17,7 +17,8 @@ Lightsleepは、軽量のO/Rマッピング･ライブラリで、Java 8以降�
 
 === 対応DBMS
 
-- DB2
+- Db2
+- MariaDB
 - MySQL
 - Oracle Database
 - PostgreSQL
@@ -35,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.lightsleep:lightsleep:3.1.0'
+    compile 'org.lightsleep:lightsleep:3.2.0'
 }
 ----
 

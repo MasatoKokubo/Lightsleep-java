@@ -2,19 +2,10 @@
 
 -- for SQL Server
 
--- Numbering
-DROP TABLE Numbering;
-CREATE TABLE Numbering (
-    tableName   VARCHAR (32)  NOT NULL,
-    nextId      INT           NOT NULL,
-
-    PRIMARY KEY(tableName)
-);
-
 -- Contact
 DROP TABLE Contact;
 CREATE TABLE Contact (
-    id          INT           NOT NULL,
+    id          INT IDENTITY(1,1) NOT NULL,
     firstName   NVARCHAR(20)  NOT NULL,
     lastName    NVARCHAR(20)  NOT NULL,
     birthday    DATE              NULL,
@@ -30,7 +21,7 @@ CREATE TABLE Contact (
 -- Address
 DROP TABLE Address;
 CREATE TABLE Address (
-    id          INT          NOT NULL,
+    id          INT IDENTITY(1,1) NOT NULL,
     postCode    VARCHAR (10)     NULL,
     address1    NVARCHAR(20)     NULL,
     address2    NVARCHAR(20)     NULL,
@@ -47,7 +38,7 @@ CREATE TABLE Address (
 -- Phone
 DROP TABLE Phone;
 CREATE TABLE Phone (
-    id          INT          NOT NULL,
+    id          INT IDENTITY(1,1) NOT NULL,
     contactId   INT          NOT NULL,
     phoneNumber VARCHAR (12) NOT NULL,
 
@@ -61,11 +52,11 @@ CREATE TABLE Phone (
 -- Product
 DROP TABLE Product;
 CREATE TABLE Product (
-    id          INT          NOT NULL,
+    id          INT IDENTITY(1,1) NOT NULL,
     productName NVARCHAR(20) NOT NULL,
     price       INT          NOT NULL,
-    productSize CHAR     (2) NULL,
-    color       NVARCHAR(20) NULL,
+    productSize CHAR     (2)     NULL,
+    color       NVARCHAR(20)     NULL,
 
     updateCount INT          NOT NULL,
     created     DATETIME2(7) NOT NULL,
@@ -77,7 +68,7 @@ CREATE TABLE Product (
 -- Sale
 DROP TABLE Sale;
 CREATE TABLE Sale (
-    id          INT          NOT NULL,
+    id          INT IDENTITY(1,1) NOT NULL,
     contactId   INT          NOT NULL,
     saleDate    DATE         NOT NULL,
     taxRate     SMALLINT     NOT NULL,
@@ -105,7 +96,7 @@ CREATE TABLE SaleItem (
 -- Various
 DROP TABLE Various;
 CREATE TABLE Various (
-    id               INT                   NOT NULL,
+    id               INT       NOT NULL,
 
     booleanPValue    BIT       DEFAULT 0   NOT NULL,
     char1PValue      NCHAR(1)  DEFAULT ' ' NOT NULL,
@@ -136,9 +127,9 @@ CREATE TABLE Various (
     binaryValue      BINARY       (20),
     varBinaryValue   VARBINARY    (40),
 
-    textValue        NTEXT            ,
+    textValue        NVARCHAR    (MAX),
     blobValue        IMAGE            ,
-    jsonValue        NTEXT            ,
+    jsonValue        NVARCHAR    (MAX),
 
     PRIMARY KEY(id)
 );

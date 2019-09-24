@@ -1,4 +1,4 @@
-// DB2.java
+// Db2.java
 // (C) 2016 Masato Kokubo
 
 package org.lightsleep.database;
@@ -8,7 +8,7 @@ import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
 
 /**
- * <a href="https://www.ibm.com/us-en/marketplace/db2-express-c" target="DB2">DB2</a>
+ * <a href="https://www.ibm.com/us-en/marketplace/db2-express-c" target="Db2">Db2</a>
  * 用のデータベース･ハンドラです。
  *
  * <p>
@@ -35,7 +35,7 @@ import org.lightsleep.helper.TypeConverter;
  * @see org.lightsleep.helper.TypeConverter
  * @see org.lightsleep.database.Standard
  */
-public class DB2 extends Standard {
+public class Db2 extends Standard {
 	/**
 	 * パスワードのパターン文字列
 	 *
@@ -48,12 +48,12 @@ public class DB2 extends Standard {
 	 *
 	 * @since 2.1.0
 	 */
-	public static final DB2 instance = new DB2();
+	public static final Db2 instance = new Db2();
 
 	/**
-	 * <b>DB2</b>を構築します。
+	 * <b>Db2</b>を構築します。
 	 */
-	protected DB2() {
+	protected Db2() {
 	}
 
 	/**

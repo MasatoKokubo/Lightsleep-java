@@ -128,7 +128,7 @@ public class Accessor<T> {
 	 * @throws IllegalArgumentException if <b>objectClass</b> is interface
 	 */
 	public Accessor(Class<T> objectClass) {
-		this.objectClass = Objects.requireNonNull(objectClass, "objectClass");
+		this.objectClass = Objects.requireNonNull(objectClass, "objectClass is null");
 		if (objectClass.isInterface())
 			throw new IllegalArgumentException("objectClass: " + objectClass);
 
@@ -461,7 +461,7 @@ public class Accessor<T> {
 	 * @throws RuntimeException if <b>IllegalAccessException</b> was thrown
 	 */
 	public Object getValue(T object, String propertyName) {
-		Objects.requireNonNull(object, () -> "object: null, propertyName: " + propertyName);
+		Objects.requireNonNull(object, () -> "object is null, propertyName: " + propertyName);
 
 		Function<T, Object> getter = getterMap.get(propertyName);
 		if (getter == null)
@@ -492,7 +492,7 @@ public class Accessor<T> {
 	 * @throws RuntimeException if <b>IllegalAccessException</b> or <b>InvocationTargetException</b> was thrown
 	 */
 	public void setValue(T object, String propertyName, Object value) {
-		Objects.requireNonNull(object, () -> "object: null, propertyName: " + propertyName);
+		Objects.requireNonNull(object, () -> "object is null, propertyName: " + propertyName);
 
 		BiConsumer<T, Object> setter = setterMap.get(propertyName);
 		if (setter == null)

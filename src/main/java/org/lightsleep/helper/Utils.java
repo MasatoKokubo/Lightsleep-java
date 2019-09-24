@@ -78,7 +78,6 @@ public class Utils {
 		maxLogMapSize         = Resource.getGlobal().getInt("maxLogMapSize"        , 100);
 	}
 
-// 3.0.0
 	private static final DateTimeFormatter utilDateFormatter       = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSxxx");
 	private static final DateTimeFormatter sqlDateFormatter        = DateTimeFormatter.ofPattern("yyyy-MM-ddxxx");
 	private static final DateTimeFormatter timeFormatter           = DateTimeFormatter.ofPattern("HH:mm:ss.SSSxxx");
@@ -90,7 +89,6 @@ public class Utils {
 	private static final DateTimeFormatter offsetDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSSxxx");
 	private static final DateTimeFormatter zonedDateTimeFormatter  = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSSxxx VV");
 	private static final DateTimeFormatter instantFormatter        = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSSX");
-////
 
 	/**
 	 * Converts the primitive type to the related class type.
@@ -126,9 +124,7 @@ public class Utils {
 			className = nameWithoutPackage(clazz.getComponentType()) + "[]";
 		} else {
 			className = clazz.getName();
-		// 3.0.0
 			if (className.startsWith("java."))
-		////
 				// gets the right from the last period
 				className = className.substring(className.lastIndexOf('.') + 1);
 		}
@@ -314,12 +310,6 @@ public class Utils {
 
 			} else if (object instanceof java.util.Date) {
 				// java.util.Date
-			// 3.0.0
-			//	if (type == java.util.Date.class)
-			//		appendType(buff.append('('), type, object).append(')')
-			//			.append(new Timestamp(((java.util.Date)object).getTime()));
-			//	else
-			//		buff.append(object);
 				appendType(buff.append('('), type, object).append(')');
 				Timestamp timestamp = object instanceof Timestamp ? (Timestamp)object : new Timestamp(((java.util.Date)object).getTime());
 				ZonedDateTime zonedDateTime = timestamp.toLocalDateTime().atZone(ZoneId.systemDefault());
@@ -327,8 +317,7 @@ public class Utils {
 				else if (object instanceof Time     ) buff.append(zonedDateTime.format(timeFormatter     )); // Time
 				else if (object instanceof Timestamp) buff.append(zonedDateTime.format(timestampFormatter)); // Timestamp
 				else                                  buff.append(zonedDateTime.format(utilDateFormatter )); // java.util.Date
-			////
-		// 3.0.0
+
 			} else if (object instanceof Temporal) {
 				// Temporal
 				appendType(buff.append('('), type, object).append(')');
@@ -340,17 +329,14 @@ public class Utils {
 				else if (object instanceof ZonedDateTime ) buff.append(((ZonedDateTime )object).format(zonedDateTimeFormatter )); // ZonedDateTime
 				else if (object instanceof Instant) buff.append(((Instant)object).atOffset(ZoneOffset.ofHours(0)).format(instantFormatter)); // Instant
 				else buff.append(object);
-		////
 
 			} else if (object instanceof String) {
 				// String
 				appendString(buff, (String)object);
 
-		// 3.0.0
 			} else if (object instanceof Class<?>) {
 				// Class
 				buff.append(((Class<?>)object).getName());
-		////
 
 			} else if (object instanceof Iterable) {
 				// Iterable
@@ -364,8 +350,6 @@ public class Utils {
 
 			} else {
 				// etc.
-			// 3.0.0
-			//	buff.append(object);
 				appendType(buff.append('('), type, object).append(')')
 					.append(object);
 			}
@@ -386,7 +370,7 @@ public class Utils {
 	 */
 	@SuppressWarnings("rawtypes")
 	private static StringBuilder appendType(StringBuilder buff, Class<?> type, Object value) {
-		Objects.requireNonNull(type, "type");
+		Objects.requireNonNull(type, "type is null");
 
 		long length = -1L;
 		int  size   = -1;
@@ -430,9 +414,6 @@ public class Utils {
 		if (ch >= ' ' && ch != '\u007F') {
 			if      (ch == '"' ) buff.append("\\\"");
 			else if (ch == '\'') buff.append("\\'" );
-		// 3.0.0
-		//	else if (ch == '/' ) buff.append("\\/" );
-		////
 			else if (ch == '\\') buff.append("\\\\");
 			else buff.append(ch);
 		} else {

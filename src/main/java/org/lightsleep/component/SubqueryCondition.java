@@ -44,15 +44,15 @@ public class SubqueryCondition<SE> implements Condition {
 	public <E> SubqueryCondition(Expression expression, Sql<E> outerSql, Sql<SE> subSql) {
 	// 3.1.0
 	//	this.expression = Objects.requireNonNull(expression, "expression");
-		leftExpression = Objects.requireNonNull(expression, "expression");
+		leftExpression = Objects.requireNonNull(expression, "expression is null");
 		rightExpression = Expression.EMPTY;
 	////
-		this.subSql = Objects.requireNonNull(subSql, "subSql");
+		this.subSql = Objects.requireNonNull(subSql, "subSql is null");
 	// 3.1.0
 		if (subSql.getWhere().isEmpty())
 			subSql.where(Condition.ALL);
 	////
-		subSql.addSqlEntityInfo(Objects.requireNonNull(outerSql, "outerSql"));
+		subSql.addSqlEntityInfo(Objects.requireNonNull(outerSql, "outerSql is null"));
 	}
 
 	/**
@@ -68,11 +68,11 @@ public class SubqueryCondition<SE> implements Condition {
 	 */
 	public <E> SubqueryCondition(Sql<E> outerSql, Sql<SE> subSql, Expression expression) {
 		leftExpression = Expression.EMPTY;
-		rightExpression = Objects.requireNonNull(expression, "expression");
-		this.subSql = Objects.requireNonNull(subSql, "subSql");
+		rightExpression = Objects.requireNonNull(expression, "expression is null");
+		this.subSql = Objects.requireNonNull(subSql, "subSql is null");
 		if (subSql.getWhere().isEmpty())
 			subSql.where(Condition.ALL);
-		subSql.addSqlEntityInfo(Objects.requireNonNull(outerSql, "outerSql"));
+		subSql.addSqlEntityInfo(Objects.requireNonNull(outerSql, "outerSql is null"));
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class SubqueryCondition<SE> implements Condition {
 	 */
 	@Override
 	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
-		Objects.requireNonNull(database, "database");
+		Objects.requireNonNull(database, "database is null");
 		StringBuilder buff = new StringBuilder();
 
 	// 3.1.0

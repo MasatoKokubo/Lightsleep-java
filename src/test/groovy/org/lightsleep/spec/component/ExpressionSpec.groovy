@@ -21,7 +21,8 @@ import spock.lang.*
 class ExpressionSpec extends Specification {
 	static databases = [
 		Standard  .instance,
-		DB2       .instance,
+		Db2       .instance,
+		MariaDB   .instance,
 		MySQL     .instance,
 		Oracle    .instance,
 		PostgreSQL.instance,
@@ -248,7 +249,7 @@ class ExpressionSpec extends Specification {
 			DebugTrace.print('paramerters', paramerters) // for Debugging
 
 		then:
-			if (database instanceof Standard || database instanceof MySQL) {
+			if (database instanceof Standard || database instanceof MariaDB || database instanceof MySQL) {
 				assert string == "X'010203'"
 				assert paramerters.size() == 0
 

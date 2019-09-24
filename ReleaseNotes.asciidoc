@@ -1,30 +1,57 @@
-= Lightsleep [.small]#Release Notes#
+= Lightsleep [small]#Release Notes#
 
 link:ReleaseNotes_ja.asciidoc[Japanese]
 
 [[TOC_]]
 === Table of Contents
 
-- <<ReleaseNote3.1.1,[.small]#version# 3.1.1 [.small]#(July     18, 2019)#>>
-- <<ReleaseNote3.1.0,[.small]#version# 3.1.0 [.small]#(July     16, 2019)#>>
-- <<ReleaseNote3.0.1,[.small]#version# 3.0.1 [.small]#(December  1, 2018)#>>
-- <<ReleaseNote3.0.0,[.small]#version# 3.0.0 [.small]#(October   7, 2018)#>>
-- <<ReleaseNote2.2.1,[.small]#version# 2.2.1 [.small]#(February 12, 2018)#>>
-- <<ReleaseNote2.2.0,[.small]#version# 2.2.0 [.small]#(February  4, 2018)#>>
-- <<ReleaseNote2.1.1,[.small]#version# 2.1.1 [.small]#(December  3, 2017)#>>
-- <<ReleaseNote2.1.0,[.small]#version# 2.1.0 [.small]#(November 12, 2017)#>>
-- <<ReleaseNote2.0.0,[.small]#version# 2.0.0 [.small]#(September 9, 2017)#>>
+- <<ReleaseNote3.2.0,[small]#version# 3.2.0 [small]#- September 23, 2019#>>
+- <<ReleaseNote3.1.1,[small]#version# 3.1.1 [small]#- July      18, 2019#>>
+- <<ReleaseNote3.1.0,[small]#version# 3.1.0 [small]#- July      16, 2019#>>
+- <<ReleaseNote3.0.1,[small]#version# 3.0.1 [small]#- December   1, 2018#>>
+- <<ReleaseNote3.0.0,[small]#version# 3.0.0 [small]#- October    7, 2018#>>
+- <<ReleaseNote2.2.1,[small]#version# 2.2.1 [small]#- February  12, 2018#>>
+- <<ReleaseNote2.2.0,[small]#version# 2.2.0 [small]#- February   4, 2018#>>
+- <<ReleaseNote2.1.1,[small]#version# 2.1.1 [small]#- December   3, 2017#>>
+- <<ReleaseNote2.1.0,[small]#version# 2.1.0 [small]#- November  12, 2017#>>
+- <<ReleaseNote2.0.0,[small]#version# 2.0.0 [small]#- September  9, 2017#>>
+
+[[ReleaseNote3.2.0]]
+
+=== [small]#version# 3.2.0
+
+1. **Added Interfaces**
+  * `org.lightsleep.entity.**PostDelete**`
+  * `org.lightsleep.entity.**PostInsert**`
+  * `org.lightsleep.entity.**PostSelect**`
+  * `org.lightsleep.entity.**PostUpdate**`
+  * `org.lightsleep.entity.**PreDelete**`
+  * `org.lightsleep.entity.**PreUpdate**`
+
+1. **Added Classes**
+  * `org.lightsleep.database.**MariaDB**`
+  * `org.lightsleep.database.anchor.**mariadb**`
+
+1. **Specification Changes**
+  * Changed the return type of `**preInsert**` method of `**PreInsert**` interface from `**int**` to `**void**`.
+  * Changed the return type of `**postInsert**`, `**postUpdate**` and `**postDelete**` method of `**Composite**` interface from `**int**` to `**void**`.
+  * Changed `org.lightsleep.database.**DB2**` class to `**Db2**`.
+
+1. **Deprecated Interfaces**
+  * `org.lightsleep.entity.**Composite**`
+  * `org.lightsleep.entity.**PostLoad**`
+  * `org.lightsleep.entity.**PreStore**`
 
 [[ReleaseNote3.1.1]]
 
-=== [.small]#version# 3.1.1
+=== [small]#version# 3.1.1
 
 1. **Bug Fix**
   * Can not refer to column names of the table joined to the main table from the subquery condition.
 
 [[ReleaseNote3.1.0]]
 
-=== [.small]#version# 3.1.0
+=== [small]#version# 3.1.0
 
 1. **Added Features**
   * Generates SELECT SQL using **subqueries** in the **FROM clause**.
@@ -68,7 +95,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 [[ReleaseNote3.0.1]]
 
-=== [.small]#version# 3.0.1
+=== [small]#version# 3.0.1
 
 1. **Changes**
   * When using the `SQLServer` database handler, string literals containing the character code of `U+0080` and above are now generated with `N` prefix (e.g. `N'漢字'`).
@@ -76,7 +103,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 [[ReleaseNote3.0.0]]
 
-=== [.small]#version# 3.0.0
+=== [small]#version# 3.0.0
 
 1. **Improvement**
   * Supported the following data types. You can use them as a field type for entity classes.
@@ -108,7 +135,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
   * `org.lightsleep.**Sql**` Class
     ** `**doIf**(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)`
 
-1. **Deleted** methods and constructor
+1. **Deleted** Methods and Constructor
   * `org.lightsleep.**Sql**` Class
 
     ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer)`
@@ -134,7 +161,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 [[ReleaseNote2.2.1]]
 
-=== [.small]#version# 2.2.1
+=== [small]#version# 2.2.1
 
 1. **Bug fix**
   * [Fixed] Lightsleep does not work unless the Oracle JDBC driver jar is in the classpath.
@@ -143,7 +170,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 [[ReleaseNote2.2.0]]
 
-=== [.small]#version# 2.2.0
+=== [small]#version# 2.2.0
 
 1. **Improvements**
   * *Added* an option to include JDBC URL of the connection to SQL logs. +
@@ -159,7 +186,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 [[ReleaseNote2.1.1]]
 
-=== [.small]#version# 2.1.1
+=== [small]#version# 2.1.1
 
 1. **Bug fix**
   * [Fixed] `Standard` database handler is always selected when connection supplier is `Jndi`.
@@ -171,7 +198,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 [[ReleaseNote2.1.0]]
 
-=== [.small]#version# 2.1.0
+=== [small]#version# 2.1.0
 
 Version number is a minor release, but there are **some specification changes**.
 
@@ -221,7 +248,7 @@ Version number is a minor release, but there are **some specification changes**.
 
 [[ReleaseNote2.0.0]]
 
-=== [.small]#version# 2.0.0
+=== [small]#version# 2.0.0
 
 1. Added the following method to get the result of SELECT SQL with entity type different from type parameter of `org.lightsleep.Sql` class.
   * public <R> Optional<R> selectAs(Class<R> resultClass)

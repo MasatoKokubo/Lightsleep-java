@@ -7,18 +7,18 @@ import org.lightsleep.connection.ConnectionWrapper;
 
 /**
  * エンティティ･クラスがこのインターフェースを実装している場合、
- * <b>Sql</b>クラスの
- * <b>select</b>, <b>insert</b>,
- * <b>update</b>または<b>delete</b>メソッドで、
- * 各SQLの実行後にエンティティ･クラスの<b>postSelect</b>, <b>postInsert</b>,
- * <b>postUpdate</b>または<b>postDelete</b>メソッドがコールされます。<br>
+ * <b>Sql&lt;E&gt;</b>クラスの
+ * <b>select</b>, <b>insert(E)</b>, <b>update(E)</b>および<b>delete(E)</b>メソッドの各SQLの実行後に
+ * <b>postSelect</b>, <b>postInsert</b>, <b>postUpdate</b>または<b>postDelete</b>メソッドが呼び出されます。<br>
  *
  * <p>
- * ただし<b>update</b>, <b>delete</b>
- * メソッドで、引数にエンティティがない場合は、コールされません。<br>
+ * @deprecated リリース 3.2.0 より。
+ * 代わりに{@link PostSelect}, {@link PostInsert}, {@link PostUpdate}および{@link PostDelete}インターフェースを使用してください。
+ * </p>
  *
+ * <p>
  * エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、
- * 内包するエンティティへのSQL処理を連動して行う事ができるようになります。
+ * 内包するエンティティへのSQL処理を連動して行う事ができます。
  * </p>
  * 
  * <div class="exampleTitle"><span>使用例/Java</span></div>
@@ -29,102 +29,67 @@ import org.lightsleep.connection.ConnectionWrapper;
  *    public final List&lt;Phone&gt; phones = new ArrayList&lt;&gt;();
  *  
  *   {@literal @}Override
- *    <b>public void postSelect(ConnectionWrapper conn)</b> {
+ *    <b>public void postSelect(ConnectionWrapper connection)</b> {
  *      if (id != 0) {
- *        new Sql&lt;&gt;(Phone.class).connection(conn)
+ *        new Sql&lt;&gt;(Phone.class)
  *          .where("{contactId}={}", id)
  *          .orderBy("{phoneNumber}")
+ *          .connection(connection)
  *          .select(phones::add);
  *      }
  *    }
- *  
+ *
  *   {@literal @}Override
- *    <b>public int postInsert(ConnectionWrapper conn)</b> {
+ *    <b>public void postInsert(ConnectionWrapper connection)</b> {
  *      phones.forEach(phone -&gt; phone.contactId = id);
- *      int count = new Sql&lt;&gt;(Phone.class).connection(conn)
+ *      new Sql&lt;&gt;(Phone.class)
+ *          .connection(connection)
  *          .insert(phones);
- *      return count;
  *    }
  *  
  *   {@literal @}Override
- *    <b>public int postUpdate(ConnectionWrapper conn)</b> {
+ *    <b>public void postUpdate(ConnectionWrapper connection)</b> {
  *      List&lt;Integer&gt; phoneIds = phones.stream()
  *        .map(phone -&gt; phone.id)
  *        .filter(id -&gt; id != 0)
  *        .collect(Collectors.toList());
  *
  *      // Delete phones
- *      int count += new Sql&lt;&gt;(Phone.class).connection(conn)
+ *      new Sql&lt;&gt;(Phone.class)
  *        .where("{contactId}={}", id)
  *        .doIf(phoneIds.size() &gt; 0,
  *          sql -&gt; sql.and("{id} NOT IN {}", phoneIds)
  *        )
+ *        .connection(connection)
  *        .delete();
  *
  *      // Uptete phones
- *      count += new Sql&lt;&gt;(Phone.class).connection(conn)
+ *      new Sql&lt;&gt;(Phone.class)
+ *        .connection(connection)
  *        .update(phones.stream()
  *          .filter(phone -&gt; phone.id != 0)
  *          .collect(Collectors.toList()));
  *
  *      // Insert phones
- *      count += new Sql&lt;&gt;(Phone.class).connection(conn)
+ *      new Sql&lt;&gt;(Phone.class)
+ *        .connection(connection)
  *        .insert(phones.stream()
  *          .filter(phone -&gt; phone.id == 0)
  *          .collect(Collectors.toList()));
- *
- *      return count;
  *    }
  *  
  *   {@literal @}Override
- *    <b>public int postDelete(ConnectionWrapper conn)</b> {
- *      int count = new Sql&lt;&gt;(Phone.class).connection(conn)
+ *    <b>public void postDelete(ConnectionWrapper connection)</b> {
+ *      new Sql&lt;&gt;(Phone.class)
  *        .where("{contactId}={}", id)
- *        .delete(conn);
- *      return count;
+ *        .connection(connection)
+ *        .delete(connection);
  *    }
  * </pre></div>
  * 
  * @since 1.0.0
  * @author Masato Kokubo
  */
-public interface Composite {
-	/**
-	 * <b>postSelect</b>は行をSELECTしエンティティに値が格納された後に実行されます。
-	 *
-	 * @param connection コネクション･ラッパー
-	 *
-	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
-	 */
-	void postSelect(ConnectionWrapper connection);
-
-	/**
-	 * <b>postInsert</b>は行の挿入後に実行されます。
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @return 挿入された行数
-	 *
-	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
-	 */
-	int postInsert(ConnectionWrapper connection);
-
-	/**
-	 * <b>postUpdate</b>は行の更新後に実行されます。
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @return 更新された行数
-	 *
-	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
-	 */
-	int postUpdate(ConnectionWrapper connection);
-
-	/**
-	 * <b>postDelete</b>は行の削除後に実行されます。
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @return 削除された行数
-	 *
-	 * @throws NullPointerException <b>connection</b>が<b>null</b>の場合
-	 */
-	int postDelete(ConnectionWrapper connection);
+@Deprecated
+public interface Composite extends PostSelect, PostInsert, PostUpdate, PostDelete {
 }

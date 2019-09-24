@@ -12,7 +12,6 @@ import org.lightsleep.connection.*
 import org.lightsleep.database.*
 import org.lightsleep.entity.*
 import org.lightsleep.test.entity.*
-import org.lightsleep.test.entity.Product.Size
 
 import spock.lang.*
 

@@ -68,7 +68,6 @@ public interface Condition extends SqlComponent {
 	 * @see #of(Sql, Sql, String)
 	 * @see SubqueryCondition#SubqueryCondition(Expression, Sql, Sql)
 	 */
-//	static <E, SE> Condition of(String content, Sql<E> outerSql, Sql<SE> subSql) {
 	static <E, SE> Condition of(String content, Sql<E> outerSql, Sql<SE> subSql) {
 		return new SubqueryCondition<>(new Expression(content), outerSql, subSql);
 	}

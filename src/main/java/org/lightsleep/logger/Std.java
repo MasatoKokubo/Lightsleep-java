@@ -213,8 +213,8 @@ public abstract class Std implements Logger {
 	 * @param level the logging level
 	 */
 	protected Std(PrintStream stream, Level level) {
-		this.stream = Objects.requireNonNull(stream, "stream");
-		this.level  = Objects.requireNonNull(level , "level");
+		this.stream = Objects.requireNonNull(stream, "stream is null");
+		this.level  = Objects.requireNonNull(level , "level is null");
 	}
 
 	/**
@@ -224,13 +224,7 @@ public abstract class Std implements Logger {
 	 * @param message a message
 	 */
 	private void println(Level level, String message) {
-	// 3.0.0
-	//	if (level.compareTo(this.level) >= 0)
-	//		stream.println(
-	//			String.format(messageFormat, new Timestamp(System.currentTimeMillis()), level)
-	//			+ message);
 		println(level, message, null);
-	////
 	}
 
 	/**
@@ -241,8 +235,6 @@ public abstract class Std implements Logger {
 	 * @param t a Throwable (nullable)
 	 */
 	private void println(Level level, String message, Throwable t) {
-	// 3.0.0
-	//	println(level, message + ", " + t.toString());
 		if (level.compareTo(this.level) < 0)
 			return;
 

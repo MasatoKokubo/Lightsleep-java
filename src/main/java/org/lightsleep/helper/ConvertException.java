@@ -77,10 +77,7 @@ public class ConvertException extends RuntimeException {
 	 * @param destinType the destination data type
 	 */
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType) {
-	// 3.0.0
-	//	this(sourceType, source, destinType, null);
 		this(sourceType, source, destinType, null, null);
-	////
 	}
 
 	/**
@@ -92,14 +89,7 @@ public class ConvertException extends RuntimeException {
 	 * @param destin the destination object (permit null)
 	 */
 	public ConvertException(Class<?> sourceType, Object source, Class<?> destinType, Object destin) {
-	// 3.0.0
-	//	super(toString(sourceType, source, destinType, destin, null));
-	//	this.sourceType = sourceType;
-	//	this.source     = source;
-	//	this.destinType = destinType;
-	//	this.destin     = destin;
 		this(sourceType, source, destinType, destin, null);
-	////
 	}
 
 	/**

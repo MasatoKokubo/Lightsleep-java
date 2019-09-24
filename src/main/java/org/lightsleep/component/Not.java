@@ -24,7 +24,7 @@ public class Not implements Condition {
 	 * @param condition a condition
 	 */
 	public Not(Condition condition) {
-		this.condition = Objects.requireNonNull(condition, "condition");
+		this.condition = Objects.requireNonNull(condition, "condition is null");
 	}
 
 	/**

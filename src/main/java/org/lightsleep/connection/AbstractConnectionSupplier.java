@@ -206,11 +206,11 @@ public abstract class AbstractConnectionSupplier implements ConnectionSupplier {
 	 * @since 2.1.0
 	 */
 	protected AbstractConnectionSupplier(Properties properties, Consumer<Properties> modifier) {
-		jdbcProperties = Objects.requireNonNull(properties);
+		jdbcProperties = Objects.requireNonNull(properties, "properties is null");
 		jdbcProperties.remove(Logger.class.getSimpleName());
 		jdbcProperties.remove(Database.class.getSimpleName());
 		jdbcProperties.remove(ConnectionSupplier.class.getSimpleName());
-		Objects.requireNonNull(modifier, "modifier").accept(jdbcProperties);
+		Objects.requireNonNull(modifier, "modifier is null").accept(jdbcProperties);
 
 		logger.debug(() -> getClass().getSimpleName() + ".<init>: jdbcProperties: " + jdbcProperties);
 

@@ -23,7 +23,7 @@ import spock.lang.*
 class SqlSpec extends Specification {
 	static databases = [
 		Standard  .instance,
-		DB2       .instance,
+		Db2       .instance,
 		MySQL     .instance,
 		Oracle    .instance,
 		PostgreSQL.instance,

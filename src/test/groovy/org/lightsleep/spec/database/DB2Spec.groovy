@@ -1,4 +1,4 @@
-// DB2Spec.groovy
+// Db2Spec.groovy
 // (C) 2016 Masato Kokubo
 
 package org.lightsleep.spec.database
@@ -10,13 +10,13 @@ import org.lightsleep.helper.*
 
 import spock.lang.*
 
-// DB2Spec
+// Db2Spec
 @Unroll
-class DB2Spec extends Specification {
-	@Shared map = DB2.instance.typeConverterMap()
+class Db2Spec extends Specification {
+	@Shared map = Db2.instance.typeConverterMap()
 
 	// -> SqlString
-	def "DB2 #title -> SqlString"(String title, Object sourceValue, String expectedString) {
+	def "Db2 #title -> SqlString"(String title, Object sourceValue, String expectedString) {
 		DebugTrace.enter() // for Debugging
 		DebugTrace.print('title', title) // for Debugging
 		DebugTrace.print('sourceValue', sourceValue) // for Debugging
@@ -50,8 +50,8 @@ class DB2Spec extends Specification {
 	}
 
 	// maskPassword
-	def "DB2 maskPassword"(String jdbcUrl, String result) {
-		expect: DB2.instance.maskPassword(jdbcUrl) == result
+	def "Db2 maskPassword"(String jdbcUrl, String result) {
+		expect: Db2.instance.maskPassword(jdbcUrl) == result
 
 		where:
 			jdbcUrl                      |result

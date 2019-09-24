@@ -36,7 +36,7 @@ public class GroupBy implements SqlComponent, Cloneable {
 	 * @throws NullPointerException if <b>expression</b> is <b>null</b>
 	 */
 	public GroupBy add(Expression expression) {
-		elements.add(Objects.requireNonNull(expression, "expression"));
+		elements.add(Objects.requireNonNull(expression, "expression is null"));
 		return this;
 	}
 

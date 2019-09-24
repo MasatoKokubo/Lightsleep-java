@@ -135,7 +135,7 @@ public class Resource {
 	 * @throws MissingResourceException if the property dose not found
 	 */
 	private String get(String propertyKey) {
-		Objects.requireNonNull(propertyKey, "propertyKey");
+		Objects.requireNonNull(propertyKey, "propertyKey is null");
 
 		String string = null;
 
@@ -328,7 +328,7 @@ public class Resource {
 	 * @since 1.8.6
 	 */
 	public <E> List<E> getList(String propertyKey, Function<String, E> valueConverter) {
-		Objects.requireNonNull(valueConverter, "valueConverter");
+		Objects.requireNonNull(valueConverter, "valueConverter is null");
 
 		String propertyValue = getString(propertyKey, "");
 
@@ -374,8 +374,8 @@ public class Resource {
 	 * @since 1.8.6
 	 */
 	public <K, V> Map<K, V> getMap(String propertyKey, Function<String, K> keyConverter, Function<String, V> valueConverter) {
-		Objects.requireNonNull(keyConverter, "keyConverter");
-		Objects.requireNonNull(valueConverter, "valueConverter");
+		Objects.requireNonNull(keyConverter, "keyConverter is null");
+		Objects.requireNonNull(valueConverter, "valueConverter is null");
 
 		String propertyValue = getString(propertyKey, "");
 

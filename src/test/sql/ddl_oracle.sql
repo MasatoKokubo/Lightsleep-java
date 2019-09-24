@@ -2,19 +2,10 @@
 
 -- for Oracle
 
--- Numbering
-DROP TABLE Numbering;
-CREATE TABLE Numbering (
-    tableName   VARCHAR2(32 BYTE) NOT NULL,
-    nextId      NUMBER   (9)      NOT NULL,
-
-    PRIMARY KEY(tableName)
-);
-
 -- Contact
 DROP TABLE Contact;
 CREATE TABLE Contact (
-    id          NUMBER   (9)      NOT NULL,
+    id          NUMBER   (9) GENERATED ALWAYS AS IDENTITY,
     firstName   VARCHAR2(20 CHAR) NOT NULL,
     lastName    VARCHAR2(20 CHAR) NOT NULL,
     birthday    DATE                  NULL,
@@ -30,14 +21,14 @@ CREATE TABLE Contact (
 -- Address
 DROP TABLE Address;
 CREATE TABLE Address (
-    id          NUMBER   (9)      NOT NULL,
+    id          NUMBER   (9) GENERATED ALWAYS AS IDENTITY,
     postCode    VARCHAR2(10 BYTE)     NULL,
     address1    VARCHAR2(20 CHAR)     NULL,
     address2    VARCHAR2(20 CHAR)     NULL,
     address3    VARCHAR2(20 CHAR)     NULL,
     address4    VARCHAR2(20 CHAR)     NULL,
 
-    updateCount NUMBER  (9)       NOT NULL,
+    updateCount NUMBER   (9)      NOT NULL,
     created     TIMESTAMP(9)      NOT NULL,
     updated     TIMESTAMP(9)      NOT NULL,
 
@@ -47,7 +38,7 @@ CREATE TABLE Address (
 -- Phone
 DROP TABLE Phone;
 CREATE TABLE Phone (
-    id          NUMBER   (9)      NOT NULL,
+    id          NUMBER   (9) GENERATED ALWAYS AS IDENTITY,
     contactId   NUMBER   (9)      NOT NULL,
     phoneNumber VARCHAR2(12 BYTE) NOT NULL,
 
@@ -61,13 +52,13 @@ CREATE TABLE Phone (
 -- Product
 DROP TABLE Product;
 CREATE TABLE Product (
-    id          NUMBER   (9)      NOT NULL,
+    id          NUMBER   (9) GENERATED ALWAYS AS IDENTITY,
     productName VARCHAR2(20 CHAR) NOT NULL,
     price       NUMBER   (9)      NOT NULL,
     productSize CHAR     (2 BYTE)     NULL,
     color       VARCHAR2(20 CHAR)     NULL,
 
-    updateCount NUMBER   (9)       NOT NULL,
+    updateCount NUMBER   (9)      NOT NULL,
     created     TIMESTAMP(9)      NOT NULL,
     updated     TIMESTAMP(9)      NOT NULL,
 
@@ -77,7 +68,7 @@ CREATE TABLE Product (
 -- Sale
 DROP TABLE Sale;
 CREATE TABLE Sale (
-    id          NUMBER   (9)      NOT NULL,
+    id          NUMBER   (9) GENERATED ALWAYS AS IDENTITY,
     contactId   NUMBER   (9)      NOT NULL,
     saleDate    DATE              NOT NULL,
     taxRate     NUMBER   (4)      NOT NULL,
@@ -147,7 +138,7 @@ CREATE TABLE Various (
 -- DateAndTime since 3.0.0
 DROP TABLE DateAndTime;
 CREATE TABLE DateAndTime (
-    id                NUMBER   (9)             NOT NULL,
+    id                NUMBER   (9) NOT NULL,
 
     dateValue         DATE                             ,
     timeValue         DATE                             ,

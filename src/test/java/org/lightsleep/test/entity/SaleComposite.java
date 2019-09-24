@@ -8,9 +8,7 @@ import java.util.List;
 
 import org.lightsleep.Sql;
 import org.lightsleep.connection.ConnectionWrapper;
-import org.lightsleep.entity.Composite;
-import org.lightsleep.entity.NonColumn;
-import org.lightsleep.entity.Table;
+import org.lightsleep.entity.*;
 
 /**
  * The composite entity of sale and saleitem table.
@@ -20,7 +18,8 @@ import org.lightsleep.entity.Table;
  * @author Masato Kokubo
  */
 @Table("super")
-public class SaleComposite extends Sale implements Composite {
+// public class SaleComposite extends Sale implements Composite { // 3.2.0
+public class SaleComposite extends Sale implements PostSelect, PostInsert, PostUpdate, PostDelete {
 	/** Sale items */
 	@NonColumn
 	public final List<SaleItem> items = new ArrayList<>();
@@ -30,9 +29,10 @@ public class SaleComposite extends Sale implements Composite {
 	 */
 	@Override
 	public void postSelect(ConnectionWrapper conn) {
-		new Sql<>(SaleItem.class).connection(conn)
+		new Sql<>(SaleItem.class)
 			.where("{saleId} = {}", id)
 			.orderBy("{itemIndex}")
+			.connection(conn)
 			.select(items::add);
 	}
 
@@ -40,28 +40,36 @@ public class SaleComposite extends Sale implements Composite {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postInsert(ConnectionWrapper conn) {
+	public void postInsert(ConnectionWrapper conn) {
+		super.postInsert(conn);
+
 		for (int index = 0; index < items.size(); ++index) {
 			SaleItem item = items.get(index);
 			item.saleId    = id;
 			item.itemIndex = index;
 		}
-		return new Sql<>(SaleItem.class).connection(conn).insert(items);
+		new Sql<>(SaleItem.class)
+			.connection(conn)
+			.insert(items);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postUpdate(ConnectionWrapper conn) {
-		return new Sql<>(SaleItem.class).connection(conn).update(items);
+	public void postUpdate(ConnectionWrapper conn) {
+		new Sql<>(SaleItem.class)
+			.connection(conn)
+			.update(items);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int postDelete(ConnectionWrapper conn) {
-		return new Sql<>(SaleItem.class).connection(conn).delete(items);
+	public void postDelete(ConnectionWrapper conn) {
+		new Sql<>(SaleItem.class)
+			.connection(conn)
+			.delete(items);
 	}
 }

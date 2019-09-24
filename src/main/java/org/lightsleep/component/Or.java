@@ -34,7 +34,7 @@ public class Or extends LogicalCondition {
 	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is <b>null</b>
 	 */
 	public Or(Collection<Condition> conditions) {
-		super(Operator.OR, Objects.requireNonNull(conditions, "Collection<Condition> conditions").stream());
+		super(Operator.OR, Objects.requireNonNull(conditions, "Collection<Condition> conditions is null").stream());
 	}
 
 	/**
@@ -45,6 +45,6 @@ public class Or extends LogicalCondition {
 	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is <b>null</b>
 	 */
 	public Or(Condition... conditions) {
-		super(Operator.OR, Arrays.stream(Objects.requireNonNull(conditions, "Condition[] conditions")));
+		super(Operator.OR, Arrays.stream(Objects.requireNonNull(conditions, "Condition[] conditions is null")));
 	}
 }

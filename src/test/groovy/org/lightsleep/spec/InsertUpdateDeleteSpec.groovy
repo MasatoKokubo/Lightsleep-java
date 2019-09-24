@@ -183,7 +183,7 @@ class InsertUpdateDeleteSpec extends Base {
 	 */
 	def "InsertUpdateDeleteSpec update delete - with condition - #connectionSupplier"(
 		ConnectionSupplier connectionSupplier) {
-		if (connectionSupplier.database instanceof DB2) return
+		if (connectionSupplier.database instanceof Db2) return
 		if (connectionSupplier.database instanceof Oracle) return
 		if (connectionSupplier.database instanceof PostgreSQL) return
 		if (connectionSupplier.database instanceof SQLite) return
@@ -220,8 +220,8 @@ class InsertUpdateDeleteSpec extends Base {
 					.innerJoin(Phone, 'P', '{P.contactId} = {C.id}')
 					.where('{P.phoneNumber} = {}', '09000000010')
 					.columns('name.first')
-					.doIf(it.database instanceof MySQL) {
-						// MySQL
+					.doIf(it.database instanceof MariaDB || it.database instanceof MySQL) {
+						// MariaDB, MySQL
 						it.expression('name.first', "CONCAT('<',{name.first},'>')")
 					}
 					.doIf(it.database instanceof SQLServer) {

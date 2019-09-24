@@ -219,15 +219,6 @@ public class Standard implements Database {
 	 */
 	public final int maxBinaryLiteralLength = Resource.getGlobal().getInt("maxBinaryLiteralLength", 128);
 
-// 3.0.0
-//	/**
-//	 * <b>TypeConverter</b> object to convert
-//	 * from <b>Boolean</b> to <b>SqlString</b> (0 or 1)
-//	 */
-//	protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter =
-//		new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"));
-////
-
 	/**
 	 * The ASCII characters without controle charactes
 	 *
@@ -269,12 +260,10 @@ public class Standard implements Database {
 	 */
 	@SuppressWarnings("unchecked")
 	protected Standard() {
-	// 3.0.1
 		if (logger.isDebugEnabled()) {
 			logger.debug(getClass().getSimpleName() + ": maxStringLiteralLength = " + maxStringLiteralLength);
 			logger.debug(getClass().getSimpleName() + ": maxBinaryLiteralLength = " + maxBinaryLiteralLength);
 		}
-	////
 
 		// Clob -> String
 		TypeConverter.put(typeConverterMap,
@@ -463,11 +452,7 @@ public class Standard implements Database {
 		// Character -> String -> SqlString
 		TypeConverter.put(typeConverterMap,
 			new TypeConverter<>(Character.class, SqlString.class,
-			// 3.0.1
-			//	TypeConverter.get(typeConverterMap, Character.class, String.class).function(),
-			//	TypeConverter.get(typeConverterMap, String.class, SqlString.class).function()
 				object -> TypeConverter.get(typeConverterMap, String.class, SqlString.class).function().apply(object.toString())
-			////
 			)
 		);
 
@@ -772,10 +757,7 @@ public class Standard implements Database {
 		if (typeConverter == null)
 			throw new ConvertException(componentType, array, SqlString.class);
 
-	// 3.0.0
-	//	Function<CT, SqlString> function = typeConverter.function();
 		Function<? super CT, ? extends SqlString> function = typeConverter.function();
-	////
 		StringBuilder buff = new StringBuilder("ARRAY[");
 		List<Object> parameters = new ArrayList<>();
 		for (int index = 0; index < Array.getLength(array); ++ index) {
@@ -807,7 +789,6 @@ public class Standard implements Database {
 			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
 			// ...
 			String delimiter = "";
-//			for (Sql<? extends E> unionSql : sql.getUnionSqls()) {
 			for (Sql<?> unionSql : sql.getUnionSqls()) {
 				buff.append(delimiter).append(subSelectSql(unionSql, parameters));
 				delimiter = sql.isUnionAll() ? " UNION ALL " : " UNION ";
@@ -1409,16 +1390,4 @@ public class Standard implements Database {
 	public <T> T convert(Object value, Class<T> type) {
 		return TypeConverter.convert(typeConverterMap, value, type);
 	}
-
-// 3.0.0
-//	/**
-//	 * {@inheritDoc}
-//	 *
-//	 * @since 2.2.0
-//	 */
-//	@Override
-//	public String maskPassword(String jdbcUrl) {
-//		return SQLServer.instance.maskPassword(MySQL.instance.maskPassword(jdbcUrl));
-//	}
-////
 }

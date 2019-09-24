@@ -986,7 +986,8 @@ class SelectSpec extends Base {
 
 	// select() / forUpdate noWait
 	def "SelectSpec forUpdate noWait #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-		if (connectionSupplier.database instanceof DB2) return
+		if (connectionSupplier.database instanceof Db2) return
+		if (connectionSupplier.database instanceof MariaDB) return
 		if (connectionSupplier.database instanceof MySQL) return
 		if (connectionSupplier.database instanceof PostgreSQL) return
 		if (connectionSupplier.database instanceof SQLite) return
@@ -1087,7 +1088,8 @@ class SelectSpec extends Base {
 
 	// select() / forUpdate wait N
 	def "SelectSpec forUpdate wait N #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-		if (connectionSupplier.database instanceof DB2) return
+		if (connectionSupplier.database instanceof Db2) return
+		if (connectionSupplier.database instanceof MariaDB) return
 		if (connectionSupplier.database instanceof MySQL) return
 		if (connectionSupplier.database instanceof PostgreSQL) return
 		if (connectionSupplier.database instanceof SQLite) return
@@ -1189,7 +1191,8 @@ class SelectSpec extends Base {
 
 	// select() / forUpdate - exception
 	def "SelectSpec forUpdate - exception #connectionSupplier"(ConnectionSupplier connectionSupplier) {
-		if (connectionSupplier.database instanceof DB2) return
+		if (connectionSupplier.database instanceof Db2) return
+		if (connectionSupplier.database instanceof MariaDB) return
 		if (connectionSupplier.database instanceof MySQL) return
 		if (connectionSupplier.database instanceof Oracle) return
 		if (connectionSupplier.database instanceof PostgreSQL) return
@@ -1208,7 +1211,7 @@ class SelectSpec extends Base {
 					.select().orElse(null)
 			}
 			DebugTrace.print('1 contact0', contact0) // for Debugging
-			
+
 		then:
 			assert contact0 != null
 
@@ -1334,7 +1337,11 @@ class SelectSpec extends Base {
 
 	@Table('super')
 	@SelectProperty(property = 'fullName', expression = "{name.first}||' '||{name.last}")
-	static class ContactFnDB2 extends ContactFn {}
+	static class ContactFnDb2 extends ContactFn {}
+
+	@Table('super')
+	@SelectProperty(property = 'fullName', expression = "CONCAT({name.first},' ',{name.last})")
+	static class ContactFnMariaDB extends ContactFn {}
 
 	@Table('super')
 	@SelectProperty(property = 'fullName', expression = "CONCAT({name.first},' ',{name.last})")
@@ -1363,7 +1370,8 @@ class SelectSpec extends Base {
 		DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
 		when:
 			Class<? extends ContactFn> contactClass =
-				connectionSupplier.database instanceof DB2        ? ContactFnDB2        :
+				connectionSupplier.database instanceof Db2        ? ContactFnDb2        :
+				connectionSupplier.database instanceof MariaDB    ? ContactFnMariaDB    :
 				connectionSupplier.database instanceof MySQL      ? ContactFnMySQL      :
 				connectionSupplier.database instanceof Oracle     ? ContactFnOracle     :
 				connectionSupplier.database instanceof PostgreSQL ? ContactFnPostgreSQL :

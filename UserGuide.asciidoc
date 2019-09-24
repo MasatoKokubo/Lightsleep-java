@@ -1,4 +1,4 @@
-= Lightsleep 3.1.1 User's Guide
+= Lightsleep [.small]#3.2.0 User's Guide#
 
 link:UserGuide_ja.asciidoc[Japanese]
 
@@ -21,10 +21,16 @@ link:UserGuide_ja.asciidoc[Japanese]
 2-1-11. <<Entity-Update,@Update>> +
 2-1-12. <<Entity-XxxxxProperty,@KeyProperty, @ColumnProperty, ... and @UpdateProperty>> +
 2-2. <<Entity-Interface,Interfaces implemented by entity classes>> +
-2-2-1. <<Entity-PreInsert,PreInsert Interface>> +
-2-2-2. <<Entity-Composite,Composite Interface>> +
-2-2-3. <<Entity-PreStore,PreStore Interface>> +
-2-2-4. <<Entity-PostLoad,PostLoad Interface>> +
+2-2-1. <<Entity-PreInsert,PreInsert [small]#Interface#>> +
+2-2-2. <<Entity-PreUpdate,PreUpdate [small]#Interface#>> [small fuchsia]#_(since 3.2.0)_# +
+2-2-3. <<Entity-PreDelete,PreDelete [small]#Interface#>> [small fuchsia]#_(since 3.2.0)_# +
+2-2-4. <<Entity-PostInsert,PostInsert [small]#Interface#>> [small fuchsia]#_(since 3.2.0)_# +
+2-2-5. <<Entity-PostUpdate,PostUpdate [small]#Interface#>> [small fuchsia]#_(since 3.2.0)_# +
+2-2-6. <<Entity-PostDelete,PostDelete [small]#Interface#>> [small fuchsia]#_(since 3.2.0)_# +
+2-2-7. <<Entity-PostSelect,PostSelect [small]#Interface#>> [small fuchsia]#_(since 3.2.0)_# +
+2-2-8. <<Entity-Composite,Composite [small]#Interface#>> [small fuchsia]#_(deprecated since 3.2.0)_# +
+2-2-9. <<Entity-PreStore,PreStore [small]#Interface#>> [small fuchsia]#_(deprecated since 3.2.0)_# +
+2-2-10. <<Entity-PostLoad,PostLoad [small]#Interface#>> [small fuchsia]#_(deprecated since 3.2.0)_# +
 3. <<lightsleep-properties,Definition of lightsleep.properties file>> +
 3-1. <<Logger,Logging library class>> +
 3-2. <<Database,Database handler class>> +
@@ -47,8 +53,8 @@ link:UserGuide_ja.asciidoc[Japanese]
 5-1-13. <<ExecuteSQL-select-leftJoin,SELECT with LEFT OUTER JOIN>> +
 5-1-14. <<ExecuteSQL-select-rightJoin,SELECT with RIGHT OUTER JOIN>> +
 5-1-15. <<ExecuteSQL-select-count,SELECT COUNT(*)>> +
-5-1-16. <<ExecuteSQL-select-fromSubquery,SELECT FROM Clause Subquery [small fuchsia]#_(v3.1.0~)_#>> +
-5-1-17. <<ExecuteSQL-select-union,SELECT UNION, UNION ALL [small fuchsia]#_(v3.1.0~)_#>> +
+5-1-16. <<ExecuteSQL-select-fromSubquery,SELECT FROM Clause Subquery [small fuchsia]#_(since 3.1.0)_#>> +
+5-1-17. <<ExecuteSQL-select-union,SELECT UNION, UNION ALL [small fuchsia]#_(since 3.1.0)_#>> +
 5-2. <<ExecuteSQL-insert,INSERT>> +
 5-2-1. <<ExecuteSQL-insert-1,INSERT 1 row>> +
 5-2-2. <<ExecuteSQL-insert-N,INSERT multiple rows>> +
@@ -65,7 +71,7 @@ link:UserGuide_ja.asciidoc[Japanese]
 6. <<Expression,Expression Conversion>> +
 7. <<DateTime,Mappings of Java types and column types in datetime types>> +
 7-1. <<DateTime-DB2,DB2>> +
-7-2. <<DateTime-MySQL,MySQL>> +
+7-2. <<DateTime-MariaDB_MySQL,MariaDB, MySQL>> +
 7-3. <<DateTime-Oracle,Oracle>> +
 7-4. <<DateTime-PostgreSQL,PostgreSQL>> +
 7-5. <<DateTime-SQLite,SQLite>> +
@@ -237,7 +243,7 @@ Specifies the table name related to the class.
 If the table name is the same as the class name, you do not need to specify this annotation.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @Table("Contact")
 public class Person extends PersonBase {
@@ -247,7 +253,7 @@ public class Person extends PersonBase {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @Table('Contact')
 class Person extends PersonBase {
@@ -264,7 +270,7 @@ If you specify `@Table("super")`, the class name of the superclass is the table 
 Indicates that the column related to the field is part of the primary key.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @Key
 public int contactId;
@@ -273,7 +279,7 @@ public short featureIndex;
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @Key
 int contactId
@@ -288,7 +294,7 @@ Indicates the name of column related to the field.
 If the column name is the same as the field name, you do not need to specify it.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @Column("firstName")
 public String first;
@@ -297,7 +303,7 @@ public String last;
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @Column('firstName')
 String first
@@ -313,14 +319,14 @@ If the field type and column type are the same type, you do not need to specify 
 Specify if field type (e.g. date type) and column type (e.g. numerical type) are different.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @ColumnType(Long.class)
 public LocalDate birthday;
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @ColumnType(Long)
 LocalDate birthday
@@ -335,7 +341,7 @@ LocalDate birthday
 Indicates that the field not related to any column.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @NonColumn
 public List<Phone> phones;
@@ -344,7 +350,7 @@ public List<Address> addresses;
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @NonColumn
 List<Phone> phones
@@ -358,7 +364,7 @@ List<Address> addresses
 Indicates that the column related the field is not used in SELECT SQL.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @NonSelect
 public LocalDateTime createdTime;
@@ -367,7 +373,7 @@ public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @NonSelect
 LocalDateTime createdTime
@@ -381,7 +387,7 @@ LocalDateTime updatedTime
 Indicates that the column related the field is not used in INSERT SQL.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @NonInsert
 public LocalDateTime createdTime;
@@ -390,7 +396,7 @@ public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @NonInsert
 LocalDateTime createdTime
@@ -404,14 +410,14 @@ LocalDateTime updatedTime
 Indicates that the column related the field is not used in UPDATE SQL.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @NonUpdate
 public LocalDateTime createdTime;
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @NonUpdate
 LocalDateTime createdTime
@@ -426,7 +432,7 @@ LocalDateTime createdTime
 Indicates a column expression instead of the column name in SELECT SQL.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @Select("{firstName}||' '||{lastName}")
 @NonInsert@NonUpdate
@@ -434,7 +440,7 @@ public String fullName;
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @Select("{firstName}||' '||{lastName}")
 @NonInsert@NonUpdate
@@ -448,7 +454,7 @@ Indicates an expression instead of the field value in INSERT SQL.
 If this annotation is specified, the value of the field is not used.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @Insert("CURRENT_TIMESTAMP")
 public LocalDateTime createdTime;
@@ -457,7 +463,7 @@ public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @Insert('CURRENT_TIMESTAMP')
 LocalDateTime createdTime
@@ -472,7 +478,7 @@ Indicates an expression instead of the field value in UPDATE SQL.
 If this annotation is specified, the value of the field is not used.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @Update("{updateCount}+1")
 public int updateCount;
@@ -481,7 +487,7 @@ public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @Update('{updateCount}+1')
 int updateCount
@@ -500,7 +506,7 @@ The specified contents also affects subclasses, but specifications in the subcla
 If you specify `value=false`, `column=""`, `type=Void.class` or `expression=""`, specifications in the superclass are canceled.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @KeyProperty(property="contactId")
 @KeyProperty(property="featureIndex")
@@ -508,7 +514,7 @@ public class ContactFeature extends ContactFeatureKey {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 @KeyProperties([
     @KeyProperty(property='contactId'),
@@ -523,37 +529,121 @@ class ContactFeature extends ContactFeatureKey {
 
 <<TOC_,To TOC>>
 
-==== 2-2-1. PreInsert Interface
-If an entity class implements this interface, `insert` method of Sql class calls `preInsert` method of the entity before INSERT SQL execution.
-In `preInsert` method, do the implementation of the numbering of the primary key or etc.
+==== 2-2-1. PreInsert [small]#Interface#
+If an entity class implements this interface,
+`insert(E)` and `insert(Iterable)` methods of Sql<E> class invoke `preInsert` method of the entity class before executing INSERT SQL.
+
+You can implement primary key numbering using `preInsert` method.
 
 [source,java]
-.Java
+.Example in Java
 ----
 public abstract class Common implements PreInsert {
     @Key
     public int id;
-        ...
 
     @Override
-    public int preInsert(ConnectionWrapper conn) {
+    public void preInsert(ConnectionWrapper conn) {
         id = Numbering.getNewId(conn, getClass());
-        return 0;
     }
 }
 ----
+
+[[Entity-PreUpdate]]
+
+<<TOC_,To TOC>>
+
+==== 2-2-2. PreUpdate [small]#Interface# [small fuchsia]#_(since 3.2.0)_#
+If an entity class implements this interface,
+`update(E)` and `update(Iterable)` methods of Sql<E> class invoke `preUpdate` method of the entity class before executing UPDATE SQL.
+
+[[Entity-PreDelete]]
+
+<<TOC_,To TOC>>
+
+==== 2-2-3. PreDelete [small]#Interface# [small fuchsia]#_(since 3.2.0)_#
+If an entity class implements this interface,
+`delete(E)` and `delete(Iterable)` methods of Sql<E> class invoke `preDelete` method of the entity class before executing DELETE SQL.
+
+[[Entity-PostInsert]]
+
+<<TOC_,To TOC>>
+
+==== 2-2-4. PostInsert [small]#Interface# [small fuchsia]#_(since 3.2.0)_#
+If an entity class implements this interface,
+`insert(E)` and `insert(Iterable)` method of Sql<E> class invoke `postInsert` method of the entity class after executing INSERT SQL.
+
+You can use `postInsert` method to get the value automatically numbered at the time of insertion.
+
+[source,java]
+.Example in Java
+----
+public abstract class Common implements PostInsert {
+    @Key
+    @NonInsert
+    public int id;
+
+    @Override
+    public void postInsert(Connection conn) {
+        Class<? extends Common> entityClass = getClass();
+        if (PostSelect.class.isAssignableFrom(entityClass))
+            entityClass = (Class<? extends Common>)entityClass.getSuperclass();
+        new Sql<>(entityClass)
+            .columns("id")
+            .where("id=",
+                new Sql<>(entityClass)
+                    .columns("id")
+                    .expression("id", "MAX({id})")
+            )
+            .connection(conn)
+            .select(entity -> id = entity.id);
+    }
+}
+
+public class Contact extends Common {
+    public String firstName;
+    public String lastName;
+    public Date birthday;
+}
+----
+
+[[Entity-PostUpdate]]
+
+<<TOC_,To TOC>>
+
+==== 2-2-5. PostUpdate [small]#Interface# [small fuchsia]#_(since 3.2.0)_#
+If an entity class implements this interface,
+`update(E)` and `update(Iterable)` methods of Sql<E> class invoke `postUpdate` method of the entity class after executing UPDATE SQL.
+
+[[Entity-PostDelete]]
+
+<<TOC_,To TOC>>
+
+==== 2-2-6. PostDelete [small]#Interface# [small fuchsia]#_(since 3.2.0)_#
+If an entity class implements this interface,
+`delete(E)` and `delete(Iterable)` method of Sql<E> class invoke `postDelete` method of the entity class after executing DELETE SQL.
+
+[[Entity-PostSelect]]
+
+<<TOC_,To TOC>>
+
+==== 2-2-7. PostSelect [small]#Interface# [small fuchsia]#_(since 3.2.0)_#
+If an entity class implements this interface,
+`select` methods of Sql<E> class invoke `postSelect` method of the entity class after each entity is retrieved by executing SELECT SQL.
 
 [[Entity-Composite]]
 
 <<TOC_,To TOC>>
 
-==== 2-2-2. Composite Interface
-If an entity class implements this interface, `select`, `insert`, `update` or `delete` method of `Sql` class calls `postSelect`, `postInsert`, `postUpdate` or `postDelete` method of the entity class after the execution of each execute SQL.
-However if `update` or `delete` method dose not have entity parameter, dose not call.
-If an entity is enclose another entity, by implementing this interface, You can perform SQL processing to the enclosed entity in conjunction the entity which encloses.
+==== 2-2-8. Composite [small]#Interface# [small fuchsia]#_(deprecated since 3.2.0)_#
+If an entity class implements this interface,
+`select`, `insert(E)`, `update(E)` and `delete(E)` methods of `Sql<E>` class invoke `postSelect`, `postInsert`, `postUpdate` or `postDelete` method of the entity class after the execution of each SQL.
+
+If an entity is enclose another entity, by implementing this interface,
+You can perform SQL processing to the enclosed entity in conjunction the entity which encloses.
 
 [source,java]
-.Java
+.Example in Java
 ----
 @Table("super")
 public class ContactComposite extends Contact implements Composite {
@@ -572,23 +662,22 @@ public class ContactComposite extends Contact implements Composite {
     }
 
     @Override
-    public int postInsert(ConnectionWrapper conn) {
+    public void postInsert(ConnectionWrapper conn) {
         phones.forEach(phone -> phone.contactId = id);
         int count = new Sql<>(Phone.class)
             .connection(conn)
             .insert(phones);
-        return count;
     }
 
     @Override
-    public int postUpdate(ConnectionWrapper conn) {
+    public void postUpdate(ConnectionWrapper conn) {
         List<Integer> phoneIds = phones.stream()
             .map(phone -> phone.id)
             .filter(id -> id != 0)
             .collect(Collectors.toList());
 
         // Delete phones
-        int count += new Sql<>(Phone.class)
+        new Sql<>(Phone.class)
             .where("{contactId}={}", id)
             .doIf(phoneIds.size() > 0,
                 sql -> sql.and("{id} NOT IN {}", phoneIds)
@@ -597,29 +686,26 @@ public class ContactComposite extends Contact implements Composite {
             .delete();
 
         // Uptete phones
-        count += new Sql<>(Phone.class)
+        new Sql<>(Phone.class)
             .connection(conn)
             .update(phones.stream()
                 .filter(phone -> phone.id != 0)
                 .collect(Collectors.toList()));
 
         // Insert phones
-        count += new Sql<>(Phone.class)
+        new Sql<>(Phone.class)
             .connection(conn)
             .insert(phones.stream()
                 .filter(phone -> phone.id == 0)
                 .collect(Collectors.toList()));
-
-        return count;
     }
 
     @Override
-    public int postDelete(ConnectionWrapper conn) {
-        int count = new Sql<>(Phone.class)
+    public void postDelete(ConnectionWrapper conn) {
+        new Sql<>(Phone.class)
             .where("{contactId}={}", id)
             .connection(conn)
             .delete();
-        return count;
     }
 ----
 
@@ -627,16 +713,19 @@ public class ContactComposite extends Contact implements Composite {
 
 <<TOC_,To TOC>>
 
-==== 2-2-3. PreStore Interface
-If the entity class implements this interface, the `preStore` method of the entity class is called in the `insert` and `update` methods of the `Sql` class before each SQL is executed.
+==== 2-2-9. PreStore [small]#Interface# [small fuchsia]#_(deprecated since 3.2.0)_#
+If an entity class implements this interface,
+`insert(E)` and `insert(Iterable)`, `update(E)` and `update(Iterable)` methods of Sql<E> class invoke
+`preStore` method of the entity class before executing INSERT and UPDATE SQL.
 
 [[Entity-PostLoad]]
 
-==== 2-2-4. PostLoad Interface
-If the entity class implements this interface, `postLoad` method of the entity class is called in the `select` methods of the `Sql` class after the SELECT SQL is executed and the entity's value obtained from the database is set.
+==== 2-2-10. PostLoad [small]#Interface# [small fuchsia]#_(deprecated since 3.2.0)_#
+If an entity class implements this interface,
+`select` methods of Sql&lt;E&gt; class invoke `postLoad` method of the entity class after each entity is retrieved by executing SELECT SQL.
 
 [source,java]
-.Java
+.Example in Java
 ----
 import org.lightsleep.entity.*;
 
@@ -741,11 +830,12 @@ Logger = Log4j2
 ConnectionSupplier = Dbcp
 urls = \
     jdbc:db2://db2-11:50000/example:user=example;password=_example_;,\
-    jdbc:mysql://mysql57/example?user=example&password=_example_,\
-    jdbc:oracle:thin:example/_example_@oracle121:1521:example,\
-    jdbc:postgresql://postgresql101/example?user=example&password=_example_,\
+    jdbc:mariadb://mariadb:3306/example?user=example&password=_example_,\
+    jdbc:mysql://mysql:3306/example?user=example&password=_example_,\
+    jdbc:oracle:thin:example/_example_@oracle122:1521:example,\
+    jdbc:postgresql://postgresql:5432/example?user=example&password=_example_,\
     jdbc:sqlite:C:/sqlite/example,\
-    jdbc:sqlserver://sqlserver13;database=example;user=example;password=_example_,\
+    jdbc:sqlserver://sqlserver:1433;database=example;user=example;password=_example_,\
 
 initialSize = 10
 maxTotal    = 100
@@ -761,11 +851,12 @@ You can specify the `username` and `jdbcUrl` property with the `user` and `url` 
 Logger = Log4j2
 urls = \
     [  Jdbc  ]jdbc:db2://db2-11:50000/example:user=example;password=_example_;,\
-    [  C3p0  ]jdbc:mysql://mysql57/example?user=example&password=_example_,\
-    [  Dbcp  ]jdbc:oracle:thin:example/_example_@oracle121:1521:example,\
-    [HikariCP]jdbc:postgresql://postgresql101/example?user=example&password=_example_,\
-    [TomcatCP]jdbc:sqlite:C:/sqlite/example,\
-    [  Jdbc  ]jdbc:sqlserver://sqlserver13;database=example;user=example;password=_example_,\
+    [  C3p0  ]jdbc:mariadb://mariadb:3306/example?user=example&password=_example_,\
+    [  Dbcp  ]jdbc:mysql://mysql:3306/example?user=example&password=_example_,\
+    [HikariCP]jdbc:oracle:thin:example/_example_@oracle122:1521:example,\
+    [TomcatCP]jdbc:postgresql://postgresql:5432/example?user=example&password=_example_,\
+    [  Jdbc  ]jdbc:sqlite:C:/sqlite/example,\
+    [  C3p0  ]jdbc:sqlserver://sqlserver:1433;database=example;user=example;password=_example_,\
 
 # Dbcp, HikariCP, TomcatCP
 initialSize = 10
@@ -824,11 +915,12 @@ The database handler class is automatically selected from the contents of the JD
 |===
 |Word included in JDBC URL|Selected class|Corresponding DBMS
 |`db2`       |`DB2`       |link:https://www.ibm.com/us-en/marketplace/db2-express-c[DB2]
+|`mariadb`   |`MariaDB`   |link:https://mariadb.org/[MariaDB] [small fuchsia]#_(since 3.2.0)_#
 |`mysql`     |`MySQL`     |link:https://www.mysql.com/[MySQL]
 |`oracle`    |`Oracle`    |link:https://www.oracle.com/database/index.html[Oracle Database]
 |`postgresql`|`PostgreSQL`|link:https://www.postgresql.org/[PostgreSQL]
 |`sqlite`    |`SQLite`    |link:https://sqlite.org/index.html[SQLite]
-|`sqlserver` |`SQLServer` |link:https://www.microsoft.com/ja-jp/sql-server/sql-server-2016[Microsoft SQL Server]
+|`sqlserver` |`SQLServer` |link:https://www.microsoft.com/en-us/sql-server/sql-server-2017[Microsoft SQL Server]
 |===
 
 If the JDBC URL does not contain any of the words above, `Standard` class is selected.
@@ -846,8 +938,8 @@ Select the value of the `ConnectionSupplier` property from the following.
 |Value|Corresponding connection pool libraries
 |`C3p0`    |link:http://www.mchange.com/projects/c3p0/[c3p0]
 |`Dbcp`    |link:https://commons.apache.org/proper/commons-dbcp/[Apache Commons DBCP]
-|`HikariCP`|link:http://brettwooldridge.github.io/HikariCP/[HikariCP]
-|`TomcatCP`|link:http://tomcat.apache.org/tomcat-8.5-doc/jdbc-pool.html[Tomcat JDBC Connection Pool]
+|`HikariCP`|link:https://github.com/brettwooldridge/HikariCP[HikariCP]
+|`TomcatCP`|link:http://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html[Tomcat JDBC Connection Pool]
 |`Jndi`    |Java Naming and Directory Interface (JNDI) (link:http://tomcat.apache.org/tomcat-8.5-doc/jndi-datasource-examples-howto.html[In the case of Tomcat])
 |`Jdbc`    |`DriverManager#getConnection(String url, Properties info)` Method
 |===
@@ -941,7 +1033,7 @@ Define contents of the transaction by the argument `transaction` as a lambda exp
 The lambda expression is equivalent to the contents of `Transaction.executeBody` method and the argument of this method is a `ConnectionWrapper`.
 
 [source,java]
-.Java
+.Example in Java
 ----
 Contact contact = new Contact(1, "Akane", "Apple");
 
@@ -956,7 +1048,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 def contact = new Contact(1, 'Akane', 'Apple')
 
@@ -975,7 +1067,7 @@ The `ConnectionSupplier.find` method searches for a JDBC URL that contains all o
 An exception will be thrown if more than one is found or if it can not be found.
 
 [source,java]
-.Java
+.Example in Java
 ----
 public static final ConnectionSupplier supplier1 = ConnectionSupplier.find("example1");
     ...
@@ -993,7 +1085,7 @@ Transaction.execute(supplier1, conn -> {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 static final supplier1 = ConnectionSupplier.find('example1')
     ...
@@ -1029,7 +1121,7 @@ Use the various methods of `Sql` class to execute SQLs and define it in the lamb
 ==== 5-1-1. SELECT 1 row with an Expression condition
 
 [source,java]
-.Java
+.Example in Java
 ----
 Transaction.execute(conn -> {
     Optional<Contact> contactOpt = new Sql<>(Contact.class)
@@ -1040,7 +1132,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 Transaction.execute {
     def contactOpt = new Sql<>(Contact)
@@ -1065,7 +1157,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-2. SELECT 1 row with an Entity condition
 
 [source,java]
-.Java
+.Example in Java
 ----
 Contact contact = new Contact();
 contact.id = 1;
@@ -1078,7 +1170,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 def contact = new Contact()
 contact.id = 1
@@ -1105,7 +1197,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-3. SELECT multiple rows with an Expression condition
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1117,7 +1209,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1143,7 +1235,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-4. SELECT with a Subquery condition
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1158,7 +1250,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1187,7 +1279,7 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 ==== 5-1-5. SELECT with Expression conditions (AND)
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1200,7 +1292,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1227,7 +1319,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-6. SELECT with Expression Condition (OR)
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1240,7 +1332,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1267,7 +1359,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-7. SELECT with Expression conditions A AND B OR C AND D
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1286,7 +1378,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1319,7 +1411,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-8. SELECT with selection of columns
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1332,7 +1424,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1357,7 +1449,7 @@ SELECT firstName, lastName FROM Contact WHERE lastName='Apple'
 ==== 5-1-9. SELECT with GROUP BY and HAVING
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1371,7 +1463,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1400,7 +1492,7 @@ SELECT MIN(C.lastName) C_lastName
 ==== 5-1-10. SELECT with ORDER BY, OFFSET and LIMIT
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn ->
@@ -1415,7 +1507,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1430,7 +1522,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2, MySQL, PostgreSQL, SQLite
+.Generated SQL - DB2, MariaDB, MySQL, PostgreSQL, SQLite
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1453,7 +1545,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-11. SELECT with FOR UPDATE
 
 [source,java]
-.Java
+.Example in Java
 ----
 Transaction.execute(conn -> {
     Optional<Contact> contactOpt = new Sql<>(Contact.class)
@@ -1465,7 +1557,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 Transaction.execute {
     def contactOpt = new Sql<>(Contact)
@@ -1484,7 +1576,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ----
 
 [source,sql]
-.Generated SQL - MySQL, Oracle, PostgreSQL
+.Generated SQL - MariaDB, MySQL, Oracle, PostgreSQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1 FOR UPDATE
@@ -1510,7 +1602,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-12. SELECT with INNER JOIN
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
@@ -1524,7 +1616,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 List<Phone> phones = []
@@ -1553,7 +1645,7 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 ==== 5-1-13. SELECT with LEFT OUTER JOIN
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
@@ -1567,7 +1659,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 List<Phone> phones = []
@@ -1596,7 +1688,7 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 ==== 5-1-14. SELECT with RIGHT OUTER JOIN
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 List<Phone> phones = new ArrayList<>();
@@ -1610,7 +1702,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 List<Contact> contacts = []
 List<Phone> phones = []
@@ -1640,7 +1732,7 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 ==== 5-1-15. SELECT COUNT(*)
 
 [source,java]
-.Java
+.Example in Java
 ----
 int[] count = new int[1];
 Transaction.execute(conn ->
@@ -1652,7 +1744,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 def count = 0
 Transaction.execute {
@@ -1676,7 +1768,7 @@ SELECT COUNT(*) FROM Contact WHERE lastName='Apple'
 ==== 5-1-16. SELECT FROM Clause Subquery
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<Contact> contacts = new ArrayList<>();
 Transaction.execute(conn -> {
@@ -1691,7 +1783,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 def contacts = []
 Transaction.execute {
@@ -1722,7 +1814,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime,
 ==== 5-1-17. SELECT UNION, UNION ALL
 
 [source,java]
-.Java
+.Example in Java
 ----
 List<ContactFeature> features = new ArrayList<>();
 String targetFirstName = "Setoka";
@@ -1761,7 +1853,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 def features = []
 def targetFirstName = 'Setoka'
@@ -1835,7 +1927,7 @@ ORDER BY F_label ASC
 ==== 5-2-1. INSERT 1 row
 
 [source,java]
-.Java
+.Example in Java
 ----
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -1844,7 +1936,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 Transaction.execute {
     new Sql<>(Contact)
@@ -1854,7 +1946,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2, MySQL, Oracle, PostgreSQL
+.Generated SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
 ----
 INSERT INTO Contact
   (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
@@ -1887,7 +1979,7 @@ INSERT INTO Contact
 ==== 5-2-2. INSERT multiple rows
 
 [source,java]
-.Java
+.Example in Java
 ----
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -1899,7 +1991,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 Transaction.execute {
     new Sql<>(Contact)
@@ -1912,7 +2004,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2, MySQL, Oracle, PostgreSQL
+.Generated SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
 ----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
   VALUES
@@ -1955,7 +2047,7 @@ INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime
 ==== 5-3-1. UPDATE 1 row
 
 [source,java]
-.Java
+.Example in Java
 ----
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -1972,7 +2064,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 Transaction.execute {
     new Sql<>(Contact)
@@ -1989,7 +2081,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2, MySQL, Oracle, PostgreSQL
+.Generated SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1
@@ -2022,7 +2114,7 @@ UPDATE Contact SET
 ==== 5-3-2. UPDATE multiple rows
 
 [source,java]
-.Java
+.Example in Java
 ----
 Transaction.execute(conn -> {
     List<Contact> contacts = new ArrayList<>();
@@ -2040,7 +2132,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 Transaction.execute {
     List<Contact> contacts = []
@@ -2058,7 +2150,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2, MySQL, Oracle, PostgreSQL
+.Generated SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE lastName='Apple'
@@ -2112,7 +2204,7 @@ UPDATE Contact
 ==== 5-3-3. UPDATE with a Condition and selection of columns
 
 [source,java]
-.Java
+.Example in Java
 ----
 Contact contact = new Contact();
 contact.lastName = "Pomme";
@@ -2126,7 +2218,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 def contact = new Contact()
 contact.lastName = 'Pomme'
@@ -2152,7 +2244,7 @@ UPDATE Contact SET lastName='Pomme' WHERE lastName='Apfel'
 ==== 5-3-4. UPDATE all rows
 
 [source,java]
-.Java
+.Example in Java
 ----
 Contact contact = new Contact();
 Transaction.execute(conn ->
@@ -2165,7 +2257,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 def contact = new Contact()
 Transaction.execute {
@@ -2195,7 +2287,7 @@ UPDATE Contact SET birthday=NULL
 ==== 5-4-1. DELETE 1 row
 
 [source,java]
-.Java
+.Example in Java
 ----
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -2210,7 +2302,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 Transaction.execute {
     new Sql<>(Contact)
@@ -2239,7 +2331,7 @@ DELETE FROM Contact WHERE id=1
 ==== 5-4-2. DELETE multiple rows
 
 [source,java]
-.Java
+.Example in Java
 ----
 Transaction.execute(conn -> {
     List<Contact> contacts = new ArrayList<>();
@@ -2254,7 +2346,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 Transaction.execute {
     List<Contact> contacts = []
@@ -2282,7 +2374,7 @@ DELETE FROM Contact WHERE id=3
 ==== 5-4-3. DELETE with a Condition
 
 [source,java]
-.Java
+.Example in Java
 ----
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -2293,7 +2385,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 Transaction.execute {
     new Sql<>(Contact)
@@ -2314,7 +2406,7 @@ DELETE FROM Contact WHERE lastName='Orange'
 ==== 5-4-4. DELETE all rows
 
 [source,java]
-.Java
+.Example in Java
 ----
 Transaction.execute(conn ->
     new Sql<>(Phone.class)
@@ -2325,7 +2417,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy
+.Example in Groovy
 ----
 Transaction.execute {
     new Sql<>(Phone)
@@ -2420,9 +2512,9 @@ Conversion of expressions has the followings.
 |`java.time.Instant`       |      |       |              |[small fuchsia]#_since 3.0.0_#
 |===
 
-[[DateTime-MySQL]]
+[[DateTime-MariaDB_MySQL]]
 
-===== 7.2 MySQL
+===== 7.2 MariaDB, MySQL
 
 [options="header", width="80%", cols=",^,^,^,^,"]
 |===

@@ -424,7 +424,8 @@ import org.lightsleep.logger.LoggerFactory;
  * @since 1.0
  * @author Masato Kokubo
  * @see org.lightsleep.database.Standard
- * @see org.lightsleep.database.DB2
+ * @see org.lightsleep.database.Db2
+ * @see org.lightsleep.database.MariaDB
  * @see org.lightsleep.database.MySQL
  * @see org.lightsleep.database.Oracle
  * @see org.lightsleep.database.PostgreSQL
@@ -485,14 +486,6 @@ public class TypeConverter<ST, DT> {
 		wellKnownClasses.add(TreeSet.class);
 		wellKnownClasses.add(SqlString.class);
 	}
-
-// 3.0.0
-//	// The string of Timestamp format (without millis)
-//	private static final String timestampFormatString = "yyyy-MM-dd HH:mm:ss";
-//
-//	// The string of Timestamp format (with millis)
-//	private static final String timestampMillisFormatString = "yyyy-MM-dd HH:mm:ss.SSS";
-////
 
 	// The LocalDate and Date formatter (since 3.0.0)
 	private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -598,10 +591,7 @@ public class TypeConverter<ST, DT> {
 	private final Class<DT> destinType;
 
 	// The function for converting
-// 3.0.0
-//	private final Function<ST, ?DT> function;
 	private final Function<? super ST, ? extends DT> function;
-////
 
 	// The key when stored in the map
 	private final String key;
@@ -619,8 +609,8 @@ public class TypeConverter<ST, DT> {
 	 * @throws NullPointerException <b>sourceType</b> or <b>destinType</b> is <b>null</b>
 	 */
 	public static String key(Class<?> sourceType, Class<?> destinType) {
-		sourceType = Utils.toClassType(Objects.requireNonNull(sourceType, "sourceType"));
-		destinType = Utils.toClassType(Objects.requireNonNull(destinType, "destinType"));
+		sourceType = Utils.toClassType(Objects.requireNonNull(sourceType, "sourceType is null"));
+		destinType = Utils.toClassType(Objects.requireNonNull(destinType, "destinType is null"));
 
 		String sourceTypeName = wellKnownClasses.contains(sourceType)
 			? sourceType.getSimpleName() : sourceType.getCanonicalName();
@@ -640,8 +630,8 @@ public class TypeConverter<ST, DT> {
 	 * @throws NullPointerException <b>typeConverterMap</b> or <b>typeConverter</b> is <b>null</b>
 	 */
 	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?> typeConverter) {
-		Objects.requireNonNull(typeConverterMap, "typeConverterMap");
-		Objects.requireNonNull(typeConverter, "typeConverter");
+		Objects.requireNonNull(typeConverterMap, "typeConverterMap is null");
+		Objects.requireNonNull(typeConverter, "typeConverter is null");
 
 		TypeConverter<?, ?> beforeTypeConverter = typeConverterMap.put(typeConverter.key, typeConverter);
 		logger.debug(() -> "put: " + typeConverter + (beforeTypeConverter != null ? " (overwrite)" : ""));
@@ -675,7 +665,7 @@ public class TypeConverter<ST, DT> {
 	 */
 	public static <ST, DT> TypeConverter<ST, DT> get(Map<String, TypeConverter<?, ?>> typeConverterMap,
 			Class<ST> sourceType, Class<DT> destinType) {
-		Objects.requireNonNull(typeConverterMap, "typeConverterMap");
+		Objects.requireNonNull(typeConverterMap, "typeConverterMap is null");
 
 		String key = TypeConverter.key(sourceType, destinType);
 		@SuppressWarnings("unchecked")
@@ -784,8 +774,8 @@ public class TypeConverter<ST, DT> {
 	 * @throws IllegalArgumentException if <b>destinType</b> is a primitive type
 	 */
 	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
-		Objects.requireNonNull(typeConverterMap, "typeConverterMap");
-		if (Objects.requireNonNull(destinType, "destinType").isPrimitive())
+		Objects.requireNonNull(typeConverterMap, "typeConverterMap is null");
+		if (Objects.requireNonNull(destinType, "destinType is null").isPrimitive())
 			throw new IllegalArgumentException("destinType: " + destinType.getName() + "(primitive type)");
 
 		DT destin = null;
@@ -807,20 +797,7 @@ public class TypeConverter<ST, DT> {
 					throw e;
 				}
 
-			// 3.0.0
-			//	try {
-			////
 				destin = typeConverter.apply(source);
-			// 3.0.0
-			//	}
-			//	catch (RuntimeException e) {
-			//		logger.error("convert: converter: " + typeConverter.key
-			//		//	+ ", conversion: " + Utils.toLogString(source) + " -> " + Utils.toLogString(destinType), e);
-			//			+ ", conversion: " + toString(typeConverterMap, source)
-			//			+ " -> " + Utils.toLogString(destinType), e);
-			//		throw e;
-			//	}
-			////
 
 				if (logger.isDebugEnabled())
 					logger.debug("convert: converter: " + typeConverter.key
@@ -869,13 +846,10 @@ public class TypeConverter<ST, DT> {
 	 *
 	 * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b> or <b>function</b> is <b>null</b>
 	 */
-// 3.0.0
-//	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<ST, DT> function) {
 	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, ? extends DT> function) {
-////
-		this.sourceType = Objects.requireNonNull(sourceType, "sourceType");
-		this.destinType = Objects.requireNonNull(destinType, "destinType");
-		this.function = Objects.requireNonNull(function, "function");
+		this.sourceType = Objects.requireNonNull(sourceType, "sourceType is null");
+		this.destinType = Objects.requireNonNull(destinType, "destinType is null");
+		this.function = Objects.requireNonNull(function, "function is null");
 		key = key(sourceType, destinType);
 		hashCode = key.hashCode();
 	}
@@ -901,8 +875,8 @@ public class TypeConverter<ST, DT> {
 		this(
 			sourceType,
 			destinType,
-			Objects.requireNonNull(function1, "function1")
-				.andThen(Objects.requireNonNull(function2, "function2"))
+			Objects.requireNonNull(function1, "function1 is null")
+				.andThen(Objects.requireNonNull(function2, "function2 is null"))
 		);
 	}
 
@@ -928,9 +902,9 @@ public class TypeConverter<ST, DT> {
 		this(
 			sourceType,
 			destinType,
-			Objects.requireNonNull(function1, "function1")
-				.andThen(Objects.requireNonNull(function2, "function2"))
-				.andThen(Objects.requireNonNull(function3, "function3"))
+			Objects.requireNonNull(function1, "function1 is null")
+				.andThen(Objects.requireNonNull(function2, "function2 is null"))
+				.andThen(Objects.requireNonNull(function3, "function3 is null"))
 		);
 	}
 
@@ -962,33 +936,12 @@ public class TypeConverter<ST, DT> {
 		this(
 			sourceType,
 			destinType,
-			Objects.requireNonNull(function1, "function1")
-				.andThen(Objects.requireNonNull(function2, "function3"))
-				.andThen(Objects.requireNonNull(function3, "function3"))
-				.andThen(Objects.requireNonNull(function4, "function4"))
+			Objects.requireNonNull(function1, "function1 is null")
+				.andThen(Objects.requireNonNull(function2, "function2 is null"))
+				.andThen(Objects.requireNonNull(function3, "function3 is null"))
+				.andThen(Objects.requireNonNull(function4, "function4 is null"))
 		);
 	}
-
-// 3.0.0
-//	/**
-//	 * Constructs a new <b>TypeConverter</b> by combining the two converters.
-//	 *
-//	 * @param <MT> the middle type of typeConverter1 and typeConverter2
-//	 * @param typeConverter1 the first TypeConverter
-//	 * @param typeConverter2 the second TypeConverter
-//	 *
-//	 * @throws NullPointerException if <b>typeConverter1</b> or <b>typeConverter2</b> is <b>null</b>
-//	 *
-//	 * @since 1.8.0
-//	 */
-//	public <MT> TypeConverter(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2) {
-//		this.sourceType = Objects.requireNonNull(typeConverter1, "typeConverter1").sourceType;
-//		this.destinType = Objects.requireNonNull(typeConverter2, "typeConverter2").destinType;
-//		this.function = typeConverter1.function.andThen(typeConverter2.function);
-//		key = key(sourceType, destinType);
-//		hashCode = key.hashCode();
-//	}
-////
 
 	/**
 	 * Returns the type of the source.
@@ -1013,10 +966,7 @@ public class TypeConverter<ST, DT> {
 	 *
 	 * @return the function for converting
 	 */
-// 3.0.0
-//	public Function<ST, DT> function() {
 	public Function<? super ST, ? extends DT> function() {
-////
 		return function;
 	}
 
@@ -2336,78 +2286,34 @@ public class TypeConverter<ST, DT> {
 
 		// String -> java.util.Date (since 1.4.0)
 		put(typeConverterMap,
-		//// 3.0.0
-		//	new TypeConverter<>(String.class, java.util.Date.class, object -> {
-		//		try {
-		//			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		//			return new java.util.Date(format.parse(object).getTime());
-		//		}
-		//		catch (ParseException e) {
-		//			throw new ConvertException(String.class, object, Date.class, e);
-		//		}
-		//	})
 			new TypeConverter<>(String.class, java.util.Date.class,
 				get(typeConverterMap, String.class, LocalDate.class).function,
 				get(typeConverterMap, LocalDate.class, java.util.Date.class).function
 			)
-		////
 		);
 
 		// String -> java.sql.Date
 		put(typeConverterMap,
-		// 3.0.0
-		//	new TypeConverter<>(String.class, Date.class, object -> {
-		//		try {
-		//			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		//			return new Date(format.parse(object).getTime());
-		//		}
-		//		catch (ParseException e) {
-		//			throw new ConvertException(String.class, object, Date.class, e);
-		//		}
-		//	})
 			new TypeConverter<>(String.class, Date.class,
 				get(typeConverterMap, String.class, LocalDate.class).function,
 				get(typeConverterMap, LocalDate.class, Date.class).function
 			)
-		////
 		);
 
 		// String -> Time
 		put(typeConverterMap,
-		// 3.0.0
-		//	new TypeConverter<>(String.class, Time.class, object -> {
-		//		try {
-		//			SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-		//			return new Time(format.parse(object).getTime());
-		//		}
-		//		catch (ParseException e) {
-		//			throw new ConvertException(String.class, object, Time.class, e);
-		//		}
-		//	})
 			new TypeConverter<>(String.class, Time.class,
 				get(typeConverterMap, String.class, LocalTime.class).function,
 				get(typeConverterMap, LocalTime.class, Time.class).function
 			)
-		////
 		);
 
 		// String -> Timestamp
 		put(typeConverterMap,
-		// 3.0.0
-		//	new TypeConverter<>(String.class, Timestamp.class, object -> {
-		//		try {
-		//			String formatStr = object.lastIndexOf('.') >= 0 ? timestampMillisFormatString : timestampFormatString;
-		//			return new Timestamp(new SimpleDateFormat(formatStr).parse(object).getTime());
-		//		}
-		//		catch (ParseException e) {
-		//			throw new ConvertException(String.class, object, Timestamp.class, e);
-		//		}
-		//	})
 			new TypeConverter<>(String.class, Timestamp.class,
 				get(typeConverterMap, String.class, LocalDateTime.class).function,
 				get(typeConverterMap, LocalDateTime.class, Timestamp.class).function
 			)
-		////
 		);
 
 	// * -> String
@@ -2464,48 +2370,34 @@ public class TypeConverter<ST, DT> {
 
 		// java.util.Date -> String (since 1.4.0)
 		put(typeConverterMap,
-		// 3.0.0
-		//	new TypeConverter<>(java.util.Date.class, String.class, object -> new Date(object.getTime()).toString())
 			new TypeConverter<>(java.util.Date.class, String.class,
 				get(typeConverterMap, java.util.Date.class, LocalDate.class).function,
 				get(typeConverterMap, LocalDate.class, String.class).function
 			)
-		////
 		);
 
 		// java.sql.Date -> String (since 1.4.0)
 		put(typeConverterMap,
-		// 3.0.0
-		//	new TypeConverter<>(Date.class, String.class, object -> object.toString())
 			new TypeConverter<>(Date.class, String.class,
 				get(typeConverterMap, Date.class, LocalDate.class).function,
 				get(typeConverterMap, LocalDate.class, String.class).function
 			)
-		////
 		);
 
 		// Time -> String (since 1.4.0)
 		put(typeConverterMap,
-		// 3.0.0
-		//	new TypeConverter<>(Time.class, String.class, object -> object.toString())
 			new TypeConverter<>(Time.class, String.class,
 				get(typeConverterMap, Time.class, LocalTime.class).function,
 				get(typeConverterMap, LocalTime.class, String.class).function
 			)
-		////
 		);
 
 		// Timestamp -> String
 		put(typeConverterMap,
-		// 3.0.0
-		//	new TypeConverter<>(Timestamp.class, String.class, object ->
-		//		new SimpleDateFormat(timestampMillisFormatString).format(object)
-		//	)
 			new TypeConverter<>(Timestamp.class, String.class,
 				get(typeConverterMap, Timestamp.class, LocalDateTime.class).function,
 				get(typeConverterMap, LocalDateTime.class, String.class).function
 			)
-		////
 		);
 
 	}

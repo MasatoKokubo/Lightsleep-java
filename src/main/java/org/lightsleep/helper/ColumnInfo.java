@@ -56,9 +56,9 @@ public class ColumnInfo {
 		EntityInfo<?> entityInfo, String propertyName, String columnName, Class<?> columnType, boolean isKey,
 		Expression selectExpression, Expression insertExpression, Expression updateExpression) {
 
-		this.entityInfo       = Objects.requireNonNull(entityInfo, "entityInfo");
-		this.propertyName     = Objects.requireNonNull(propertyName, "propertyName");
-		this.columnName       = Objects.requireNonNull(columnName, "columnName");
+		this.entityInfo       = Objects.requireNonNull(entityInfo, "entityInfo is null");
+		this.propertyName     = Objects.requireNonNull(propertyName, "propertyName is null");
+		this.columnName       = Objects.requireNonNull(columnName, "columnName is null");
 		this.columnType       = columnType;
 		this.isKey            = isKey;
 		this.selectExpression = selectExpression;

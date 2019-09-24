@@ -1,20 +1,11 @@
 -- (C) 2016 Masato Kokubo
 
--- for DB2
-
--- Numbering
-DROP TABLE Numbering;
-CREATE TABLE Numbering (
-    tableName   VARCHAR   (32) NOT NULL,
-    nextId      INTEGER        NOT NULL,
-
-    PRIMARY KEY(tableName)
-);
+-- for Db2
 
 -- Contact
 DROP TABLE Contact;
 CREATE TABLE Contact (
-    id          INTEGER        NOT NULL,
+    id          INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY,
     firstName   VARGRAPHIC(20) NOT NULL,
     lastName    VARGRAPHIC(20) NOT NULL,
     birthday    DATE               NULL,
@@ -30,7 +21,7 @@ CREATE TABLE Contact (
 -- Address
 DROP TABLE Address;
 CREATE TABLE Address (
-    id          INTEGER        NOT NULL,
+    id          INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY,
     postCode    VARCHAR   (10)     NULL,
     address1    VARGRAPHIC(20)     NULL,
     address2    VARGRAPHIC(20)     NULL,
@@ -47,7 +38,7 @@ CREATE TABLE Address (
 -- Phone
 DROP TABLE Phone;
 CREATE TABLE Phone (
-    id          INTEGER        NOT NULL,
+    id          INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY,
     contactId   INTEGER        NOT NULL,
     phoneNumber VARCHAR   (12) NOT NULL,
 
@@ -61,7 +52,7 @@ CREATE TABLE Phone (
 -- Product
 DROP TABLE Product;
 CREATE TABLE Product (
-    id          INTEGER        NOT NULL,
+    id          INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY,
     productName VARGRAPHIC(20) NOT NULL,
     price       INTEGER        NOT NULL,
     productSize CHAR      ( 2)     NULL,
@@ -77,7 +68,7 @@ CREATE TABLE Product (
 -- Sale
 DROP TABLE Sale;
 CREATE TABLE Sale (
-    id          INTEGER        NOT NULL,
+    id          INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY,
     contactId   INTEGER        NOT NULL,
     saleDate    DATE           NOT NULL,
     taxRate     SMALLINT       NOT NULL,

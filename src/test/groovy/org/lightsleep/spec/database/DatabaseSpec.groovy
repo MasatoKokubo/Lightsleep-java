@@ -18,7 +18,8 @@ class DatabaseSpec extends Specification {
 
 		where:
 			jdbcUrl           |database
-			'jdbc:db2:'       |DB2.instance
+			'jdbc:db2:'       |Db2.instance
+			'jdbc:mariadb:'   |MariaDB.instance
 			'jdbc:mysql:'     |MySQL.instance
 			'jdbc:oracle:'    |Oracle.instance
 			'jdbc:postgresql:'|PostgreSQL.instance
@@ -34,6 +35,7 @@ class DatabaseSpec extends Specification {
 		where:
 			jdbcUrl << [
 				'jdbc:Db2:',
+				'jdbc:MariaDB:',
 				'jdbc:MySQL:',
 				'jdbc:Oracle:',
 				'jdbc:PostgreSQL:',

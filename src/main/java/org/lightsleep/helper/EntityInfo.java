@@ -51,7 +51,7 @@ public class EntityInfo<E> {
 	 * @throws IllegalArgumentException if <b>entityClass</b> is illegal
 	 */
 	public EntityInfo(Class<E> entityClass) {
-		this.entityClass = Objects.requireNonNull(entityClass, "entityClass");
+		this.entityClass = Objects.requireNonNull(entityClass, "entityClass is null");
 
 		if (entityClass.isAnnotation())
 			throw new IllegalArgumentException("entityClass: " + entityClass.getName() + " is an annotation class");
@@ -298,7 +298,7 @@ public class EntityInfo<E> {
 	 * @throws IllegalArgumentException if the column information related to <b>propertyName</b> can not be found
 	 */
 	public ColumnInfo getColumnInfo(String propertyName) {
-		Objects.requireNonNull(propertyName, "propertyName");
+		Objects.requireNonNull(propertyName, "propertyName is null");
 
 		ColumnInfo columnInfo = columnInfoMap.get(propertyName);
 		if (columnInfo == null)

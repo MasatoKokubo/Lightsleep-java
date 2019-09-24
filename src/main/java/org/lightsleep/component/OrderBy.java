@@ -117,7 +117,7 @@ public class OrderBy implements SqlComponent, Cloneable {
 	 * @throws NullPointerException if <b>element</b> is <b>null</b>
 	 */
 	public OrderBy add(Element element) {
-		elements.add(Objects.requireNonNull(element, "element"));
+		elements.add(Objects.requireNonNull(element, "element is null"));
 		return this;
 	}
 

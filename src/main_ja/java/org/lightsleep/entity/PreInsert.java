@@ -7,11 +7,11 @@ import org.lightsleep.connection.ConnectionWrapper;
 
 /**
  * エンティティ･クラスがこのインターフェースを実装している場合、
- * <b>Sql</b>クラスの<b>insert</b>メソッドで、
- * INSERT SQL 実行前に<b>preInsert</b>メソッドがコールされます。<br>
+ * <b>Sql&lt;E&gt;</b>クラスの<b>insert(E)</b>および<b>insert(Iterable)</b>メソッドから
+ * INSERT SQLの実行前に<b>preInsert</b>メソッドが呼び出されます。
  *
  * <p>
- * <b>preInsert</b>メソッドでは、プライマリー･キーの採番の実装等を行います。
+ * <b>preInsert</b>メソッドを使用して、プライマリー･キーの採番の実装をする事ができます。
  * </p>
  *
  * <div class="exampleTitle"><span>使用例/Java</span></div>
@@ -19,27 +19,24 @@ import org.lightsleep.connection.ConnectionWrapper;
  * public abstract class Common implements <b>PreInsert</b> {
  *  {@literal @}Key
  *   public int id;
- *     ...
  *
  *  {@literal @}Override
- *   <b>public int preInsert(Connection conn)</b> {
- *     id = Numbering.getNewId(conn, getClass());
- *     return 0;
+ *   <b>public void preInsert(Connection connection)</b> {
+ *     id = Numbering.getNewId(connection, getClass());
  *   }
  * }
  * </pre></div>
- * 
+ *
  * @since 1.0.0
  * @author Masato Kokubo
  */
 public interface PreInsert {
 	/**
-	 * <b>preInsert</b>は行が挿入される前に実行されます。
+	 * INSERT SQLの実行前に呼び出されます。
 	 *
 	 * @param connection コネクション･ラッパー
-	 * @return 挿入された行数
 	 *
 	 * @throws NullPointerException <b>connection</b>がnullの場合
 	 */
-	int preInsert(ConnectionWrapper connection);
+	public void preInsert(ConnectionWrapper connection);
 }

@@ -23,7 +23,7 @@ import org.lightsleep.helper.Utils;
  * @author Masato Kokubo
  */
 public abstract class DateAndTime {
-	@Key()
+	@Key
 	/** PRIMARY KEY */
 	public int id;
 
@@ -75,11 +75,18 @@ public abstract class DateAndTime {
 		/** TIMESTAMP LOCAL WITH TIME ZONE */
 		public Timestamp timestampLTZValue;
 
-		/** for DB2 */
+		/** for Db2 */
 		@Table("super")
 		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
 		@NonColumnProperty(property="timestampLTZValue")
-		public static class DB2 extends JavaSql {
+		public static class Db2 extends JavaSql {
+		}
+
+		/** for MariaDB */
+		@Table("super")
+		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
+		@NonColumnProperty(property="timestampLTZValue")
+		public static class MariaDB extends JavaSql {
 		}
 
 		/** for MySQL */
@@ -202,11 +209,18 @@ public abstract class DateAndTime {
 		@ColumnType(LocalDateTime.class)
 		public Long timestampLTZValue;
 
-		/** for DB2 */
+		/** for Db2 */
 		@Table("super")
 		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
 		@NonColumnProperty(property="timestampLTZValue")
-		public static class DB2 extends JavaLong {
+		public static class Db2 extends JavaLong {
+		}
+
+		/** for MariaDB */
+		@Table("super")
+		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
+		@NonColumnProperty(property="timestampLTZValue")
+		public static class MariaDB extends JavaLong {
 		}
 
 		/** for MySQL */
@@ -312,11 +326,18 @@ public abstract class DateAndTime {
 		/** TIMESTAMP WITH LOCAL TIME ZONE */
 		public LocalDateTime timestampLTZValue;
 
-		/** for DB2 */
+		/** for Db2 */
 		@Table("super")
 		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
 		@NonColumnProperty(property="timestampLTZValue")
-		public static class DB2 extends Local {
+		public static class Db2 extends Local {
+		}
+
+		/** for MariaDB */
+		@Table("super")
+		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
+		@NonColumnProperty(property="timestampLTZValue")
+		public static class MariaDB extends Local {
 		}
 
 		/** for MySQL */
@@ -430,11 +451,18 @@ public abstract class DateAndTime {
 		@ColumnType(LocalDateTime.class)
 		public OffsetDateTime timestampLTZValue;
 
-		/** for DB2 */
+		/** for Db2 */
 		@Table("super")
 		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
 		@NonColumnProperty(property="timestampLTZValue")
-		public static class DB2 extends Offset {
+		public static class Db2 extends Offset {
+		}
+
+		/** for MariaDB */
+		@Table("super")
+		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
+		@NonColumnProperty(property="timestampLTZValue")
+		public static class MariaDB extends Offset {
 		}
 
 		/** for MySQL */
@@ -534,11 +562,18 @@ public abstract class DateAndTime {
 		@ColumnType(LocalDateTime.class)
 		public ZonedDateTime timestampLTZValue;
 
-		/** for DB2 */
+		/** for Db2 */
 		@Table("super")
 		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
 		@NonColumnProperty(property="timestampLTZValue")
-		public static class DB2 extends Zoned {
+		public static class Db2 extends Zoned {
+		}
+
+		/** for MariaDB */
+		@Table("super")
+		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
+		@NonColumnProperty(property="timestampLTZValue")
+		public static class MariaDB extends Zoned {
 		}
 
 		/** for MySQL */
@@ -639,11 +674,18 @@ public abstract class DateAndTime {
 		@ColumnType(LocalDateTime.class)
 		public java.time.Instant timestampLTZValue;
 
-		/** for DB2 */
+		/** for Db2 */
 		@Table("super")
 		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
 		@NonColumnProperty(property="timestampLTZValue")
-		public static class DB2 extends Instant {
+		public static class Db2 extends Instant {
+		}
+
+		/** for MariaDB */
+		@Table("super")
+		@ColumnTypeProperty(property="timestampTZValue", type=LocalDateTime.class)
+		@NonColumnProperty(property="timestampLTZValue")
+		public static class MariaDB extends Instant {
 		}
 
 		/** for MySQL */

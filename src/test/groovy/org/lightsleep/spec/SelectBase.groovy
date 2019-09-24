@@ -12,7 +12,6 @@ import org.lightsleep.connection.*
 import org.lightsleep.database.*
 import org.lightsleep.entity.*
 import org.lightsleep.test.entity.*
-import org.lightsleep.test.entity.Product.Size
 
 import spock.lang.*
 
@@ -105,7 +104,14 @@ public class ContactYMD extends Contact {
 	public short birthdayDay;
 
 	@Table('super')
-	public static class DB2 extends ContactYMD {
+	public static class Db2 extends ContactYMD {
+	}
+
+	@Table('super')
+	@SelectProperty(property='birthdayYear' , expression='YEAR({birthday})')
+	@SelectProperty(property='birthdayMonth', expression='MONTH({birthday})')
+	@SelectProperty(property='birthdayDay'  , expression='DAY({birthday})')
+	public static class MariaDB extends ContactYMD {
 	}
 
 	@Table('super')
@@ -150,7 +156,8 @@ public class ContactYMD extends Contact {
 
 @Table('super')
 public class Contact1 extends ContactYMD {
-	@Table('super') static class DB2        extends ContactYMD.DB2        {}
+	@Table('super') static class Db2        extends ContactYMD.Db2        {}
+	@Table('super') static class MariaDB    extends ContactYMD.MariaDB    {}
 	@Table('super') static class MySQL      extends ContactYMD.MySQL      {}
 	@Table('super') static class Oracle     extends ContactYMD.Oracle     {}
 	@Table('super') static class PostgreSQL extends ContactYMD.PostgreSQL {}
@@ -160,7 +167,8 @@ public class Contact1 extends ContactYMD {
 
 @Table('super')
 public class Contact2 extends ContactYMD {
-	@Table('super') static class DB2        extends ContactYMD.DB2        {}
+	@Table('super') static class Db2        extends ContactYMD.Db2        {}
+	@Table('super') static class MariaDB    extends ContactYMD.MariaDB    {}
 	@Table('super') static class MySQL      extends ContactYMD.MySQL      {}
 	@Table('super') static class Oracle     extends ContactYMD.Oracle     {}
 	@Table('super') static class PostgreSQL extends ContactYMD.PostgreSQL {}
@@ -170,7 +178,8 @@ public class Contact2 extends ContactYMD {
 
 @Table('super')
 public class Contact3 extends ContactYMD {
-	@Table('super') static class DB2        extends ContactYMD.DB2        {}
+	@Table('super') static class Db2        extends ContactYMD.Db2        {}
+	@Table('super') static class MariaDB    extends ContactYMD.MariaDB    {}
 	@Table('super') static class MySQL      extends ContactYMD.MySQL      {}
 	@Table('super') static class Oracle     extends ContactYMD.Oracle     {}
 	@Table('super') static class PostgreSQL extends ContactYMD.PostgreSQL {}

@@ -2,19 +2,10 @@
 
 -- for PostgreSQL
 
--- Numbering
-DROP TABLE IF EXISTS Numbering;
-CREATE TABLE Numbering (
-    tableName   VARCHAR(32)  NOT NULL,
-    nextId      INT          NOT NULL,
-
-    PRIMARY KEY(tableName)
-);
-
 -- Contact
 DROP TABLE IF EXISTS Contact;
 CREATE TABLE Contact (
-    id          INT          NOT NULL,
+    id          SERIAL       NOT NULL,
     firstName   VARCHAR(20)  NOT NULL,
     lastName    VARCHAR(20)  NOT NULL,
     birthday    DATE             NULL,
@@ -30,7 +21,7 @@ CREATE TABLE Contact (
 -- Address
 DROP TABLE IF EXISTS Address;
 CREATE TABLE Address (
-    id          INT          NOT NULL,
+    id          SERIAL       NOT NULL,
     postCode    VARCHAR(10)      NULL,
     address1    VARCHAR(20)      NULL,
     address2    VARCHAR(20)      NULL,
@@ -47,7 +38,7 @@ CREATE TABLE Address (
 -- Phone
 DROP TABLE IF EXISTS Phone;
 CREATE TABLE Phone (
-    id          INT          NOT NULL,
+    id          SERIAL       NOT NULL,
     contactId   INT          NOT NULL,
     phoneNumber VARCHAR(12)  NOT NULL,
 
@@ -61,7 +52,7 @@ CREATE TABLE Phone (
 -- Product
 DROP TABLE IF EXISTS Product;
 CREATE TABLE Product (
-    id          INT          NOT NULL,
+    id          SERIAL       NOT NULL,
     productName VARCHAR(20)  NOT NULL,
     price       INT          NOT NULL,
     productSize CHAR   ( 2)      NULL,
@@ -77,7 +68,7 @@ CREATE TABLE Product (
 -- Sale
 DROP TABLE IF EXISTS Sale;
 CREATE TABLE Sale (
-    id          INT          NOT NULL,
+    id          SERIAL       NOT NULL,
     contactId   INT          NOT NULL,
     saleDate    DATE         NOT NULL,
     taxRate     SMALLINT     NOT NULL,
@@ -116,42 +107,42 @@ CREATE TABLE Various (
     floatPValue      FLOAT            DEFAULT 0     NOT NULL,
     doublePValue     DOUBLE PRECISION DEFAULT 0     NOT NULL,
 
-    booleanValue     BOOLEAN                 ,
-    char1Value       CHAR(1)                 ,
-    tinyIntValue     SMALLINT                , -- instead of TINYINT type
-    smallIntValue    SMALLINT                ,
-    intValue         INT                     ,
-    bigIntValue      BIGINT                  ,
-    floatValue       FLOAT                   ,
-    doubleValue      DOUBLE PRECISION        ,
-    decimalValue     DECIMAL(12,2)           ,
+    booleanValue     BOOLEAN               ,
+    char1Value       CHAR(1)               ,
+    tinyIntValue     SMALLINT              , -- instead of TINYINT type
+    smallIntValue    SMALLINT              ,
+    intValue         INT                   ,
+    bigIntValue      BIGINT                ,
+    floatValue       FLOAT                 ,
+    doubleValue      DOUBLE PRECISION      ,
+    decimalValue     DECIMAL(12,2)         ,
 
-    longDate         BIGINT                  , -- since 1.8.0
-    longTime         BIGINT                  , -- since 1.8.0
-    longTimestamp    BIGINT                  , -- since 1.8.0
+    longDate         BIGINT                , -- since 1.8.0
+    longTime         BIGINT                , -- since 1.8.0
+    longTimestamp    BIGINT                , -- since 1.8.0
 
-    charValue        CHAR    (20)            ,
-    varCharValue     VARCHAR (40)            ,
+    charValue        CHAR    (20)          ,
+    varCharValue     VARCHAR (40)          ,
 
-    binaryValue      BYTEA                   , -- instead of BINARY   (20) type
-    varBinaryValue   BYTEA                   , -- instead of VARBINARY(40) type
+    binaryValue      BYTEA                 , -- instead of BINARY   (20) type
+    varBinaryValue   BYTEA                 , -- instead of VARBINARY(40) type
 
-    textValue        TEXT                    ,
-    blobValue        BYTEA                   ,
-    jsonValue        JSON                    ,
-    jsonbValue       JSONB                   ,
+    textValue        TEXT                  ,
+    blobValue        BYTEA                 ,
+    jsonValue        JSON                  ,
+    jsonbValue       JSONB                 ,
 
-    booleans         BOOLEAN          ARRAY  ,
-    shorts           SMALLINT         ARRAY  ,
-    ints             INT              ARRAY  ,
-    longs            BIGINT           ARRAY  ,
-    floats           FLOAT            ARRAY  ,
-    doubles          DOUBLE PRECISION ARRAY  ,
-    decimals         DECIMAL(12,2)    ARRAY  ,
-    texts            TEXT             ARRAY  ,
-    dates            DATE             ARRAY  ,
-    times            TIME     (6)     ARRAY  ,
-    timestamps       TIMESTAMP(6)     ARRAY  ,
+    booleans         BOOLEAN          ARRAY,
+    shorts           SMALLINT         ARRAY,
+    ints             INT              ARRAY,
+    longs            BIGINT           ARRAY,
+    floats           FLOAT            ARRAY,
+    doubles          DOUBLE PRECISION ARRAY,
+    decimals         DECIMAL(12,2)    ARRAY,
+    texts            TEXT             ARRAY,
+    dates            DATE             ARRAY,
+    times            TIME     (6)     ARRAY,
+    timestamps       TIMESTAMP(6)     ARRAY,
 
     PRIMARY KEY(id)
 );

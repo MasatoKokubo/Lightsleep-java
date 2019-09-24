@@ -7,7 +7,7 @@ Lightsleep is a lightweight Object-Relational (O/R) mapping library and is avail
 === Features
 
 - It has API using features added in Java 8 (functional interface and Optional class).
-- It is easy to understand intuitively because method names when constructing SQL are the same as SQL reserved words.
+- It is easy to understand intuitively because method names used in SQL construction are the same as SQL reserved words.
 - It is applicable because J2EE is unnecessary: there is no library that depends on Java Runtime and JDBC driver other than.
 - It does not need a definition file for mapping tables and Java classes with XML files.
 - Learning is easy because the library is compact.
@@ -15,9 +15,10 @@ Lightsleep is a lightweight Object-Relational (O/R) mapping library and is avail
 - Various connection pool libraries can be used simultaneously.
 - You can select from various logging libraries when outputting internal logs.
 
-=== Supported DBMS
+=== Supported DBMSs
 
-- DB2
+- Db2
+- MariaDB
 - MySQL
 - Oracle Database
 - PostgreSQL
@@ -35,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.lightsleep:lightsleep:3.1.0'
+    compile 'org.lightsleep:lightsleep:3.2.0'
 }
 ----
 

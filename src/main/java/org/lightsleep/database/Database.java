@@ -128,12 +128,9 @@ public interface Database {
 	 *
 	 * @since 2.2.0
 	 */
-// 3.0.0
-//	String maskPassword(String jdbcUrl);
 	default String maskPassword(String jdbcUrl) {
 		return SQLServer.instance.maskPassword(MySQL.instance.maskPassword(jdbcUrl));
 	}
-////
 
 	/**
 	 * Gets the value from the resultSet and returns it.
@@ -180,7 +177,7 @@ public interface Database {
 	 */
 	@SuppressWarnings("unchecked")
 	static Database getInstance(String jdbcUrl) {
-		Objects.requireNonNull(jdbcUrl, "jdbcUrl");
+		Objects.requireNonNull(jdbcUrl, "jdbcUrl is null");
 		String[] words = jdbcUrl.split(":");
 		for (String word : words) {
 			if (word.equals("jdbc")) continue;

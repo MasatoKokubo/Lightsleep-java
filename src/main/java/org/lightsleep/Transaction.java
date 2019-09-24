@@ -63,7 +63,7 @@ public interface Transaction {
 	 * Executes a transaction in the following order.
 	 *
 	 * <ol>
-	 *   <li>Gets a connection wrapper by calling <b>Sql.getConnectionSupplier().get()</b>.</li>
+	 *   <li>Gets a connection wrapper by invoking <b>Sql.getConnectionSupplier().get()</b>.</li>
 	 *   <li>Calls <b>transaction.executeBody</b> method.</li>
 	 *   <li>Commits the transaction.</li>
 	 *   <li>Closes the connection wrapper.</li>
@@ -90,7 +90,7 @@ public interface Transaction {
 	 * Executes a transaction in the following order.
 	 *
 	 * <ol>
-	 *   <li>Gets a connection wrapper by calling <b>connectionSupplier.get()</b>.</li>
+	 *   <li>Gets a connection wrapper by invoking <b>connectionSupplier.get()</b>.</li>
 	 *   <li>Calls <b>transaction.executeBody</b> method.</li>
 	 *   <li>Commits the transaction.</li>
 	 *   <li>Closes the connection wrapper.</li>
@@ -113,8 +113,8 @@ public interface Transaction {
 	 * @since 1.5.0
 	 */
 	static void execute(ConnectionSupplier connectionSupplier, Transaction transaction) {
-		Objects.requireNonNull(connectionSupplier, "connectionSupplier");
-		Objects.requireNonNull(transaction, "transaction");
+		Objects.requireNonNull(connectionSupplier, "connectionSupplier is null");
+		Objects.requireNonNull(transaction, "transaction is null");
 
 		ConnectionWrapper connection = null;
 		boolean committed = false;
@@ -201,7 +201,7 @@ public interface Transaction {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
 	static void commit(ConnectionWrapper connection) {
-		Objects.requireNonNull(connection, "connection");
+		Objects.requireNonNull(connection, "connection is null");
 
 		try {
 			if (!connection.getAutoCommit()) {
@@ -233,7 +233,7 @@ public interface Transaction {
 	 * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database
 	 */
 	static void rollback(ConnectionWrapper connection) {
-		Objects.requireNonNull(connection, "connection");
+		Objects.requireNonNull(connection, "connection is null");
 		try {
 			if (!connection.getAutoCommit()) {
 				// Is not not auto-commit

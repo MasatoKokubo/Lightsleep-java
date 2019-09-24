@@ -54,7 +54,8 @@ class VariousTypeSpce extends Base {
 
 			// nano seconds of Time
 			int timeNano =
-				connectionSupplier.database instanceof DB2        ? 0 :
+				connectionSupplier.database instanceof Db2        ? 0 :
+				connectionSupplier.database instanceof MariaDB    ? 0 :
 				connectionSupplier.database instanceof MySQL      ? 0 :
 				connectionSupplier.database instanceof Oracle     ? 0 :
 				connectionSupplier.database instanceof PostgreSQL ? 123_456 :
@@ -63,7 +64,8 @@ class VariousTypeSpce extends Base {
 
 			// nano seconds of Timestamp
 			int timestampNano =
-				connectionSupplier.database instanceof DB2        ? 123_456_789 :
+				connectionSupplier.database instanceof Db2        ? 123_456_789 :
+				connectionSupplier.database instanceof MariaDB    ? 123_456_000 :
 				connectionSupplier.database instanceof MySQL      ? 123_456_000 :
 				connectionSupplier.database instanceof Oracle     ? 123_456_789 :
 				connectionSupplier.database instanceof PostgreSQL ? 123_456_000 :
@@ -99,8 +101,8 @@ class VariousTypeSpce extends Base {
 			various1.longDate         = new Date     (dayCal .timeInMillis)
 			various1.longTime         = new Time     (timeCal.timeInMillis)
 			various1.longTimestamp    = new Timestamp(timestampCal.timeInMillis + (int)(timestampNano / 1000_000))
-			various1.charValue        = "¢0123456789😀_\b\t\n\f\r'\\" // contains \u00A2 and \uD83D \uDE00
-			various1.varCharValue     = "😀0123456789¢_\b\t\n\f\r'\\" // contains \uD83D \uDE00 and \u00A2
+			various1.charValue        = '¢0123456789😀_\b\t\n\f\r\'\\' // contains \u00A2 and \uD83D \uDE00
+			various1.varCharValue     = '😀0123456789¢_\b\t\n\f\r\'\\' // contains \uD83D \uDE00 and \u00A2
 			various1.binaryValue      = [0x00, 0x01, 0x7F, 0x80, 0xFE, 0xFF] as byte[]
 			various1.varBinaryValue   = [0x00, 0x01, 0x7E, 0x7F, 0x80, 0x81, 0xFE, 0xFF] as byte[]
 			various1.textValue        = readTextFile  (new File('testdata/text.html'))
@@ -298,7 +300,7 @@ class VariousTypeSpce extends Base {
 
 			various1.char1Value       = '£' as char // \u00A3
 			if (connectionSupplier.database instanceof SQLServer)
-				various1.tinyIntValue = '' + (byte)0x00
+				various1.tinyIntValue = '' + (byte )0x00
 			else
 				various1.tinyIntValue = '' + (byte )0x80
 			various1.smallIntValue    = '' + (short)0x8000
@@ -308,9 +310,9 @@ class VariousTypeSpce extends Base {
 			various1.doubleValue      = '' + -123456.123456
 
 			various1.decimalValue     = '' + new BigDecimal('1234567890.99')
-			various1.charValue        = "¢0123456789😀_\b\t\n\f\r'\\" // contains \u00A2 and \uD83D \uDE00
-			various1.varCharValue     = "😀0123456789¢_\b\t\n\f\r'\\" // contains \uD83D \uDE00 and \u00A2
-			various1.textValue        = "0123456789¢_\b\t\n\f\r'\\😀" // contains \u00A2 and \uD83D \uDE00
+			various1.charValue        = '¢0123456789😀_\b\t\n\f\r\'\\' // contains \u00A2 and \uD83D \uDE00
+			various1.varCharValue     = '😀0123456789¢_\b\t\n\f\r\'\\' // contains \uD83D \uDE00 and \u00A2
+			various1.textValue        = '0123456789¢_\b\t\n\f\r\'\\😀' // contains \u00A2 and \uD83D \uDE00
 
 		when:
 			VariousString various2
