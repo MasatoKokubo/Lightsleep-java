@@ -5,7 +5,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 [[TOC_]]
 === Table of Contents
 
-- <<ReleaseNote3.2.0,[small]#version# 3.2.0 [small]#- September 23, 2019#>>
+- <<ReleaseNote3.2.0,[small]#version# 3.2.0 [small]#- September 25, 2019#>>
 - <<ReleaseNote3.1.1,[small]#version# 3.1.1 [small]#- July      18, 2019#>>
 - <<ReleaseNote3.1.0,[small]#version# 3.1.0 [small]#- July      16, 2019#>>
 - <<ReleaseNote3.0.1,[small]#version# 3.0.1 [small]#- December   1, 2018#>>
