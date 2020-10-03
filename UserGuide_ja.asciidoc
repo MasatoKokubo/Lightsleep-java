@@ -1,4 +1,4 @@
-= Lightsleep [.small]#3.2.0 ユーザーガイド#
+= Lightsleep [.small]#4.0.0 ユーザーガイド#
 
 link:UserGuide.asciidoc[English]
 
@@ -6,8 +6,8 @@ link:UserGuide.asciidoc[English]
 === 目次
 
 1. <<Package,パッケージ>>
-2. <<EntityClass,エンティティ･クラスの作成>> +
-2-1. <<Entity-Annotation,エンティティ･クラスで使用するアノテーション>> +
+2. <<EntityClass,エンティティクラスの作成>> +
+2-1. <<Entity-Annotation,エンティティクラスで使用するアノテーション>> +
 2-1-1. <<Entity-Table,@Table>> +
 2-1-2. <<Entity-Key,@Key>> +
 2-1-3. <<Entity-Column,@Column>> +
@@ -20,21 +20,18 @@ link:UserGuide.asciidoc[English]
 2-1-10. <<Entity-Insert,@Insert>> +
 2-1-11. <<Entity-Update,@Update>> +
 2-1-12. <<Entity-XxxxxProperty,@KeyProperty, @ColumnProperty, ... @UpdateProperty>> +
-2-2. <<Entity-Interface,エンティティ･クラスで実装するインターフェース>> +
-2-2-1. <<Entity-PreInsert,PreInsert [small]#インターフェース#>> +
-2-2-2. <<Entity-PreUpdate,PreUpdate [small]#インターフェース#>> [small fuchsia]#_(v3.2.0~)_# +
-2-2-3. <<Entity-PreDelete,PreDelete [small]#インターフェース#>> [small fuchsia]#_(v3.2.0~)_# +
-2-2-4. <<Entity-PostInsert,PostInsert [small]#インターフェース#>> [small fuchsia]#_(v3.2.0~)_# +
-2-2-5. <<Entity-PostUpdate,PostUpdate [small]#インターフェース#>> [small fuchsia]#_(v3.2.0~)_# +
-2-2-6. <<Entity-PostDelete,PostDelete [small]#インターフェース#>> [small fuchsia]#_(v3.2.0~)_# +
-2-2-7. <<Entity-PostSelect,PostSelect [small]#インターフェース#>> [small fuchsia]#_(v3.2.0~)_# +
-2-2-8. <<Entity-Composite,Composite [small]#インターフェース#>> [small fuchsia]#_(非推奨 v3.2.0~)_# +
-2-2-9. <<Entity-PreStore,PreStore [small]#インターフェース#>> [small fuchsia]#_(非推奨 v3.2.0~)_# +
-2-2-10. <<Entity-PostLoad,PostLoad [small]#インターフェース#>> [small fuchsia]#_(非推奨 v3.2.0~)_# +
+2-2. <<Entity-Interface,エンティティクラスで実装するインターフェース>> +
+2-2-1. <<Entity-PreInsert,PreInsert[small]##インターフェース##>> +
+2-2-2. <<Entity-PreUpdate,PreUpdate[small]##インターフェース##>> [small fuchsia]#_(v3.2.0~)_# +
+2-2-3. <<Entity-PreDelete,PreDelete[small]##インターフェース##>> [small fuchsia]#_(v3.2.0~)_# +
+2-2-4. <<Entity-PostInsert,PostInsert[small]##インターフェース##>> [small fuchsia]#_(v3.2.0~)_# +
+2-2-5. <<Entity-PostUpdate,PostUpdate[small]##インターフェース##>> [small fuchsia]#_(v3.2.0~)_# +
+2-2-6. <<Entity-PostDelete,PostDelete[small]##インターフェース##>> [small fuchsia]#_(v3.2.0~)_# +
+2-2-7. <<Entity-PostSelect,PostSelect[small]##インターフェース##>> [small fuchsia]#_(v3.2.0~)_# +
 3. <<lightsleep-properties,lightsleep.propertiesファイルの定義>> +
-3-1. <<Logger,ログ･ライブラリ･クラス>> +
-3-2. <<Database,データベース･ハンドラ･クラス>> +
-3-3. <<ConnectionSupplier,コネクション･サプライヤ･クラス>> +
+3-1. <<Logger,ログライブラリクラス>> +
+3-2. <<Database,データベースハンドラクラス>> +
+3-3. <<ConnectionSupplier,コネクションサプライヤクラス>> +
 4. <<Transaction,トランザクション>> +
 5. <<ExecuteSQL,SQLの実行>> +
 5-1. <<ExecuteSQL-select,SELECT>> +
@@ -55,6 +52,8 @@ link:UserGuide.asciidoc[English]
 5-1-15. <<ExecuteSQL-select-count,SELECT COUNT(*)>> +
 5-1-16. <<ExecuteSQL-select-fromSubquery,SELECT FROM句サブクエリ [small fuchsia]#_(v3.1.0~)_#>> +
 5-1-17. <<ExecuteSQL-select-union,SELECT UNION, UNION ALL [small fuchsia]#_(v3.1.0~)_#>> +
+5-1-18. <<ExecuteSQL-select-with,SELECT WITH句 [small fuchsia]#_(v4.0.0~)_#>> +
+5-1-19. <<ExecuteSQL-select-recursive,SELECT RECURSIVE [small fuchsia]#_(v4.0.0~)_#>> +
 5-2. <<ExecuteSQL-insert,INSERT>> +
 5-2-1. <<ExecuteSQL-insert-1,INSERT 1行>> +
 5-2-2. <<ExecuteSQL-insert-N,INSERT 複数行>> +
@@ -89,27 +88,27 @@ link:UserGuide.asciidoc[English]
 [options="header", width="80%"]
 |===
 |パッケージ|含まれるクラス/インタフェース
-|org.lightsleep                |主に使用するクラス
-|org.lightsleep.component      |条件や式などのSQLの構成要素を作成する際に使用するクラス
-|org.lightsleep.connection     |各種コネクション･プール･ライブラリを利用してコネクション･ラッパー･クラスを供給するクラス
-|org.lightsleep.database       |各種DBMS用のSQLを生成するクラス
-|org.lightsleep.database.anchor|JDBC URLに含まれる文字列と*org.lightsleep.database*パッケージのクラスとの対応付けで使用されるクラス
-|org.lightsleep.entity         |エンティティ･クラスを作成する際に使用するアノテーション･クラスおよびインタフェース
-|org.lightsleep.helper         |ライブラリ内部で使用される補助的なクラス
-|org.lightsleep.logger         |各種ロギング･ライブラリを利用してライブラリ内部のログを出力するクラス
+|`org.lightsleep`                |主に使用するクラス
+|`org.lightsleep.component`      |条件や式などのSQLの構成要素を作成する際に使用するクラス
+|`org.lightsleep.connection`     |各種コネクションプールライブラリを利用してコネクションラッパークラスを供給するクラス
+|`org.lightsleep.database`       |各種DBMS用のSQLを生成するクラス
+|`org.lightsleep.database.anchor`|JDBC URLに含まれる文字列と``org.lightsleep.database``パッケージのクラスとの対応付けで使用されるクラス
+|`org.lightsleep.entity`         |エンティティクラスを作成する際に使用するアノテーションクラスおよびインタフェース
+|`org.lightsleep.helper`         |ライブラリ内部で使用される補助的なクラス
+|`org.lightsleep.logger`         |各種ロギングライブラリを利用してライブラリ内部のログを出力するクラス
 |===
 
 [[EntityClass]]
 
 <<TOC_,目次へ>>
 
-=== 2. エンティティ･クラスの作成
-データベースのテーブル毎に対応するエンティティ･クラスを作成します。
+=== 2. エンティティクラスの作成
+データベースのテーブル毎に対応するエンティティクラスを作成します。
 
 [[Entity-Annotation]]
 
-==== 2-1. エンティティ･クラスで使用するアノテーション
-Lihgtsleepは、エンティティ･クラスまたはオブジェクトを引数とするメソッドでは自動的にテーブルとの関連付けを行いますが、エンティティ･クラスにアノテーションの付与が必要な場合があります。
+==== 2-1. エンティティクラスで使用するアノテーション
+Lihgtsleepは、エンティティクラスまたはオブジェクトを引数とするメソッドでは自動的にテーブルとの関連付けを行いますが、エンティティクラスにアノテーションの付与が必要な場合があります。
 
 Lightsleepには、以下のアノテーションがあります。
 
@@ -124,7 +123,7 @@ Lightsleepには、以下のアノテーションがあります。
 
 |<<Entity-Key,`@Key`>>
 |`boolean value` (省略値: `true`)
-|プライマリ･キーに対応
+|プライマリキーに対応
 |フィールド
 
 |<<Entity-Column,`@Column`>>
@@ -175,7 +174,7 @@ Lightsleepには、以下のアノテーションがあります。
 |<<Entity-XxxxxProperty,`@KeyProperty`>>
 |`String property`, +
 `boolean value` (省略値: `true`)
-|プライマリ･キーに対応
+|プライマリキーに対応
 |クラス
 
 |<<Entity-XxxxxProperty,`@ColumnProperty`>>
@@ -239,11 +238,11 @@ String column
 <<Entity-Annotation,アノテーション一覧へ>>
 
 ===== 2-1-1. @Table
-クラスに関連するデータベース･テーブル名を示します。
+クラスに関連するデータベーステーブル名を示します。
 テーブル名がクラス名と同じであれば、このアノテーションを指定する必要はありません。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 import org.lightsleep.entity.*;
 
@@ -253,10 +252,10 @@ public class Contact1 extends Contact {
 }
 ----
 
-`@Table("super")` を指定した場合は、スーパークラスのクラス名がテーブル名となります。
+``@Table("super")``を指定した場合は、スーパークラスのクラス名がテーブル名となります。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @Table("Contact")
 public class Person extends PersonBase {
@@ -266,7 +265,7 @@ public class Person extends PersonBase {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @Table('Contact')
 class Person extends PersonBase {
@@ -278,10 +277,10 @@ class Person extends PersonBase {
 [[Entity-Key]]
 
 ===== 2-1-2. @Key
-フィールドに関連するカラムがプライマリー･キーの一部である事を示します。
+フィールドに関連するカラムがプライマリーキーの一部である事を示します。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @Key
 public int contactId;
@@ -290,7 +289,7 @@ public short featureIndex;
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @Key
 int contactId
@@ -301,11 +300,11 @@ short featureIndex
 [[Entity-Column]]
 
 ===== 2-1-3. @Column
-フィールドに関連するデータベース･カラム名を示します。
+フィールドに関連するデータベースカラム名を示します。
 カラム名がフィールド名と同じであれば、このアノテーションを指定する必要がありません。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @Column("firstName")
 public String first;
@@ -314,7 +313,7 @@ public String last;
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @Column('firstName')
 String first
@@ -330,14 +329,14 @@ String last
 フィールド型が日付型で、カラム型が数値型のように異なる場合に指定します。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @ColumnType(Long.class)
 public LocalDate birthday;
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @ColumnType(Long)
 LocalDate birthday
@@ -352,7 +351,7 @@ LocalDate birthday
 フィールドがどのカラムにも関連しない事を示します。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @NonColumn
 public List<Phone> phones;
@@ -361,7 +360,7 @@ public List<Address> addresses;
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @NonColumn
 List<Phone> phones
@@ -375,7 +374,7 @@ List<Address> addresses
 フィールドに関連するカラムがSELECT SQLで使用されない事を示します。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @NonSelect
 public LocalDateTime createdTime;
@@ -384,7 +383,7 @@ public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @NonSelect
 LocalDateTime createdTime
@@ -398,7 +397,7 @@ LocalDateTime updatedTime
 フィールドに関連するカラムがINSERT SQLで使用されない事を示します。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @NonInsert
 public LocalDateTime createdTime;
@@ -407,7 +406,7 @@ public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @NonInsert
 LocalDateTime createdTime
@@ -421,14 +420,14 @@ LocalDateTime updatedTime
 フィールドに関連するカラムがUPDATE SQLで使用されない事を示します。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @NonUpdate
 public LocalDateTime createdTime;
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @NonUpdate
 LocalDateTime createdTime
@@ -443,7 +442,7 @@ LocalDateTime createdTime
 SELECT SQLのカラム名の代わりの式を指定します。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @Select("{firstName}||' '||{lastName}")
 @NonInsert@NonUpdate
@@ -451,7 +450,7 @@ public String fullName;
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @Select("{firstName}||' '||{lastName}")
 @NonInsert@NonUpdate
@@ -465,7 +464,7 @@ INSERT SQLの挿入値の式を示します。
 このアノテーションが指定された場合、フィールドの値は使用されません。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @Insert("CURRENT_TIMESTAMP")
 public LocalDateTime createdTime;
@@ -474,7 +473,7 @@ public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @Insert('CURRENT_TIMESTAMP')
 LocalDateTime createdTime
@@ -489,7 +488,7 @@ UPDATE SQLの更新値の式を示します。
 このアノテーションが指定された場合、フィールドの値は使用されません。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @Update("{updateCount}+1")
 public int updateCount;
@@ -498,7 +497,7 @@ public LocalDateTime updatedTime;
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @Update('{updateCount}+1')
 int updateCount
@@ -517,7 +516,7 @@ LocalDateTime updatedTime
 `value=false`, `column=""`, `type=Void.class`, `expression=""` を指定すると、スーパークラスでの指定が打ち消されます。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @KeyProperty(property="contactId")
 @KeyProperty(property="featureIndex")
@@ -525,7 +524,7 @@ public class ContactFeature extends ContactFeatureKey {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 @KeyProperties([
     @KeyProperty(property='contactId'),
@@ -536,19 +535,19 @@ class ContactFeature extends ContactFeatureKey {
 
 [[Entity-Interface]]
 
-=== 2-2. エンティティ･クラスで実装するインターフェース
+=== 2-2. エンティティクラスで実装するインターフェース
 
 [[Entity-PreInsert]]
 
 <<TOC_,目次へ>>
 
-==== 2-2-1. PreInsert [small]#インターフェース#
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql<E>` クラスの `insert(E)` および `insert(Iterable)` メソッドから INSERT SQL の実行前に `preInsert` メソッドが呼び出されます。
+==== 2-2-1. PreInsert[small]##インターフェース##
+エンティティクラスがこのインターフェースを実装している場合、``Sql<E>``クラスの``insert(E)``および``insert(Iterable)``メソッドからINSERT SQLの実行前に``preInsert``メソッドが呼び出されます。
 
-`preInsert` メソッドを使用して、プライマリー･キーの採番の実装をする事ができます。
+``preInsert``メソッドを使用して、プライマリーキーの採番の実装をする事ができます。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 public abstract class Common implements PreInsert {
     @Key
@@ -565,27 +564,29 @@ public abstract class Common implements PreInsert {
 
 <<TOC_,目次へ>>
 
-==== 2-2-2. PreUpdate [small]#インターフェース# [small fuchsia]#_(v3.2.0~)_#
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql<E>` クラスの `update(E)` および `update(Iterable)` メソッドからUPDATE SQLの実行前に `preUpdate` メソッドが呼び出されます。
+==== 2-2-2. PreUpdate[small]##インターフェース## [small fuchsia]#_(v3.2.0~)_#
+エンティティクラスがこのインターフェースを実装している場合、``Sql<E>``クラスの``update(E)``および``update(Iterable)``メソッドからUPDATE SQLの実行前に``preUpdate``メソッドが呼び出されます。
 
 [[Entity-PreDelete]]
 
 <<TOC_,目次へ>>
 
-==== 2-2-3. PreDelete [small]#インターフェース# [small fuchsia]#_(v3.2.0~)_#
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql<E>` クラスの `delete(E)` および `delete(Iterable)` メソッドからDELETE SQLの実行前に `preDelete` メソッドが呼び出されます。
+==== 2-2-3. PreDelete[small]##インターフェース## [small fuchsia]#_(v3.2.0~)_#
+エンティティクラスがこのインターフェースを実装している場合、``Sql<E>``クラスの``delete(E)``および``delete(Iterable)``メソッドからDELETE SQLの実行前に``preDelete``メソッドが呼び出されます。
 
 [[Entity-PostInsert]]
 
 <<TOC_,目次へ>>
 
-==== 2-2-4. PostInsert [small]#インターフェース# [small fuchsia]#_(v3.2.0~)_#
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql<E>` クラスの `insert(E)` および `insert(Iterable)` メソッドからINSERT SQLの実行後に `postInsert` メソッドが呼び出されます。
+==== 2-2-4. PostInsert[small]##インターフェース## [small fuchsia]#_(v3.2.0~)_#
+エンティティクラスがこのインターフェースを実装している場合、``Sql<E>``クラスの``insert(E)``および``insert(Iterable)``メソッドからINSERT SQLの実行後に``postInsert``メソッドが呼び出されます。
 
-`postInsert` メソッドを使用して、挿入時に自動採番された値を取得する事ができます。
+エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、内包するエンティティへの SQL 処理を連動して行う事ができます。
+
+また``postInsert``メソッドを使用して、挿入時に自動採番された値を取得する事ができます。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 public abstract class Common implements PostInsert {
     @Key
@@ -627,38 +628,40 @@ SELECT id FROM Contact WHERE id= (SELECT MAX(id) id FROM Contact)
 
 <<TOC_,目次へ>>
 
-==== 2-2-5. PostUpdate [small]#インターフェース# [small fuchsia]#_(v3.2.0~)_#
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql<E>` クラスの `update(E)` および `update(Iterable)` メソッドからUPDATE SQLの実行後に `postUpdate` メソッドが呼び出されます。
+==== 2-2-5. PostUpdate[small]##インターフェース## [small fuchsia]#_(v3.2.0~)_#
+エンティティクラスがこのインターフェースを実装している場合、``Sql<E>``クラスの``update(E)``および``update(Iterable)``メソッドからUPDATE SQLの実行後に``postUpdate``メソッドが呼び出されます。
+
+エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、内包するエンティティへの SQL 処理を連動して行う事ができます。
 
 [[Entity-PostDelete]]
 
 <<TOC_,目次へ>>
 
-==== 2-2-6. PostDelete [small]#インターフェース# [small fuchsia]#_(v3.2.0~)_#
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql<E>` クラスの `delete(E)` および `delete(Iterable)` メソッドからDELETE SQLの実行後に `postDelete` メソッドが呼び出されます。
+==== 2-2-6. PostDelete[small]##インターフェース## [small fuchsia]#_(v3.2.0~)_#
+エンティティクラスがこのインターフェースを実装している場合、``Sql<E>``クラスの``delete(E)``および``delete(Iterable)``メソッドからDELETE SQLの実行後に``postDelete``メソッドが呼び出されます。
+
+エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、内包するエンティティへの SQL 処理を連動して行う事ができます。
 
 [[Entity-PostSelect]]
 
 <<TOC_,目次へ>>
 
-==== 2-2-7. PostSelect [small]#インターフェース# [small fuchsia]#_(v3.2.0~)_#
-エンティティ･クラスがこのインターフェースを実装している場合、SELECT SQLを実行してエンティティを取得した後に `postSelect` メソッドが呼び出されます。
+==== 2-2-7. PostSelect[small]##インターフェース## [small fuchsia]#_(v3.2.0~)_#
+エンティティクラスがこのインターフェースを実装している場合、SELECT SQLを実行してエンティティを取得した後に``postSelect``メソッドが呼び出されます。
+
+エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、内包するエンティティへの SQL 処理を連動して行う事ができます。
 
 [[Entity-Composite]]
 
 <<TOC_,目次へ>>
 
-==== 2-2-8. Composite [small]#インターフェース# [small fuchsia]#_(非推奨 v3.2.0~)_#
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql<E>` クラスの `select`, `insert(E)`, `update(E)` または `delete(E)` メソッドから 各 SQLの実行後にエンティティ･クラスの `postSelect`, `postInsert`, `postUpdate` または `postDelete` メソッドが呼び出されます。
-エンティティが他のエンティティを内包する場合、このインターフェースを実装する事で、内包するエンティティへの SQL 処理を連動して行う事ができます。
-
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 @Table("super")
-public class ContactComposite extends Contact implements Composite {
+public class ContactComposite extends Contact implements PostSelect, PostInsert, PostUpdate, PostDelete {
     @NonColumn
-    public final List<Phone> phones = new ArrayList<>();
+    public final var phones = new ArrayList<Phone>();
 
     @Override
     public void postSelect(ConnectionWrapper conn) {
@@ -719,41 +722,6 @@ public class ContactComposite extends Contact implements Composite {
     }
 ----
 
-[[Entity-PreStore]]
-
-<<TOC_,目次へ>>
-
-==== 2-2-9. PreStore [small]#インターフェース# [small fuchsia]#_(非推奨 v3.2.0~)_#
-エンティティ･クラスがこのインターフェースを実装している場合、`Sql<E>` クラスの `insert(E)`,  `insert(Iterable)`,  `update(E)` および `update(Iterable)` メソッドからINSERTまたはUPDATE SQLの実行前に `preStore` メソッドが呼び出されます。
-
-[[Entity-PostLoad]]
-
-==== 2-2-10. PostLoad [small]#インターフェース# [small fuchsia]#_(非推奨 v3.2.0~)_#
-エンティティ･クラスがこのインターフェースを実装している場合、SELECT SQLを実行してエンティティを取得した後に `postLoad` メソッドが呼び出されます。
-
-[source,java]
-.Java [small]#での例#
-----
-import org.lightsleep.entity.*;
-
-public class Contact implements PreStore, PostLoad {
-
-    @Column("phone")
-    public String[] phones_
-
-    @NonColumn
-    public final List<String> phones = new ArrayList<>();
-
-    public void preStore() {
-        phones_ = phones.toArray(new String[phones.size()]);
-    }
-
-    public void postLoad() {
-        phones.clear();
-        Arrays.stream(phones_).forEach(phones::add);
-    }
-----
-
 [[lightsleep-properties]]
 
 <<TOC_,目次へ>>
@@ -761,8 +729,8 @@ public class Contact implements PreStore, PostLoad {
 [[lightsleep-properties]]
 === 3. lightsleep.propertiesの定義
 
-lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイルで、以下の内容を指定できます。 +
-*(バージョン2.0.0まで存在した `Database` プロパティは、バージョン2.1.0で削除されました。データベース･ハンドラは、JDBC URLから自動的に決定されます。)*
+lightsleep.propertiesは、Lightsleepが参照するプロパティファイルで、以下の内容を指定できます。 +
+*(バージョン2.0.0まで存在した `Database` プロパティは、バージョン2.1.0で削除されました。データベースハンドラは、JDBC URLから自動的に決定されます。)*
 
 [options="header", width="80%"]
 |===
@@ -772,13 +740,13 @@ lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイ�
 |`Std$Out$Info`
 
 |`<<ConnectionSupplier,ConnectionSupplier>>`
-|コネクション･サプライヤ･クラス
+|コネクションサプライヤクラス
 |`Jdbc`
 
 |`url`                   |JDBC URL|なし
 |`urls`                  |JDBC URL(複数)|なし
-|`dataSource`            |`Jndi` を使用した場合のデータソース名|なし
-|`dataSources`           |`Jndi` を使用した場合のデータソース名(複数)|なし
+|`dataSource`            |``Jndi``を使用した場合のデータソース名|なし
+|`dataSources`           |``Jndi``を使用した場合のデータソース名(複数)|なし
 |`maxStringLiteralLength`|SQLが生成される時の文字列リテラルの最大長|128
 |`maxBinaryLiteralLength`|SQLが生成される時のバイナリ列リテラルの最大長|128
 |`maxLogStringLength`    |ログに出力する文字列値の最大長|200
@@ -790,14 +758,14 @@ lightsleep.propertiesは、Lightsleepが参照するプロパティ･ファイ�
 [small fuchsia]#_(v2.2.0~)_#
 |`ConnectionSupplier` のログ出力フォーマット +
 *文字列の置換:* +
-*{0}*: データベース･ハンドラのクラス名 +
-*{1}*: コネクション･サプライヤのクラス名 +
+*{0}*: データベースハンドラのクラス名 +
+*{1}*: コネクションサプライヤのクラス名 +
 *{2}*: 接続先JDBC URL
 |`[{0}/{1}]`
 |===
 
-`lightsleep.properties` ファイルは、クラス･パスのいずれかに置いてください。あるいはシステム･プロパティ `lightsleep.resource` でファイル･パスを指定する事もできます。*(java -Dlightsleep.resource=...)* +
-上記以外にもコネクション･プール･ライブラリが使用するプロパティを定義します。
+`lightsleep.properties` ファイルは、クラスパスのいずれかに置いてください。あるいはシステムプロパティ `lightsleep.resource` でファイルパスを指定する事もできます。*(java -Dlightsleep.resource=...)* +
+上記以外にもコネクションプールライブラリが使用するプロパティを定義します。
 
 lightsleep.propertiesの例: +
 
@@ -813,9 +781,9 @@ initialSize = 10
 maxTotal    = 100
 ----
 
-`urls` プロパティにカンマ区切りで複数のJDBC URLを指定できます。[small fuchsia]#_(v2.1.0~)_# +
+``urls``プロパティにカンマ区切りで複数のJDBC URLを指定できます。[small fuchsia]#_(v2.1.0~)_# +
 1つのプロパティを複数行で定義する場合は、最後の行以外の行末にバックスラッシュ(`\`)を付加します。 +
-`urls` を指定した場合は、`url` の指定は無効になります。
+``urls``を指定した場合は、``url``の指定は無効になります。
 
 [source,properties]
 .lightsleep.properties - 複数のJDBC URLを指定する場合
@@ -850,12 +818,12 @@ initialSize = 10
 maxTotal    = 100
 ----
 
-URL毎にコネクション･サプライヤを指定する場合は、URLの先頭の `[]` 内に記述します。[small fuchsia]#_(v2.1.0~)_# +
-この形式の指定は、`ConnectionSupplier` プロパティの指定よりも優先されます。 +
-`username`, `jdbcUrl` プロパティは、`user`, `url` プロパティで指定する事ができますが、それら以外はコネクション･プール･ライブラリ固有のプロパティ名で指定してください。
+URL毎にコネクションサプライヤを指定する場合は、URLの先頭の``[]``内に記述します。[small fuchsia]#_(v2.1.0~)_# +
+この形式の指定は、``ConnectionSupplier``プロパティの指定よりも優先されます。 +
+`username`, ``jdbcUrl``プロパティは、`user`, ``url``プロパティで指定する事ができますが、それら以外はコネクションプールライブラリ固有のプロパティ名で指定してください。
 
 [source,properties]
-.lightsleep.properties - URL毎にコネクション･サプライヤを指定する場合
+.lightsleep.properties - URL毎にコネクションサプライヤを指定する場合
 ----
 Logger = Log4j2
 urls = \
@@ -885,17 +853,17 @@ maximumPoolSize = 10
 
 <<TOC_,目次へ>> <<lightsleep-properties,【プロパティ一覧へ】>>
 
-==== 3-1. ログ･ライブラリ･クラスの指定
+==== 3-1. ログライブラリクラスの指定
 
 Loggerプロパティの値は以下から選択してください。
 
 [options="header", width="80%"]
 |===
-|指定値|ログ･ライブラリなど|ログ･レベル|ログ･ライブラリが使用する定義ファイル
+|指定値|ログライブラリなど|ログレベル|ログライブラリが使用する定義ファイル
 |`Jdk`          |Java Runtime    |－   |logging.properties
 |`Log4j`        |Log4j           |－   |log4j.propertiesまたはlog4j.xml
 |`Log4j2`       |Log4j 2         |－   |log4j2.xml
-|`SLF4J`        |SLF4J           |－   |対象とするログ･ライブラリ実装に依存
+|`SLF4J`        |SLF4J           |－   |対象とするログライブラリ実装に依存
 |`Std$Out$Trace`|System.outに出力|trace|－
 |`Std$Out$Debug`|_同上_          |debug|－
 |`Std$Out$Info` |_同上_          |info |－
@@ -910,15 +878,15 @@ Loggerプロパティの値は以下から選択してください。
 |`Std$Err$Fatal`|_同上_          |fatal|－
 |===
 
-指定がない場合は、`Std$Out$Info` が選択されます。
+指定がない場合は、``Std$Out$Info``が選択されます。
 
 [[Database]]
 
 <<TOC_,目次へ>> <<lightsleep-properties,【プロパティ一覧へ】>>
 
-==== 3-2. データベース･ハンドラ･クラス
+==== 3-2. データベースハンドラクラス
 
-データベース･ハンドラ･クラスは、`url` または `urls` プロパティで指定されたJDBC URLの内容から自動的に選択されます。[small fuchsia]#_(v2.1.0~)_#
+データベースハンドラクラスは、``url``または``urls``プロパティで指定されたJDBC URLの内容から自動的に選択されます。[small fuchsia]#_(v2.1.0~)_#
 
 [options="header", width="60%"]
 |===
@@ -932,7 +900,7 @@ Loggerプロパティの値は以下から選択してください。
 |`sqlserver` |`SQLServer` |link:https://www.microsoft.com/ja-jp/sql-server/sql-server-2017[Microsoft SQL Server]
 |===
 
-JDBC URLに上記の文字列のいずれもが含まれていない場合、`Standard` クラスが選択されます。
+JDBC URLに上記の文字列のいずれもが含まれていない場合、``Standard``クラスが選択されます。
 
 [[ConnectionSupplier]]
 
@@ -940,11 +908,11 @@ JDBC URLに上記の文字列のいずれもが含まれていない場合、`St
 
 ==== 3-3. コネクションを供給するクラスの指定
 
-ConnectionSupplierプロパティの値は以下から選択してください。JDBC URLの先頭の `[]` 内で指定する事もできます。
+ConnectionSupplierプロパティの値は以下から選択してください。JDBC URLの先頭の``[]``内で指定する事もできます。
 
 [options="header", width="60%"]
 |===
-|指定値|対応するコネクション･プール･ライブラリ
+|指定値|対応するコネクションプールライブラリ
 |`C3p0`    |link:http://www.mchange.com/projects/c3p0/[c3p0]
 |`Dbcp`    |link:https://commons.apache.org/proper/commons-dbcp/[Apache Commons DBCP]
 |`HikariCP`|link:https://github.com/brettwooldridge/HikariCP[HikariCP]
@@ -953,11 +921,11 @@ ConnectionSupplierプロパティの値は以下から選択してください�
 |`Jdbc`    |`DriverManager#getConnection(String url, Properties info)` メソッド
 |===
 
-`C3p0`, `Dbcp 2`, `HikariCP`, `TomcatCP` クラスは、それぞれ対応するコネクション･プール･ライブラリを使用してデータベース･コネクションを取得します。 +
-`Jndi` クラスは、JNDI (Java Naming and Directory Interface)を使用して取得したデータソース(`javax.sql.DataSource`)からデータベース･コネクションを取得します。 +
-`Jdbc` クラスは、`java.sql.DriverManager.getConnection` メソッドを使用してデータベース･コネクションを取得します。 +
-コネクション･プール･ライブラリが必要する情報もlightsleep.propertiesファイルに定義してください。
-以下のlightsleep.propertiesの定義例のConnectionSupplierより下(url ~)は、コネクション･プール･ライブラリに渡す内容です。
+`C3p0`, `Dbcp 2`, `HikariCP`, ``TomcatCP``クラスは、それぞれ対応するコネクションプールライブラリを使用してデータベースコネクションを取得します。 +
+``Jndi``クラスは、JNDI (Java Naming and Directory Interface)を使用して取得したデータソース(`javax.sql.DataSource`)からデータベースコネクションを取得します。 +
+``Jdbc``クラスは、``java.sql.DriverManager.getConnection``メソッドを使用してデータベースコネクションを取得します。 +
+コネクションプールライブラリが必要する情報もlightsleep.propertiesファイルに定義してください。
+以下のlightsleep.propertiesの定義例のConnectionSupplierより下(url ~)は、コネクションプールライブラリに渡す内容です。
 
 [source,properties]
 .lightsleep.properties - Jdbc
@@ -1039,14 +1007,14 @@ dataSource         = example
 
 === 4. トランザクション
 
-`Transaction.execute` メソッドの実行が1つのトランザクションの実行に相当します。
-トランザクションの内容を引数 `transaction`(ラムダ式) で定義してください。
-ラムダ式は、`Transaction.executeBody` メソッドの内容に相当し、このメソッドの引数は、`ConnectionWrapper` です。
+``Transaction.execute``メソッドの実行が1つのトランザクションの実行に相当します。
+トランザクションの内容を引数``transaction``(ラムダ式) で定義してください。
+ラムダ式は、``Transaction.executeBody``メソッドの内容に相当し、このメソッドの引数は、``ConnectionWrapper``です。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-Contact contact = new Contact(1, "Akane", "Apple");
+var contact = new Contact(1, "Akane", "Apple");
 
 Transaction.execute(conn -> {
     // トランザクション開始
@@ -1059,7 +1027,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 def contact = new Contact(1, 'Akane', 'Apple')
 
@@ -1073,16 +1041,16 @@ Transaction.execute {
 }
 ----
 
-複数のJDBC URLを `lightsleep.properties` に定義した場合は、どのURLに対してトランザクションの実行を行うかを指定する必要があります。 `ConnectionSupplier.find` メソッドは、引数の文字列配列のすべてが含まれるJDBC URLを検索します。
+複数のJDBC URLを ``lightsleep.properties``に定義した場合は、どのURLに対してトランザクションの実行を行うかを指定する必要があります。 ``ConnectionSupplier.find``メソッドは、引数の文字列配列のすべてが含まれるJDBC URLを検索します。
 複数見つかった場合または見つからない場合は例外がスローされます。
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 public static final ConnectionSupplier supplier1 = ConnectionSupplier.find("example1");
     ...
 
-Contact contact = new Contact(1, "Akane", "Apple");
+var contact = new Contact(1, "Akane", "Apple");
 
 Transaction.execute(supplier1, conn -> {
     // トランザクション開始
@@ -1095,7 +1063,7 @@ Transaction.execute(supplier1, conn -> {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 static final supplier1 = ConnectionSupplier.find('example1')
     ...
@@ -1112,15 +1080,15 @@ Transaction.execute(supplier1) {
 }
 ----
 
-トランザクション中に例外がスローされた場合は、`Transaction.rollback` メソッドが実行され、
-そうでなければ `Transaction.commit` メソッドが実行されます。
+トランザクション中に例外がスローされた場合は、``Transaction.rollback``メソッドが実行され、
+そうでなければ ``Transaction.commit``メソッドが実行されます。
 
 [[ExecuteSQL]]
 
 <<TOC_,目次へ>>
 
 === 5. SQLの実行
-SQLの実行は、`Sql` クラスの各種メソッドを使用し、`Transaction.execute` メソッドの引数のラムダ式内に定義します。
+SQLの実行は、``Sql``クラスの各種メソッドを使用し、``Transaction.execute``メソッドの引数のラムダ式内に定義します。
 
 [[ExecuteSQL-select]]
 
@@ -1131,10 +1099,10 @@ SQLの実行は、`Sql` クラスの各種メソッドを使用し、`Transactio
 ==== 5-1-1. SELECT 1行/式条件
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 Transaction.execute(conn -> {
-    Optional<Contact> contactOpt = new Sql<>(Contact.class)
+    var contactOpt = new Sql<>(Contact.class)
         .where("{id}={}", 1)
         .connection(conn)
         .select();
@@ -1142,7 +1110,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 Transaction.execute {
     def contactOpt = new Sql<>(Contact)
@@ -1153,7 +1121,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1167,12 +1135,12 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-2. SELECT 1行/エンティティ条件
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-Contact contact = new Contact();
+var contact = new Contact();
 contact.id = 1;
 Transaction.execute(conn -> {
-    Optional<Contact> contactOpt = new Sql<>(Contact.class)
+    var contactOpt = new Sql<>(Contact.class)
         .where(contact)
         .connection(conn)
         .select();
@@ -1180,7 +1148,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 def contact = new Contact()
 contact.id = 1
@@ -1193,7 +1161,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1207,9 +1175,9 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-3. SELECT 複数行/式条件
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
@@ -1219,7 +1187,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1232,7 +1200,7 @@ Transaction.execute {
 
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1246,9 +1214,9 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-4. SELECT サブクエリ条件
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C")
         .where("EXISTS",
@@ -1261,7 +1229,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1276,7 +1244,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_birthday, C.updateCount C_updateCount, C.createdTime C_createdTime, C.updatedTime C_updatedTime
   FROM Contact C
@@ -1290,9 +1258,9 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 ==== 5-1-5. SELECT 式条件/AND
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
@@ -1303,7 +1271,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1316,7 +1284,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1330,9 +1298,9 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-6. SELECT 式条件/OR
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
@@ -1343,7 +1311,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1356,7 +1324,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1370,9 +1338,9 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-7. SELECT 式条件/A AND B OR C AND D
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where(Condition
@@ -1388,7 +1356,7 @@ Transaction.execute(conn ->
 );
 ----
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 Transaction.execute(conn ->
@@ -1407,7 +1375,7 @@ Transaction.execute(conn ->
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1421,9 +1389,9 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-8. SELECTカラムの選択
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
@@ -1434,7 +1402,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1447,7 +1415,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT firstName, lastName FROM Contact WHERE lastName='Apple'
 ----
@@ -1459,9 +1427,9 @@ SELECT firstName, lastName FROM Contact WHERE lastName='Apple'
 ==== 5-1-9. SELECT GROUP BY, HAVING
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C")
         .columns("lastName")
@@ -1473,7 +1441,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1487,7 +1455,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT MIN(C.lastName) C_lastName FROM Contact C GROUP BY C.lastName HAVING COUNT(C.lastName)>=2
 ----
@@ -1499,9 +1467,9 @@ SELECT MIN(C.lastName) C_lastName FROM Contact C GROUP BY C.lastName HAVING COUN
 ==== 5-1-10. SELECT ORDER BY, OFFSET, LIMIT
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .orderBy("{lastName}")
@@ -1514,7 +1482,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 Transaction.execute {
@@ -1529,7 +1497,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL - DB2, MariaDB, MySQL, PostgreSQL, SQLite
+.[small]##生成される##SQL - DB2, MariaDB, MySQL, PostgreSQL, SQLite
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1538,7 +1506,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ----
 
 [source,sql]
-.[small]#生成される# SQL - Oracle, SQLServer (取得時に行をスキップする)
+.[small]##生成される##SQL - Oracle, SQLServer (取得時に行をスキップする)
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1552,10 +1520,10 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-11. SELECT FOR UPDATE
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 Transaction.execute(conn -> {
-    Optional<Contact> contactOpt = new Sql<>(Contact.class)
+    var contactOpt = new Sql<>(Contact.class)
         .where("{id}={}", 1)
         .forUpdate()
         .connection(conn)
@@ -1564,7 +1532,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 Transaction.execute {
     def contactOpt = new Sql<>(Contact)
@@ -1576,27 +1544,27 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL - DB2
+.[small]##生成される##SQL - DB2
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1 FOR UPDATE WITH RS
 ----
 
 [source,sql]
-.[small]#生成される# SQL - MariaDB, MySQL, Oracle, PostgreSQL, SQLite
+.[small]##生成される##SQL - MariaDB, MySQL, Oracle, PostgreSQL, SQLite
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1 FOR UPDATE
 ----
 
 [source,sql]
-.[small]#生成される# SQL - SQLite
+.[small]##生成される##SQL - SQLite
 ----
 -- SQLiteでは、FOR UPDATEをサポートしていないのでUnsupportedOperationExceptionがスローされます。
 ----
 
 [source,sql]
-.[small]#生成される# SQL - SQLServer
+.[small]##生成される##SQL - SQLServer
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WITH (ROWLOCK,UPDLOCK) WHERE id=1
@@ -1609,21 +1577,21 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ==== 5-1-12. SELECT 内部結合
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
-List<Phone> phones = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
+var phones = new ArrayList<Phone>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C")
         .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
         .where("{C.id}={}", 1)
         .connection(conn)
-        .<Phone>select(contacts::add, phones::add)
+        .select(contacts::add, phones::add)
 );
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 List<Phone> phones = []
@@ -1637,7 +1605,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_birthday, C.updateCount C_updateCount, C.createdTime C_createdTime, C.updatedTime C_updatedTime, P.contactId P_contactId, P.featureIndex P_featureIndex, P.label P_label, P.content P_content
   FROM Contact C
@@ -1652,21 +1620,21 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 ==== 5-1-13. SELECT 左外部結合
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
-List<Phone> phones = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
+var phones = new ArrayList<Phone>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C")
         .leftJoin(Phone.class, "P", "{P.contactId}={C.id}")
         .where("{C.lastName}={}", "Apple")
         .connection(conn)
-        .<Phone>select(contacts::add, phones::add)
+        .select(contacts::add, phones::add)
 );
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 List<Phone> phones = []
@@ -1680,7 +1648,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_birthday, C.updateCount C_updateCount, C.createdTime C_createdTime, C.updatedTime C_updatedTime, P.contactId P_contactId, P.featureIndex P_featureIndex, P.label P_label, P.content P_content
   FROM Contact C
@@ -1695,21 +1663,21 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 ==== 5-1-14. SELECT 右外部結合
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
-List<Phone> phones = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
+var phones = new ArrayList<Phone>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C")
         .rightJoin(Phone.class, "P", "{P.contactId}={C.id}")
         .where("{P.label}={}", "Main")
         .connection(conn)
-        .<Phone>select(contacts::add, phones::add)
+        .select(contacts::add, phones::add)
 );
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 List<Contact> contacts = []
 List<Phone> phones = []
@@ -1723,7 +1691,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 -- SQLiteでは、RIGHT OUTER JOINが未サポートのため、例外がスローされます。
 SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_birthday, C.updateCount C_updateCount, C.createdTime C_createdTime, C.updatedTime C_updatedTime, P.contactId P_contactId, P.featureIndex P_featureIndex, P.label P_label, P.content P_content
@@ -1739,9 +1707,9 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 ==== 5-1-15. SELECT COUNT(*)
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-int[] rowCount = new int[1];
+var count = new int[1];
 Transaction.execute(conn ->
     count[0] = new Sql<>(Contact.class)
         .where("lastName={}", "Apple")
@@ -1751,9 +1719,9 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
-def rowCount = 0
+def count = 0
 Transaction.execute {
     count = new Sql<>(Contact)
         .where('lastName={}', 'Apple')
@@ -1763,7 +1731,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT COUNT(*) FROM Contact WHERE lastName='Apple'
 ----
@@ -1775,9 +1743,9 @@ SELECT COUNT(*) FROM Contact WHERE lastName='Apple'
 ==== 5-1-16. SELECT FROM句サブクエリ
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn -> {
     Class<? extends Contact.Ex> contactClass = Contact.Ex.targetClass(conn.getDatabase());
     new Sql<>(contactClass)
@@ -1790,7 +1758,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 def contacts = []
 Transaction.execute {
@@ -1805,7 +1773,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime, fullName
   FROM (
@@ -1821,11 +1789,11 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime,
 ==== 5-1-17. SELECT UNION, UNION ALL
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-List<ContactFeature> features = new ArrayList<>();
-String targetFirstName = "Setoka";
-String targetLastName = "Orange";
+var features = new ArrayList<ContactFeature>();
+var targetFirstName = "Setoka";
+var targetLastName = "Orange";
 Transaction.execute(conn -> {
     new Sql<>(ContactFeature.class, "F")
         .columns(ContactFeature.class)
@@ -1860,9 +1828,9 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
-def features = []
+List<ContactFeature> features = []
 def targetFirstName = 'Setoka'
 def targetLastName = 'Orange'
 Transaction.execute {
@@ -1899,7 +1867,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT F.contactId F_contactId, F.featureIndex F_featureIndex, F.label F_label, F.content F_content
   FROM Address F
@@ -1923,6 +1891,113 @@ SELECT F.contactId F_contactId, F.featureIndex F_featureIndex, F.label F_label, 
 ORDER BY F_label ASC
 ----
 
+[[ExecuteSQL-select-with]]
+
+<<TOC_,目次へ>>
+
+==== 5-1-18. SELECT WITH句
+
+[source,java]
+.Java[small]##での例##
+----
+var nodes = new ArrayList<Node>();
+var nodeSql = new Sql<>(Node.class)
+    .where("{name} LIKE {}", "%-%");
+Transaction.execute(conn ->
+    new Sql<>(Node.class)
+        .with(nodeSql)
+        .from(nodeSql)
+        .connection(conn)
+        .select(nodes::add)
+);
+----
+
+[source,groovy]
+.Groovy[small]##での例##
+----
+List<Node> nodes = []
+def nodeSql = new Sql<>(Node)
+    .where('{name} LIKE {}', '%-%')
+Transaction.execute {
+    new Sql<>(Node)
+        .with(nodeSql)
+        .from(nodeSql)
+        .connection(it)
+        .select({nodes << it})
+}
+----
+
+[source,sql]
+.[small]##生成される##SQL
+----
+WITH W1(id, parentId, name) AS (
+  SELECT id, parentId, name FROM Node WHERE name LIKE '%-%'
+)
+SELECT id, parentId, name FROM W1
+----
+
+[[ExecuteSQL-select-recursive]]
+
+<<TOC_,目次へ>>
+
+==== 5-1-19. SELECT RECURSIVE
+
+[source,java]
+.Java[small]##での例##
+----
+var nodes = new ArrayList<Node>();
+var nodeSql = new Sql<>(Node.class).where(rootNode)
+    .recursive(new Sql<>(Node.class, "node").where("{node.parentId}={W1.id}"));
+Transaction.execute(conn ->
+    new Sql<>(Node.class)
+        .with(nodeSql)
+        .from(nodeSql)
+        .connection(conn)
+        .select(nodes::add)
+);
+----
+
+[source,groovy]
+.Groovy[small]##での例##
+----
+List<Node> nodes = []
+def nodeSql = new Sql<>(Node).where(rootNode)
+    .recursive(new Sql<>(Node, 'node').where('{node.parentId}={W1.id}'))
+Transaction.execute {
+    new Sql<>(Node)
+        .with(nodeSql)
+        .from(nodeSql)
+        .connection(it)
+        .select({nodes << it})
+}
+----
+
+[source,sql]
+.[small]##生成される##SQL - MariaDB, MySQL, PostgreSQL, SQLite
+----
+WITH RECURSIVE W1(id, parentId, name) AS (
+  SELECT id, parentId, name FROM Node WHERE id=1
+  UNION ALL
+  SELECT node.id node_id, node.parentId node_parentId, node.name node_name
+    FROM Node node,W1
+    WHERE node.parentId=W1.id
+)
+SELECT id, parentId, name FROM W1
+----
+
+[source,sql]
+.[small]##生成される##SQL - DB2, Oracle, SQL Server
+----
+WITH W1(id, parentId, name) AS (
+  SELECT id, parentId, name FROM Node WHERE id=1
+  UNION ALL
+  SELECT node.id node_id, node.parentId node_parentId, node.name node_name
+    FROM Node node,W1
+    WHERE node.parentId=W1.id
+)
+SELECT id, parentId, name FROM W1
+----
+
 [[ExecuteSQL-insert]]
 
 <<TOC_,目次へ>>
@@ -1934,7 +2009,7 @@ ORDER BY F_label ASC
 ==== 5-2-1. INSERT 1行
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -1943,7 +2018,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 Transaction.execute {
     new Sql<>(Contact)
@@ -1953,7 +2028,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
+.[small]##生成される##SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
 ----
 INSERT INTO Contact
   (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
@@ -1962,7 +2037,7 @@ INSERT INTO Contact
 ----
 
 [source,sql]
-.[small]#生成される# SQL - SQLite
+.[small]##生成される##SQL - SQLite
 ----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
   VALUES
@@ -1970,7 +2045,7 @@ INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime
 ----
 
 [source,sql]
-.[small]#生成される# SQL - SQLServer
+.[small]##生成される##SQL - SQLServer
 ----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
   VALUES
@@ -1984,7 +2059,7 @@ INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime
 ==== 5-2-2. INSERT 複数行
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -1996,7 +2071,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 Transaction.execute {
     new Sql<>(Contact)
@@ -2009,7 +2084,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
+.[small]##生成される##SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
 ----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
   VALUES
@@ -2020,7 +2095,7 @@ INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime
 ----
 
 [source,sql]
-.[small]#生成される# SQL - SQLite
+.[small]##生成される##SQL - SQLite
 ----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
   VALUES
@@ -2031,7 +2106,7 @@ INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime
 ----
 
 [source,sql]
-.[small]#生成される# SQL - SQLServer
+.[small]##生成される##SQL - SQLServer
 ----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
   VALUES
@@ -2052,7 +2127,7 @@ INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime
 ==== 5-3-1. UPDATE 1行
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -2069,7 +2144,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 Transaction.execute {
     new Sql<>(Contact)
@@ -2086,7 +2161,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
+.[small]##生成される##SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1
@@ -2095,7 +2170,7 @@ UPDATE Contact SET
 ----
 
 [source,sql]
-.[small]#生成される# SQL - SQLite
+.[small]##生成される##SQL - SQLite
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1
@@ -2104,7 +2179,7 @@ UPDATE Contact SET
 ----
 
 [source,sql]
-.[small]#生成される# SQL - SQLServer
+.[small]##生成される##SQL - SQLServer
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1
@@ -2119,10 +2194,10 @@ UPDATE Contact SET
 ==== 5-3-2. UPDATE 複数行
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 Transaction.execute(conn -> {
-    List<Contact> contacts = new ArrayList<>();
+    var contacts = new ArrayList<Contact>();
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
         .connection(conn)
@@ -2137,7 +2212,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 Transaction.execute {
     List<Contact> contacts = []
@@ -2155,7 +2230,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
+.[small]##生成される##SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE lastName='Apple'
@@ -2171,7 +2246,7 @@ UPDATE Contact SET
 ----
 
 [source,sql]
-.[small]#生成される# SQL - SQLite
+.[small]##生成される##SQL - SQLite
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE lastName='Apple'
@@ -2187,7 +2262,7 @@ UPDATE Contact SET
 ----
 
 [source,sql]
-.[small]#生成される# SQL - SQLServer
+.[small]##生成される##SQL - SQLServer
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE lastName='Apple'
@@ -2209,9 +2284,9 @@ UPDATE Contact SET
 ==== 5-3-3. UPDATE 指定条件, カラム選択
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-Contact contact = new Contact();
+var contact = new Contact();
 contact.lastName = "Pomme";
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -2223,7 +2298,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 def contact = new Contact()
 contact.lastName = 'Pomme'
@@ -2237,7 +2312,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 UPDATE Contact SET lastName='Pomme' WHERE lastName='Apfel'
 ----
@@ -2249,9 +2324,9 @@ UPDATE Contact SET lastName='Pomme' WHERE lastName='Apfel'
 ==== 5-3-4. UPDATE 全行
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
-Contact contact = new Contact();
+var contact = new Contact();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where(Condition.ALL)
@@ -2262,7 +2337,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 def contact = new Contact()
 Transaction.execute {
@@ -2275,7 +2350,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 UPDATE Contact SET birthday=NULL
 ----
@@ -2291,7 +2366,7 @@ UPDATE Contact SET birthday=NULL
 ==== 5-4-1. DELETE 1行
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -2306,7 +2381,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 Transaction.execute {
     new Sql<>(Contact)
@@ -2322,7 +2397,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1
@@ -2336,10 +2411,10 @@ DELETE FROM Contact WHERE id=1
 ==== 5-4-2. DELETE 複数行
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 Transaction.execute(conn -> {
-    List<Contact> contacts = new ArrayList<>();
+    var contacts = new ArrayList<Contact>();
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Pomme")
         .connection(conn)
@@ -2351,7 +2426,7 @@ Transaction.execute(conn -> {
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 Transaction.execute {
     List<Contact> contacts = []
@@ -2366,7 +2441,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE lastName='Pomme'
@@ -2381,7 +2456,7 @@ DELETE FROM Contact WHERE id=3
 ==== 5-4-3. DELETE 指定条件
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -2392,7 +2467,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 Transaction.execute {
     new Sql<>(Contact)
@@ -2403,7 +2478,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 DELETE FROM Contact WHERE lastName='Orange'
 ----
@@ -2415,7 +2490,7 @@ DELETE FROM Contact WHERE lastName='Orange'
 ==== 5-4-4. DELETE 全行
 
 [source,java]
-.Java [small]#での例#
+.Java[small]##での例##
 ----
 Transaction.execute(conn ->
     new Sql<>(Phone.class)
@@ -2426,7 +2501,7 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovy [small]#での例#
+.Groovy[small]##での例##
 ----
 Transaction.execute {
     new Sql<>(Phone)
@@ -2437,7 +2512,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.[small]#生成される# SQL
+.[small]##生成される##SQL
 ----
 DELETE FROM Phone
 ----
@@ -2450,9 +2525,9 @@ DELETE FROM Phone
 
 SQL を生成する時に、以下の文字列を式として評価し、変換処理を行います。
 
-* `@Select`, `@Insert`, `@Update` アノテーションの値
+* `@Select`, `@Insert`, ``@Update``アノテーションの値
 
-* `@SelectProperty`, `@InsertProperty`, `@UpdateProperty` アノテーションの `expression` の値
+* `@SelectProperty`, `@InsertProperty`, ``@UpdateProperty``アノテーションの ``expression``の値
 
 * `Sql` クラスの以下のメソッドの引数
 ** `where(String content, Object... arguments)`
@@ -2489,11 +2564,11 @@ SQL を生成する時に、以下の文字列を式として評価し、変換�
 [options="header", width="80%"]
 |===
 |書式|変換内容
-|`{}`     |出現順に `arguments` の要素
-|`{xxx}`  |`xxx` プロパティに関連するカラム名
-|`{A.xxx}`|`"A."` + `xxx` プロパティに関連するカラム名(`A` はテーブル別名)
-|`{A_xxx}`|テーブル別名 `A` と `xxx` プロパティに関連するカラム別名
-|`{#xxx}` |`Sql` オブジェクトに設定されたエンティティ(または `Sql#insert`, `Sql#update` メソッドのエンティティ引数)の `xxx` プロパティの値
+|`{}`     |出現順に``arguments``の要素
+|`{xxx}`  |``xxx``プロパティに関連するカラム名
+|`{A.xxx}`|`"A."` + ``xxx``プロパティに関連するカラム名(`A` はテーブル別名)
+|`{A_xxx}`|テーブル別名``A``と``xxx``プロパティに関連するカラム別名
+|`{#xxx}` |`Sql` オブジェクトに設定されたエンティティ(または``Sql#insert``, ``Sql#update``メソッドのエンティティ引数)の``xxx``プロパティの値
 |===
 
 [[DateTime]]

@@ -29,9 +29,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonUpdate {
-	/**
-	 * @return フィールドに関連するカラムがUPDATE SQLで使用されないなら<b>true</b>、そうでなければ<b>false</b>
-	 * @since 2.0.0
-	 */
-	boolean value() default true;
+    /**
+     * @return フィールドに関連するカラムがUPDATE SQLで使用されない場合は<b>true</b>、そうでなければ<b>false</b>
+     * @since 2.0.0
+     */
+    boolean value() default true;
 }

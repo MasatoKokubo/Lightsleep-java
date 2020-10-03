@@ -40,12 +40,12 @@ import java.lang.annotation.*;
 @Repeatable(NonSelectProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonSelectProperty {
-	/**
-	 * @return the property name that specifies the field
-	 * @since 2.0.0
-	 */
-	String property();
+    /**
+     * @return the property name that specifies the field
+     * @since 2.0.0
+     */
+    String property();
 
-	/** @return true if the column related the field is not used in SELECT SQL, false otherwise */
-	boolean value() default true;
+    /** @return true if the column related the field is not used in SELECT SQL, false otherwise */
+    boolean value() default true;
 }

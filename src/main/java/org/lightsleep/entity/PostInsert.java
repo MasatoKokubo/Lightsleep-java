@@ -55,12 +55,12 @@ import org.lightsleep.connection.ConnectionWrapper;
  * @author Masato Kokubo
  */
 public interface PostInsert {
-	/**
-	 * Invoked after executing INSERT SQL.
-	 *
-	 * @param conn the connection wrapper
-	 *
-	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
-	 */
-	public void postInsert(ConnectionWrapper conn);
+    /**
+     * Invoked after executing INSERT SQL.
+     *
+     * @param conn the connection wrapper
+     *
+     * @throws NullPointerException if <b>conn</b> is <b>null</b>
+     */
+    public void postInsert(ConnectionWrapper conn);
 }

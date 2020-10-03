@@ -20,32 +20,59 @@ import spock.lang.*
 // Base
 // @since 2.1.0
 public class Base extends Specification {
-	@Shared List<ConnectionSupplier> connectionSuppliers
-	@Shared ConnectionSupplier connectionSupplier
+    @Shared List<ConnectionSupplier> connectionSuppliers
+    @Shared ConnectionSupplier connectionSupplier
+    @Shared boolean doesNotSupportRightJoin        // Dose not support SELECT ... RIGHT OUTER JOIN ...
+    @Shared boolean doesNotSupportWithClause       // Dose not support WITH ...
+    @Shared boolean doesNotSupportUpdateWithJoin   // Dose not support UPDATE ... JOIN ... 
+    @Shared boolean doesNotSupportForUpdate        // Dose not support SELECT ... FOR UPDATE 
+    @Shared boolean doesNotSupportForUpdateNoWait  // Dose not support SELECT ... FOR UPDATE NOWAIT
+    @Shared boolean doesNotSupportForUpdateNoWaitN // Dose not support SELECT ... FOR UPDATE WAIT N
 
-	def setupSpec() {
-		def databaseResource = new Resource('Database')
-		def databaseKeyword = databaseResource.getString('Database')
+    def setupSpec() {
+        def databaseResource = new Resource('Database')
+        def databaseKeyword = databaseResource.getString('Database')
+        doesNotSupportRightJoin = databaseKeyword.contains('sqlite')
+        doesNotSupportWithClause = databaseKeyword.contains('mysql:3306') // MySQL 4.7
+        doesNotSupportUpdateWithJoin =
+            databaseKeyword.contains('db2'       ) ||
+            databaseKeyword.contains('oracle'    ) ||
+            databaseKeyword.contains('postgresql') ||
+            databaseKeyword.contains('sqlite'    )
+        doesNotSupportForUpdate = databaseKeyword.contains('sqlite')
+        doesNotSupportForUpdateNoWait = 
+            databaseKeyword.contains('db2'       ) ||
+            databaseKeyword.contains('mariadb'   ) ||
+            databaseKeyword.contains('mysql'     ) ||
+            databaseKeyword.contains('postgresql') ||
+            databaseKeyword.contains('sqlite'    )
+        doesNotSupportForUpdateNoWaitN = 
+            databaseKeyword.contains('db2'       ) ||
+            databaseKeyword.contains('mariadb'   ) ||
+            databaseKeyword.contains('mysql'     ) ||
+            databaseKeyword.contains('postgresql') ||
+            databaseKeyword.contains('sqlite'    ) ||
+            databaseKeyword.contains('sqlserver' )
 
-		connectionSuppliers = [
-			Jdbc    .simpleName,
-			C3p0    .simpleName,
-			Dbcp    .simpleName,
-			HikariCP.simpleName,
-			TomcatCP.simpleName,
-		].collect {ConnectionSupplier.find(it, databaseKeyword)}
+        connectionSuppliers = [
+            Jdbc    .simpleName,
+            C3p0    .simpleName,
+            Dbcp    .simpleName,
+            HikariCP.simpleName,
+            TomcatCP.simpleName,
+        ].collect {ConnectionSupplier.find(it, databaseKeyword)}
 
-		connectionSupplier = connectionSuppliers[0]
-	}
+        connectionSupplier = connectionSuppliers[0]
+    }
 
-	def deleteAllTables() {
-		Transaction.execute(connectionSupplier) {
-			new Sql<>(Contact ).where(Condition.ALL).connection(it).delete()
-			new Sql<>(Address ).where(Condition.ALL).connection(it).delete()
-			new Sql<>(Phone   ).where(Condition.ALL).connection(it).delete()
-			new Sql<>(Product ).where(Condition.ALL).connection(it).delete()
-			new Sql<>(Sale    ).where(Condition.ALL).connection(it).delete()
-			new Sql<>(SaleItem).where(Condition.ALL).connection(it).delete()
-		}
-	}
+    def deleteAllTables() {
+        Transaction.execute(connectionSupplier) {
+            new Sql<>(Contact ).connection(it).where(Condition.ALL).delete()
+            new Sql<>(Address ).connection(it).where(Condition.ALL).delete()
+            new Sql<>(Phone   ).connection(it).where(Condition.ALL).delete()
+            new Sql<>(Product ).connection(it).where(Condition.ALL).delete()
+            new Sql<>(Sale    ).connection(it).where(Condition.ALL).delete()
+            new Sql<>(SaleItem).connection(it).where(Condition.ALL).delete()
+        }
+    }
 }

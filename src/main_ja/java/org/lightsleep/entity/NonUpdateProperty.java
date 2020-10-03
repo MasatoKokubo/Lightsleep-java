@@ -36,12 +36,12 @@ import java.lang.annotation.*;
 @Repeatable(NonUpdateProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonUpdateProperty {
-	/**
-	 * @return フィールドを指定するプロパティ名
-	 * @since 2.0.0
-	 */
-	String property();
+    /**
+     * @return フィールドを指定するプロパティ名
+     * @since 2.0.0
+     */
+    String property();
 
-	/** @return フィールドに関連するカラムがUPDATE SQLで使用されないなら<b>true</b>、そうでなければ<b>false</b> */
-	boolean value() default true;
+    /** @return フィールドに関連するカラムがUPDATE SQLで使用されない場合は<b>true</b>、そうでなければ<b>false</b> */
+    boolean value() default true;
 }

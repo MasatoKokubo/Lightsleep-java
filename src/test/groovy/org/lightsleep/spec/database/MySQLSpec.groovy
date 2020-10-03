@@ -13,50 +13,50 @@ import spock.lang.*
 // MySQLSpec
 @Unroll
 class MySQLSpec extends Specification {
-	@Shared map = MySQL.instance.typeConverterMap()
+    @Shared map = MySQL.instance.typeConverterMap()
 
-	// -> SqlString
-	def "MySQL #title -> SqlString"(String title, Object sourceValue, String expectedString) {
-		DebugTrace.enter() // for Debugging
-		DebugTrace.print('title', title) // for Debugging
-		DebugTrace.print('sourceValue', sourceValue) // for Debugging
-		DebugTrace.print('expectedString', expectedString) // for Debugging
-		when:
-			def convertedValue = TypeConverter.convert(map, sourceValue, SqlString).toString()
-			DebugTrace.print('convertedValue', convertedValue) // for Debugging
+    // -> SqlString
+    def "MySQL #title -> SqlString"(String title, Object sourceValue, String expectedString) {
+        DebugTrace.enter() // for Debugging
+        DebugTrace.print('title', title) // for Debugging
+        DebugTrace.print('sourceValue', sourceValue) // for Debugging
+        DebugTrace.print('expectedString', expectedString) // for Debugging
+        when:
+            def convertedValue = TypeConverter.convert(map, sourceValue, SqlString).toString()
+            DebugTrace.print('convertedValue', convertedValue) // for Debugging
 
-		then:
-			expectedString == convertedValue
-		DebugTrace.leave() // for Debugging
+        then:
+            expectedString == convertedValue
+        DebugTrace.leave() // for Debugging
 
-		where:
-			title|sourceValue|expectedString
+        where:
+            title|sourceValue|expectedString
 
-		//	title               |sourceValue          |expectedString
-			'Boolean false     '|false                |'0'
-			'Boolean true      '|true                 |'1'
-			'String \\u0000    '|'\u0000'             |"'\\0'"
-			'String \\b        '|'\b'                 |"'\\b'"
-			'String \\t        '|'\t'                 |"'\\t'"
-			'String \\n        '|'\n'                 |"'\\n'"
-			'String \\r        '|'\r'                 |"'\\r'"
-			'String \'A\'      '|"'A'"                |"'''A'''"
-			'String \\         '|'\\'                 |"'\\\\'"
-			'byte[] {0,1,-2,-1}'|[0,1,-2,-1] as byte[]|"X'0001FEFF'"
-	}
+        //    title               |sourceValue          |expectedString
+            'Boolean false     '|false                |'0'
+            'Boolean true      '|true                 |'1'
+            'String \\u0000    '|'\u0000'             |"'\\0'"
+            'String \\b        '|'\b'                 |"'\\b'"
+            'String \\t        '|'\t'                 |"'\\t'"
+            'String \\n        '|'\n'                 |"'\\n'"
+            'String \\r        '|'\r'                 |"'\\r'"
+            'String \'A\'      '|"'A'"                |"'''A'''"
+            'String \\         '|'\\'                 |"'\\\\'"
+            'byte[] {0,1,-2,-1}'|[0,1,-2,-1] as byte[]|"X'0001FEFF'"
+    }
 
-	// maskPassword
-	def "MySQL maskPassword"(String jdbcUrl, String result) {
-		expect: MySQL.instance.maskPassword(jdbcUrl) == result
+    // maskPassword
+    def "MySQL maskPassword"(String jdbcUrl, String result) {
+        expect: MySQL.instance.maskPassword(jdbcUrl) == result
 
-		where:
-			jdbcUrl                       |result
-			''                            |''
-			'passwor='                    |'passwor='
-			'password ='                  |'password=' + Standard.PASSWORD_MASK
-			'password  =a'                |'password=' + Standard.PASSWORD_MASK
-			'password= !"#$%\'()*+,-./&'  |'password=' + Standard.PASSWORD_MASK + '&'
-			'?password=;<=>?@[\\]^_`(|)~:'|'?password=' + Standard.PASSWORD_MASK + ':'
-			'?password=a&password=a:bbb'  |'?password=' + Standard.PASSWORD_MASK + '&password=' + Standard.PASSWORD_MASK + ':bbb'
-	}
+        where:
+            jdbcUrl                       |result
+            ''                            |''
+            'passwor='                    |'passwor='
+            'password ='                  |'password=' + Standard.PASSWORD_MASK
+            'password  =a'                |'password=' + Standard.PASSWORD_MASK
+            'password= !"#$%\'()*+,-./&'  |'password=' + Standard.PASSWORD_MASK + '&'
+            '?password=;<=>?@[\\]^_`(|)~:'|'?password=' + Standard.PASSWORD_MASK + ':'
+            '?password=a&password=a:bbb'  |'?password=' + Standard.PASSWORD_MASK + '&password=' + Standard.PASSWORD_MASK + ':bbb'
+    }
 }

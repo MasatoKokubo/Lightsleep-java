@@ -40,12 +40,12 @@ import java.lang.annotation.*;
 @Repeatable(NonInsertProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonInsertProperty {
-	/**
-	 * @return フィールドを指定するプロパティ名
-	 * @since 2.0.0
-	 */
-	String property();
+    /**
+     * @return フィールドを指定するプロパティ名
+     * @since 2.0.0
+     */
+    String property();
 
-	/** @return フィールドに関連するカラムがINSERT SQLで使用されないなら<b>true</b>、そうでなければ<b>false</b> */
-	boolean value() default true;
+    /** @return フィールドに関連するカラムがINSERT SQLで使用されない場合は<b>true</b>、そうでなければ<b>false</b> */
+    boolean value() default true;
 }

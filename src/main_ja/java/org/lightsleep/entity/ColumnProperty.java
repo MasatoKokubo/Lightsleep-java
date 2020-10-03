@@ -45,9 +45,9 @@ import java.lang.annotation.*;
 @Repeatable(ColumnProperties.class)
 @Target({ElementType.TYPE})
 public @interface ColumnProperty {
-	/** @return フィールドを指定するプロパティ名 */
-	String property();
+    /** @return フィールドを指定するプロパティ名 */
+    String property();
 
-	/** @return カラム名 */
-	String column();
+    /** @return カラム名 */
+    String column();
 }

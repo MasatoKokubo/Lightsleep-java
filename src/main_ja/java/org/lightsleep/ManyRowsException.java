@@ -11,19 +11,19 @@ package org.lightsleep;
  */
 @SuppressWarnings("serial")
 public class ManyRowsException extends RuntimeException {
-	/**
-	 * 新規<b>ManyRowsException</b>を構築します。
-	 */
-	public ManyRowsException() {
-	}
+    /**
+     * 新規<b>ManyRowsException</b>を構築します。
+     */
+    public ManyRowsException() {
+    }
 
-	/**
-	 * 指定の詳細メッセージで新規<b>ManyRowsException</b>を構築します。
-	 *
-	 * @param message 詳細メッセージ
-	 *
-	 * @since 1.5.0
-	 */
-	public ManyRowsException(String message) {
-	}
+    /**
+     * 指定の詳細メッセージで新規<b>ManyRowsException</b>を構築します。
+     *
+     * @param message 詳細メッセージ
+     *
+     * @since 1.5.0
+     */
+    public ManyRowsException(String message) {
+    }
 }

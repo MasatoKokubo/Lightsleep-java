@@ -6,12 +6,12 @@ package org.lightsleep.entity;
 import org.lightsleep.connection.ConnectionWrapper;
 
 /**
- * エンティティ･クラスがこのインターフェースを実装している場合、
+ * エンティティクラスがこのインターフェースを実装している場合、
  * <b>Sql&lt;E&gt;</b>クラスの<b>insert(E)</b>および<b>insert(Iterable)</b>メソッドから
  * INSERT SQLの実行前に<b>preInsert</b>メソッドが呼び出されます。
  *
  * <p>
- * <b>preInsert</b>メソッドを使用して、プライマリー･キーの採番の実装をする事ができます。
+ * <b>preInsert</b>メソッドを使用して、プライマリーキーの採番の実装をする事ができます。
  * </p>
  *
  * <div class="exampleTitle"><span>使用例/Java</span></div>
@@ -31,12 +31,12 @@ import org.lightsleep.connection.ConnectionWrapper;
  * @author Masato Kokubo
  */
 public interface PreInsert {
-	/**
-	 * INSERT SQLの実行前に呼び出されます。
-	 *
-	 * @param connection コネクション･ラッパー
-	 *
-	 * @throws NullPointerException <b>connection</b>がnullの場合
-	 */
-	public void preInsert(ConnectionWrapper connection);
+    /**
+     * INSERT SQLの実行前に呼び出されます。
+     *
+     * @param connection コネクションラッパー
+     *
+     * @throws NullPointerException <b>connection</b>がnullの場合
+     */
+    public void preInsert(ConnectionWrapper connection);
 }

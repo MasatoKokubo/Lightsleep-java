@@ -6,7 +6,7 @@ package org.lightsleep.entity;
 import org.lightsleep.connection.ConnectionWrapper;
 
 /**
- * エンティティ･クラスがこのインターフェースを実装している場合、
+ * エンティティクラスがこのインターフェースを実装している場合、
  * <b>Sql&lt;E&gt;</b>クラスの<b>insert(E)</b>および<b>insert(Iterable)</b>メソッドから
  * INSERT SQLの実行後に<b>postInsert</b>メソッドが呼び出されます。
  *
@@ -55,13 +55,13 @@ import org.lightsleep.connection.ConnectionWrapper;
  * @author Masato Kokubo
  */
 public interface PostInsert {
-	/**
-	 * INSERT SQLの実行後に呼び出されます。
-	 *
-	 * @param connection コネクション･ラッパー
-	 * @return このメソッドで挿入または更新した行数
-	 *
-	 * @throws NullPointerException <b>connection</b>がnullの場合
-	 */
-	int postInsert(ConnectionWrapper connection);
+    /**
+     * INSERT SQLの実行後に呼び出されます。
+     *
+     * @param connection コネクションラッパー
+     * @return このメソッドで挿入または更新した行数
+     *
+     * @throws NullPointerException <b>connection</b>がnullの場合
+     */
+    int postInsert(ConnectionWrapper connection);
 }

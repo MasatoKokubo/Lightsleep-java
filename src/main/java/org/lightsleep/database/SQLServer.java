@@ -106,364 +106,417 @@ import org.lightsleep.helper.Utils;
  * @see org.lightsleep.database.Standard
  */
 public class SQLServer extends Standard {
-	/**
-	 * The pattern string of passwords
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_PATTERN =
-		'['
-		+ ASCII_CHARS
-			.replace(":;", "")
-			.replace("[\\]", "\\[\\\\\\]")
-			.replace("^", "\\^")
-		+ "]*";
+    /**
+     * The pattern string of passwords
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_PATTERN =
+        '['
+        + ASCII_CHARS
+            .replace(":;", "")
+            .replace("[\\]", "\\[\\\\\\]")
+            .replace("^", "\\^")
+        + "]*";
 
-	/**
-	 * The only instance of this class
-	 *
-	 * @since 2.1.0
-	 */
-	public static final SQLServer instance = new SQLServer();
+    /**
+     * The only instance of this class
+     *
+     * @since 2.1.0
+     */
+    public static final SQLServer instance = new SQLServer();
 
-	/**
-	 * Constructs a new <b>SQLServer</b>.
-	 */
-	protected SQLServer() {
-		// boolean -> 0, 1
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
-		);
+    /**
+     * Constructs a new <b>SQLServer</b>.
+     */
+    protected SQLServer() {
+        // boolean -> 0, 1
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
+        );
 
-		// String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String.class, SqlString.class, object -> {
-				if (object.length() > maxStringLiteralLength)
-					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
+        // String -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(String.class, SqlString.class, object -> {
+                if (object.length() > maxStringLiteralLength)
+                    return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
 
-				StringBuilder buff = new StringBuilder(object.length() + 2);
-				int literalIndex = buff.length();
-				buff.append('\'');
-				boolean hasNChar = false;
+                StringBuilder buff = new StringBuilder(object.length() + 2);
+                int literalIndex = buff.length();
+                buff.append('\'');
+                boolean hasNChar = false;
 
-				for (char ch : object.toCharArray()) {
-					if (ch >= ' ' && ch != '\u007F') {
-						// Literal representation
-						if (ch >= '\u0080')
-							hasNChar = true;
-						if (literalIndex < 0) {
-							// Outside of the literal
-							buff.append('+');
-							literalIndex = buff.length();
-							buff.append('\'');
-						}
-						if (ch == '\'') buff.append("''");
-						else buff.append(ch);
-					} else {
-						// Functional representation
-						if (literalIndex >= 0) {
-							// Inside of the literal
-							if (hasNChar) {
-								buff.insert(literalIndex, 'N');
-								hasNChar = false;
-							}
-							// Inside of the literal
-							buff.append('\'');
-							literalIndex = -1;
-						}
-						buff.append("+CHAR(").append((int)ch).append(')');
-					}
-				}
+                for (char ch : object.toCharArray()) {
+                    if (ch >= ' ' && ch != '\u007F') {
+                        // Literal representation
+                        if (ch >= '\u0080')
+                            hasNChar = true;
+                        if (literalIndex < 0) {
+                            // Outside of the literal
+                            buff.append('+');
+                            literalIndex = buff.length();
+                            buff.append('\'');
+                        }
+                        if (ch == '\'') buff.append("''");
+                        else buff.append(ch);
+                    } else {
+                        // Functional representation
+                        if (literalIndex >= 0) {
+                            // Inside of the literal
+                            if (hasNChar) {
+                                buff.insert(literalIndex, 'N');
+                                hasNChar = false;
+                            }
+                            // Inside of the literal
+                            buff.append('\'');
+                            literalIndex = -1;
+                        }
+                        buff.append("+CHAR(").append((int)ch).append(')');
+                    }
+                }
 
-				if (literalIndex >= 0) {
-					if (hasNChar)
-						buff.insert(literalIndex, 'N');
-					buff.append('\'');
-				}
+                if (literalIndex >= 0) {
+                    if (hasNChar)
+                        buff.insert(literalIndex, 'N');
+                    buff.append('\'');
+                }
 
-				return new SqlString(buff.toString());
-			})
-		);
+                return new SqlString(buff.toString());
+            })
+        );
 
-		Function<String, SqlString> toDateSqlString         = string -> new SqlString("CAST('" + string + "' AS DATE)");
-		Function<String, SqlString> toTimeSqlString         = string -> new SqlString("CAST('" + string + "' AS TIME)");
-		Function<String, SqlString> toTimestampSqlString    = string -> new SqlString("CAST('" + string + "' AS DATETIME2)");
-		Function<String, SqlString> toTimestampWTZSqlString = string -> new SqlString("CAST('" + string + "' AS DATETIMEOFFSET)");
+        // 4.0.0
+        // Character -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+            TypeConverter.of(typeConverterMap, Character.class, String.class, SqlString.class)
+        );
 
-		// java.util.Date -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.util.Date.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function(),
-				toDateSqlString
-			)
-		);
+        Function<String, SqlString> toDateSqlString         = string -> new SqlString("CAST('" + string + "' AS DATE)");
+        Function<String, SqlString> toTimeSqlString         = string -> new SqlString("CAST('" + string + "' AS TIME)");
+        Function<String, SqlString> toTimestampSqlString    = string -> new SqlString("CAST('" + string + "' AS DATETIME2)");
+        Function<String, SqlString> toTimestampWTZSqlString = string -> new SqlString("CAST('" + string + "' AS DATETIMEOFFSET)");
 
-		// java.sql.Date -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Date.class, String.class).function(),
-				toDateSqlString
-			)
-		);
+        // java.util.Date -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(java.util.Date.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function(),
+        //        toDateSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, java.util.Date.class, String.class, SqlString.class, toDateSqlString)
+        ////
+        );
 
-		// Time -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
-				toTimeSqlString
-			)
-		);
+        // java.sql.Date -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Date.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Date.class, String.class).function(),
+        //        toDateSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Date.class, String.class, SqlString.class, toDateSqlString)
+        ////
+        );
 
-		// Timestamp -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function(),
-				toTimestampSqlString
-			)
-		);
+        // Time -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Time.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
+        //        toTimeSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Time.class, String.class, SqlString.class, toTimeSqlString)
+        ////
+        );
 
-		// LocalDate -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalDate.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, LocalDate.class, String.class).function(),
-				toDateSqlString
-			)
-		);
+        // Timestamp -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Timestamp.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function(),
+        //        toTimestampSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Timestamp.class, String.class, SqlString.class, toTimestampSqlString)
+        ////
+        );
 
-		// LocalTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
-				toTimeSqlString
-			)
-		);
+        // LocalDate -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(LocalDate.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, LocalDate.class, String.class).function(),
+        //        toDateSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, LocalDate.class, String.class, SqlString.class, toDateSqlString)
+        ////
+        );
 
-		// LocalDateTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalDateTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, LocalDateTime.class, String.class).function(),
-				toTimestampSqlString
-			)
-		);
+        // LocalTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(LocalTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
+        //        toTimeSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, LocalTime.class, String.class, SqlString.class, toTimeSqlString)
+        ////
+        );
 
-		// OffsetDateTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(OffsetDateTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, OffsetDateTime.class, String.class).function(),
-				toTimestampWTZSqlString
-			)
-		);
+        // LocalDateTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(LocalDateTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, LocalDateTime.class, String.class).function(),
+        //        toTimestampSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, LocalDateTime.class, String.class, SqlString.class, toTimestampSqlString)
+        ////
+        );
 
-		// ZonedDateTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(ZonedDateTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, ZonedDateTime.class, String.class).function(),
-				toTimestampWTZSqlString
-			)
-		);
+        // OffsetDateTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(OffsetDateTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, OffsetDateTime.class, String.class).function(),
+        //        toTimestampWTZSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, OffsetDateTime.class, String.class, SqlString.class, toTimestampWTZSqlString)
+        ////
+        );
 
-		// Instant -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Instant.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Instant.class, String.class).function(),
-				toTimestampWTZSqlString
-			)
-		);
+        // ZonedDateTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(ZonedDateTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, ZonedDateTime.class, String.class).function(),
+        //        toTimestampWTZSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, ZonedDateTime.class, String.class, SqlString.class, toTimestampWTZSqlString)
+        ////
+        );
 
-		// byte[] -> SqlString (since 1.7.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[].class, SqlString.class, object -> new SqlString(SqlString.PARAMETER, object))
-		);
-	}
+        // Instant -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Instant.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Instant.class, String.class).function(),
+        //        toTimestampWTZSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Instant.class, String.class, SqlString.class, toTimestampWTZSqlString)
+        ////
+        );
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
-		StringBuilder buff = new StringBuilder();
+        // byte[] -> SqlString (since 1.7.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(byte[].class, SqlString.class, object -> new SqlString(SqlString.PARAMETER, object))
+        );
+    }
 
-	// 3.1.0
-		if (sql.getUnionSqls().isEmpty()) {
-	////
-			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-			buff.append(subSelectSql(sql, parameters));
-	// 3.1.0
-		} else {
-			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-			// UNION or UNION ALL
-			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-			// ...
-			String delimiter = "";
-//			for (Sql<? extends E> unionSql : sql.getUnionSqls()) {
-			for (Sql<?> unionSql : sql.getUnionSqls()) {
-				buff.append(delimiter).append(subSelectSql(unionSql, parameters));
-				delimiter = sql.isUnionAll() ? " UNION ALL " : " UNION ";
-			}
-		}
-	////
+    @Override
+// 4.0.0
+//  public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
+    public <E> CharSequence selectSql(Sql<E> sql, List<Object> parameters) {
+////
+        StringBuilder buff = new StringBuilder();
 
-		// ORDER BY ...
-		appendOrderBy(buff, sql, parameters);
+    // 4.0.0
+    //   if (!sql.getUnionSqls().isEmpty()) {
+    //      // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+    //      // UNION or UNION ALL
+    //      // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+    //      // ...
+    //      String delimiter = "";
+    //      for (Sql<?> unionSql : sql.getUnionSqls()) {
+    //      // 4.0.0
+    //      //  buff.append(delimiter).append(subSelectSql(unionSql, parameters));
+    //          buff.append(delimiter).append(subSelectSql(unionSql, sql, parameters));
+    //      ////
+    //          delimiter = sql.isUnionAll() ? " UNION ALL " : " UNION ";
+    //      }
+    //  } else {
+    //      // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+    //      buff.append(subSelectSql(sql, parameters));
+    //  }
+       // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+        buff.append(subSelectSql(sql, null, parameters));
+    ////
 
-		return buff.toString();
-	}
+        // ORDER BY ...
+        appendOrderBy(buff, sql, parameters);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
-		StringBuilder buff = new StringBuilder();
+    // 4.0.0
+    //  return buff.toString();
+        return buff;
+    ////
+    }
 
-		// SELECT
-		buff.append("SELECT");
+    @Override
+    protected <E> CharSequence withSelectSql(Sql<E> sql, List<Object> parameters) {
+        return onlyWithSelectSql(sql, parameters);
+    }
 
-		// DISTINCT
-		appendDistinct(buff, sql);
+    @Override
+// 4.0.0
+//  public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
+    public <E, OE> CharSequence subSelectSql(Sql<E> sql, Sql<OE> outerSql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
+////
+        StringBuilder buff = new StringBuilder();
 
-		// the column names, ...
-		buff.append(' ').append(columnsSupplier.get());
+        // SELECT
+        buff.append("SELECT ");
 
-		// FROM
-		buff.append(" FROM");
+        // DISTINCT
+        appendDistinct(buff, sql);
 
-	// 3.1.0
-	//	// main table name and alias
-	//	appendMainTable(buff, sql);
-		if (sql.getFrom() == null) {
-			// main table name and alias
-			appendMainTable(buff, sql);
+        // the column names, ...
+        buff.append(columnsSupplier.get());
 
-		} else {
-			// (SELECT ...) table alias
-			buff.append(" (")
-				.append(subSelectSql(sql.getFrom(), parameters))
-				.append(") ")
-				.append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
-		}
-	////
+        // FROM
+        buff.append(" FROM ");
 
-		// FOR UPDATE
-		appendForUpdate(buff, sql);
+    // 4.0.0
+    //  if (sql.getFrom() == null) {
+    //      // main table name and alias
+    //      appendMainTable(buff, sql);
+    //
+    //  } else {
+    //      // (SELECT ...) table alias
+    //      buff.append("(")
+    //          .append(subSelectSql(sql.getFrom(), parameters))
+    //          .append(") ")
+    //          .append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
+    //  }
+        // main table
+        appendFrom(buff, sql, outerSql, parameters);
+    ////
 
-		// INNER / OUTER JOIN ...
-		appendJoinTables(buff, sql, parameters);
+        // FOR UPDATE
+        appendForUpdate(buff, sql);
 
-		// WHERE ...
-		appendWhere(buff, sql, parameters);
+        // INNER / OUTER JOIN ...
+        appendJoinTables(buff, sql, parameters);
 
-		// GROUP BY ...
-		appendGroupBy(buff, sql, parameters);
+        // WHERE ...
+        appendWhere(buff, sql, parameters);
 
-		// HAVING ...
-		appendHaving(buff, sql, parameters);
+        // GROUP BY ...
+        appendGroupBy(buff, sql, parameters);
 
-		return buff.toString();
-	}
+        // HAVING ...
+        appendHaving(buff, sql, parameters);
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 1.8.4
-	 */
-	@Override
-	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
-		if (sql.getJoinInfos().size() == 0)
-			return super.updateSql(sql, parameters);
+    // 4.0.0
+    //  return buff.toString();
+        return buff;
+    ////
+    }
 
-		StringBuilder buff = new StringBuilder();
+    /**
+     * @since 1.8.4
+     */
+    @Override
+// 4.0.0
+//  public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
+    public <E> CharSequence updateSql(Sql<E> sql, List<Object> parameters) {
+////
+        if (sql.getJoinInfos().size() == 0)
+            return super.updateSql(sql, parameters);
 
-		Sql<E> sql2 = new Sql<>(sql.entityInfo().entityClass())
-			.columns(sql.getColumns())
-			.setEntity(sql.entity());
+        StringBuilder buff = new StringBuilder();
 
-		// Sets expressions to sql2 from sql.
-		sql.columnInfoStream().forEach(columnInfo -> {
-			String propertyName = columnInfo.getPropertyName("");
-			Expression expression = sql.getExpression(propertyName);
-			if (!expression.isEmpty())
-				sql2.expression(propertyName, expression);
-		});
+        Sql<E> sql2 = new Sql<>(sql.entityInfo().entityClass())
+            .columns(sql.getColumns())
+            .setEntity(sql.entity());
 
-		// UPDATE table name
-		buff.append("UPDATE");
+        // Sets expressions to sql2 from sql.
+        sql.columnInfoStream().forEach(columnInfo -> {
+            String propertyName = columnInfo.getPropertyName("");
+            Expression expression = sql.getExpression(propertyName);
+            if (!expression.isEmpty())
+                sql2.expression(propertyName, expression);
+        });
 
-		// main table name and alias
-		appendMainTable(buff, sql2);
+        // UPDATE table name
+        buff.append("UPDATE ");
 
-		// SET column name =  value, ...
-		appendUpdateColumnsAndValues(buff, sql2, parameters);
+        // main table name and alias
+    // 4.0.0
+    //  appendMainTable(buff, sql2);
+        appendMainTable(buff, sql2);
+    ////
 
-		// FROM
-		buff.append(" FROM");
+        // SET column name =  value, ...
+        appendUpdateColumnsAndValues(buff, sql2, parameters);
 
-		// main table name and alias
-		appendMainTable(buff, sql);
+        // FROM
+        buff.append(" FROM ");
 
-		// INNER / OUTER JOIN ...
-		appendJoinTables(buff, sql, parameters);
+        // main table name and alias
+    // 4.0.0
+    //  appendMainTable(buff, sql);
+        appendMainTable(buff, sql);
+    ////
 
-		// WHERE ...
-		appendWhere(buff, sql, parameters);
+        // INNER / OUTER JOIN ...
+        appendJoinTables(buff, sql, parameters);
 
-		// ORDER BY ...
-		appendOrderBy(buff, sql, parameters);
+        // WHERE ...
+        appendWhere(buff, sql, parameters);
 
-		return buff.toString();
-	}
+        // ORDER BY ...
+        appendOrderBy(buff, sql, parameters);
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 1.8.2
-	 */
-	@Override
-	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
-		// FOR UPDATE
-		if (sql.isForUpdate()) {
-			// NO WAIT
-			if (sql.isNoWait())
-				buff.append(" WITH (ROWLOCK,UPDLOCK,NOWAIT)");
-			// WAIT
-			else if (sql.isWaitForever())
-				buff.append(" WITH (ROWLOCK,UPDLOCK)");
-			// WAIT n
-			else
-				throw new UnsupportedOperationException("wait N");
-		}
-	}
+    // 4.0.0
+    //  return buff.toString();
+        return buff;
+    ////
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
-	}
+    /**
+     * @since 1.8.2
+     */
+    @Override
+    protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
+        // FOR UPDATE
+        if (sql.isForUpdate()) {
+            // NO WAIT
+            if (sql.isNoWait())
+                buff.append(" WITH (ROWLOCK,UPDLOCK,NOWAIT)");
+            // WAIT
+            else if (sql.isWaitForever())
+                buff.append(" WITH (ROWLOCK,UPDLOCK)");
+            // WAIT n
+            else
+                throw new UnsupportedOperationException("wait N");
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 3.0.0
-	 */
-	@Override
-	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
-		Object object = super.getObject(connection, resultSet, columnLabel);
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
+    }
 
-		if (object instanceof microsoft.sql.DateTimeOffset) {
-			// microsoft.sql.DateTimeOffset
-			LocalDateTime localDateTime = ((microsoft.sql.DateTimeOffset)object).getTimestamp().toLocalDateTime();
-			ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds(((microsoft.sql.DateTimeOffset)object).getMinutesOffset() * 60);
-			object = OffsetDateTime.of(localDateTime, zoneOffset);
+    /**
+     * @since 3.0.0
+     */
+    @Override
+    public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+        Object object = super.getObject(connection, resultSet, columnLabel);
 
-			if (logger.isDebugEnabled())
-				logger.debug("  -> SQLServer.getObject: columnLabel: " + columnLabel
-					+ ", getted object: " + Utils.toLogString(object));
-		}
+        if (object instanceof microsoft.sql.DateTimeOffset) {
+            // microsoft.sql.DateTimeOffset
+            LocalDateTime localDateTime = ((microsoft.sql.DateTimeOffset)object).getTimestamp().toLocalDateTime();
+            ZoneOffset zoneOffset = ZoneOffset.ofTotalSeconds(((microsoft.sql.DateTimeOffset)object).getMinutesOffset() * 60);
+            object = OffsetDateTime.of(localDateTime, zoneOffset);
 
-		return object;
-	}
+            if (logger.isDebugEnabled())
+                logger.debug("  -> SQLServer.getObject: columnLabel: " + columnLabel
+                    + ", getted object: " + Utils.toLogString(object));
+        }
+
+        return object;
+    }
 }

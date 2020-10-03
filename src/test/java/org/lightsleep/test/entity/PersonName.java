@@ -12,11 +12,11 @@ import org.lightsleep.entity.Column;
  * @author Masato Kokubo
  */
 public class PersonName {
-	/** First Name */
-	@Column("firstName")
-	public String first;
+    /** First Name */
+    @Column("firstName")
+    public String first;
 
-	/** Last Name */
-	@Column("lastName")
-	public String last;
+    /** Last Name */
+    @Column("lastName")
+    public String last;
 }

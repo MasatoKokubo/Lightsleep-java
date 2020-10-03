@@ -9,7 +9,7 @@ import org.lightsleep.helper.Resource;
 
 /**
  * <b>JdbcConnection</b>は、<b>java.sql.DriverManager</b>クラスから直接
- * コネクション･ラッパーを取得する場合に使用します。<br>
+ * コネクションラッパーを取得する場合に使用します。<br>
  * lightsleep.propertiesファイルの以下のプロパティを参照します。<br>
  *
  * <div class="blankline">&nbsp;</div>
@@ -22,7 +22,7 @@ import org.lightsleep.helper.Resource;
  *   <tr><td>password</td><td>データベースに接続する時のパスワード</td></tr>
  *   <tr>
  *     <td><i>その他のプロパティ名</i></td>
- *     <td><b>DriverManager</b>からコネクション･ラッパーを取得する時に使用するその他のプロパティ</td>
+ *     <td><b>DriverManager</b>からコネクションラッパーを取得する時に使用するその他のプロパティ</td>
  *   </tr>
  * </table>
  *
@@ -30,22 +30,19 @@ import org.lightsleep.helper.Resource;
  * @author Masato Kokubo
  */
 public class Jdbc extends AbstractConnectionSupplier {
-	/**
-	 * <b>Jdbc</b>を構築します。
-	 *
-	 * <p>
-	 * lightsleep.propertiesファイルで指定された値を設定情報として使用します。
-	 * </p>
-	 */
-	public Jdbc() {
-		super(Resource.getGlobal().getProperties(), modifier -> {});
-	}
+    /**
+     * <b>Jdbc</b>を構築します。
+     *
+     * <p>
+     * lightsleep.propertiesファイルで指定された値を設定情報として使用します。
+     * </p>
+     */
+    public Jdbc() {
+        super(Resource.getGlobal().getProperties(), modifier -> {});
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DataSource getDataSource() {
-		return null;
-	}
+    @Override
+    public DataSource getDataSource() {
+        return null;
+    }
 }

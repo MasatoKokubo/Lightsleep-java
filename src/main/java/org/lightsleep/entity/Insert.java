@@ -39,6 +39,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Insert {
-	/** @return the expression */
-	String value();
+    /** @return the expression */
+    String value();
 }

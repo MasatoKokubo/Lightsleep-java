@@ -33,9 +33,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonColumn {
-	/**
-	 * @return フィールドがどのカラムにも関連しないなら<b>true</b>、そうでなければ<b>false</b>
-	 * @since 2.0.0
-	 */
-	boolean value() default true;
+    /**
+     * @return フィールドがどのカラムにも関連しない場合は<b>true</b>、そうでなければ<b>false</b>
+     * @since 2.0.0
+     */
+    boolean value() default true;
 }

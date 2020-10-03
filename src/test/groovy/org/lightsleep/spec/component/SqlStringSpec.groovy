@@ -14,25 +14,25 @@ import spock.lang.*
 // SqlStringSpec
 @Unroll
 class SqlStringSpec extends Specification {
-	def "SqlStringSpec 01 A"() {
-		DebugTrace.enter() // for Debugging
+    def "SqlStringSpec 01 A"() {
+        DebugTrace.enter() // for Debugging
 
-		when: SqlString sqlString = new SqlString("A")
-		then:
-			sqlString.content() == 'A'
-			sqlString.toString() == 'A'
+        when: SqlString sqlString = new SqlString("A")
+        then:
+            sqlString.content() == 'A'
+            sqlString.toString() == 'A'
 
-		DebugTrace.leave() // for Debugging
-	}
+        DebugTrace.leave() // for Debugging
+    }
 
-	def "SqlStringSpec 02 null"() {
-		DebugTrace.enter() // for Debugging
+    def "SqlStringSpec 02 null"() {
+        DebugTrace.enter() // for Debugging
 
-		when: SqlString sqlString = new SqlString(null)
-		then:
-			sqlString.content() == null
-			sqlString.toString() == 'NULL'
+        when: SqlString sqlString = new SqlString(null)
+        then:
+            sqlString.content() == null
+            sqlString.toString() == 'NULL'
 
-		DebugTrace.leave() // for Debugging
-	}
+        DebugTrace.leave() // for Debugging
+    }
 }

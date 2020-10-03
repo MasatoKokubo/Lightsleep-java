@@ -40,12 +40,12 @@ import java.lang.annotation.*;
 @Repeatable(NonColumnProperties.class)
 @Target({ElementType.TYPE})
 public @interface NonColumnProperty {
-	/**
-	 * @return フィールドを指定するプロパティ名
-	 * @since 2.0.0
-	 */
-	String property();
+    /**
+     * @return フィールドを指定するプロパティ名
+     * @since 2.0.0
+     */
+    String property();
 
-	/** @return フィールドがどのカラムにも関連しない場合は<b>true</b>、そうでなければ<b>false</b> */
-	boolean value() default true;
+    /** @return フィールドがどのカラムにも関連しない場合は<b>true</b>、そうでなければ<b>false</b> */
+    boolean value() default true;
 }

@@ -7,39 +7,39 @@ import org.lightsleep.database.*;
 import org.lightsleep.helper.*;
 
 /**
- * The entity of product table.
+ * The entity of Product table.
  *
  * @since 1.0
  * @author Masato Kokubo
  */
 public class Product extends Common {
-	static {
-		TypeConverter<String, Size> typeConverter = new TypeConverter<>(String.class, Size.class,
-			object -> Enum.valueOf(Size.class, object.trim())
-		);
+    static {
+        TypeConverter<String, Size> typeConverter = new TypeConverter<>(String.class, Size.class,
+            object -> Enum.valueOf(Size.class, object.trim())
+        );
 
-		TypeConverter.put(Standard  .instance.typeConverterMap(), typeConverter);
-		TypeConverter.put(Db2       .instance.typeConverterMap(), typeConverter); // 1.9.0
-		TypeConverter.put(MariaDB   .instance.typeConverterMap(), typeConverter); // 3.2.0
-		TypeConverter.put(MySQL     .instance.typeConverterMap(), typeConverter);
-		TypeConverter.put(Oracle    .instance.typeConverterMap(), typeConverter);
-		TypeConverter.put(PostgreSQL.instance.typeConverterMap(), typeConverter);
-		TypeConverter.put(SQLite    .instance.typeConverterMap(), typeConverter); // 1.7.0
-		TypeConverter.put(SQLServer .instance.typeConverterMap(), typeConverter);
-	}
+        TypeConverter.put(Standard  .instance.typeConverterMap(), typeConverter);
+        TypeConverter.put(Db2       .instance.typeConverterMap(), typeConverter); // 1.9.0
+        TypeConverter.put(MariaDB   .instance.typeConverterMap(), typeConverter); // 3.2.0
+        TypeConverter.put(MySQL     .instance.typeConverterMap(), typeConverter);
+        TypeConverter.put(Oracle    .instance.typeConverterMap(), typeConverter);
+        TypeConverter.put(PostgreSQL.instance.typeConverterMap(), typeConverter);
+        TypeConverter.put(SQLite    .instance.typeConverterMap(), typeConverter); // 1.7.0
+        TypeConverter.put(SQLServer .instance.typeConverterMap(), typeConverter);
+    }
 
-	/** Size enum */
-	public enum Size {XS, S, M, L, XL};
+    /** Size enum */
+    public enum Size {XS, S, M, L, XL};
 
-	/** Product Name */
-	public String productName;
+    /** Product Name */
+    public String productName;
 
-	/** Price */
-	public int price;
+    /** Price */
+    public int price;
 
-	/** Size */
-	public Size productSize;
+    /** Size */
+    public Size productSize;
 
-	/** Color */
-	public String color;
+    /** Color */
+    public String color;
 }

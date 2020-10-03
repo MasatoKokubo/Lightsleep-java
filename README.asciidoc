@@ -36,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.lightsleep:lightsleep:3.2.0'
+    compile 'org.lightsleep:lightsleep:4.0.0'
 }
 ----
 
@@ -99,7 +99,7 @@ class Contact {
 [source,java]
 .Java Example
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")

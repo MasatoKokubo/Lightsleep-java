@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface ColumnProperties {
-	/** @return the array of <b>ColumnProperty</b> annotations */
-	ColumnProperty[] value();
+    /** @return the array of <b>ColumnProperty</b> annotations */
+    ColumnProperty[] value();
 }

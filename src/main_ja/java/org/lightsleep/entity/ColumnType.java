@@ -34,6 +34,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface ColumnType {
-	/** @return カラムの型 */
-	Class<?> value();
+    /** @return カラムの型 */
+    Class<?> value();
 }

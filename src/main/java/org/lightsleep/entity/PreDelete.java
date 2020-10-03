@@ -14,12 +14,12 @@ import org.lightsleep.connection.ConnectionWrapper;
  * @author Masato Kokubo
  */
 public interface PreDelete {
-	/**
-	 * Invoked before executing DELETE SQL.
-	 *
-	 * @param conn the connection wrapper
-	 *
-	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
-	 */
-	void preDelete(ConnectionWrapper conn);
+    /**
+     * Invoked before executing DELETE SQL.
+     *
+     * @param conn the connection wrapper
+     *
+     * @throws NullPointerException if <b>conn</b> is <b>null</b>
+     */
+    void preDelete(ConnectionWrapper conn);
 }

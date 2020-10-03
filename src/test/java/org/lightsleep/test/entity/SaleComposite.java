@@ -18,58 +18,45 @@ import org.lightsleep.entity.*;
  * @author Masato Kokubo
  */
 @Table("super")
-// public class SaleComposite extends Sale implements Composite { // 3.2.0
 public class SaleComposite extends Sale implements PostSelect, PostInsert, PostUpdate, PostDelete {
-	/** Sale items */
-	@NonColumn
-	public final List<SaleItem> items = new ArrayList<>();
+    /** Sale items */
+    @NonColumn
+    public final List<SaleItem> items = new ArrayList<>();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void postSelect(ConnectionWrapper conn) {
-		new Sql<>(SaleItem.class)
-			.where("{saleId} = {}", id)
-			.orderBy("{itemIndex}")
-			.connection(conn)
-			.select(items::add);
-	}
+    @Override
+    public void postSelect(ConnectionWrapper conn) {
+        new Sql<>(SaleItem.class)
+            .where("{saleId} = {}", id)
+            .orderBy("{itemIndex}")
+            .connection(conn)
+            .select(items::add);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void postInsert(ConnectionWrapper conn) {
-		super.postInsert(conn);
+    @Override
+    public void postInsert(ConnectionWrapper conn) {
+        super.postInsert(conn);
 
-		for (int index = 0; index < items.size(); ++index) {
-			SaleItem item = items.get(index);
-			item.saleId    = id;
-			item.itemIndex = index;
-		}
-		new Sql<>(SaleItem.class)
-			.connection(conn)
-			.insert(items);
-	}
+        for (int index = 0; index < items.size(); ++index) {
+            SaleItem item = items.get(index);
+            item.saleId    = id;
+            item.itemIndex = index;
+        }
+        new Sql<>(SaleItem.class)
+            .connection(conn)
+            .insert(items);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void postUpdate(ConnectionWrapper conn) {
-		new Sql<>(SaleItem.class)
-			.connection(conn)
-			.update(items);
-	}
+    @Override
+    public void postUpdate(ConnectionWrapper conn) {
+        new Sql<>(SaleItem.class)
+            .connection(conn)
+            .update(items);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void postDelete(ConnectionWrapper conn) {
-		new Sql<>(SaleItem.class)
-			.connection(conn)
-			.delete(items);
-	}
+    @Override
+    public void postDelete(ConnectionWrapper conn) {
+        new Sql<>(SaleItem.class)
+            .connection(conn)
+            .delete(items);
+    }
 }

@@ -4,7 +4,7 @@
 package org.lightsleep.entity;
 
 /**
- * エンティティ･クラスがこのインターフェースを実装している場合、
+ * エンティティクラスがこのインターフェースを実装している場合、
  * SELECT SQLを実行してエンティティを取得した後に<b>postLoad</b>メソッドが呼び出されます。
  *
  * <p>
@@ -17,8 +17,8 @@ package org.lightsleep.entity;
  */
 @Deprecated
 public interface PostLoad {
-	/**
-	 * SELECT SQLを実行してエンティティを取得した後に呼び出されます。
-	 */
-	void postLoad();
+    /**
+     * SELECT SQLを実行してエンティティを取得した後に呼び出されます。
+     */
+    void postLoad();
 }

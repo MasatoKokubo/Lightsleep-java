@@ -14,12 +14,12 @@ import org.lightsleep.connection.ConnectionWrapper;
  * @author Masato Kokubo
  */
 public interface PostDelete {
-	/**
-	 * Invoked after executing DELETE SQL.
-	 *
-	 * @param conn the connection wrapper
-	 *
-	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
-	 */
-	public void postDelete(ConnectionWrapper conn);
+    /**
+     * Invoked after executing DELETE SQL.
+     *
+     * @param conn the connection wrapper
+     *
+     * @throws NullPointerException if <b>conn</b> is <b>null</b>
+     */
+    public void postDelete(ConnectionWrapper conn);
 }

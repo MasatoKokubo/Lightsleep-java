@@ -11,7 +11,7 @@ import org.lightsleep.helper.Resource;
 
 /**
  * <a href="http://brettwooldridge.github.io/HikariCP/" target="HikariCP">HikariCP JDBC Connection Pool</a>
- * を使用してコネクション･ラッパーを取得します。
+ * を使用してコネクションラッパーを取得します。
  * lightsleep.propertiesファイルの以下のプロパティを参照します。<br>
  *
  * <div class="blankline">&nbsp;</div>
@@ -36,48 +36,45 @@ import org.lightsleep.helper.Resource;
  * @author Masato Kokubo
  */
 public class HikariCP extends AbstractConnectionSupplier {
-	/**
-	 * <b>HikariCP</b>を構築します。
-	 *
-	 * <p>
-	 * lightsleep.propertiesファイルで指定された値をコネクション情報として使用します。
-	 * </p>
-	 */
-	public HikariCP() {
-		super(Resource.getGlobal().getProperties(), modifier -> {});
-	}
+    /**
+     * <b>HikariCP</b>を構築します。
+     *
+     * <p>
+     * lightsleep.propertiesファイルで指定された値をコネクション情報として使用します。
+     * </p>
+     */
+    public HikariCP() {
+        super(Resource.getGlobal().getProperties(), modifier -> {});
+    }
 
-	/**
-	 * <b>HikariCP</b>を構築します。
-	 *
-	 * <p>
-	 * lightsleep.propertiesファイルで指定された値をコネクション情報として使用します。
-	 * </p>
-	 *
-	 * @param modifier propertiesを変更するコンシューマー
-	 *
-	 * @since 1.5.0
-	 */
-	public HikariCP(Consumer<Properties> modifier) {
-		super(Resource.getGlobal().getProperties(), modifier);
-	}
+    /**
+     * <b>HikariCP</b>を構築します。
+     *
+     * <p>
+     * lightsleep.propertiesファイルで指定された値をコネクション情報として使用します。
+     * </p>
+     *
+     * @param modifier propertiesを変更するコンシューマー
+     *
+     * @since 1.5.0
+     */
+    public HikariCP(Consumer<Properties> modifier) {
+        super(Resource.getGlobal().getProperties(), modifier);
+    }
 
-	/**
-	 * <b>HikariCP</b>を構築します。
-	 *
-	 * @param properties コネクション情報を含むプロパティ
-	 *
-	 * @since 2.1.0
-	 */
-	public HikariCP(Properties properties) {
-		super(properties, modifier -> {});
-	}
+    /**
+     * <b>HikariCP</b>を構築します。
+     *
+     * @param properties コネクション情報を含むプロパティ
+     *
+     * @since 2.1.0
+     */
+    public HikariCP(Properties properties) {
+        super(properties, modifier -> {});
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DataSource getDataSource() {
-		return null;
-	}
+    @Override
+    public DataSource getDataSource() {
+        return null;
+    }
 }

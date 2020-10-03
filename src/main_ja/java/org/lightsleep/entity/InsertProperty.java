@@ -45,9 +45,9 @@ import java.lang.annotation.*;
 @Repeatable(InsertProperties.class)
 @Target({ElementType.TYPE})
 public @interface InsertProperty {
-	/** @return フィールドを指定するプロパティ名 */
-	String property();
+    /** @return フィールドを指定するプロパティ名 */
+    String property();
 
-	/** @return 式 */
-	String expression();
+    /** @return 式 */
+    String expression();
 }

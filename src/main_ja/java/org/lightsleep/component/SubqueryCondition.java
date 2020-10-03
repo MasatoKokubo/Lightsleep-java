@@ -17,45 +17,39 @@ import org.lightsleep.database.Database;
  * @author Masato Kokubo
  */
 public class SubqueryCondition<SE> implements Condition {
-	/**
-	 * <b>SubqueryCondition</b>を構築します。
-	 *
-	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
-	 * @param expression サブクエリの SELECT 文の左部分の式
-	 * @param outerSql 外側の Sqlオブジェクト
-	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
-	 *
-	 * @throws NullPointerException <b>expression</b>, <b>outerSql</b>または<b>subSql</b>が<b>null</b>の場合
-	 */
-	public <E> SubqueryCondition(Expression expression, Sql<E> outerSql, Sql<SE> subSql) {
-	}
+    /**
+     * <b>SubqueryCondition</b>を構築します。
+     *
+     * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
+     * @param expression サブクエリの SELECT 文の左部分の式
+     * @param outerSql 構文上<b>subSql</b>の外側にある<b>Sql</b>オブジェクト
+     * @param subSql サブクエリ生成用の<b>Sql</b>オブジェクト
+     *
+     * @throws NullPointerException <b>expression</b>, <b>outerSql</b>または<b>subSql</b>が<b>null</b>の場合
+     */
+    public <E> SubqueryCondition(Expression expression, Sql<E> outerSql, Sql<SE> subSql) {
+    }
 
-	/**
-	 * <b>SubqueryCondition</b>を構築します。
-	 *
-	 * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
-	 * @param outerSql 外側の Sqlオブジェクト
-	 * @param subSql サブクエリ用の<b>Sql</b>オブジェクト
-	 * @param expression サブクエリの SELECT 文の右部分の式
-	 *
-	 * @throws NullPointerException <b>outerSql</b>, <b>subSql</b>または<b>expression</b>が<b>null</b>の場合
-	 */
-	public <E> SubqueryCondition(Sql<E> outerSql, Sql<SE> subSql, Expression expression) {
-	}
+    /**
+     * <b>SubqueryCondition</b>を構築します。
+     *
+     * @param <E> 外側のクエリの対象テーブルに対応するエンティティの型
+     * @param outerSql 構文上<b>subSql</b>の外側にある<b>Sql</b>オブジェクト
+     * @param subSql サブクエリ生成用の<b>Sql</b>オブジェクト
+     * @param expression サブクエリの SELECT 文の右部分の式
+     *
+     * @throws NullPointerException <b>outerSql</b>, <b>subSql</b>または<b>expression</b>が<b>null</b>の場合
+     */
+    public <E> SubqueryCondition(Sql<E> outerSql, Sql<SE> subSql, Expression expression) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
+        return null;
+    }
 }

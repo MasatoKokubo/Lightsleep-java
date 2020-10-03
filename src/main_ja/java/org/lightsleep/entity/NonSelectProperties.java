@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface NonSelectProperties {
-	/** @return <b>NonSelectProperty</b>アノテーションの配列 */
-	NonSelectProperty[] value();
+    /** @return <b>NonSelectProperty</b>アノテーションの配列 */
+    NonSelectProperty[] value();
 }

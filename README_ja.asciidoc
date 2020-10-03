@@ -4,7 +4,7 @@ link:README.asciidoc[English]
 
 Lightsleepは、軽量のO/Rマッピング･ライブラリで、Java 8以降で利用できます。
 
-=== 特徴
+=== [small]#特徴#
 
 - Java 8で追加された機能(関数型インタフェース、Optionalクラス)を使用したAPI 。
 - SQLの構築で使用するメソッド名がSQLの予約語と同じため、直観的に理解しやすい。
@@ -15,7 +15,7 @@ Lightsleepは、軽量のO/Rマッピング･ライブラリで、Java 8以降�
 - 各種のコネクション･プール･ライブラリを同時に使用可能。
 - 内部ログを各種のロギング･ライブラリから選択して出力可能。
 
-=== 対応DBMS
+=== [small]##対応##DBMS
 
 - Db2
 - MariaDB
@@ -26,7 +26,7 @@ Lightsleepは、軽量のO/Rマッピング･ライブラリで、Java 8以降�
 - Microsoft SQL Server
 - 標準SQL準拠DBMS
 
-==== build.gradleでの依存関係の記述例
+==== build.gradle[small]##での依存関係の記述例##
 
 [source,groovy]
 .build.gradle
@@ -36,11 +36,11 @@ repositories {
 }
 
 dependencies {
-    compile 'org.lightsleep:lightsleep:3.2.0'
+    compile 'org.lightsleep:lightsleep:4.0.0'
 }
 ----
 
-=== Lightsleepで使用するエンティティ･クラスの定義例
+=== Lightsleep[small]##で使用するエンティティ･クラスの定義例##
 
 [source,java]
 .Contact.java
@@ -94,12 +94,12 @@ class Contact {
 }
 ----
 
-=== Lightsleepの使用例
+=== Lightsleep[small]##の使用例##
 
 [source,java]
-.Javaの使用例
+.Java[small]##での使用例##
 ----
-List<Contact> contacts = new ArrayList<Contact>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
@@ -112,9 +112,9 @@ Transaction.execute(conn ->
 ----
 
 [source,groovy]
-.Groovyの使用例
+.Groovy[small]##での使用例##
 ----
-def contacts = []
+List<Contact> contacts = []
 Transaction.execute {
     new Sql<>(Contact)
         .where('{lastName}={}', 'Apple')
@@ -127,7 +127,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.生成されるSQL
+.[small]##生成される##SQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -135,24 +135,24 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   ORDER BY lastName ASC, firstName ASC
 ----
 
-=== ライセンス
+=== [small]#ライセンス#
 
 The MIT License (MIT)
 
-[gray]#_(C) 2015 Masato Kokubo (小久保 雅人)_#
+[gray]#_(C) 2015 Masato Kokubo ([small]##小久保 雅人##)_#
 
-=== ドキュメント
+=== [small]#ドキュメント#
 
-link:ReleaseNotes_ja.asciidoc[リリース･ノート]
+link:ReleaseNotes_ja.asciidoc[[small]#リリース･ノート#]
 
-link:Tutorial_ja.asciidoc[チュートリアル]
+link:Tutorial_ja.asciidoc[[small]#チュートリアル#]
 
-link:UserGuide_ja.asciidoc[ユーザー･ガイド]
+link:UserGuide_ja.asciidoc[[small]#ユーザー･ガイド#]
 
 http://masatokokubo.github.io/Lightsleep-java/javadoc_ja/index.html[API仕様]
 
-=== Qiita記事
+=== Qiita[small]##記事##
 
-http://qiita.com/MasatoKokubo/items/ab46696b203d7f67036c[Java RuntimeとJDBCドライバーだけで動作するO/R マッピング･ライブラリLightsleepの紹介]
+http://qiita.com/MasatoKokubo/items/ab46696b203d7f67036c[Java RuntimeとJDBCドライバーだけで動作するO/Rマッピング･ライブラリLightsleepの紹介]
 
 http://qiita.com/MasatoKokubo/items/1080d1277e2b51d88f89[Java 8用O/Rマッピング･ライブラリLightsleepの柔軟なデータ型変換の仕組み]

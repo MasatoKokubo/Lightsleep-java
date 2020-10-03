@@ -88,153 +88,183 @@ import org.lightsleep.helper.TypeConverter;
  * @see org.lightsleep.database.Standard
  */
 public class SQLite extends Standard {
-	/**
-	 * The only instance of this class
-	 *
-	 * @since 2.1.0
-	 */
-	public static final SQLite instance = new SQLite();
+    /**
+     * The only instance of this class
+     *
+     * @since 2.1.0
+     */
+    public static final SQLite instance = new SQLite();
 
-	/**
-	 * Constructs a new <b>SQLite</b>.
-	 */
-	protected SQLite() {
-		// boolean -> 0, 1
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
-		);
+    /**
+     * Constructs a new <b>SQLite</b>.
+     */
+    protected SQLite() {
+        // boolean -> 0, 1
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
+        );
 
-		// String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String.class, SqlString.class, object -> {
-				if (object.length() > maxStringLiteralLength)
-					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
+        // String -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(String.class, SqlString.class, object -> {
+                if (object.length() > maxStringLiteralLength)
+                    return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
 
-				StringBuilder buff = new StringBuilder(object.length() + 2);
-				buff.append('\'');
-				for (char ch : object.toCharArray()) {
-					if (ch == '\'')
-						buff.append(ch);
-					buff.append(ch);
-				}
-				buff.append('\'');
+                StringBuilder buff = new StringBuilder(object.length() + 2);
+                buff.append('\'');
+                for (char ch : object.toCharArray()) {
+                    if (ch == '\'')
+                        buff.append(ch);
+                    buff.append(ch);
+                }
+                buff.append('\'');
 
-				return new SqlString(buff.toString());
-			})
-		);
+                return new SqlString(buff.toString());
+            })
+        );
 
-		Function<String, SqlString> toSimpleSqlString = string -> new SqlString('\'' + string + '\'');
+        // 4.0.0
+        // Character -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+            TypeConverter.of(typeConverterMap, Character.class, String.class, SqlString.class)
+        );
 
-		// java.util.Date -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.util.Date.class, SqlString.class, 
-				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function(),
-				toSimpleSqlString
-			)
-		);
+        Function<String, SqlString> toSimpleSqlString = string -> new SqlString('\'' + string + '\'');
 
-		// java.sql.Date -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Date.class, String.class).function(),
-				toSimpleSqlString
-			)
-		);
+        // java.util.Date -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(java.util.Date.class, SqlString.class, 
+        //        TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function(),
+        //        toSimpleSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, java.util.Date.class, String.class, SqlString.class, toSimpleSqlString)
+        ////
+        );
 
-		// Time -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
-				toSimpleSqlString
-			)
-		);
+        // java.sql.Date -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Date.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Date.class, String.class).function(),
+        //        toSimpleSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Date.class, String.class, SqlString.class, toSimpleSqlString)
+        ////
+        );
 
-		// Timestamp -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function(),
-				toSimpleSqlString
-			)
-		);
+        // Time -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Time.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
+        //        toSimpleSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Time.class, String.class, SqlString.class, toSimpleSqlString)
+        ////
+        );
 
-		// LocalDate -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalDate.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, LocalDate.class, String.class).function(),
-				toSimpleSqlString
-			)
-		);
+        // Timestamp -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Timestamp.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function(),
+        //        toSimpleSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Timestamp.class, String.class, SqlString.class, toSimpleSqlString)
+        ////
+        );
 
-		// LocalTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
-				toSimpleSqlString
-			)
-		);
+        // LocalDate -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(LocalDate.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, LocalDate.class, String.class).function(),
+        //        toSimpleSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, LocalDate.class, String.class, SqlString.class, toSimpleSqlString)
+        ////
+        );
 
-		// LocalDateTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalDateTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, LocalDateTime.class, String.class).function(),
-				toSimpleSqlString
-			)
-		);
+        // LocalTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(LocalTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
+        //        toSimpleSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, LocalTime.class, String.class, SqlString.class, toSimpleSqlString)
+        ////
+        );
 
-		// OffsetDateTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(OffsetDateTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, OffsetDateTime.class, String.class).function(),
-				toSimpleSqlString
-			)
-		);
+        // LocalDateTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(LocalDateTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, LocalDateTime.class, String.class).function(),
+        //        toSimpleSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, LocalDateTime.class, String.class, SqlString.class, toSimpleSqlString)
+        ////
+        );
 
-		// ZonedDateTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(ZonedDateTime.class, SqlString.class, 
-				TypeConverter.get(typeConverterMap, ZonedDateTime.class, String.class).function(),
-				toSimpleSqlString
-			)
-		);
+        // OffsetDateTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(OffsetDateTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, OffsetDateTime.class, String.class).function(),
+        //        toSimpleSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, OffsetDateTime.class, String.class, SqlString.class, toSimpleSqlString)
+        ////
+        );
 
-		// Instant -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Instant.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Instant.class, String.class).function(),
-				toSimpleSqlString
-			)
-		);
-	}
+        // ZonedDateTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(ZonedDateTime.class, SqlString.class, 
+        //        TypeConverter.get(typeConverterMap, ZonedDateTime.class, String.class).function(),
+        //        toSimpleSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, ZonedDateTime.class, String.class, SqlString.class, toSimpleSqlString)
+        ////
+        );
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 1.9.0
-	 */
-	@Override
-	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
-		// FOR UPDATE
-		if (sql.isForUpdate())
-			throw new UnsupportedOperationException("forUpdate");
-	}
+        // Instant -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Instant.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Instant.class, String.class).function(),
+        //        toSimpleSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Instant.class, String.class, SqlString.class, toSimpleSqlString)
+        ////
+        );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 1.8.2
-	 */
-	@Override
-	public boolean supportsOffsetLimit() {
-		return true;
-	}
+    /**
+     * @since 1.9.0
+     */
+    @Override
+    protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
+        // FOR UPDATE
+        if (sql.isForUpdate())
+            throw new UnsupportedOperationException("forUpdate");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return jdbcUrl;
-	}
+    /**
+     * @since 1.8.2
+     */
+    @Override
+    public boolean supportsOffsetLimit() {
+        return true;
+    }
+
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return jdbcUrl;
+    }
 }

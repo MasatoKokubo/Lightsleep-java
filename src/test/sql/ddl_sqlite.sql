@@ -82,7 +82,6 @@ CREATE TABLE SaleItem (
 );
 
 
-
 -- Various
 DROP TABLE IF EXISTS Various;
 CREATE TABLE Various (
@@ -131,4 +130,43 @@ CREATE TABLE DateAndTime (
     timeValue        TIME    ,
     timestampValue   DATETIME,
     timestampTZValue DATETIME
+);
+
+
+-- Node since 4.0.0
+DROP TABLE IF EXISTS Node;
+CREATE TABLE Node (
+    id          INTEGER PRIMARY KEY,
+    parentId    INTEGER NOT NULL,
+    name        TEXT    NOT NULL,
+
+    updateCount INTEGER NOT NULL,
+    created     TEXT    NOT NULL,
+    updated     TEXT    NOT NULL
+);
+
+-- Leaf since 4.0.0
+DROP TABLE IF EXISTS Leaf;
+CREATE TABLE Leaf (
+    id          INTEGER PRIMARY KEY,
+    parentId    INTEGER NOT NULL,
+    name        TEXT    NOT NULL,
+    content     TEXT    NOT NULL,
+
+    updateCount INTEGER NOT NULL,
+    created     TEXT    NOT NULL,
+    updated     TEXT    NOT NULL
+);
+
+-- Leaf2 since 4.0.0
+DROP TABLE IF EXISTS Leaf2;
+CREATE TABLE Leaf2 (
+    id          INTEGER PRIMARY KEY,
+    parentId    INTEGER NOT NULL,
+    name        TEXT    NOT NULL,
+    content     TEXT    NOT NULL,
+
+    updateCount INTEGER NOT NULL,
+    created     TEXT    NOT NULL,
+    updated     TEXT    NOT NULL
 );

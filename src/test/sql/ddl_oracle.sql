@@ -92,7 +92,6 @@ CREATE TABLE SaleItem (
 );
 
 
-
 -- Various
 DROP TABLE Various;
 CREATE TABLE Various (
@@ -145,6 +144,51 @@ CREATE TABLE DateAndTime (
     timestampValue    TIMESTAMP(9)                     ,
     timestampTZValue  TIMESTAMP(9) WITH TIME ZONE      ,
     timestampLTZValue TIMESTAMP(9) WITH LOCAL TIME ZONE,
+
+    PRIMARY KEY(id)
+);
+
+
+-- Node since 4.0.0
+DROP TABLE Node;
+CREATE TABLE Node (
+    id          NUMBER   (9) GENERATED ALWAYS AS IDENTITY,
+    parentId    NUMBER   (9)      NOT NULL,
+    name        VARCHAR (32 CHAR) NOT NULL,
+
+    updateCount NUMBER   (9)      NOT NULL,
+    created     TIMESTAMP(9)      NOT NULL,
+    updated     TIMESTAMP(9)      NOT NULL,
+
+    PRIMARY KEY(id)
+);
+
+-- Leaf since 4.0.0
+DROP TABLE Leaf;
+CREATE TABLE Leaf (
+    id          NUMBER   (9) GENERATED ALWAYS AS IDENTITY,
+    parentId    NUMBER   (9)      NOT NULL,
+    name        VARCHAR (32 CHAR) NOT NULL,
+    content     CLOB              NOT NULL,
+
+    updateCount NUMBER   (9)      NOT NULL,
+    created     TIMESTAMP(9)      NOT NULL,
+    updated     TIMESTAMP(9)      NOT NULL,
+
+    PRIMARY KEY(id)
+);
+
+-- Leaf2 since 4.0.0
+DROP TABLE Leaf2;
+CREATE TABLE Leaf2 (
+    id          NUMBER   (9) GENERATED ALWAYS AS IDENTITY,
+    parentId    NUMBER   (9)      NOT NULL,
+    name        VARCHAR (32 CHAR) NOT NULL,
+    content     CLOB              NOT NULL,
+
+    updateCount NUMBER   (9)      NOT NULL,
+    created     TIMESTAMP(9)      NOT NULL,
+    updated     TIMESTAMP(9)      NOT NULL,
 
     PRIMARY KEY(id)
 );

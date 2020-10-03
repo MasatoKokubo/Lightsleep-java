@@ -38,9 +38,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Key {
-	/**
-	 * @return true if the column related to the field is part of the primary key, false otherwise
-	 * @since 2.0.0
-	 */
-	boolean value() default true;
+    /**
+     * @return true if the column related to the field is part of the primary key, false otherwise
+     * @since 2.0.0
+     */
+    boolean value() default true;
 }

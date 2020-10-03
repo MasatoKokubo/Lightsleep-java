@@ -12,7 +12,7 @@ import org.lightsleep.Sql;
 
 /**
  * <a href="https://www.microsoft.com/ja-jp/server-cloud/products-SQL-Server-2014.aspx" target="SQL Server">Microsoft SQL Server</a>
- * 用のデータベース･ハンドラです。
+ * 用のデータベースハンドラです。
  *
  * <p>
  * このクラスのオブジェクトは、{@linkplain Standard#typeConverterMap}
@@ -90,78 +90,64 @@ import org.lightsleep.Sql;
  * @see org.lightsleep.database.Standard
  */
 public class SQLServer extends Standard {
-	/**
-	 * パスワードのパターン文字列
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_PATTERN = "";
+    /**
+     * パスワードのパターン文字列
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_PATTERN = "";
 
-	/**
-	 * このクラスの唯一のインスタンス
-	 *
-	 * @since 2.1.0
-	 */
-	public static final SQLServer instance = new SQLServer();
+    /**
+     * このクラスの唯一のインスタンス
+     *
+     * @since 2.1.0
+     */
+    public static final SQLServer instance = new SQLServer();
 
-	/**
-	 * <b>SQLServer</b>を構築します。
-	 */
-	protected SQLServer() {
-	}
+    /**
+     * <b>SQLServer</b>を構築します。
+     */
+    protected SQLServer() {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <E> CharSequence selectSql(Sql<E> sql, List<Object> parameters) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <E, OE> CharSequence subSelectSql(Sql<E> sql, Sql<OE> outerSql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 1.8.4
-	 */
-	@Override
-	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
-		return null;
-	}
+    /**
+     * @since 1.8.4
+     */
+    @Override
+    public <E> CharSequence updateSql(Sql<E> sql, List<Object> parameters) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 1.8.2
-	 */
-	@Override
-	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
-	}
+    /**
+     * @since 1.8.2
+     */
+    @Override
+    protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return null;
-	}
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 3.0.0
-	 */
-	@Override
-	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
-		return null;
-	}
+    /**
+     * @since 3.0.0
+     */
+    @Override
+    public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+        return null;
+    }
 }

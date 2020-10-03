@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface KeyProperties {
-	/** @return the array of <b>KeyProperty</b> annotations */
-	KeyProperty[] value();
+    /** @return the array of <b>KeyProperty</b> annotations */
+    KeyProperty[] value();
 }

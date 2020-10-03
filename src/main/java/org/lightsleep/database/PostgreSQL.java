@@ -55,118 +55,123 @@ import org.lightsleep.helper.Utils;
  * @see org.lightsleep.database.Standard
  */
 public class PostgreSQL extends Standard {
-	/**
-	 * The pattern string of passwords
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_PATTERN =
-		'['
-		+ ASCII_CHARS
-			.replace("&", "")
-			.replace(":", "")
-			.replace("[\\]", "\\[\\\\\\]")
-			.replace("^", "\\^")
-		+ "]*";
+    /**
+     * The pattern string of passwords
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_PATTERN =
+        '['
+        + ASCII_CHARS
+            .replace("&", "")
+            .replace(":", "")
+            .replace("[\\]", "\\[\\\\\\]")
+            .replace("^", "\\^")
+        + "]*";
 
-	/**
-	 * The only instance of this class
-	 *
-	 * @since 2.1.0
-	 */
-	public static final PostgreSQL instance = new PostgreSQL();
+    /**
+     * The only instance of this class
+     *
+     * @since 2.1.0
+     */
+    public static final PostgreSQL instance = new PostgreSQL();
 
-	/**
-	 * Constructs a new <b>PostgreSQL</b>.
-	 */
-	protected PostgreSQL() {
-		// String.class -> SqlString.class
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String.class, SqlString.class, object -> {
-				if (object.length() > maxStringLiteralLength)
-					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
-	
-				boolean escaped = false;
-				StringBuilder buff = new StringBuilder(object.length() + 2);
-				buff.append('\'');
-				for (char ch : object.toCharArray()) {
-					switch (ch) {
-					case '\b': buff.append("\\b" ); escaped = true; break; // 07 BEL
-					case '\t': buff.append("\\t" ); escaped = true; break; // 09 HT
-					case '\n': buff.append("\\n" ); escaped = true; break; // 0A LF
-					case '\f': buff.append("\\f" ); escaped = true; break; // 0C FF
-					case '\r': buff.append("\\r" ); escaped = true; break; // 0D CR
-					case '\'': buff.append("''"  ); break;
-					case '\\': buff.append("\\\\"); escaped = true; break;
-					default  :
-						if (ch >= ' ' && ch != 0x7F)
-							buff.append(ch);
-						else {
-							buff.append("\\u")
-								.append(String.format("%04X", (int)ch));
-							escaped = true;
-						}
-						break;
-					}
-				}
-				if (escaped)
-					buff.insert(0, 'E');
-				buff.append('\'');
-				return new SqlString(buff.toString());
-			})
-		);
+    /**
+     * Constructs a new <b>PostgreSQL</b>.
+     */
+    protected PostgreSQL() {
+        // String.class -> SqlString.class
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(String.class, SqlString.class, object -> {
+                if (object.length() > maxStringLiteralLength)
+                    return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
+    
+                boolean escaped = false;
+                StringBuilder buff = new StringBuilder(object.length() + 2);
+                buff.append('\'');
+                for (char ch : object.toCharArray()) {
+                    switch (ch) {
+                    case '\b': buff.append("\\b" ); escaped = true; break; // 07 BEL
+                    case '\t': buff.append("\\t" ); escaped = true; break; // 09 HT
+                    case '\n': buff.append("\\n" ); escaped = true; break; // 0A LF
+                    case '\f': buff.append("\\f" ); escaped = true; break; // 0C FF
+                    case '\r': buff.append("\\r" ); escaped = true; break; // 0D CR
+                    case '\'': buff.append("''"  ); break;
+                    case '\\': buff.append("\\\\"); escaped = true; break;
+                    default  :
+                        if (ch >= ' ' && ch != 0x7F)
+                            buff.append(ch);
+                        else {
+                            buff.append("\\u")
+                                .append(String.format("%04X", (int)ch));
+                            escaped = true;
+                        }
+                        break;
+                    }
+                }
+                if (escaped)
+                    buff.insert(0, 'E');
+                buff.append('\'');
+                return new SqlString(buff.toString());
+            })
+        );
 
-		// byte[].class -> SqlString.class
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[].class, SqlString.class,
-				TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function(),
-				object -> object.parameters().length > 0
-					? object : new SqlString("E'\\\\x" + object.content().substring(2)) // X'...' -> E'\\x...'
-			)
-		);
-	}
+        // 4.0.0
+        // Character -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+            TypeConverter.of(typeConverterMap, Character.class, String.class, SqlString.class)
+        );
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean supportsOffsetLimit() {
-		return true;
-	}
+        // byte[].class -> SqlString.class
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(byte[].class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function(),
+        //        object -> object.parameters().length > 0
+        //            ? object : new SqlString("E'\\\\x" + object.content().substring(2)) // X'...' -> E'\\x...'
+        //    )
+            TypeConverter.of(typeConverterMap, byte[].class, SqlString.class, SqlString.class,
+                object -> object.parameters().length > 0
+                    ? object : new SqlString("E'\\\\x" + object.content().substring(2)) // X'...' -> E'\\x...'
+            )
+        ////
+        );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
-	}
+    @Override
+    public boolean supportsOffsetLimit() {
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 3.0.0
-	 */
-	@Override
-	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
-		Object object = super.getObject(connection, resultSet, columnLabel);
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
+    }
 
-		if (object instanceof Time) {
-			// Time (for get microseconds)
-			try {
-				object = resultSet.getObject(columnLabel, LocalTime.class);
+    /**
+     * @since 3.0.0
+     */
+    @Override
+    public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+        Object object = super.getObject(connection, resultSet, columnLabel);
 
-				if (logger.isDebugEnabled())
-					logger.debug("  -> PostgreSQL.getObject: columnLabel: " + columnLabel
-						+ ", getted object: " + Utils.toLogString(object));
-			}
-			catch (SQLException e) {
-				throw new RuntimeSQLException(e);
-			}
-		}
+        if (object instanceof Time) {
+            // Time (for get microseconds)
+            try {
+                object = resultSet.getObject(columnLabel, LocalTime.class);
 
-		return object;
-	}
+                if (logger.isDebugEnabled())
+                    logger.debug("  -> PostgreSQL.getObject: columnLabel: " + columnLabel
+                        + ", getted object: " + Utils.toLogString(object));
+            }
+            catch (SQLException e) {
+                throw new RuntimeSQLException(e);
+            }
+        }
+
+        return object;
+    }
 }

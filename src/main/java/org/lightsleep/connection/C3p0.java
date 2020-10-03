@@ -32,59 +32,56 @@ import com.mchange.v2.c3p0.DataSources;
  * @author Masato Kokubo
  */
 public class C3p0 extends AbstractConnectionSupplier {
-	/**
-	 * Constructs a new <b>C3p0</b>.
-	 *
-	 * <p>
-	 * Uses values specified in the lightsleep.properties and
-	 * (c3p0.properties or c3p0-config.xml)
-	 * file as the setting information.
-	 * </p>
-	 */
-	public C3p0() {
-		super(Resource.getGlobal().getProperties(), props -> {});
-	}
+    /**
+     * Constructs a new <b>C3p0</b>.
+     *
+     * <p>
+     * Uses values specified in the lightsleep.properties and
+     * (c3p0.properties or c3p0-config.xml)
+     * file as the setting information.
+     * </p>
+     */
+    public C3p0() {
+        super(Resource.getGlobal().getProperties(), props -> {});
+    }
 
-	/**
-	 * Constructs a new <b>C3p0</b>.
-	 *
-	 * <p>
-	 * Uses values specified in the lightsleep.properties and
-	 * (c3p0.properties or c3p0-config.xml)
-	 * file as the setting information.
-	 * </p>
-	 *
-	 * @param modifier a consumer to modify the properties
-	 *
-	 * @since 1.5.0
-	 */
-	public C3p0(Consumer<Properties> modifier) {
-		super(Resource.getGlobal().getProperties(), modifier);
-	}
+    /**
+     * Constructs a new <b>C3p0</b>.
+     *
+     * <p>
+     * Uses values specified in the lightsleep.properties and
+     * (c3p0.properties or c3p0-config.xml)
+     * file as the setting information.
+     * </p>
+     *
+     * @param modifier a consumer to modify the properties
+     *
+     * @since 1.5.0
+     */
+    public C3p0(Consumer<Properties> modifier) {
+        super(Resource.getGlobal().getProperties(), modifier);
+    }
 
-	/**
-	 * Constructs a new <b>C3p0</b>.
-	 *
-	 * @param properties the properties with connection information
-	 *
-	 * @since 2.1.0
-	 */
-	public C3p0(Properties properties) {
-		super(properties, props -> {});
-	}
+    /**
+     * Constructs a new <b>C3p0</b>.
+     *
+     * @param properties the properties with connection information
+     *
+     * @since 2.1.0
+     */
+    public C3p0(Properties properties) {
+        super(properties, props -> {});
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DataSource getDataSource() {
-		try {
-			DataSource unpooledDataSource = DataSources.unpooledDataSource(jdbcProperties.getProperty("url"), jdbcProperties);
-			DataSource dataSource = DataSources.pooledDataSource(unpooledDataSource);
-			return dataSource;
-		}
-		catch (SQLException e) {
-			throw new RuntimeException("jdbcProperties: " + jdbcProperties, e);
-		}
-	}
+    @Override
+    public DataSource getDataSource() {
+        try {
+            DataSource unpooledDataSource = DataSources.unpooledDataSource(jdbcProperties.getProperty("url"), jdbcProperties);
+            DataSource dataSource = DataSources.pooledDataSource(unpooledDataSource);
+            return dataSource;
+        }
+        catch (SQLException e) {
+            throw new RuntimeException("jdbcProperties: " + jdbcProperties, e);
+        }
+    }
 }

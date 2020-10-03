@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface NonUpdateProperties {
-	/** @return the array of <b>NonUpdateProperty</b> annotations */
-	NonUpdateProperty[] value();
+    /** @return the array of <b>NonUpdateProperty</b> annotations */
+    NonUpdateProperty[] value();
 }

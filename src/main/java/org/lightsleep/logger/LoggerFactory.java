@@ -43,90 +43,90 @@ import org.lightsleep.helper.Resource;
  */
 @SuppressWarnings("unchecked")
 public class LoggerFactory {
-	// The logger class
-	private static Class<? extends Logger> loggerClass;
+    // The logger class
+    private static Class<? extends Logger> loggerClass;
 
-	// The logger map
-	private static final Map<String, Logger> loggerMap = new LinkedHashMap<>();
+    // The logger map
+    private static final Map<String, Logger> loggerMap = new LinkedHashMap<>();
 
-	static {
-		initClass();
-	}
-	private static void initClass() {
-		String loggerName = null;
-		Logger logger = null;
+    static {
+        initClass();
+    }
+    private static void initClass() {
+        String loggerName = null;
+        Logger logger = null;
 
-		loggerName = Resource.getGlobal().getString(Logger.class.getSimpleName(), null);
-		if (loggerName != null) {
-			if (loggerName.indexOf('.') < 0)
-				loggerName = Logger.class.getPackage().getName() + '.' + loggerName;
+        loggerName = Resource.getGlobal().getString(Logger.class.getSimpleName(), null);
+        if (loggerName != null) {
+            if (loggerName.indexOf('.') < 0)
+                loggerName = Logger.class.getPackage().getName() + '.' + loggerName;
 
-			// Checks whether there is a Logger class that is specified in the property
-			try {
-				loggerClass = (Class<? extends Logger>)Class.forName(loggerName);
-				logger = getLogger(loggerClass, LoggerFactory.class);
-			}
-			catch (Exception e) {
-			}
-		}
+            // Checks whether there is a Logger class that is specified in the property
+            try {
+                loggerClass = (Class<? extends Logger>)Class.forName(loggerName);
+                logger = getLogger(loggerClass, LoggerFactory.class);
+            }
+            catch (Exception e) {
+            }
+        }
 
-		if (logger == null) {
-			loggerClass = Std.Out.Info.class;
+        if (logger == null) {
+            loggerClass = Std.Out.Info.class;
 
-			try {
-				logger = getLogger(loggerClass, LoggerFactory.class);
-			}
-			catch (Exception e) {
-				System.out.println(loggerClass.getName() + ": " + e.getMessage());
-			}
-		}
+            try {
+                logger = getLogger(loggerClass, LoggerFactory.class);
+            }
+            catch (Exception e) {
+                System.out.println(loggerClass.getName() + ": " + e.getMessage());
+            }
+        }
 
-		String version = new Resource("org.lightsleep.lightsleep-version").getString("version");
-		logger.info("Lightsleep " + version + " / logger: " + loggerClass.getName());
-	}
+        String version = new Resource("org.lightsleep.lightsleep-version").getString("version");
+        logger.info("Lightsleep " + version + " / logger: " + loggerClass.getName());
+    }
 
-	// Returns the logger
-	private static Logger getLogger(Class<? extends Logger> loggerClass, String name) throws Exception {
-		Logger logger = loggerClass.getConstructor(String.class).newInstance(name);
-		return logger;
-	}
+    // Returns the logger
+    private static Logger getLogger(Class<? extends Logger> loggerClass, String name) throws Exception {
+        Logger logger = loggerClass.getConstructor(String.class).newInstance(name);
+        return logger;
+    }
 
-	// Returns the logger
-	private static Logger getLogger(Class<? extends Logger> loggerClass, Class<?> clazz) throws Exception {
-		Logger logger = getLogger(loggerClass, clazz.getName());
-		return logger;
-	}
+    // Returns the logger
+    private static Logger getLogger(Class<? extends Logger> loggerClass, Class<?> clazz) throws Exception {
+        Logger logger = getLogger(loggerClass, clazz.getName());
+        return logger;
+    }
 
-	/**
-	 * Returns the Logger of the specified name.
-	 *
-	 * @param name a name
-	 *
-	 * @return the logger
-	 */
-	public static Logger getLogger(String name) {
-		Logger logger = loggerMap.get(name);
-		if (logger == null) {
-			try {
-				logger = getLogger(loggerClass, name);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-			loggerMap.put(name, logger);
-		}
-		return logger;
-	}
+    /**
+     * Returns the Logger of the specified name.
+     *
+     * @param name a name
+     *
+     * @return the logger
+     */
+    public static Logger getLogger(String name) {
+        Logger logger = loggerMap.get(name);
+        if (logger == null) {
+            try {
+                logger = getLogger(loggerClass, name);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            loggerMap.put(name, logger);
+        }
+        return logger;
+    }
 
-	/**
-	 * Returns the Logger of the name of the specified class.
-	 *
-	 * @param clazz a class 
-	 *
-	 * @return the logger
-	 */
-	public static Logger getLogger(Class<?> clazz) {
-		Logger logger = getLogger(clazz.getName());
-		return logger;
-	}
+    /**
+     * Returns the Logger of the name of the specified class.
+     *
+     * @param clazz a class 
+     *
+     * @return the logger
+     */
+    public static Logger getLogger(Class<?> clazz) {
+        Logger logger = getLogger(clazz.getName());
+        return logger;
+    }
 }

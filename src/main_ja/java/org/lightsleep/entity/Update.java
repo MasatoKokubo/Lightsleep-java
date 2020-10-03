@@ -38,6 +38,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Update {
-	/** @return 式 */
-	String value();
+    /** @return 式 */
+    String value();
 }

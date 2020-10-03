@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 
 /**
  * <a href="http://people.apache.org/~fhanik/jdbc-pool/jdbc-pool.html" target="Apache">TomcatCP JDBC Connection Pool</a>
- * を使用してコネクション･ラッパーを取得します。
+ * を使用してコネクションラッパーを取得します。
  * lightsleep.propertiesファイルの以下のプロパティを参照します。<br>
  *
  * <div class="blankline">&nbsp;</div>
@@ -34,48 +34,45 @@ import javax.sql.DataSource;
  * @author Masato Kokubo
  */
 public class TomcatCP extends AbstractConnectionSupplier {
-	/**
-	 * <b>TomcatCP</b>を構築します。
-	 *
-	 * <p>
-	 * lightsleep.propertiesファイルで指定された値をコネクション情報として使用します。
-	 * </p>
-	 */
-	public TomcatCP() {
-		super(null, null);
-	}
+    /**
+     * <b>TomcatCP</b>を構築します。
+     *
+     * <p>
+     * lightsleep.propertiesファイルで指定された値をコネクション情報として使用します。
+     * </p>
+     */
+    public TomcatCP() {
+        super(null, null);
+    }
 
-	/**
-	 * <b>TomcatCP</b>を構築します。
-	 *
-	 * <p>
-	 * lightsleep.propertiesファイルで指定された値をコネクション情報として使用します。
-	 * </p>
-	 *
-	 * @param modifier propertiesを変更するコンシューマー
-	 *
-	 * @since 1.5.0
-	 */
-	public TomcatCP(Consumer<Properties> modifier) {
-		super(null, null);
-	}
+    /**
+     * <b>TomcatCP</b>を構築します。
+     *
+     * <p>
+     * lightsleep.propertiesファイルで指定された値をコネクション情報として使用します。
+     * </p>
+     *
+     * @param modifier propertiesを変更するコンシューマー
+     *
+     * @since 1.5.0
+     */
+    public TomcatCP(Consumer<Properties> modifier) {
+        super(null, null);
+    }
 
-	/**
-	 * <b>TomcatCP</b>を構築します。
-	 *
-	 * @param properties コネクション情報を含むプロパティ
-	 *
-	 * @since 2.1.0
-	 */
-	public TomcatCP(Properties properties) {
-		super(null, null);
-	}
+    /**
+     * <b>TomcatCP</b>を構築します。
+     *
+     * @param properties コネクション情報を含むプロパティ
+     *
+     * @since 2.1.0
+     */
+    public TomcatCP(Properties properties) {
+        super(null, null);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DataSource getDataSource() {
-		return null;
-	}
+    @Override
+    public DataSource getDataSource() {
+        return null;
+    }
 }

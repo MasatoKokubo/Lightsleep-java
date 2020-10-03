@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.function.Function;
 
 import org.lightsleep.RuntimeSQLException;
@@ -48,125 +49,130 @@ import org.lightsleep.helper.TypeConverter;
  * @see org.lightsleep.database.Standard
  */
 public class Oracle extends Standard {
-	/**
-	 * The pattern string of passwords
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_PATTERN =
-		'['
-		+ ASCII_CHARS
-			.replace(":", "")
-			.replace("@", "")
-			.replace("[\\]", "\\[\\\\\\]")
-			.replace("^", "\\^")
-		+ "]*";
+    /**
+     * The pattern string of passwords
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_PATTERN =
+        '['
+        + ASCII_CHARS
+            .replace(":", "")
+            .replace("@", "")
+            .replace("[\\]", "\\[\\\\\\]")
+            .replace("^", "\\^")
+        + "]*";
 
-	/**
-	 * The only instance of this class
-	 *
-	 * @since 2.1.0
-	 */
-	public static final Oracle instance = new Oracle();
+    /**
+     * The only instance of this class
+     *
+     * @since 2.1.0
+     */
+    public static final Oracle instance = new Oracle();
 
-	/**
-	 * Constructs a new <b>Oracle</b>.
-	 */
-	protected Oracle() {
-		// boolean -> 0, 1
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
-		);
+    /**
+     * Constructs a new <b>Oracle</b>.
+     */
+    protected Oracle() {
+        // boolean -> 0, 1
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
+        );
 
-		Function<String, SqlString> toTimeSqlString =
-			string -> new SqlString("TO_TIMESTAMP('1970-01-01 " + string + "','YYYY-MM-DD HH24:MI:SS')");
+        Function<String, SqlString> toTimeSqlString =
+            string -> new SqlString("TO_TIMESTAMP('1970-01-01 " + string + "','YYYY-MM-DD HH24:MI:SS')");
 
-		// Time -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
-				toTimeSqlString
-			)
-		);
+        // Time -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Time.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
+        //        toTimeSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Time.class, String.class, SqlString.class, toTimeSqlString)
+        ////
+        );
 
-		// LocalTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
-				toTimeSqlString
-			)
-		);
+        // LocalTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(LocalTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
+        //        toTimeSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, LocalTime.class, String.class, SqlString.class, toTimeSqlString)
+        ////
+        );
 
-		// 1.7.0
-		// byte[] -> SqlString (since 1.7.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[].class, SqlString.class, object ->
-				new SqlString(SqlString.PARAMETER, object))
-		);
-	}
+        // 1.7.0
+        // byte[] -> SqlString (since 1.7.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(byte[].class, SqlString.class, object ->
+                new SqlString(SqlString.PARAMETER, object))
+        );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 1.9.0
-	 */
-	@Override
-	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
-		// FOR UPDATE
-		if (sql.isForUpdate()) {
-			buff.append(" FOR UPDATE");
+    @Override
+    protected <E> CharSequence withSelectSql(Sql<E> sql, List<Object> parameters) {
+        return onlyWithSelectSql(sql, parameters);
+    }
 
-			// NO WAIT
-			if (sql.isNoWait())
-				buff.append(" NOWAIT");
+    /**
+     * @since 1.9.0
+     */
+    @Override
+    protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
+        // FOR UPDATE
+        if (sql.isForUpdate()) {
+            buff.append(" FOR UPDATE");
 
-			// WAIT n
-			else if (!sql.isWaitForever())
-				buff.append(" WAIT ").append(sql.getWaitTime());
-		}
-	}
+            // NO WAIT
+            if (sql.isNoWait())
+                buff.append(" NOWAIT");
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return jdbcUrl.replaceAll('/' + PASSWORD_PATTERN + '@', '/' + PASSWORD_MASK + '@');
-	}
+            // WAIT n
+            else if (!sql.isWaitForever())
+                buff.append(" WAIT ").append(sql.getWaitTime());
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 3.0.0
-	 */
-	@Override
-	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
-		Object object = super.getObject(connection, resultSet, columnLabel);
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return jdbcUrl.replaceAll('/' + PASSWORD_PATTERN + '@', '/' + PASSWORD_MASK + '@');
+    }
 
-		if (object instanceof oracle.sql.Datum) {
-			try {
-				if (object instanceof oracle.sql.TIMESTAMP)
-					// oracle.sql.TIMESTAMP
-					object = ((oracle.sql.TIMESTAMP)object).timestampValue();
+    /**
+     * @since 3.0.0
+     */
+    @Override
+    public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+        Object object = super.getObject(connection, resultSet, columnLabel);
 
-				else if (object instanceof oracle.sql.TIMESTAMPLTZ)
-					// oracle.sql.TIMESTAMPLTZ
-					object = ((oracle.sql.TIMESTAMPLTZ)object).timestampValue(connection);
+        if (object instanceof oracle.sql.Datum) {
+            try {
+                if (object instanceof oracle.sql.TIMESTAMP)
+                    // oracle.sql.TIMESTAMP
+                    object = ((oracle.sql.TIMESTAMP)object).timestampValue();
 
-				else if (object instanceof oracle.sql.TIMESTAMPTZ) {
-					// oracle.sql.TIMESTAMPTZ
-					LocalDateTime localDateTime = ((oracle.sql.TIMESTAMPTZ)object).timestampValue(connection).toLocalDateTime();
-					ZoneId zoneId = ((oracle.sql.TIMESTAMPTZ)object).getTimeZone().toZoneId();
-					object = ZonedDateTime.of(localDateTime, zoneId);
-				}
-			}
-			catch (SQLException e) {
-				throw new RuntimeSQLException(e);
-			}
-		}
+                else if (object instanceof oracle.sql.TIMESTAMPLTZ)
+                    // oracle.sql.TIMESTAMPLTZ
+                    object = ((oracle.sql.TIMESTAMPLTZ)object).timestampValue(connection);
 
-		return object;
-	}
+                else if (object instanceof oracle.sql.TIMESTAMPTZ) {
+                    // oracle.sql.TIMESTAMPTZ
+                    LocalDateTime localDateTime = ((oracle.sql.TIMESTAMPTZ)object).timestampValue(connection).toLocalDateTime();
+                    ZoneId zoneId = ((oracle.sql.TIMESTAMPTZ)object).getTimeZone().toZoneId();
+                    object = ZonedDateTime.of(localDateTime, zoneId);
+                }
+            }
+            catch (SQLException e) {
+                throw new RuntimeSQLException(e);
+            }
+        }
+
+        return object;
+    }
 }

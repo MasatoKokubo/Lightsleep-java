@@ -404,249 +404,311 @@ import java.util.Objects;
  * @see org.lightsleep.database.SQLServer
  */
 public class TypeConverter<ST, DT> {
-	/**
-	 * 変換元の型と変換先の型の組み合わせで、マップのキーとして使用する文字列を作成します。
-	 *
-	 * @param sourceType 変換元の型のクラス
-	 * @param destinType 変換先の型のクラス
-	 * @return キー
-	 *
-	 * @throws NullPointerException <b>sourceType</b> または<b>destinType</b>が<b>null</b>の場合
-	 */
-	public static String key(Class<?> sourceType, Class<?> destinType) {
-		return null;
-	}
+    /**
+     * 変換元の型と変換先の型の組み合わせで、マップのキーとして使用する文字列を作成します。
+     *
+     * @param sourceType 変換元の型のクラス
+     * @param destinType 変換先の型のクラス
+     * @return キー
+     *
+     * @throws NullPointerException <b>sourceType</b> または<b>destinType</b>が<b>null</b>の場合
+     */
+    public static String key(Class<?> sourceType, Class<?> destinType) {
+        return null;
+    }
 
-	/**
-	 * <b>TypeConverter</b>マップに<b>TypeConverter</b> 配列の各要素を関連付けます。
-	 *
-	 * @param typeConverterMap <b>TypeConverter</b>マップ
-	 * @param typeConverters <b>TypeConverter</b>オブジェクト配列
-	 *
-	 * @throws NullPointerException <b>typeConverterMap</b>, <b>typeConverters</b> または<b>typeConverters</b>の要素が<b>null</b>の場合
-	 */
-	public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?>... typeConverters) {
-	}
+    /**
+     * <b>TypeConverter</b>マップに<b>TypeConverter</b> 配列の各要素を関連付けます。
+     *
+     * @param typeConverterMap <b>TypeConverter</b>マップ
+     * @param typeConverters <b>TypeConverter</b>オブジェクト配列
+     *
+     * @throws NullPointerException <b>typeConverterMap</b>, <b>typeConverters</b> または<b>typeConverters</b>の要素が<b>null</b>の場合
+     */
+    public static void put(Map<String, TypeConverter<?, ?>> typeConverterMap, TypeConverter<?, ?>... typeConverters) {
+    }
 
-	/**
-	 * <b>typeConverterMap</b>から
-	 * <b>sourceType</b>を<b>destinType</b>に変換する<b>TypeConverter</b>オブジェクトを返します。<br>
-	 *
-	 * <b>sourceType</b>と<b>destinType</b>の組み合わせでマッチする
-	 * <b>TypeConverter</b>オブジェクトが見つからない場合は、
-	 * <b>sourceType</b>のスーパークラスやインタフェースでマッチするのを探します。<br>
-	 *
-	 * それでも見つからない場合は、<b>null</b>を返します。<br>
-	 *
-	 * スーパークラスまたはインターフェースで見つかった場合は、次回は直接見つかるようにマップに登録します。<br>
-	 *
-	 * @param <ST> 変換元の型
-	 * @param <DT> 変換先の型
-	 * @param typeConverterMap <b>TypeConverter</b>マップ
-	 * @param sourceType 変換元の型のクラス
-	 * @param destinType 変換先の型のクラス
-	 * @return TypeConverterオブジェクト (見つからない場合はnull)
-	 *
-	 * @throws NullPointerException typeConverterMap, <b>sourceType</b> または<b>destinType</b>が<b>null</b>の場合
-	 */
-	public static <ST, DT> TypeConverter<ST, DT> get(Map<String, TypeConverter<?, ?>> typeConverterMap, Class<ST> sourceType, Class<DT> destinType) {
-		return null;
-	}
+    /**
+     * <b>typeConverterMap</b>から
+     * <b>sourceType</b>を<b>destinType</b>に変換する<b>TypeConverter</b>オブジェクトを返します。<br>
+     *
+     * <b>sourceType</b>と<b>destinType</b>の組み合わせでマッチする
+     * <b>TypeConverter</b>オブジェクトが見つからない場合は、
+     * <b>sourceType</b>のスーパークラスやインタフェースでマッチするのを探します。<br>
+     *
+     * それでも見つからない場合は、<b>null</b>を返します。<br>
+     *
+     * スーパークラスまたはインターフェースで見つかった場合は、次回は直接見つかるようにマップに登録します。<br>
+     *
+     * @param <ST> 変換元の型
+     * @param <DT> 変換先の型
+     * @param typeConverterMap <b>TypeConverter</b>マップ
+     * @param sourceType 変換元の型のクラス
+     * @param destinType 変換先の型のクラス
+     * @return TypeConverterオブジェクト (見つからない場合はnull)
+     *
+     * @throws NullPointerException typeConverterMap, <b>sourceType</b> または<b>destinType</b>が<b>null</b>の場合
+     */
+    public static <ST, DT> TypeConverter<ST, DT> get(Map<String, TypeConverter<?, ?>> typeConverterMap,
+            Class<ST> sourceType, Class<DT> destinType) {
+        return null;
+    }
 
-	/**
-	 * <b>source</b> == null の場合は、null を返します。<br>
-	 * <b>destinType.isInstance(source)</b>の場合は、<b>source</b>を変換しないで返します。<br>
-	 * コンバータが見つかった場合は、そのコンバータで<b>source</b>を変換したオブジェクトを返します。
-	 *
-	 * @param <ST> 変換元の型
-	 * @param <DT> 変換先の型
-	 * @param typeConverterMap <b>TypeConverter</b>マップ
-	 * @param source 変換元のオブジェクト(null可)
-	 * @param destinType 変換先の型のクラス (プリミティブ型以外)
-	 * @return 型を変換されたオブジェクト(null有)
-	 *
-	 * @throws NullPointerException <b>typeConverterMap</b> または<b>destinType</b>が<b>null</b>の場合	 *
-	 * @throws ConvertException コンバータが見つからない場合か変換処理で精度が落ちた場合
-	 * @throws IllegalArgumentException <b>destinType</b>がプリミティブ･タイプの場合
-	 */
-	public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
-		return null;
-	}
+    /**
+     * <b>source</b> == null の場合は、null を返します。<br>
+     * <b>destinType.isInstance(source)</b>の場合は、<b>source</b>を変換しないで返します。<br>
+     * コンバータが見つかった場合は、そのコンバータで<b>source</b>を変換したオブジェクトを返します。
+     *
+     * @param <ST> 変換元の型
+     * @param <DT> 変換先の型
+     * @param typeConverterMap <b>TypeConverter</b>マップ
+     * @param source 変換元のオブジェクト(null可)
+     * @param destinType 変換先の型のクラス (プリミティブ型以外)
+     * @return 型を変換されたオブジェクト(null有)
+     *
+     * @throws NullPointerException <b>typeConverterMap</b> または<b>destinType</b>が<b>null</b>の場合     *
+     * @throws ConvertException コンバータが見つからない場合か変換処理で精度が落ちた場合
+     * @throws IllegalArgumentException <b>destinType</b>がプリミティブタイプの場合
+     */
+    public static <ST, DT> DT convert(Map<String, TypeConverter<?, ?>> typeConverterMap, ST source, Class<DT> destinType) {
+        return null;
+    }
 
-	/**
-	 * TypeConverterオブジェクトが登録された変更不可な<b>TypeConverter</b>マップを返します。
-	 *
-	 * @return <b>TypeConverter</b>マップ
-	 *
-	 * @since 1.8.1
-	 */
-	public static Map<String, TypeConverter<?, ?>>typeConverterMap() {
-		return null;
-	}
+    /**
+     * 変換元の型を変換先の型に変換する<b>TypeConverter</b>オブジェクトを作成します。
+     *
+     * @param <ST> 変換元の型
+     * @param <DT> 変換先の型
+     * @param sourceType 変換元の型のクラス
+     * @param destinType 変換先の型のクラス
+     * @param function 変換元の型を変換先の型に変換する関数
+     * @return 変換元の型を変換先の型に変換する<b>TypeConverter</b>オブジェクト
+     *
+     * @throws NullPointerException <b>sourceType</b>, <b>destinType</b>または<b>function</b>が<b>null</b>の場合
+     *
+     * @since 4.0.0
+     */
+    public static <ST, DT> TypeConverter<ST, DT> of(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, ? extends DT> function) {
+        return new TypeConverter<ST, DT>(sourceType, destinType, function);
+    }
 
-	/**
-	 * <b>TypeConverter</b>を構築します。
-	 *
-	 * @param sourceType 変換元の型のクラス
-	 * @param destinType 変換先の型のクラス
-	 * @param function データ変換を行う関数
-	 *
-	 * @throws NullPointerException <b>sourceType</b>, <b>destinType</b>または<b>function</b>が<b>null</b>の場合
-	 */
-	public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, ? extends DT> function) {
-	}
+    /**
+     * 変換元の型を中間の型に変換し、それを変換先の型に変換する<b>TypeConverter</b>オブジェクトを作成します。
+     *
+     * @param <ST> 変換元の型
+     * @param <MT> 中間の型
+     * @param <DT> 変換先の型
+     * @param typeConverterMap <b>TypeConverter</b>マップ
+     * @param sourceType 変換元の型のクラス
+     * @param middleType 中間の型のクラス
+     * @param destinType 変換先の型のクラス
+     * @return 変換元の型を変換先の型に変換する<b>TypeConverter</b>オブジェクト
+     *
+     * @throws NullPointerException <b>typeConverterMap</b>, <b>sourceType</b>, <b>middleType</b>または<b>destinType</b>が<b>null</b>の場合
+     *
+     * @since 4.0.0
+     */
+    public static <ST, MT, DT> TypeConverter<ST, DT> of(Map<String, TypeConverter<?, ?>> typeConverterMap,
+            Class<ST> sourceType, Class<MT> middleType, Class<DT> destinType) {
+        Function<? super ST, ? extends MT> function1 = get(typeConverterMap, sourceType, middleType).function();
+        Function<? super MT, ? extends DT> function2 = get(typeConverterMap, middleType, destinType).function();
+        return new TypeConverter<ST, DT>(sourceType, destinType, function1.andThen(function2));
+    }
 
-	/**
-	 * 2つの関数を結合して<b>TypeConverter</b>を構築します。
-	 *
-	 * @param <MT> 関数1と関数2の中間型
-	 * @param sourceType 変換元の型のクラス
-	 * @param destinType 変換先の型のクラス
-	 * @param function1 データ変換を行う関数1
-	 * @param function2 データ変換を行う関数2
-	 *
-	 * @throws NullPointerException <b>sourceType</b>, <b>destinType</b>, <b>function1</b>または<b>function2</b>が<b>null</b>の場合
-	 *
-	 * @since 3.0.0
-	 */
-	public <MT> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
-			Function<? super ST, MT> function1, Function<? super MT, ? extends DT> function2) {
-		this(
-			sourceType,
-			destinType,
-			Objects.requireNonNull(function1, "function1")
-				.andThen(Objects.requireNonNull(function2, "function2"))
-		);
-	}
+    /**
+     * 変換元の型を中間の型に変換し、それを変換先の型に変換する<b>TypeConverter</b>オブジェクトを作成します。
+     *
+     * @param <ST> 変換元の型
+     * @param <MT> 中間の型
+     * @param <DT> 変換先の型
+     * @param typeConverterMap <b>TypeConverter</b>マップ
+     * @param sourceType 変換元の型のクラス
+     * @param middleType 中間の型のクラス
+     * @param destinType 変換先の型のクラス
+     * @param function 中間の型を変換先の型に変換する関数
+     * @return 変換元の型を変換先の型に変換する<b>TypeConverter</b>オブジェクト
+     *
+     * @throws NullPointerException <b>typeConverterMap</b>, <b>sourceType</b>, <b>middleType</b>, <b>destinType</b>または<b>function</b>が<b>null</b>の場合
+     *
+     * @since 4.0.0
+     */
+    public static <ST, MT, DT> TypeConverter<ST, DT> of(Map<String, TypeConverter<?, ?>> typeConverterMap,
+            Class<ST> sourceType, Class<MT> middleType, Class<DT> destinType, Function<? super MT, ? extends DT> function) {
+        Function<? super ST, ? extends MT> function1 = get(typeConverterMap, sourceType, middleType).function();
+        return new TypeConverter<ST, DT>(sourceType, destinType, function1.andThen(function));
+    }
 
-	/**
-	 * 3つの関数を結合して<b>TypeConverter</b>を構築します。
-	 *
-	 * @param <MT1> 関数1と関数2の中間型
-	 * @param <MT2> 関数2と関数3の中間型
-	 * @param sourceType 変換元の型のクラス
-	 * @param destinType 変換先の型のクラス
-	 * @param function1 データ変換を行う関数1
-	 * @param function2 データ変換を行う関数2
-	 * @param function3 データ変換を行う関数3
-	 *
-	 * @throws NullPointerException <b>sourceType</b>, <b>destinType</b>, <b>function1</b>, <b>function2</b>または<b>function3</b>が<b>null</b>の場合
-	 *
-	 * @since 3.0.0
-	 */
-	public <MT1, MT2> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
-			Function<? super ST, ? extends MT1> function1,
-			Function<? super MT1, ? extends MT2> function2,
-			Function<? super MT2, ? extends DT> function3) {
-		this(
-			sourceType,
-			destinType,
-			Objects.requireNonNull(function1, "function1")
-				.andThen(Objects.requireNonNull(function2, "function2"))
-				.andThen(Objects.requireNonNull(function3, "function3"))
-		);
-	}
+    /**
+     * TypeConverterオブジェクトが登録された変更不可な<b>TypeConverter</b>マップを返します。
+     *
+     * @return <b>TypeConverter</b>マップ
+     *
+     * @since 1.8.1
+     */
+    public static Map<String, TypeConverter<?, ?>>typeConverterMap() {
+        return null;
+    }
 
-	/**
-	 * 4つの関数を結合して<b>TypeConverter</b>を構築します。
-	 *
-	 * @param <MT1> 関数1と関数2の中間型
-	 * @param <MT2> 関数2と関数3の中間型
-	 * @param <MT3> 関数3と関数4の中間型
-	 * @param sourceType 変換元の型のクラス
-	 * @param destinType 変換先の型のクラス
-	 * @param function1 データ変換を行う関数1
-	 * @param function2 データ変換を行う関数2
-	 * @param function3 データ変換を行う関数3
-	 * @param function4 データ変換を行う関数4
-	 *
-	 * @throws NullPointerException <b>sourceType</b>, <b>destinType</b>, <b>function1</b>, <b>function2</b>, <b>function3</b>または<b>function4</b>が<b>null</b>の場合
-	 *
-	 * @since 3.0.0
-	 */
-	public <MT1, MT2, MT3> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
-			Function<? super ST, MT1> function1,
-			Function<? super MT1, ? extends MT2> function2,
-			Function<? super MT2, ? extends MT3> function3,
-			Function<? super MT3, ? extends DT> function4) {
-		this(
-			sourceType,
-			destinType,
-			Objects.requireNonNull(function1, "function1")
-				.andThen(Objects.requireNonNull(function2, "function3"))
-				.andThen(Objects.requireNonNull(function3, "function3"))
-				.andThen(Objects.requireNonNull(function4, "function4"))
-		);
-	}
+    /**
+     * <b>TypeConverter</b>を構築します。
+     *
+     * @param sourceType 変換元の型のクラス
+     * @param destinType 変換先の型のクラス
+     * @param function データ変換を行う関数
+     *
+     * @throws NullPointerException <b>sourceType</b>, <b>destinType</b>または<b>function</b>が<b>null</b>の場合
+     */
+    public TypeConverter(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, ? extends DT> function) {
+    }
 
-	/**
-	 * 変換元の型を返します。
-	 *
-	 * @return 変換元の型
-	 */
-	public Class<ST> sourceType() {
-		return null;
-	}
+// 4.0.0,
+//    /**
+//     * 2つの関数を結合して<b>TypeConverter</b>を構築します。
+//     *
+//     * @param <MT> 関数1と関数2の中間型
+//     * @param sourceType 変換元の型のクラス
+//     * @param destinType 変換先の型のクラス
+//     * @param function1 データ変換を行う関数1
+//     * @param function2 データ変換を行う関数2
+//     *
+//     * @throws NullPointerException <b>sourceType</b>, <b>destinType</b>, <b>function1</b>または<b>function2</b>が<b>null</b>の場合
+//     *
+//     * @since 3.0.0
+//     */
+//    public <MT> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
+//            Function<? super ST, MT> function1, Function<? super MT, ? extends DT> function2) {
+//        this(
+//            sourceType,
+//            destinType,
+//            Objects.requireNonNull(function1, "function1")
+//                .andThen(Objects.requireNonNull(function2, "function2"))
+//        );
+//    }
+////
 
-	/**
-	 * 変換先の型を返します。
-	 *
-	 * @return 変換先の型
-	 */
-	public Class<DT> destinType() {
-		return null;
-	}
+// 4.0.0,
+//    /**
+//     * 3つの関数を結合して<b>TypeConverter</b>を構築します。
+//     *
+//     * @param <MT1> 関数1と関数2の中間型
+//     * @param <MT2> 関数2と関数3の中間型
+//     * @param sourceType 変換元の型のクラス
+//     * @param destinType 変換先の型のクラス
+//     * @param function1 データ変換を行う関数1
+//     * @param function2 データ変換を行う関数2
+//     * @param function3 データ変換を行う関数3
+//     *
+//     * @throws NullPointerException <b>sourceType</b>, <b>destinType</b>, <b>function1</b>, <b>function2</b>または<b>function3</b>が<b>null</b>の場合
+//     *
+//     * @since 3.0.0
+//     */
+//    public <MT1, MT2> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
+//            Function<? super ST, ? extends MT1> function1,
+//            Function<? super MT1, ? extends MT2> function2,
+//            Function<? super MT2, ? extends DT> function3) {
+//        this(
+//            sourceType,
+//            destinType,
+//            Objects.requireNonNull(function1, "function1")
+//                .andThen(Objects.requireNonNull(function2, "function2"))
+//                .andThen(Objects.requireNonNull(function3, "function3"))
+//        );
+//    }
+////
 
-	/**
-	 * 型を変換する関数を返します。
-	 *
-	 * @return 型を変換する関数
-	 */
-	public Function<? super ST, ? extends DT> function() {
-		return null;
-	}
+// 4.0.0,
+//    /**
+//     * 4つの関数を結合して<b>TypeConverter</b>を構築します。
+//     *
+//     * @param <MT1> 関数1と関数2の中間型
+//     * @param <MT2> 関数2と関数3の中間型
+//     * @param <MT3> 関数3と関数4の中間型
+//     * @param sourceType 変換元の型のクラス
+//     * @param destinType 変換先の型のクラス
+//     * @param function1 データ変換を行う関数1
+//     * @param function2 データ変換を行う関数2
+//     * @param function3 データ変換を行う関数3
+//     * @param function4 データ変換を行う関数4
+//     *
+//     * @throws NullPointerException <b>sourceType</b>, <b>destinType</b>, <b>function1</b>, <b>function2</b>, <b>function3</b>または<b>function4</b>が<b>null</b>の場合
+//     *
+//     * @since 3.0.0
+//     */
+//    public <MT1, MT2, MT3> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
+//            Function<? super ST, MT1> function1,
+//            Function<? super MT1, ? extends MT2> function2,
+//            Function<? super MT2, ? extends MT3> function3,
+//            Function<? super MT3, ? extends DT> function4) {
+//        this(
+//            sourceType,
+//            destinType,
+//            Objects.requireNonNull(function1, "function1")
+//                .andThen(Objects.requireNonNull(function2, "function3"))
+//                .andThen(Objects.requireNonNull(function3, "function3"))
+//                .andThen(Objects.requireNonNull(function4, "function4"))
+//        );
+//    }
+////
 
-	/**
-	 * キーを返します。
-	 *
-	 * @return キー
-	 */
-	public String key() {
-		return null;
-	}
+    /**
+     * 変換元の型を返します。
+     *
+     * @return 変換元の型
+     */
+    public Class<ST> sourceType() {
+        return null;
+    }
 
-	/**
-	 * <b>value</b>の型を変換します。
-	 *
-	 * @param value 変換元のオブジェクト
-	 *
-	 * @return 変換されたオブジェクト
-	 */
-	public DT apply(ST value) {
-		return null;
-	}
+    /**
+     * 変換先の型を返します。
+     *
+     * @return 変換先の型
+     */
+    public Class<DT> destinType() {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(Object object) {
-		return false;
-	}
+    /**
+     * 型を変換する関数を返します。
+     *
+     * @return 型を変換する関数
+     */
+    public Function<? super ST, ? extends DT> function() {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		return 0;
-	}
+    /**
+     * キーを返します。
+     *
+     * @return キー
+     */
+    public String key() {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		return null;
-	}
+    /**
+     * <b>value</b>の型を変換します。
+     *
+     * @param value 変換元のオブジェクト
+     *
+     * @return 変換されたオブジェクト
+     */
+    public DT apply(ST value) {
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return null;
+    }
 }

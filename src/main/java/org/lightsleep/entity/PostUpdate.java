@@ -14,12 +14,12 @@ import org.lightsleep.connection.ConnectionWrapper;
  * @author Masato Kokubo
  */
 public interface PostUpdate {
-	/**
-	 * Invoked after executing UPDATE SQL.
-	 *
-	 * @param conn the connection wrapper
-	 *
-	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
-	 */
-	public void postUpdate(ConnectionWrapper conn);
+    /**
+     * Invoked after executing UPDATE SQL.
+     *
+     * @param conn the connection wrapper
+     *
+     * @throws NullPointerException if <b>conn</b> is <b>null</b>
+     */
+    public void postUpdate(ConnectionWrapper conn);
 }

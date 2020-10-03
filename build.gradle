@@ -36,11 +36,11 @@ dependencies {
 	testRuntimeOnly    'com.oracle.ojdbc:ojdbc8:19.+'
 	testRuntimeOnly    'org.postgresql:postgresql:42.+'
 	testRuntimeOnly    'org.xerial:sqlite-jdbc:3.+'
-	compileOnly        'com.microsoft.sqlserver:mssql-jdbc:7.2.2.jre8'
-	testRuntimeOnly    'com.microsoft.sqlserver:mssql-jdbc:7.2.2.jre8'
+	compileOnly        'com.microsoft.sqlserver:mssql-jdbc:8.4.1.jre8'
+	testRuntimeOnly    'com.microsoft.sqlserver:mssql-jdbc:8.4.1.jre8'
 
-	testCompileOnly    'org.junit.jupiter:junit-jupiter-api:5.5.+'
-	testRuntimeOnly    'org.junit.vintage:junit-vintage-engine:5.5.+'
+	testCompileOnly    'org.junit.jupiter:junit-jupiter-api:5.7.+'
+	testRuntimeOnly    'org.junit.vintage:junit-vintage-engine:5.7.+'
 	testImplementation 'org.codehaus.groovy:groovy-all:2.5.+'
 	testCompileOnly    'org.spockframework:spock-core:1.3-groovy-2.5'
 
@@ -48,15 +48,15 @@ dependencies {
 	testRuntimeOnly    'tomcat:naming-factory:5.+'
 	testRuntimeOnly    'tomcat:naming-resources:5.+'
 
-	compileOnly        'org.debugtrace:debugtrace:2.+'
-	testImplementation 'org.debugtrace:debugtrace:2.+'
+	compileOnly        'org.debugtrace:debugtrace:3.+'
+	testImplementation 'org.debugtrace:debugtrace:3.+'
 }
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
-version             = '3.2.0'
+version             = '4.0.0'
 
 sourceSets {
 	main {
@@ -81,7 +81,7 @@ sourceSets {
 }
 
 wrapper {
-	gradleVersion = '5.6.2'
+	gradleVersion = '6.6.1'
 }
 
 compileJava {
@@ -125,8 +125,8 @@ javadoc {
 	options.locale      = 'en'
 	options.windowTitle = "$project.name"
 	options.overview    = 'src/main/java/overview.html'
-	options.addBooleanOption('author', true)
-	options.addStringOption ('bottom', '<div class="copyright">&copy; 2016 Masato Kokubo</div>')
+    options.author      = true
+    options.bottom      = '<div class="copyright">&copy; 2016 Masato Kokubo</div>'
 }
 
 javadoc.doFirst {
@@ -151,8 +151,8 @@ task javadoc_ja(type:Javadoc) {
 	options.locale      = 'ja'
 	options.windowTitle = javadoc.options.windowTitle
 	options.overview    = 'src/main/java/overview_ja.html'
-	options.addBooleanOption('author', true)
-	options.addStringOption ('bottom', '<div class="copyright">&copy; 2016 Masato Kokubo</div>')
+    options.author      = true
+    options.bottom      = '<div class="copyright">&copy; 2016 Masato Kokubo</div>'
 
 	classpath      = javadoc.classpath
 	source         = fileTree('src/main_ja/java').include('**/*.java')

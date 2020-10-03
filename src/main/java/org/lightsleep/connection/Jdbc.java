@@ -38,97 +38,94 @@ import org.lightsleep.helper.Resource;
  * @author Masato Kokubo
  */
 public class Jdbc extends AbstractConnectionSupplier {
-	/**
-	 * Constructs a new <b>Jdbc</b>.
-	 *
-	 * <p>
-	 * Uses values specified in the lightsleep.properties file as the connection information.
-	 * </p>
-	 */
-	public Jdbc() {
-		super(Resource.getGlobal().getProperties(), props -> {});
-	}
+    /**
+     * Constructs a new <b>Jdbc</b>.
+     *
+     * <p>
+     * Uses values specified in the lightsleep.properties file as the connection information.
+     * </p>
+     */
+    public Jdbc() {
+        super(Resource.getGlobal().getProperties(), props -> {});
+    }
 
-	/**
-	 * Constructs a new <b>Jdbc</b>.
-	 *
-	 * <p>
-	 * Uses values specified in the lightsleep.properties file as the connection information.
-	 * </p>
-	 *
-	 * @param modifier a consumer to modify the properties
-	 *
-	 * @since 1.5.0
-	 */
-	public Jdbc(Consumer<Properties> modifier) {
-		super(Resource.getGlobal().getProperties(), modifier);
-	}
+    /**
+     * Constructs a new <b>Jdbc</b>.
+     *
+     * <p>
+     * Uses values specified in the lightsleep.properties file as the connection information.
+     * </p>
+     *
+     * @param modifier a consumer to modify the properties
+     *
+     * @since 1.5.0
+     */
+    public Jdbc(Consumer<Properties> modifier) {
+        super(Resource.getGlobal().getProperties(), modifier);
+    }
 
-	/**
-	 * Constructs a new <b>Jdbc</b>.
-	 *
-	 * @param properties the properties with connection information
-	 *
-	 * @since 2.1.0
-	 */
-	public Jdbc(Properties properties) {
-		super(properties, props -> {});
-	}
+    /**
+     * Constructs a new <b>Jdbc</b>.
+     *
+     * @param properties the properties with connection information
+     *
+     * @since 2.1.0
+     */
+    public Jdbc(Properties properties) {
+        super(properties, props -> {});
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DataSource getDataSource() {
-		return new DataSource() {
-			@Override
-			public PrintWriter getLogWriter() throws SQLException {
-				return null;
-			}
+    @Override
+    public DataSource getDataSource() {
+        return new DataSource() {
+            @Override
+            public PrintWriter getLogWriter() throws SQLException {
+                return null;
+            }
 
-			@Override
-			public void setLogWriter(PrintWriter out) throws SQLException {
-			}
+            @Override
+            public void setLogWriter(PrintWriter out) throws SQLException {
+            }
 
-			@Override
-			public void setLoginTimeout(int seconds) throws SQLException {
-			}
+            @Override
+            public void setLoginTimeout(int seconds) throws SQLException {
+            }
 
-			@Override
-			public int getLoginTimeout() throws SQLException {
-				return 0;
-			}
+            @Override
+            public int getLoginTimeout() throws SQLException {
+                return 0;
+            }
 
-			@Override
-			public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
-				return null;
-			}
+            @Override
+            public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+                return null;
+            }
 
-			@Override
-			public <T> T unwrap(Class<T> iface) throws SQLException {
-				return null;
-			}
+            @Override
+            public <T> T unwrap(Class<T> iface) throws SQLException {
+                return null;
+            }
 
-			@Override
-			public boolean isWrapperFor(Class<?> iface) throws SQLException {
-				return false;
-			}
+            @Override
+            public boolean isWrapperFor(Class<?> iface) throws SQLException {
+                return false;
+            }
 
-			@Override
-			public Connection getConnection() throws SQLException {
-				String url = getUrl();
-				if (url == null)
-					logger.error("Jdbc.getDataSource: jdbcProperties url == null");
+            @Override
+            public Connection getConnection() throws SQLException {
+                String url = getUrl();
+                if (url == null)
+                    logger.error("Jdbc.getDataSource: jdbcProperties url == null");
 
-				Connection connection = DriverManager.getConnection(url, jdbcProperties);
-				connection.setAutoCommit(false);
-				return connection;
-			}
+                Connection connection = DriverManager.getConnection(url, jdbcProperties);
+                connection.setAutoCommit(false);
+                return connection;
+            }
 
-			@Override
-			public Connection getConnection(String username, String password) throws SQLException {
-				return null;
-			}
-		};
-	}
+            @Override
+            public Connection getConnection(String username, String password) throws SQLException {
+                return null;
+            }
+        };
+    }
 }

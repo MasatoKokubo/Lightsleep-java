@@ -52,103 +52,102 @@ import org.lightsleep.helper.Utils;
  * @see org.lightsleep.database.Standard
  */
 public class MySQL extends Standard {
-	/**
-	 * The pattern string of passwords
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_PATTERN =
-		'['
-		+ ASCII_CHARS
-			.replace("&", "")
-			.replace(":", "")
-			.replace("[\\]", "\\[\\\\\\]")
-			.replace("^", "\\^")
-		+ "]*";
+    /**
+     * The pattern string of passwords
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_PATTERN =
+        '['
+        + ASCII_CHARS
+            .replace("&", "")
+            .replace(":", "")
+            .replace("[\\]", "\\[\\\\\\]")
+            .replace("^", "\\^")
+        + "]*";
 
-	/**
-	 * The only instance of this class
-	 *
-	 * @since 2.1.0
-	 */
-	public static final MySQL instance = new MySQL();
+    /**
+     * The only instance of this class
+     *
+     * @since 2.1.0
+     */
+    public static final MySQL instance = new MySQL();
 
-	/**
-	 * Constructs a new <b>MySQL</b>.
-	 */
-	protected MySQL() {
-		// boolean -> 0, 1
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
-		);
+    /**
+     * Constructs a new <b>MySQL</b>.
+     */
+    protected MySQL() {
+        // boolean -> 0, 1
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "1" : "0"))
+        );
 
-		// String.class -> SqlString.class
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String.class, SqlString.class, object -> {
-				if (object.length() > maxStringLiteralLength)
-					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
+        // String.class -> SqlString.class
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(String.class, SqlString.class, object -> {
+                if (object.length() > maxStringLiteralLength)
+                    return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
 
-				StringBuilder buff = new StringBuilder(object.length() + 2);
-				buff.append('\'');
-				for (char ch : object.toCharArray()) {
-					switch (ch) {
-					case '\u0000': buff.append("\\0" ); break; // 00 NUL
-					case '\b'    : buff.append("\\b" ); break; // 07 BEL
-					case '\t'    : buff.append("\\t" ); break; // 09 HT
-					case '\n'    : buff.append("\\n" ); break; // 0A LF
-					case '\r'    : buff.append("\\r" ); break; // 0D CR
-					case '\''    : buff.append("''"  ); break;
-					case '\\'    : buff.append("\\\\"); break;
-					default      : buff.append(ch    ); break;
-					}
-				}
-				buff.append('\'');
-				return new SqlString(buff.toString());
-			})
-		);
-	}
+                StringBuilder buff = new StringBuilder(object.length() + 2);
+                buff.append('\'');
+                for (char ch : object.toCharArray()) {
+                    switch (ch) {
+                    case '\u0000': buff.append("\\0" ); break; // 00 NUL
+                    case '\b'    : buff.append("\\b" ); break; // 07 BEL
+                    case '\t'    : buff.append("\\t" ); break; // 09 HT
+                    case '\n'    : buff.append("\\n" ); break; // 0A LF
+                    case '\r'    : buff.append("\\r" ); break; // 0D CR
+                    case '\''    : buff.append("''"  ); break;
+                    case '\\'    : buff.append("\\\\"); break;
+                    default      : buff.append(ch    ); break;
+                    }
+                }
+                buff.append('\'');
+                return new SqlString(buff.toString());
+            })
+        );
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean supportsOffsetLimit() {
-		return true;
-	}
+        // 4.0.0
+        // Character -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+            TypeConverter.of(typeConverterMap, Character.class, String.class, SqlString.class)
+        );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
-	}
+    @Override
+    public boolean supportsOffsetLimit() {
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 3.0.0
-	 */
-	@Override
-	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
-		Object object = super.getObject(connection, resultSet, columnLabel);
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
+    }
 
-		if (object instanceof Time) {
-			// Time (for get microseconds)
-			try {
-				object = resultSet.getObject(columnLabel, LocalTime.class);
+    /**
+     * @since 3.0.0
+     */
+    @Override
+    public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+        Object object = super.getObject(connection, resultSet, columnLabel);
 
-				if (logger.isDebugEnabled())
-					logger.debug("  -> MySQL.getObject: columnLabel: " + columnLabel
-						+ ", getted object: " + Utils.toLogString(object));
-			}
-			catch (SQLException e) {
-				throw new RuntimeSQLException(e);
-			}
-		}
+        if (object instanceof Time) {
+            // Time (for get microseconds)
+            try {
+                object = resultSet.getObject(columnLabel, LocalTime.class);
 
-		return object;
-	}
+                if (logger.isDebugEnabled())
+                    logger.debug("  -> MySQL.getObject: columnLabel: " + columnLabel
+                        + ", getted object: " + Utils.toLogString(object));
+            }
+            catch (SQLException e) {
+                throw new RuntimeSQLException(e);
+            }
+        }
+
+        return object;
+    }
 }

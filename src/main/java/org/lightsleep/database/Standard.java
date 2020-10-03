@@ -190,1204 +190,1388 @@ import org.lightsleep.logger.LoggerFactory;
  * @see org.lightsleep.helper.TypeConverter
  */
 public class Standard implements Database {
-	// Class Resources
-	private static final Resource resource = new Resource(Standard.class);
-	private static final String messageSelectSqlWithoutColumns = resource.getString("messageSelectSqlWithoutColumns");
-
-	// The logger
-	protected static final Logger logger = LoggerFactory.getLogger(Database.class);
-
-	/**
-	 * Maximum length of string literal when generates SQL.
-	 *
-	 * <p>
-	 * If the string literal exceeds this length, it generated as SQL parameters (?).<br>
-	 * The value of <b>maxStringLiteralLength</b> of lightsleep.properties has been set.
-	 * (if undefined, 128)
-	 * </p>
-	 */
-	public final int maxStringLiteralLength = Resource.getGlobal().getInt("maxStringLiteralLength", 128);
-
-	/**
-	 * Maximum length of binary literal when generates SQL.
-	 *
-	 * <p>
-	 * If the binary literal exceeds this length, it generated as SQL parameters (?).<br>
-	 * The value of <b>maxBinaryLiteralLength</b> of lightsleep.properties has been set.
-	 * (if undefined, 128)
-	 * </p>
-	 */
-	public final int maxBinaryLiteralLength = Resource.getGlobal().getInt("maxBinaryLiteralLength", 128);
-
-	/**
-	 * The ASCII characters without controle charactes
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String ASCII_CHARS =
-		  " !\"#$%&'()*+,-./"
-		+ "0123456789:;<=>?"
-		+ "@ABCDEFGHUJKLMNO"
-		+ "PQRSTUVWXYZ[\\]^_"
-		+ "`abcdefghijklmno"
-		+ "pqrstuvwxyz(|)~";
-
-	/**
-	 * The pattern string of passwords
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_MASK = "xxxx";
-
-	/**
-	 * The only instance of this class
-	 *
-	 * @since 2.1.0
-	 */
-	public static final Standard instance = new Standard();
-
-	/**
-	 * <b>TypeConverter</b> map used for the following data type conversion
-	 * <ul>
-	 *   <li>When generating SQL</li>
-	 *   <li>When storing the value obtained by SELECT SQL in the entity</li>
-	 * </ul>
-	 */
-	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = new ConcurrentHashMap<>(TypeConverter.typeConverterMap());
-
-	/**
-	 * Constructs a new <b>Standard</b>.
-	 */
-	@SuppressWarnings("unchecked")
-	protected Standard() {
-		if (logger.isDebugEnabled()) {
-			logger.debug(getClass().getSimpleName() + ": maxStringLiteralLength = " + maxStringLiteralLength);
-			logger.debug(getClass().getSimpleName() + ": maxBinaryLiteralLength = " + maxBinaryLiteralLength);
-		}
-
-		// Clob -> String
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Clob.class, String.class, object -> {
-				try {
-					long length = object.length();
-					if (length > Integer.MAX_VALUE)
-						throw new ConvertException(Clob.class, "length=" + length, String.class);
-					return object.getSubString(1L, (int)length);
-				}
-				catch (SQLException e) {
-					throw new ConvertException(Clob.class, object, String.class, null, e);
-				}
-			})
-		);
-
-		// Blob -> byte[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Blob.class, byte[].class, object -> {
-				try {
-					long length = object.length();
-					if (length > Integer.MAX_VALUE)
-						throw new ConvertException(Blob.class, "length=" + length, byte[].class);
-					return object.getBytes(1L, (int)length);
-				}
-				catch (SQLException e) {
-					throw new ConvertException(Blob.class, object, byte[].class, null, e);
-				}
-			})
-		);
-
-	// java.sql.Array -> *[]
-		// java.sql.Array -> boolean[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, boolean[].class, object -> toArray(object, boolean[].class, boolean.class))
-		);
-
-		// java.sql.Array -> byte[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, byte[].class, object -> toArray(object, byte[].class, byte.class))
-		);
-
-		// java.sql.Array -> short[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, short[].class, object -> toArray(object, short[].class, short.class))
-		);
-
-		// java.sql.Array -> int[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, int[].class, object -> toArray(object, int[].class, int.class))
-		);
-
-		// java.sql.Array -> long[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, long[].class, object -> toArray(object, long[].class, long.class))
-		);
-
-		// java.sql.Array -> float[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, float[].class, object -> toArray(object, float[].class, float.class))
-		);
-
-		// java.sql.Array -> double[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, double[].class, object -> toArray(object, double[].class, double.class))
-		);
-
-		// java.sql.Array -> BigDecimal[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, BigDecimal[].class, object -> toArray(object, BigDecimal[].class, BigDecimal.class))
-		);
-
-		// java.sql.Array -> String[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, String[].class, object -> toArray(object, String[].class, String.class))
-		);
-
-		// java.sql.Array -> java.util.Date[] (since 1.4.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, java.util.Date[].class, object -> toArray(object, java.util.Date[].class, java.util.Date.class))
-		);
-
-		// java.sql.Array -> Date[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, Date[].class, object -> toArray(object, Date[].class, Date.class))
-		);
-
-		// java.sql.Array -> Time[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, Time[].class, object -> toArray(object, Time[].class, Time.class))
-		);
-
-		// java.sql.Array -> Timestamp[]
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, Timestamp[].class, object -> toArray(object, Timestamp[].class, Timestamp.class))
-		);
-
-		// java.sql.Array -> LocalDateTime[] (3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, LocalDateTime[].class, object -> toArray(object, LocalDateTime[].class, LocalDateTime.class))
-		);
-
-		// java.sql.Array -> LocalDate[] (3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, LocalDate[].class, object -> toArray(object, LocalDate[].class, LocalDate.class))
-		);
-
-		// java.sql.Array -> LocalTime[] (3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, LocalTime[].class, object -> toArray(object, LocalTime[].class, LocalTime.class))
-		);
-
-		// java.sql.Array -> OffsetDateTime[] (3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, OffsetDateTime[].class, object -> toArray(object, OffsetDateTime[].class, OffsetDateTime.class))
-		);
-
-		// java.sql.Array -> ZonedDateTime[] (3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, ZonedDateTime[].class, object -> toArray(object, ZonedDateTime[].class, ZonedDateTime.class))
-		);
-
-		// java.sql.Array -> Instant[] (3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.sql.Array.class, Instant[].class, object -> toArray(object, Instant[].class, Instant.class))
-		);
-
-	// * -> SqlString
-		Function<String, SqlString> toDateSqlString      = string -> new SqlString("DATE'" + string + '\'');
-		Function<String, SqlString> toTimeSqlString      = string -> new SqlString("TIME'" + string + '\'');
-		Function<String, SqlString> toTimestampSqlString = string -> new SqlString("TIMESTAMP'" + string + '\'');
-
-		// Object -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Object.class, SqlString.class, object -> new SqlString(object.toString()))
-		);
-
-		// Boolean -> SqlString(FALSE, TRUE)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "TRUE" : "FALSE"))
-		);
-
-		// BigDecimal -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigDecimal.class, SqlString.class, object -> new SqlString(object.toPlainString()))
-		);
-
-		// String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String.class, SqlString.class, object -> {
-				if (object.length() > maxStringLiteralLength)
-					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
-
-				StringBuilder buff = new StringBuilder(object.length() + 2);
-				buff.append('\'');
-				boolean inLiteral = true;
-
-				for (char ch : object.toCharArray()) {
-					if (ch >= ' ' && ch != '\u007F') {
-						// Literal representation
-						if (!inLiteral) {
-							// Outside of the literal
-							buff.append("||'");
-							inLiteral = true;
-						}
-						if (ch == '\'') buff.append('\'');
-						buff.append(ch);
-					} else {
-						// Functional representation
-						if (inLiteral) {
-							// Inside of the literal
-							buff.append('\'');
-							inLiteral = false;
-						}
-						buff.append("||CHR(").append((int)ch).append(')');
-					}
-				}
-
-				if (inLiteral)
-					buff.append('\'');
-
-				return new SqlString(buff.toString());
-			})
-		);
-
-		// Character -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Character.class, SqlString.class,
-				object -> TypeConverter.get(typeConverterMap, String.class, SqlString.class).function().apply(object.toString())
-			)
-		);
-
-		// java.util.Date -> String -> SqlString (since 1.4.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.util.Date.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function(),
-				toDateSqlString
-			)
-		);
-
-		// java.sql.Date -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Date.class, String.class).function(),
-				toDateSqlString
-			)
-		);
-
-		// LocalDate -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalDate.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, LocalDate.class, String.class).function(),
-				toDateSqlString
-			)
-		);
-
-		// Time -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
-				toTimeSqlString
-			)
-		);
-
-		// LocalTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
-				toTimeSqlString
-			)
-		);
-
-		// Timestamp -> String -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function(),
-				toTimestampSqlString
-			)
-		);
-
-		// LocalDateTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalDateTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, LocalDateTime.class, String.class).function(),
-				toTimestampSqlString
-			)
-		);
-
-		// OffsetDateTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(OffsetDateTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, OffsetDateTime.class, String.class).function(),
-				toTimestampSqlString
-			)
-		);
-
-		// ZonedDateTime -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(ZonedDateTime.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, ZonedDateTime.class, String.class).function(),
-				toTimestampSqlString
-			)
-		);
-
-		// Instant -> String -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Instant.class, SqlString.class,
-				TypeConverter.get(typeConverterMap, Instant.class, String.class).function(),
-				toTimestampSqlString
-			)
-		);
-
-		// Enum -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Enum.class, SqlString.class, object -> new SqlString('\'' + object.toString() + '\''))
-		);
-
-		// boolean[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(boolean[].class, SqlString.class, object -> toSqlString(object, Boolean.class))
-		);
-
-		// char[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(char[].class, SqlString.class, object -> toSqlString(object, Character.class))
-		);
-
-		// byte[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[].class, SqlString.class, object -> {
-				if (object.length > maxBinaryLiteralLength)
-					return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
-
-				StringBuilder buff = new StringBuilder(object.length * 2 + 3);
-				buff.append("X'");
-				for (int value : object) {
-					value &= 0xFF;
-					char ch = (char)((value >>> 4) + '0');
-					if (ch > '9') ch += 'A' - ('9' + 1);
-					buff.append(ch);
-					ch = (char)((value & 0x0F) + '0');
-					if (ch > '9') ch += 'A' - ('9' + 1);
-					buff.append(ch);
-				}
-				buff.append('\'');
-
-				return new SqlString(buff.toString());
-			})
-		);
-
-		// byte[][] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[][].class, SqlString.class, object -> toSqlString(object, byte[].class))
-		);
-
-		// short[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(short[].class, SqlString.class, object -> toSqlString(object, Short.class))
-		);
-
-		// int[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(int[].class, SqlString.class, object -> toSqlString(object, Integer.class))
-		);
-
-		// long[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(long[].class, SqlString.class, object -> toSqlString(object, Long.class))
-		);
-
-		// float[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(float[].class, SqlString.class, object -> toSqlString(object, Float.class))
-		);
-
-		// double[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(double[].class, SqlString.class, object -> toSqlString(object, Double.class))
-		);
-
-		// BigDecimal[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(BigDecimal[].class, SqlString.class, object -> toSqlString(object, BigDecimal.class))
-		);
-
-		// String[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(String[].class, SqlString.class, object -> toSqlString(object, String.class))
-		);
-
-		// java.util.Date[] -> SqlString (since 1.4.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(java.util.Date[].class, SqlString.class, object -> toSqlString(object, java.util.Date.class))
-		);
-
-		// Date[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Date[].class, SqlString.class, object -> toSqlString(object, Date.class))
-		);
-
-		// Time[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Time[].class, SqlString.class, object -> toSqlString(object, Time.class))
-		);
-
-		// Timestamp[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Timestamp[].class, SqlString.class, object -> toSqlString(object, Timestamp.class))
-		);
-
-		// LocalDateTime[] -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalDateTime[].class, SqlString.class, object -> toSqlString(object, LocalDateTime.class))
-		);
-
-		// LocalDate[] -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalDate[].class, SqlString.class, object -> toSqlString(object, LocalDate.class))
-		);
-
-		// LocalTime[] -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(LocalTime[].class, SqlString.class, object -> toSqlString(object, LocalTime.class))
-		);
-
-		// OffsetDateTime[] -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(OffsetDateTime[].class, SqlString.class, object -> toSqlString(object, OffsetDateTime.class))
-		);
-
-		// ZonedDateTime[] -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(ZonedDateTime[].class, SqlString.class, object -> toSqlString(object, ZonedDateTime.class))
-		);
-
-		// Instant[] -> SqlString (since 3.0.0)
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Instant[].class, SqlString.class, object -> toSqlString(object, Instant.class))
-		);
-
-		// Iterable -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(Iterable.class, SqlString.class, object -> {
-				Iterator<Object> iterator = object.iterator();
-				Class<?> beforeElementType = null;
-				Function<Object, SqlString> function = null;
-
-				StringBuilder buff = new StringBuilder("(");
-
-				for (int index = 0; iterator.hasNext(); ++index) {
-					if (index > 0) buff.append(",");
-					Object element = iterator.next();
-					if (element == null)
-						buff.append("NULL");
-					else {
-						Class<?> elementType = element.getClass();
-						if (elementType != beforeElementType) {
-							TypeConverter<?, SqlString> typeConverter = TypeConverter.get(typeConverterMap, elementType, SqlString.class);
-							if (typeConverter == null)
-								throw new ConvertException(elementType, element, SqlString.class);
-
-							function = (Function<Object, SqlString>)typeConverter.function();
-							beforeElementType = elementType;
-						}
-						buff.append(function.apply(element).content());
-					}
-				}
-
-				buff.append(')');
-				return new SqlString(buff.toString());
-			})
-		);
-
-	}
-
-	/**
-	 * Converts a java.sql.Array to an array.
-	 *
-	 * @param <AT> array type
-	 * @param <CT> component type
-	 * @param object an object to be converted
-	 * @param arrayType the array type
-	 * @param componentType the component type
-	 * @return the converted array
-	 */
-	@SuppressWarnings("unchecked")
-	protected <AT, CT> AT toArray(java.sql.Array object, Class<AT> arrayType, Class<CT> componentType) {
-		try {
-			Object array = object.getArray();
-			if (arrayType.isInstance(array))
-				return (AT)array;
-
-			AT result = (AT)Array.newInstance(componentType, Array.getLength(array));
-			TypeConverter<Object, CT> typeConverter = null;
-			for (int index = 0; index < Array.getLength(result); ++index) {
-				Object value = Array.get(array, index);
-				CT convertedValue = null;
-				if (value != null) {
-					if (Utils.toClassType(componentType).isInstance(value))
-						convertedValue = (CT)value;
-					else {
-						if (typeConverter == null)
-							typeConverter = (TypeConverter<Object, CT>)TypeConverter.get(typeConverterMap, value.getClass(), componentType);
-
-						if (typeConverter == null)
-							throw new ConvertException(value.getClass(), value, componentType);
-
-						convertedValue = typeConverter.function().apply(value);
-					}
-				}
-				Array.set(result, index, convertedValue);
-			}
-			return result;
-		}
-		catch (Exception e) {
-			throw new ConvertException(object.getClass(), object, arrayType, e);
-		}
-	}
-
-	/**
-	 * Converts an array object to a <b>SqlString</b>.
-	 *
-	 * @param <CT> component type
-	 * @param array an array object to be converted
-	 * @param componentType the component type
-	 * @return the converted <b>SqlString</b>
-	 */
-	@SuppressWarnings("unchecked")
-	protected <CT> SqlString toSqlString(Object array, Class<CT> componentType) {
-		TypeConverter<CT, SqlString> typeConverter = TypeConverter.get(typeConverterMap, componentType, SqlString.class);
-		if (typeConverter == null)
-			throw new ConvertException(componentType, array, SqlString.class);
-
-		Function<? super CT, ? extends SqlString> function = typeConverter.function();
-		StringBuilder buff = new StringBuilder("ARRAY[");
-		List<Object> parameters = new ArrayList<>();
-		for (int index = 0; index < Array.getLength(array); ++ index) {
-			if (index > 0) buff.append(",");
-			SqlString sqlString = function.apply((CT)Array.get(array, index));
-			buff.append(sqlString.content());
-			parameters.addAll(Arrays.asList(sqlString.parameters()));
-		}
-		buff.append(']');
-		return new SqlString(buff.toString(), parameters.toArray());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
-		StringBuilder buff = new StringBuilder();
-
-	// 3.1.0
-		if (sql.getUnionSqls().isEmpty()) {
-	////
-			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-			buff.append(subSelectSql(sql, parameters));
-	// 3.1.0
-		} else {
-			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-			// UNION or UNION ALL
-			// SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-			// ...
-			String delimiter = "";
-			for (Sql<?> unionSql : sql.getUnionSqls()) {
-				buff.append(delimiter).append(subSelectSql(unionSql, parameters));
-				delimiter = sql.isUnionAll() ? " UNION ALL " : " UNION ";
-			}
-		}
-	////
-
-		// ORDER BY ...
-		appendOrderBy(buff, sql, parameters);
-
-		if (supportsOffsetLimit()) {
-			// LIMIT ...
-			appendLimit(buff, sql);
-
-			// OFFSET ...
-			appendOffset(buff, sql);
-		}
-
-		// FOR UPDATE
-		appendForUpdate(buff, sql);
-
-		return buff.toString();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String subSelectSql(Sql<E> sql, List<Object> parameters) {
-	// 3.1.0
-	//	return subSelectSql(sql, () -> {
-	//		//  column name, ...
-	//		StringBuilder buff = new StringBuilder();
-	//		String[] delimiter = new String[] {""};
-	//
-	//		sql.selectedJoinSqlColumnInfoStream()
-	//			.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
-	//			.forEach(sqlColumnInfo -> {
-	//				buff.append(delimiter[0]);
-	//				delimiter[0] = ", ";
-	//
-	//				ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
-	//				String tableAlias  = sqlColumnInfo.tableAlias();
-	//				String columnName  = columnInfo.getColumnName(tableAlias);
-	//				String columnAlias = columnInfo.getColumnAlias(tableAlias);
-	//
-	//				// gets expression
-	//				Expression expression = sql.getExpression(columnInfo.propertyName());
-	//				if (expression.isEmpty())
-	//					expression = sql.getExpression(columnInfo.getPropertyName(tableAlias));
-	//
-	//				if (expression.isEmpty())
-	//					expression = columnInfo.selectExpression();
-	//
-	//				if (expression.isEmpty()) {
-	//					if (!sql.getGroupBy().isEmpty()) buff.append("MIN(");
-	//
-	//					// No expression ->  column name
-	//					buff.append(columnName);
-	//
-	//					if (!sql.getGroupBy().isEmpty()) buff.append(")");
-	//
-	//					// column alias
-	//					if (!columnAlias.equals(columnName))
-	//					// 3.1.0
-	//					//	buff.append(" AS ").append(columnAlias);
-	//						buff.append(" ").append(columnAlias);
-	//					////
-	//
-	//				} else {
-	//					// First expression
-	//					buff.append(expression.toString(this, sql, parameters));
-	//
-	//					// column alias
-	//				// 3.1.0
-	//				//	buff.append(" AS ").append(columnAlias);
-	//					buff.append(" ").append(columnAlias);
-	//				////
-	//				}
-	//			});
-	//		if (buff.length() == 0)
-	//			throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
-	//				sql.entityClass().getName(),
-	//				'[' + sql.getColumns().stream()
-	//					.map(name -> '"' + name + '"')
-	//					.collect(Collectors.joining(", ")) + ']'
-	//			));
-	//		return buff;
-	//	}, parameters);
-		return subSelectSql(sql, () -> {
-			StringBuilder buff = new StringBuilder();
-			if (sql.getFrom() == null)
-				appendSelectColumns(buff, sql, parameters);
-			else
-				appendSelectColumnAliases(buff, sql, parameters);
-			return buff;
-		}, parameters);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
-		StringBuilder buff = new StringBuilder();
-
-		// SELECT
-		buff.append("SELECT");
-
-		// DISTINCT
-		appendDistinct(buff, sql);
-
-		//  column name, ...
-		buff.append(' ').append(columnsSupplier.get());
-
-		// FROM
-		buff.append(" FROM");
-
-	// 3.1.0
-	//	// main table name and alias
-	//	appendMainTable(buff, sql);
-		if (sql.getFrom() == null) {
-			// main table name and alias
-			appendMainTable(buff, sql);
-
-		} else {
-			// (SELECT ...) table alias
-			buff.append(" (")
-				.append(subSelectSql(sql.getFrom(), parameters))
-				.append(") ")
-				.append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
-		}
-	////
-
-		// INNER / OUTER JOIN ...
-		appendJoinTables(buff, sql, parameters);
-
-		// WHERE ...
-		appendWhere(buff, sql, parameters);
-
-		// GROUP BY ...
-		appendGroupBy(buff, sql, parameters);
-
-		// HAVING ...
-		appendHaving(buff, sql, parameters);
-
-		return buff.toString();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String insertSql(Sql<E> sql, List<Object> parameters) {
-		StringBuilder buff = new StringBuilder();
-
-		// INSERT INTO
-		buff.append("INSERT INTO");
-
-		// table name and alias
-		appendMainTable(buff, sql);
-
-		// (column name, ...) VALUES (value, ...)
-		appendInsertColumnsAndValues(buff, sql, parameters);
-
-		return buff.toString();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
-		StringBuilder buff = new StringBuilder();
-
-		// UPDATE table name
-		buff.append("UPDATE");
-
-		// table name and alias
-		appendMainTable(buff, sql);
-
-		// INNER / OUTER JOIN ...
-		appendJoinTables(buff, sql, parameters);
-
-		// SET column name =  value, ...
-		appendUpdateColumnsAndValues(buff, sql, parameters);
-
-		// WHERE ...
-		appendWhere(buff, sql, parameters);
-
-		// ORDER BY ...
-		appendOrderBy(buff, sql, parameters);
-
-		// LIMIT ...
-		appendLimit(buff, sql);
-
-		return buff.toString();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String deleteSql(Sql<E> sql, List<Object> parameters) {
-		StringBuilder buff = new StringBuilder();
-
-		// DELETE FROM
-		buff.append("DELETE");
-		if (sql.getJoinInfos().size() > 0)
-			buff.append(' ')
-				.append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
-		buff.append(" FROM");
-
-		// table name and alias
-		appendMainTable(buff, sql);
-
-		// INNER / OUTER JOIN ...
-		appendJoinTables(buff, sql, parameters);
-
-		// WHERE ...
-		appendWhere(buff, sql, parameters);
-
-		// ORDER BY ...
-		appendOrderBy(buff, sql, parameters);
-
-		// LIMIT ...
-		appendLimit(buff, sql);
-
-		return buff.toString();
-	}
-
-	/**
-	 * Appends DISTINCT to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendDistinct(StringBuilder buff, Sql<E> sql) {
-		// DISTINCT
-		if (sql.isDistinct())
-			buff.append(" DISTINCT");
-	}
-
-	/**
-	 * Appends the main table name and alias to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendMainTable(StringBuilder buff, Sql<E> sql) {
-		// main table name
-		buff.append(' ').append(sql.entityInfo().tableName());
-
-		// table alias
-		if (!sql.tableAlias().isEmpty())
-			buff.append(' ').append(sql.tableAlias());
-	}
-
-	/**
-	 * Appends the join table names and aliases to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 * @param parameters a list to add the parameters of the SQL
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendJoinTables(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-		sql.getJoinInfos().forEach(joinInfo -> {
-			// INNER/OUTER JOIN table name
-			buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());
-
-			// table alias
-			if (!joinInfo.tableAlias().isEmpty())
-				buff.append(' ').append(joinInfo.tableAlias());
-
-			// ON ...
-			if (!joinInfo.on().isEmpty())
-				buff.append(" ON ").append(joinInfo.on().toString(this, sql, parameters));
-		});
-	}
-
-	/**
-	 * Appends SELECT column aliass<b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 * @param parameters a list to add the parameters of the SQL
-	 *
-	 * @since 3.1.0
-	 */
-	protected <E> void appendSelectColumnAliases(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-		// alias, ...
-		String[] delimiter = new String[] {""};
-
-		sql.selectedJoinSqlColumnInfoStream()
-			.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
-			.forEach(sqlColumnInfo -> {
-				buff.append(delimiter[0]);
-				delimiter[0] = ", ";
-
-				ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
-				String tableAlias  = sqlColumnInfo.tableAlias();
-				String columnAlias = columnInfo.getColumnAlias(tableAlias);
-
-				// column alias
-				buff.append(columnAlias);
-			});
-
-		if (buff.length() == 0)
-			throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
-				sql.entityClass().getName(),
-				'[' + sql.getColumns().stream()
-					.map(name -> '"' + name + '"')
-					.collect(Collectors.joining(", ")) + ']'
-			));
-	}
-
-	/**
-	 * Appends SELECT column names<b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 * @param parameters a list to add the parameters of the SQL
-	 *
-	 * @since 3.1.0
-	 */
-	protected <E> void appendSelectColumns(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-		// column name or expression alias, ...
-		String[] delimiter = new String[] {""};
-
-		sql.selectedJoinSqlColumnInfoStream()
-			.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
-			.forEach(sqlColumnInfo -> {
-				buff.append(delimiter[0]);
-				delimiter[0] = ", ";
-
-				ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
-				String tableAlias  = sqlColumnInfo.tableAlias();
-				String columnName  = columnInfo.getColumnName(tableAlias);
-				String columnAlias = columnInfo.getColumnAlias(tableAlias);
-
-				// gets expression
-				Expression expression = sql.getExpression(columnInfo.propertyName());
-				if (expression.isEmpty())
-					expression = sql.getExpression(columnInfo.getPropertyName(tableAlias));
-
-				if (expression.isEmpty())
-					expression = columnInfo.selectExpression();
-
-				if (expression.isEmpty()) {
-					if (!sql.getGroupBy().isEmpty()) buff.append("MIN(");
-
-					// No expression ->  column name
-					buff.append(columnName);
-
-					if (!sql.getGroupBy().isEmpty()) buff.append(")");
-
-					// column alias
-					if (!columnAlias.equals(columnName))
-						buff.append(" ").append(columnAlias);
-
-				} else {
-					// First expression
-					buff.append(expression.toString(this, sql, parameters));
-
-					// column alias
-					buff.append(" ").append(columnAlias);
-				}
-			});
-
-		if (buff.length() == 0)
-			throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
-				sql.entityClass().getName(),
-				'[' + sql.getColumns().stream()
-					.map(name -> '"' + name + '"')
-					.collect(Collectors.joining(", ")) + ']'
-			));
-	}
-
-	/**
-	 * Appends INSERT column names and values to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 * @param parameters a list to add the parameters of the SQL
-	 *
-	 * @since 1.8.4
-	 */
-	protected <E> void appendInsertColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-		// ( column name, ...
-		buff.append(" (");
-		String[] delimiter = new String[] {""};
-
-		sql.columnInfoStream()
-			.filter(ColumnInfo::insertable)
-			.forEach(columnInfo -> {
-				buff.append(delimiter[0]).append(columnInfo.columnName());
-				delimiter[0] = ", ";
-			});
-
-		// ) VALUES (value, ...)
-		buff.append(") VALUES (");
-		delimiter[0] = "";
-
-		sql.columnInfoStream()
-			.filter(ColumnInfo::insertable)
-			.forEach(columnInfo -> {
-				String propertyName = columnInfo.propertyName();
-
-				// gets expression
-				Expression expression = sql.getExpression(propertyName);
-				if (expression.isEmpty())
-					expression = columnInfo.insertExpression();
-
-				if (expression.isEmpty())
-					expression = new Expression("{#" + propertyName + "}");
-
-				buff.append(delimiter[0])
-					.append(expression.toString(this, sql, parameters));
-				delimiter[0] = ", ";
-			});
-		buff.append(")");
-	}
-
-	/**
-	 * Appends UPDATE column names and values to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 * @param parameters a list to add the parameters of the SQL
-	 *
-	 * @since 1.8.4
-	 */
-	protected <E> void appendUpdateColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-		// SET column name =  value, ...
-		buff.append(" SET ");
-		String[] delimiter = new String[] {""};
-
-		sql.selectedSqlColumnInfoStream()
-			.filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().updatable())
-			.forEach(sqlColumnInfo -> {
-				ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
-				String tableAlias   = sqlColumnInfo.tableAlias();
-				String propertyName = columnInfo.propertyName();
-				String columnName   = columnInfo.getColumnName(tableAlias);
-
-				// gets expression
-				Expression expression = sql.getExpression(propertyName);
-				if (expression.isEmpty())
-					expression = columnInfo.updateExpression();
-
-				if (expression.isEmpty())
-					expression = new Expression("{#" + propertyName + "}");
-
-				buff.append(delimiter[0])
-					.append(columnName)
-					.append("=")
-					.append(expression.toString(this, sql, parameters));
-				delimiter[0] = ", ";
-			});
-	}
-
-	/**
-	 * Appends WHERE clause to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 * @param parameters a list to add the parameters of the SQL
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-		if (sql.getWhere() != Condition.ALL)
-			buff.append(" WHERE ").append(sql.getWhere().toString(this, sql, parameters));
-	}
-
-	/**
-	 * Appends GROUP BY clause to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 * @param parameters a list to add the parameters of the SQL
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-		if (!sql.getGroupBy().isEmpty())
-			buff.append(' ').append(sql.getGroupBy().toString(this, sql, parameters));
-	}
-
-	/**
-	 * Appends HAVING clause to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 * @param parameters a list to add the parameters of the SQL
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-		if (!sql.getHaving().isEmpty())
-			buff.append(" HAVING ").append(sql.getHaving().toString(this, sql, parameters));
-	}
-
-	/**
-	 * Appends ORDER BY clause to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 * @param parameters a list to add the parameters of the SQL
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-		if (!sql.getOrderBy().isEmpty())
-			buff.append(' ').append(sql.getOrderBy().toString(this, sql, parameters));
-	}
-
-	/**
-	 * Appends LIMIT clause to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendLimit(StringBuilder buff, Sql<E> sql) {
-		if (sql.getLimit() != Integer.MAX_VALUE)
-			buff.append(" LIMIT ").append(sql.getLimit());
-	}
-
-	/**
-	 * Appends OFFSET clause to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendOffset(StringBuilder buff, Sql<E> sql) {
-		if (sql.getOffset() != 0)
-			buff.append(" OFFSET ").append(sql.getOffset());
-	}
-
-	/**
-	 * Appends FOR UPDATE clause to <b>buff</b>.
-	 *
-	 * @param <E> the type of the entity
-	 * @param buff the string buffer to be appended
-	 * @param sql a <b>Sql</b> object
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
-		// FOR UPDATE
-		if (sql.isForUpdate()) {
-			buff.append(" FOR UPDATE");
-
-			// NO WAIT
-			if (sql.isNoWait())
-				throw new UnsupportedOperationException("noWait");
-
-			// WAIT n
-			else if (!sql.isWaitForever())
-				throw new UnsupportedOperationException("wait N");
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Map<String, TypeConverter<?, ?>> typeConverterMap() {
-		return typeConverterMap;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <T> T convert(Object value, Class<T> type) {
-		return TypeConverter.convert(typeConverterMap, value, type);
-	}
+    // Class Resources
+    private static final Resource resource = new Resource(Standard.class);
+    private static final String messageSelectSqlWithoutColumns = resource.getString("messageSelectSqlWithoutColumns");
+
+    // The logger
+    protected static final Logger logger = LoggerFactory.getLogger(Database.class);
+
+    /**
+     * Maximum length of string literal when generates SQL.
+     *
+     * <p>
+     * If the string literal exceeds this length, it generated as SQL parameters (?).<br>
+     * The value of <b>maxStringLiteralLength</b> of lightsleep.properties has been set.
+     * (if undefined, 128)
+     * </p>
+     */
+    public final int maxStringLiteralLength = Resource.getGlobal().getInt("maxStringLiteralLength", 128);
+
+    /**
+     * Maximum length of binary literal when generates SQL.
+     *
+     * <p>
+     * If the binary literal exceeds this length, it generated as SQL parameters (?).<br>
+     * The value of <b>maxBinaryLiteralLength</b> of lightsleep.properties has been set.
+     * (if undefined, 128)
+     * </p>
+     */
+    public final int maxBinaryLiteralLength = Resource.getGlobal().getInt("maxBinaryLiteralLength", 128);
+
+    /**
+     * The ASCII characters without controle charactes
+     *
+     * @since 2.2.0
+     */
+    protected static final String ASCII_CHARS =
+          " !\"#$%&'()*+,-./"
+        + "0123456789:;<=>?"
+        + "@ABCDEFGHUJKLMNO"
+        + "PQRSTUVWXYZ[\\]^_"
+        + "`abcdefghijklmno"
+        + "pqrstuvwxyz(|)~";
+
+    /**
+     * The pattern string of passwords
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_MASK = "xxxx";
+
+    /**
+     * The only instance of this class
+     *
+     * @since 2.1.0
+     */
+    public static final Standard instance = new Standard();
+
+    /**
+     * <b>TypeConverter</b> map used for the following data type conversion
+     * <ul>
+     *   <li>When generating SQL</li>
+     *   <li>When storing the value obtained by SELECT SQL in the entity</li>
+     * </ul>
+     */
+    protected final Map<String, TypeConverter<?, ?>> typeConverterMap = new ConcurrentHashMap<>(TypeConverter.typeConverterMap());
+
+    /**
+     * Constructs a new <b>Standard</b>.
+     */
+    @SuppressWarnings("unchecked")
+    protected Standard() {
+        if (logger.isDebugEnabled()) {
+            logger.debug(getClass().getSimpleName() + ": maxStringLiteralLength = " + maxStringLiteralLength);
+            logger.debug(getClass().getSimpleName() + ": maxBinaryLiteralLength = " + maxBinaryLiteralLength);
+        }
+
+        // Clob -> String
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Clob.class, String.class, object -> {
+                try {
+                    long length = object.length();
+                    if (length > Integer.MAX_VALUE)
+                        throw new ConvertException(Clob.class, "length=" + length, String.class);
+                    return object.getSubString(1L, (int)length);
+                }
+                catch (SQLException e) {
+                    throw new ConvertException(Clob.class, object, String.class, null, e);
+                }
+            })
+        );
+
+        // Blob -> byte[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Blob.class, byte[].class, object -> {
+                try {
+                    long length = object.length();
+                    if (length > Integer.MAX_VALUE)
+                        throw new ConvertException(Blob.class, "length=" + length, byte[].class);
+                    return object.getBytes(1L, (int)length);
+                }
+                catch (SQLException e) {
+                    throw new ConvertException(Blob.class, object, byte[].class, null, e);
+                }
+            })
+        );
+
+    // java.sql.Array -> *[]
+        // java.sql.Array -> boolean[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, boolean[].class, object -> toArray(object, boolean[].class, boolean.class))
+        );
+
+        // java.sql.Array -> byte[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, byte[].class, object -> toArray(object, byte[].class, byte.class))
+        );
+
+        // java.sql.Array -> short[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, short[].class, object -> toArray(object, short[].class, short.class))
+        );
+
+        // java.sql.Array -> int[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, int[].class, object -> toArray(object, int[].class, int.class))
+        );
+
+        // java.sql.Array -> long[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, long[].class, object -> toArray(object, long[].class, long.class))
+        );
+
+        // java.sql.Array -> float[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, float[].class, object -> toArray(object, float[].class, float.class))
+        );
+
+        // java.sql.Array -> double[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, double[].class, object -> toArray(object, double[].class, double.class))
+        );
+
+        // java.sql.Array -> BigDecimal[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, BigDecimal[].class, object -> toArray(object, BigDecimal[].class, BigDecimal.class))
+        );
+
+        // java.sql.Array -> String[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, String[].class, object -> toArray(object, String[].class, String.class))
+        );
+
+        // java.sql.Array -> java.util.Date[] (since 1.4.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, java.util.Date[].class, object -> toArray(object, java.util.Date[].class, java.util.Date.class))
+        );
+
+        // java.sql.Array -> Date[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, Date[].class, object -> toArray(object, Date[].class, Date.class))
+        );
+
+        // java.sql.Array -> Time[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, Time[].class, object -> toArray(object, Time[].class, Time.class))
+        );
+
+        // java.sql.Array -> Timestamp[]
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, Timestamp[].class, object -> toArray(object, Timestamp[].class, Timestamp.class))
+        );
+
+        // java.sql.Array -> LocalDateTime[] (3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, LocalDateTime[].class, object -> toArray(object, LocalDateTime[].class, LocalDateTime.class))
+        );
+
+        // java.sql.Array -> LocalDate[] (3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, LocalDate[].class, object -> toArray(object, LocalDate[].class, LocalDate.class))
+        );
+
+        // java.sql.Array -> LocalTime[] (3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, LocalTime[].class, object -> toArray(object, LocalTime[].class, LocalTime.class))
+        );
+
+        // java.sql.Array -> OffsetDateTime[] (3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, OffsetDateTime[].class, object -> toArray(object, OffsetDateTime[].class, OffsetDateTime.class))
+        );
+
+        // java.sql.Array -> ZonedDateTime[] (3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, ZonedDateTime[].class, object -> toArray(object, ZonedDateTime[].class, ZonedDateTime.class))
+        );
+
+        // java.sql.Array -> Instant[] (3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.sql.Array.class, Instant[].class, object -> toArray(object, Instant[].class, Instant.class))
+        );
+
+    // * -> SqlString
+        Function<String, SqlString> toDateSqlString      = string -> new SqlString("DATE'" + string + '\'');
+        Function<String, SqlString> toTimeSqlString      = string -> new SqlString("TIME'" + string + '\'');
+        Function<String, SqlString> toTimestampSqlString = string -> new SqlString("TIMESTAMP'" + string + '\'');
+
+        // Object -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Object.class, SqlString.class, object -> new SqlString(object.toString()))
+        );
+
+        // Boolean -> SqlString(FALSE, TRUE)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Boolean.class, SqlString.class, object -> new SqlString(object ? "TRUE" : "FALSE"))
+        );
+
+        // BigDecimal -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(BigDecimal.class, SqlString.class, object -> new SqlString(object.toPlainString()))
+        );
+
+        // String -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(String.class, SqlString.class, object -> {
+                if (object.length() > maxStringLiteralLength)
+                    return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
+
+                StringBuilder buff = new StringBuilder(object.length() + 2);
+                buff.append('\'');
+                boolean inLiteral = true;
+
+                for (char ch : object.toCharArray()) {
+                    if (ch >= ' ' && ch != '\u007F') {
+                        // Literal representation
+                        if (!inLiteral) {
+                            // Outside of the literal
+                            buff.append("||'");
+                            inLiteral = true;
+                        }
+                        if (ch == '\'') buff.append('\'');
+                        buff.append(ch);
+                    } else {
+                        // Functional representation
+                        if (inLiteral) {
+                            // Inside of the literal
+                            buff.append('\'');
+                            inLiteral = false;
+                        }
+                        buff.append("||CHR(").append((int)ch).append(')');
+                    }
+                }
+
+                if (inLiteral)
+                    buff.append('\'');
+
+                return new SqlString(buff.toString());
+            })
+        );
+
+        // Character -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Character.class, SqlString.class,
+        //        object -> TypeConverter.get(typeConverterMap, String.class, SqlString.class).function().apply(object.toString())
+        //    )
+            TypeConverter.of(typeConverterMap, Character.class, String.class, SqlString.class)
+        ////
+        );
+
+        // java.util.Date -> String -> SqlString (since 1.4.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(java.util.Date.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function(),
+        //        toDateSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, java.util.Date.class, String.class, SqlString.class, toDateSqlString)
+        ////
+        );
+
+        // java.sql.Date -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Date.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Date.class, String.class).function(),
+        //        toDateSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Date.class, String.class, SqlString.class, toDateSqlString)
+        ////
+        );
+
+        // LocalDate -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(LocalDate.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, LocalDate.class, String.class).function(),
+        //        toDateSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, LocalDate.class, String.class, SqlString.class, toDateSqlString)
+        ////
+        );
+
+        // Time -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Time.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
+        //        toTimeSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Time.class, String.class, SqlString.class, toTimeSqlString)
+        ////
+        );
+
+        // LocalTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(LocalTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
+        //        toTimeSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, LocalTime.class, String.class, SqlString.class, toTimeSqlString)
+        ////
+        );
+
+        // Timestamp -> String -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Timestamp.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function(),
+        //        toTimestampSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Timestamp.class, String.class, SqlString.class, toTimestampSqlString)
+        ////
+        );
+
+        // LocalDateTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(LocalDateTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, LocalDateTime.class, String.class).function(),
+        //        toTimestampSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, LocalDateTime.class, String.class, SqlString.class, toTimestampSqlString)
+        ////
+        );
+
+        // OffsetDateTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(OffsetDateTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, OffsetDateTime.class, String.class).function(),
+        //        toTimestampSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, OffsetDateTime.class, String.class, SqlString.class, toTimestampSqlString)
+        ////
+        );
+
+        // ZonedDateTime -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(ZonedDateTime.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, ZonedDateTime.class, String.class).function(),
+        //        toTimestampSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, ZonedDateTime.class, String.class, SqlString.class, toTimestampSqlString)
+        ////
+        );
+
+        // Instant -> String -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(Instant.class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, Instant.class, String.class).function(),
+        //        toTimestampSqlString
+        //    )
+            TypeConverter.of(typeConverterMap, Instant.class, String.class, SqlString.class, toTimestampSqlString)
+        ////
+        );
+
+        // Enum -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Enum.class, SqlString.class, object -> new SqlString('\'' + object.toString() + '\''))
+        );
+
+        // boolean[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(boolean[].class, SqlString.class, object -> toSqlString(object, Boolean.class))
+        );
+
+        // char[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(char[].class, SqlString.class, object -> toSqlString(object, Character.class))
+        );
+
+        // byte[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(byte[].class, SqlString.class, object -> {
+                if (object.length > maxBinaryLiteralLength)
+                    return new SqlString(SqlString.PARAMETER, object); // SQL Parameter
+
+                StringBuilder buff = new StringBuilder(object.length * 2 + 3);
+                buff.append("X'");
+                for (int value : object) {
+                    value &= 0xFF;
+                    char ch = (char)((value >>> 4) + '0');
+                    if (ch > '9') ch += 'A' - ('9' + 1);
+                    buff.append(ch);
+                    ch = (char)((value & 0x0F) + '0');
+                    if (ch > '9') ch += 'A' - ('9' + 1);
+                    buff.append(ch);
+                }
+                buff.append('\'');
+
+                return new SqlString(buff.toString());
+            })
+        );
+
+        // byte[][] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(byte[][].class, SqlString.class, object -> toSqlString(object, byte[].class))
+        );
+
+        // short[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(short[].class, SqlString.class, object -> toSqlString(object, Short.class))
+        );
+
+        // int[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(int[].class, SqlString.class, object -> toSqlString(object, Integer.class))
+        );
+
+        // long[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(long[].class, SqlString.class, object -> toSqlString(object, Long.class))
+        );
+
+        // float[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(float[].class, SqlString.class, object -> toSqlString(object, Float.class))
+        );
+
+        // double[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(double[].class, SqlString.class, object -> toSqlString(object, Double.class))
+        );
+
+        // BigDecimal[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(BigDecimal[].class, SqlString.class, object -> toSqlString(object, BigDecimal.class))
+        );
+
+        // String[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(String[].class, SqlString.class, object -> toSqlString(object, String.class))
+        );
+
+        // java.util.Date[] -> SqlString (since 1.4.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(java.util.Date[].class, SqlString.class, object -> toSqlString(object, java.util.Date.class))
+        );
+
+        // Date[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Date[].class, SqlString.class, object -> toSqlString(object, Date.class))
+        );
+
+        // Time[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Time[].class, SqlString.class, object -> toSqlString(object, Time.class))
+        );
+
+        // Timestamp[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Timestamp[].class, SqlString.class, object -> toSqlString(object, Timestamp.class))
+        );
+
+        // LocalDateTime[] -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(LocalDateTime[].class, SqlString.class, object -> toSqlString(object, LocalDateTime.class))
+        );
+
+        // LocalDate[] -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(LocalDate[].class, SqlString.class, object -> toSqlString(object, LocalDate.class))
+        );
+
+        // LocalTime[] -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(LocalTime[].class, SqlString.class, object -> toSqlString(object, LocalTime.class))
+        );
+
+        // OffsetDateTime[] -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(OffsetDateTime[].class, SqlString.class, object -> toSqlString(object, OffsetDateTime.class))
+        );
+
+        // ZonedDateTime[] -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(ZonedDateTime[].class, SqlString.class, object -> toSqlString(object, ZonedDateTime.class))
+        );
+
+        // Instant[] -> SqlString (since 3.0.0)
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Instant[].class, SqlString.class, object -> toSqlString(object, Instant.class))
+        );
+
+        // Iterable -> SqlString
+        TypeConverter.put(typeConverterMap,
+            new TypeConverter<>(Iterable.class, SqlString.class, object -> {
+                Iterator<Object> iterator = object.iterator();
+                Class<?> beforeElementType = null;
+                Function<Object, SqlString> function = null;
+
+                StringBuilder buff = new StringBuilder("(");
+
+                for (int index = 0; iterator.hasNext(); ++index) {
+                    if (index > 0) buff.append(",");
+                    Object element = iterator.next();
+                    if (element == null)
+                        buff.append("NULL");
+                    else {
+                        Class<?> elementType = element.getClass();
+                        if (elementType != beforeElementType) {
+                            TypeConverter<?, SqlString> typeConverter = TypeConverter.get(typeConverterMap, elementType, SqlString.class);
+                            if (typeConverter == null)
+                                throw new ConvertException(elementType, element, SqlString.class);
+
+                            function = (Function<Object, SqlString>)typeConverter.function();
+                            beforeElementType = elementType;
+                        }
+                        buff.append(function.apply(element).content());
+                    }
+                }
+
+                buff.append(')');
+                return new SqlString(buff.toString());
+            })
+        );
+
+    }
+
+    /**
+     * Converts a java.sql.Array to an array.
+     *
+     * @param <AT> array type
+     * @param <CT> component type
+     * @param object an object to be converted
+     * @param arrayType the array type
+     * @param componentType the component type
+     * @return the converted array
+     */
+    @SuppressWarnings("unchecked")
+    protected <AT, CT> AT toArray(java.sql.Array object, Class<AT> arrayType, Class<CT> componentType) {
+        try {
+            Object array = object.getArray();
+            if (arrayType.isInstance(array))
+                return (AT)array;
+
+            AT result = (AT)Array.newInstance(componentType, Array.getLength(array));
+            TypeConverter<Object, CT> typeConverter = null;
+            for (int index = 0; index < Array.getLength(result); ++index) {
+                Object value = Array.get(array, index);
+                CT convertedValue = null;
+                if (value != null) {
+                    if (Utils.toClassType(componentType).isInstance(value))
+                        convertedValue = (CT)value;
+                    else {
+                        if (typeConverter == null)
+                            typeConverter = (TypeConverter<Object, CT>)TypeConverter.get(typeConverterMap, value.getClass(), componentType);
+
+                        if (typeConverter == null)
+                            throw new ConvertException(value.getClass(), value, componentType);
+
+                        convertedValue = typeConverter.function().apply(value);
+                    }
+                }
+                Array.set(result, index, convertedValue);
+            }
+            return result;
+        }
+        catch (Exception e) {
+            throw new ConvertException(object.getClass(), object, arrayType, e);
+        }
+    }
+
+    /**
+     * Converts an array object to a <b>SqlString</b>.
+     *
+     * @param <CT> component type
+     * @param array an array object to be converted
+     * @param componentType the component type
+     * @return the converted <b>SqlString</b>
+     */
+    @SuppressWarnings("unchecked")
+    protected <CT> SqlString toSqlString(Object array, Class<CT> componentType) {
+        TypeConverter<CT, SqlString> typeConverter = TypeConverter.get(typeConverterMap, componentType, SqlString.class);
+        if (typeConverter == null)
+            throw new ConvertException(componentType, array, SqlString.class);
+
+        Function<? super CT, ? extends SqlString> function = typeConverter.function();
+        StringBuilder buff = new StringBuilder("ARRAY[");
+        List<Object> parameters = new ArrayList<>();
+        for (int index = 0; index < Array.getLength(array); ++ index) {
+            if (index > 0) buff.append(",");
+            SqlString sqlString = function.apply((CT)Array.get(array, index));
+            buff.append(sqlString.content());
+            parameters.addAll(Arrays.asList(sqlString.parameters()));
+        }
+        buff.append(']');
+        return new SqlString(buff.toString(), parameters.toArray());
+    }
+
+     @Override
+// 4.0.0
+//  public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
+    public <E> CharSequence selectSql(Sql<E> sql, List<Object> parameters) {
+////
+        StringBuilder buff = new StringBuilder();
+
+    // 4.0.0
+    //  if (!sql.getUnionSqls().isEmpty()) {
+    //      // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+    //      // UNION or UNION ALL
+    //      // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+    //      // ...
+    //      String delimiter = "";
+    //      for (Sql<?> unionSql : sql.getUnionSqls()) {
+    //          buff.append(delimiter).append(subSelectSql(unionSql, parameters));
+    //          delimiter = sql.isUnionAll() ? " UNION ALL " : " UNION ";
+    //      }
+    //  } else {
+    //      // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+    //      buff.append(subSelectSql(sql, parameters));
+    //  }
+        // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+        buff.append(subSelectSql(sql, null, parameters));
+    ////
+
+        // ORDER BY ...
+        appendOrderBy(buff, sql, parameters);
+
+        if (supportsOffsetLimit()) {
+            // LIMIT ...
+            appendLimit(buff, sql);
+
+            // OFFSET ...
+            appendOffset(buff, sql);
+        }
+
+        // FOR UPDATE
+        appendForUpdate(buff, sql);
+
+    // 4.0.0
+    //  return buff.toString();
+        return buff;
+    ////
+    }
+
+    @Override
+// 4.0.0
+//  public <E> String subSelectSql(Sql<E> sql, List<Object> parameters) {
+//      return subSelectSql(sql, () -> {
+//          StringBuilder buff = new StringBuilder();
+//          if (sql.getFrom() == null)
+//              appendSelectColumns(buff, sql, parameters);
+//          else
+//              appendSelectColumnAliases(buff, sql, parameters);
+//          return buff;
+//      }, parameters);
+//  }
+    public <E, OE> CharSequence subSelectSql(Sql<E> sql, Sql<OE> outerSql, List<Object> parameters) {
+        StringBuilder buff = new StringBuilder();
+
+        if (!sql.getWithSqls().isEmpty())
+            // WITH ... AS (SELECT ...)
+            buff.append(withSelectSql(sql, parameters));
+
+        if (!sql.getUnionSqls().isEmpty())
+            buff.append(unionSelectSql(sql, parameters));
+        else {
+             // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+            buff.append(subSelectSql(sql, outerSql, () -> {
+                StringBuilder buff2 = new StringBuilder();
+            // 4.0.0
+            //  if (sql.getFrom() == null)
+                if (sql.getFrom() == null || sql.getFrom().isWithSql())
+            ////
+                    appendSelectColumns(buff2, sql, parameters);
+                else
+                    appendSelectColumnAliases(buff2, sql, parameters);
+                return buff2;
+            }, parameters));
+        }
+
+        return buff;
+    }
+////
+
+    protected <E> CharSequence withSelectSql(Sql<E> sql, List<Object> parameters) {
+        return withRecursiveSelectSql(sql, parameters);
+    }
+
+    protected <E> CharSequence withRecursiveSelectSql(Sql<E> sql, List<Object> parameters) {
+        StringBuilder buff = new StringBuilder();
+
+        // WITH ... (...) AS (
+        //   SELECT ...
+        String delimiter = "";
+        for (Sql<?> withSql : sql.getWithSqls()) {
+            if (delimiter.isEmpty())
+                buff.append(withSql.getRecursiveSql() == null ? "WITH " : "WITH RECURSIVE ");
+            buff.append(delimiter).append(withSql.queryName()).append('(');
+            appendSelectColumnNames(buff, withSql, parameters);
+            buff.append(") AS (")
+                .append(subSelectSql(withSql, sql, parameters));
+
+            if (withSql.getRecursiveSql() != null)
+                //   UNION ALL
+                //   SELECT ...
+                buff.append(" UNION ALL ")
+                    .append(subSelectSql(withSql.getRecursiveSql(), withSql, parameters));
+    
+            buff.append(')');
+            delimiter = ", ";
+        }
+
+        buff.append(' ');
+
+        return buff;
+    }
+
+    protected <E> CharSequence onlyWithSelectSql(Sql<E> sql, List<Object> parameters) {
+        StringBuilder buff = new StringBuilder();
+
+        // WITH ... (...) AS (
+        //   SELECT ...
+        String delimiter = "";
+        buff.append("WITH ");
+        for (Sql<?> withSql : sql.getWithSqls()) {
+            buff.append(delimiter).append(withSql.queryName()).append('(');
+            appendSelectColumnNames(buff, withSql, parameters);
+            buff.append(") AS (")
+                .append(subSelectSql(withSql, sql, parameters));
+
+            //   UNION ALL
+            //   SELECT ...
+            if (withSql.getRecursiveSql() != null)
+                buff.append(" UNION ALL ")
+                    .append(subSelectSql(withSql.getRecursiveSql(), withSql, parameters));
+    
+            buff.append(')');
+            delimiter = ", ";
+        }
+
+        buff.append(' ');
+
+        return buff;
+    }
+
+    protected <E> CharSequence unionSelectSql(Sql<E> sql, List<Object> parameters) {
+        StringBuilder buff = new StringBuilder();
+
+        // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+        // UNION or UNION ALL
+        // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
+        // ...
+        String delimiter = "";
+        for (Sql<?> unionSql : sql.getUnionSqls()) {
+            buff.append(delimiter).append(subSelectSql(unionSql, sql, parameters));
+            delimiter = sql.isUnionAll() ? " UNION ALL " : " UNION ";
+        }
+
+        return buff;
+    }
+
+    @Override
+// 4.0.0
+//  public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
+    public <E, OE> CharSequence subSelectSql(Sql<E> sql, Sql<OE> outerSql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
+////
+        StringBuilder buff = new StringBuilder();
+
+        // SELECT
+        buff.append("SELECT ");
+
+        // DISTINCT
+        appendDistinct(buff, sql);
+
+        //  column name, ...
+        buff.append(columnsSupplier.get());
+
+        // FROM
+        buff.append(" FROM ");
+
+    // 4.0.0
+    //  if (sql.getFrom() == null) {
+    //      // main table name and alias
+    //      appendMainTable(buff, sql);
+    //
+    //  } else {
+    //      // (SELECT ...) table alias
+    //      buff.append("(")
+    //          .append(subSelectSql(sql.getFrom(), parameters))
+    //          .append(") ")
+    //          .append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
+    //  }
+        // main table
+        appendFrom(buff, sql, outerSql, parameters);
+    ////
+
+        // INNER / OUTER JOIN ...
+        appendJoinTables(buff, sql, parameters);
+
+        // WHERE ...
+        appendWhere(buff, sql, parameters);
+
+        // GROUP BY ...
+        appendGroupBy(buff, sql, parameters);
+
+        // HAVING ...
+        appendHaving(buff, sql, parameters);
+
+    // 4.0.0
+        return buff;
+    ////
+    }
+
+    @Override
+// 4.0.0
+//  public <E> String insertSql(Sql<E> sql, List<Object> parameters) {
+    public <E> CharSequence insertSql(Sql<E> sql, List<Object> parameters) {
+////
+        StringBuilder buff = new StringBuilder();
+
+        // INSERT INTO
+        buff.append("INSERT INTO ");
+
+        // table name and alias
+        appendMainTable(buff, sql);
+
+    // 4.0.0
+    //  // VALUES (value, ...)
+    //  appendInsertColumnsAndValues(buff, sql, parameters);
+    //  return buff.toString();
+        // (column name, ...)
+        appendInsertColumns(buff, sql);
+
+        if (sql.getFrom() != null)
+            // FROM SELECT ...
+            buff.append(' ').append(subSelectSql(sql.getFrom(), sql, parameters));
+        else
+            // VALUES (value, ...)
+            appendInsertValues(buff, sql, parameters);
+
+        return buff;
+    }
+
+    @Override
+// 4.0.0
+//  public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
+    public <E> CharSequence updateSql(Sql<E> sql, List<Object> parameters) {
+////
+        StringBuilder buff = new StringBuilder();
+
+        // UPDATE table name
+        buff.append("UPDATE ");
+
+        // table name and alias
+        appendMainTable(buff, sql);
+
+        // INNER / OUTER JOIN ...
+        appendJoinTables(buff, sql, parameters);
+
+        // SET column name =  value, ...
+        appendUpdateColumnsAndValues(buff, sql, parameters);
+
+        // WHERE ...
+        appendWhere(buff, sql, parameters);
+
+        // ORDER BY ...
+        appendOrderBy(buff, sql, parameters);
+
+        // LIMIT ...
+        appendLimit(buff, sql);
+
+    // 4.0.0
+    //  return buff.toString();
+        return buff;
+    ////
+    }
+
+    @Override
+// 4.0.0
+//  public <E> String deleteSql(Sql<E> sql, List<Object> parameters) {
+    public <E> CharSequence deleteSql(Sql<E> sql, List<Object> parameters) {
+////
+        StringBuilder buff = new StringBuilder();
+
+        // DELETE FROM
+        buff.append("DELETE");
+        if (sql.getJoinInfos().size() > 0)
+            buff.append(' ').append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
+        buff.append(" FROM ");
+
+        // table name and alias
+        appendMainTable(buff, sql);
+
+        // INNER / OUTER JOIN ...
+        appendJoinTables(buff, sql, parameters);
+
+        // WHERE ...
+        appendWhere(buff, sql, parameters);
+
+        // ORDER BY ...
+        appendOrderBy(buff, sql, parameters);
+
+        // LIMIT ...
+        appendLimit(buff, sql);
+
+    // 4.0.0
+    //  return buff.toString();
+        return buff;
+    ////
+    }
+
+    /**
+     * Appends DISTINCT to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendDistinct(StringBuilder buff, Sql<E> sql) {
+        // DISTINCT
+        if (sql.isDistinct())
+            buff.append("DISTINCT ");
+    }
+
+    /**
+     * Appends a FROM clause to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param <OE> the type of the entity of <b>outerSql</b>
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param outerSql the <b>Sql</b> object syntactically outer of <b>sql</b>
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 4.0.0
+     */
+    protected <E, OE> void appendFrom(StringBuilder buff, Sql<E> sql, Sql<OE> outerSql, List<Object> parameters) {
+        // main table name
+        if (sql.getFrom() == null)
+            buff.append(sql.entityInfo().tableName());
+        else if (sql.getFrom().isWithSql())
+            buff.append(sql.getFrom().queryName());
+        else
+            buff.append("(")
+                .append(subSelectSql(sql.getFrom(), outerSql, parameters))
+                .append(") ")
+                .append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
+
+        // table alias
+        if (!sql.tableAlias().isEmpty())
+            buff.append(' ').append(sql.tableAlias());
+
+        if (outerSql != null && sql.isRecursiveSql())
+            buff.append(",").append(outerSql.queryName());
+    }
+
+    /**
+     * Appends the main table name and alias to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendMainTable(StringBuilder buff, Sql<E> sql) {
+        // main table name
+        buff.append(sql.entityInfo().tableName());
+
+        // table alias
+        if (!sql.tableAlias().isEmpty())
+            buff.append(' ').append(sql.tableAlias());
+    }
+
+    /**
+     * Appends the join table names and aliases to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendJoinTables(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+        sql.getJoinInfos().forEach(joinInfo -> {
+        // 4.0.0
+        //  // INNER/OUTER JOIN table name
+        //  buff.append(joinInfo.joinType().sql()).append(joinInfo.entityInfo().tableName());
+            // INNER/OUTER JOIN
+            buff.append(joinInfo.joinType().sql());
+            if (joinInfo.joinSql() != null) {
+                if (joinInfo.joinSql().isWithSql())
+                    // use WITH clause
+                    buff.append(joinInfo.joinSql().queryName());
+                else
+                    buff.append('(')
+                        .append(subSelectSql(joinInfo.joinSql(), sql, parameters))
+                        .append(')');
+            } else
+                buff.append(joinInfo.entityInfo().tableName());
+        ////
+
+            // table alias
+            if (!joinInfo.tableAlias().isEmpty())
+                buff.append(' ').append(joinInfo.tableAlias());
+
+            // ON ...
+            if (!joinInfo.on().isEmpty())
+                buff.append(" ON ").append(joinInfo.on().toString(this, sql, parameters));
+        });
+    }
+
+    /**
+     * Appends SELECT column aliass<b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 3.1.0
+     */
+    protected <E> void appendSelectColumnNames(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+        // names, ...
+        String[] delimiter = new String[] {""};
+
+        sql.selectedSqlColumnInfoStream()
+            .filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
+            .forEach(sqlColumnInfo -> {
+                buff.append(delimiter[0]);
+                delimiter[0] = ", ";
+
+                // simple column name
+                buff.append(sqlColumnInfo.columnInfo().columnName());
+            });
+
+        if (buff.length() == 0)
+            throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
+                sql.entityClass().getName(),
+                '[' + sql.getColumns().stream()
+                    .map(name -> '"' + name + '"')
+                    .collect(Collectors.joining(", ")) + ']'
+            ));
+    }
+
+    /**
+     * Appends SELECT column aliass<b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 3.1.0
+     */
+    protected <E> void appendSelectColumnAliases(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+        // alias, ...
+        String[] delimiter = new String[] {""};
+
+        sql.selectedJoinSqlColumnInfoStream()
+            .filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
+            .forEach(sqlColumnInfo -> {
+                buff.append(delimiter[0]);
+                delimiter[0] = ", ";
+
+                ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
+                String tableAlias  = sqlColumnInfo.tableAlias();
+                String columnAlias = columnInfo.getColumnAlias(tableAlias);
+
+                // column alias
+                buff.append(columnAlias);
+            });
+
+        if (buff.length() == 0)
+            throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
+                sql.entityClass().getName(),
+                '[' + sql.getColumns().stream()
+                    .map(name -> '"' + name + '"')
+                    .collect(Collectors.joining(", ")) + ']'
+            ));
+    }
+
+    /**
+     * Appends SELECT columns<b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 3.1.0
+     */
+    protected <E> void appendSelectColumns(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+        // column name or expression alias, ...
+        String[] delimiter = new String[] {""};
+
+        sql.selectedJoinSqlColumnInfoStream()
+            .filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().selectable())
+            .filter(sqlColumnInfo -> sql.isInInsertFrom() ? sqlColumnInfo.columnInfo().insertable() : true)
+            .forEach(sqlColumnInfo -> {
+                buff.append(delimiter[0]);
+                delimiter[0] = ", ";
+
+                ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
+                String tableAlias  = sqlColumnInfo.tableAlias();
+                String columnName  = columnInfo.getColumnName(tableAlias);
+                String columnAlias = columnInfo.getColumnAlias(tableAlias);
+
+                // gets expression
+                Expression expression = sql.getExpression(columnInfo.propertyName());
+                if (expression.isEmpty())
+                    expression = sql.getExpression(columnInfo.getPropertyName(tableAlias));
+
+                if (expression.isEmpty())
+                    expression = columnInfo.selectExpression();
+
+                if (expression.isEmpty()) {
+                    if (!sql.getGroupBy().isEmpty()) buff.append("MIN(");
+
+                    // No expression ->  column name
+                    buff.append(columnName);
+
+                    if (!sql.getGroupBy().isEmpty()) buff.append(")");
+
+                    // column alias
+                    if (!columnAlias.equals(columnName))
+                        buff.append(" ").append(columnAlias);
+
+                } else {
+                    // First expression
+                    buff.append(expression.toString(this, sql, parameters));
+
+                    // column alias
+                    buff.append(" ").append(columnAlias);
+                }
+            });
+
+        if (buff.length() == 0)
+            throw new IllegalStateException(MessageFormat.format(messageSelectSqlWithoutColumns,
+                sql.entityClass().getName(),
+                '[' + sql.getColumns().stream()
+                    .map(name -> '"' + name + '"')
+                    .collect(Collectors.joining(", ")) + ']'
+            ));
+    }
+
+    /**
+     * Appends INSERT column names to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     *
+     * @since 4.0.0
+     */
+    protected <E> void appendInsertColumns(StringBuilder buff, Sql<E> sql) {
+        // ( column name, ...
+        buff.append(" (");
+        String[] delimiter = new String[] {""};
+
+        sql.columnInfoStream()
+            .filter(ColumnInfo::insertable)
+            .forEach(columnInfo -> {
+                buff.append(delimiter[0]).append(columnInfo.columnName());
+                delimiter[0] = ", ";
+            });
+
+        // )
+        buff.append(')');
+    }
+
+    /**
+     * Appends INSERT column values to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 4.0.0
+     */
+    protected <E> void appendInsertValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+        // VALUES (value, ...)
+        buff.append(" VALUES (");
+        String[] delimiter = new String[] {""};
+
+        sql.columnInfoStream()
+            .filter(ColumnInfo::insertable)
+            .forEach(columnInfo -> {
+                String propertyName = columnInfo.propertyName();
+
+                // gets expression
+                Expression expression = sql.getExpression(propertyName);
+                if (expression.isEmpty())
+                    expression = columnInfo.insertExpression();
+
+                if (expression.isEmpty())
+                    expression = new Expression("{#" + propertyName + "}");
+
+                buff.append(delimiter[0])
+                    .append(expression.toString(this, sql, parameters));
+                delimiter[0] = ", ";
+            });
+        buff.append(')');
+    }
+
+    /**
+     * Appends UPDATE column names and values to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 1.8.4
+     */
+    protected <E> void appendUpdateColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+        // SET column name =  value, ...
+        buff.append(" SET ");
+        String[] delimiter = new String[] {""};
+
+        sql.selectedSqlColumnInfoStream()
+            .filter(sqlColumnInfo -> sqlColumnInfo.columnInfo().updatable())
+            .forEach(sqlColumnInfo -> {
+                ColumnInfo columnInfo = sqlColumnInfo.columnInfo();
+                String tableAlias   = sqlColumnInfo.tableAlias();
+                String propertyName = columnInfo.propertyName();
+                String columnName   = columnInfo.getColumnName(tableAlias);
+
+                // gets expression
+                Expression expression = sql.getExpression(propertyName);
+                if (expression.isEmpty())
+                    expression = columnInfo.updateExpression();
+
+                if (expression.isEmpty())
+                    expression = new Expression("{#" + propertyName + "}");
+
+                buff.append(delimiter[0])
+                    .append(columnName)
+                    .append("=")
+                    .append(expression.toString(this, sql, parameters));
+                delimiter[0] = ", ";
+            });
+    }
+
+    /**
+     * Appends WHERE clause to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+        if (sql.getWhere() != Condition.ALL)
+            buff.append(" WHERE ").append(sql.getWhere().toString(this, sql, parameters));
+    }
+
+    /**
+     * Appends GROUP BY clause to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+        if (!sql.getGroupBy().isEmpty())
+            buff.append(' ').append(sql.getGroupBy().toString(this, sql, parameters));
+    }
+
+    /**
+     * Appends HAVING clause to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+        if (!sql.getHaving().isEmpty())
+            buff.append(" HAVING ").append(sql.getHaving().toString(this, sql, parameters));
+    }
+
+    /**
+     * Appends ORDER BY clause to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+        if (!sql.getOrderBy().isEmpty())
+            buff.append(' ').append(sql.getOrderBy().toString(this, sql, parameters));
+    }
+
+    /**
+     * Appends LIMIT clause to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendLimit(StringBuilder buff, Sql<E> sql) {
+        if (sql.getLimit() != Integer.MAX_VALUE)
+            buff.append(" LIMIT ").append(sql.getLimit());
+    }
+
+    /**
+     * Appends OFFSET clause to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendOffset(StringBuilder buff, Sql<E> sql) {
+        if (sql.getOffset() != 0)
+            buff.append(" OFFSET ").append(sql.getOffset());
+    }
+
+    /**
+     * Appends FOR UPDATE clause to <b>buff</b>.
+     *
+     * @param <E> the type of the entity
+     * @param buff the string buffer to be appended
+     * @param sql the <b>Sql</b> object that contains SQL generation information
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
+        // FOR UPDATE
+        if (sql.isForUpdate()) {
+            buff.append(" FOR UPDATE");
+
+            // NO WAIT
+            if (sql.isNoWait())
+                throw new UnsupportedOperationException("noWait");
+
+            // WAIT n
+            else if (!sql.isWaitForever())
+                throw new UnsupportedOperationException("wait N");
+        }
+    }
+
+    @Override
+    public Map<String, TypeConverter<?, ?>> typeConverterMap() {
+        return typeConverterMap;
+    }
+
+    @Override
+    public <T> T convert(Object value, Class<T> type) {
+        return TypeConverter.convert(typeConverterMap, value, type);
+    }
 }

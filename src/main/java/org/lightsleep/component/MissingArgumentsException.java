@@ -11,14 +11,14 @@ package org.lightsleep.component;
  */
 @SuppressWarnings("serial")
 public class MissingArgumentsException extends RuntimeException {
-	/**
-	 * Constructs a new <b>MissingArgumentsException</b> with the specified detail message.
-	 *
-	 * @param message the detail message
-	 *
-	 * @since 2.0.0
-	 */
-	public MissingArgumentsException(String message) {
-		super(message);
-	}
+    /**
+     * Constructs a new <b>MissingArgumentsException</b> with the specified detail message.
+     *
+     * @param message the detail message
+     *
+     * @since 2.0.0
+     */
+    public MissingArgumentsException(String message) {
+        super(message);
+    }
 }

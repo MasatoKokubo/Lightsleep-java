@@ -14,12 +14,12 @@ import org.lightsleep.connection.ConnectionWrapper;
  * @author Masato Kokubo
  */
 public interface PostSelect {
-	/**
-	 * Invoked after each entity is retrieved by executing SELECT SQL.
-	 *
-	 * @param conn the connection wrapper
-	 *
-	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
-	 */
-	public void postSelect(ConnectionWrapper conn);
+    /**
+     * Invoked after each entity is retrieved by executing SELECT SQL.
+     *
+     * @param conn the connection wrapper
+     *
+     * @throws NullPointerException if <b>conn</b> is <b>null</b>
+     */
+    public void postSelect(ConnectionWrapper conn);
 }

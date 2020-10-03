@@ -92,7 +92,6 @@ CREATE TABLE SaleItem (
 );
 
 
-
 -- Various
 DROP TABLE Various;
 CREATE TABLE Various (
@@ -134,6 +133,7 @@ CREATE TABLE Various (
     PRIMARY KEY(id)
 );
 
+
 -- DateAndTime since 3.0.0
 DROP TABLE DateAndTime;
 CREATE TABLE DateAndTime (
@@ -143,6 +143,51 @@ CREATE TABLE DateAndTime (
     timeValue        TIME          (7),
     timestampValue   DATETIME2     (7),
     timestampTZValue DATETIMEOFFSET(7),
+
+    PRIMARY KEY(id)
+);
+
+
+-- Node since 4.0.0
+DROP TABLE IF EXISTS Node;
+CREATE TABLE Node (
+    id          INT IDENTITY(1,1) NOT NULL,
+    parentId    INT          NOT NULL,
+    name        NVARCHAR(32) NOT NULL,
+
+    updateCount INT          NOT NULL,
+    created     DATETIME2(7) NOT NULL,
+    updated     DATETIME2(7) NOT NULL,
+
+    PRIMARY KEY(id)
+);
+
+-- Leaf since 4.0.0
+DROP TABLE IF EXISTS Leaf;
+CREATE TABLE Leaf (
+    id          INT IDENTITY(1,1) NOT NULL,
+    parentId    INT           NOT NULL,
+    name        NVARCHAR(32)  NOT NULL,
+    content     NVARCHAR(MAX) NOT NULL,
+
+    updateCount INT           NOT NULL,
+    created     DATETIME2(7)  NOT NULL,
+    updated     DATETIME2(7)  NOT NULL,
+
+    PRIMARY KEY(id)
+);
+
+-- Leaf2 since 4.0.0
+DROP TABLE IF EXISTS Leaf2;
+CREATE TABLE Leaf2 (
+    id          INT IDENTITY(1,1) NOT NULL,
+    parentId    INT           NOT NULL,
+    name        NVARCHAR(32)  NOT NULL,
+    content     NVARCHAR(MAX) NOT NULL,
+
+    updateCount INT           NOT NULL,
+    created     DATETIME2(7)  NOT NULL,
+    updated     DATETIME2(7)  NOT NULL,
 
     PRIMARY KEY(id)
 );

@@ -4,7 +4,7 @@
 package org.lightsleep.entity;
 
 /**
- * エンティティ･クラスがこのインターフェースを実装している場合、
+ * エンティティクラスがこのインターフェースを実装している場合、
  * <b>Sql&lt;E&gt;</b>クラスの<b>insert(E)</b>, <b>insert(Iterable)</b>,
  * <b>update(E)</b>および<b>update(Iterable)</b>メソッドから
  * INSERTまたはUPDATE SQLの実行前に<b>preStore</b>メソッドが呼び出されます。
@@ -19,8 +19,8 @@ package org.lightsleep.entity;
  */
 @Deprecated
 public interface PreStore {
-	/**
-	 * INSERTまたはUPDATE SQLの実行前に呼び出されます。
-	 */
-	void preStore();
+    /**
+     * INSERTまたはUPDATE SQLの実行前に呼び出されます。
+     */
+    void preStore();
 }

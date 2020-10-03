@@ -32,15 +32,12 @@ import org.lightsleep.connection.ConnectionWrapper;
  * @author Masato Kokubo
  */
 public interface PreInsert {
-	/**
-	 * Invoked before executing INSERT SQL.
-	 *
-	 * @param conn the connection wrapper
-	 *
-	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
-	 */
-// 3.2.0
-//	int preInsert(ConnectionWrapper conn);
-	public void preInsert(ConnectionWrapper conn);
-////
+    /**
+     * Invoked before executing INSERT SQL.
+     *
+     * @param conn the connection wrapper
+     *
+     * @throws NullPointerException if <b>conn</b> is <b>null</b>
+     */
+    public void preInsert(ConnectionWrapper conn);
 }

@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 
 /**
  * <a href="https://mariadb.org/" target="MariaDB">MariaDB</a>
- * 用のデータベース･ハンドラです。
+ * 用のデータベースハンドラです。
  *
  * <p>
  * このクラスのオブジェクトは、{@linkplain Standard#typeConverterMap}
@@ -43,43 +43,34 @@ import java.sql.ResultSet;
  * @see org.lightsleep.database.Standard
  */
 public class MariaDB extends Standard {
-	/**
-	 * パスワードのパターン文字列
-	 */
-	protected static final String PASSWORD_PATTERN = "";
+    /**
+     * パスワードのパターン文字列
+     */
+    protected static final String PASSWORD_PATTERN = "";
 
-	/**
-	 * このクラスの唯一のインスタンス
-	 */
-	public static final MariaDB instance = new MariaDB();
+    /**
+     * このクラスの唯一のインスタンス
+     */
+    public static final MariaDB instance = new MariaDB();
 
-	/**
-	 * <b>MariaDB</b>を構築します。
-	 */
-	protected MariaDB() {
-	}
+    /**
+     * <b>MariaDB</b>を構築します。
+     */
+    protected MariaDB() {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean supportsOffsetLimit() {
-		return true;
-	}
+    @Override
+    public boolean supportsOffsetLimit() {
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return null;
-	}
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
-		return null;
-	}
+    @Override
+    public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+        return null;
+    }
 }

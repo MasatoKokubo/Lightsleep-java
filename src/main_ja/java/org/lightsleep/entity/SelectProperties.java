@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface SelectProperties {
-	/** @return <b>SelectProperty</b>アノテーションの配列 */
-	SelectProperty[] value();
+    /** @return <b>SelectProperty</b>アノテーションの配列 */
+    SelectProperty[] value();
 }

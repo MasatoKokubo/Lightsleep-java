@@ -24,49 +24,46 @@ import javax.sql.DataSource;
  * @author Masato Kokubo
  */
 public class Jndi extends AbstractConnectionSupplier {
-	/**
-	 * <b>Jndi</b>を構築します。
-	 *
-	 * <p>
-	 * lightsleep.propertiesファイルで指定された値を接続情報に使用します。
-	 * </p>
-	 *
-	 * @see #Jndi(java.lang.String)
-	 */
-	public Jndi() {
-		super(null, null);
-	}
+    /**
+     * <b>Jndi</b>を構築します。
+     *
+     * <p>
+     * lightsleep.propertiesファイルで指定された値を接続情報に使用します。
+     * </p>
+     *
+     * @see #Jndi(java.lang.String)
+     */
+    public Jndi() {
+        super(null, null);
+    }
 
-	/**
-	 * <b>Jndi</b>を構築します。
-	 *
-	 * <p>
-	 * <b>"java:/comp/env/" + dataSourceName</b>の文字列でデータソースを検索します。
-	 * <b>dataSourceName</b>が<b>null</b>の場合、lightsleep.propertiesファイルで指定された値を使用します。
-	 * </p>
-	 *
-	 * @param dataSourceName データソース名(null可)
-	 */
-	public Jndi(String dataSourceName) {
-		super(null, null);
-	}
+    /**
+     * <b>Jndi</b>を構築します。
+     *
+     * <p>
+     * <b>"java:/comp/env/" + dataSourceName</b>の文字列でデータソースを検索します。
+     * <b>dataSourceName</b>が<b>null</b>の場合、lightsleep.propertiesファイルで指定された値を使用します。
+     * </p>
+     *
+     * @param dataSourceName データソース名(null可)
+     */
+    public Jndi(String dataSourceName) {
+        super(null, null);
+    }
 
-	/**
-	 * <b>Jndi</b>を構築します。
-	 *
-	 * @param properties コネクション情報を含むプロパティ
-	 *
-	 * @since 2.1.0
-	 */
-	public Jndi(Properties properties) {
-		super(null, null);
-	}
+    /**
+     * <b>Jndi</b>を構築します。
+     *
+     * @param properties コネクション情報を含むプロパティ
+     *
+     * @since 2.1.0
+     */
+    public Jndi(Properties properties) {
+        super(null, null);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public DataSource getDataSource() {
-		return null;
-	}
+    @Override
+    public DataSource getDataSource() {
+        return null;
+    }
 }

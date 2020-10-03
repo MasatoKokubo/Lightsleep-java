@@ -15,52 +15,46 @@ import org.lightsleep.database.Database;
  * @author Masato Kokubo
  */
 public class Not implements Condition {
-	private Condition condition;
+    private Condition condition;
 
-	/**
-	 * Notを構築します。
-	 *
-	 * @param condition 否定対象の条件
-	 *
-	 * @throws NullPointerException <b>condition</b>が<b>null</b>の場合
-	 */
-	public Not( Condition condition) {
-	}
+    /**
+     * Notを構築します。
+     *
+     * @param condition 否定対象の条件
+     *
+     * @throws NullPointerException <b>condition</b>が<b>null</b>の場合
+     */
+    public Not( Condition condition) {
+    }
 
-	/**
-	 * 否定対象の条件を返します。
-	 *
-	 * @return 否定対象の条件
-	 */
-	public Condition condition() {
-		return condition;
-	}
+    /**
+     * 否定対象の条件を返します。
+     *
+     * @return 否定対象の条件
+     */
+    public Condition condition() {
+        return condition;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
-	/**
-	 * 否定対象の条件が<b>Not</b>であれば否定対象の条件、そうでなければ<b>this</b>を返します。
-	 *
-	 * @return 否定対象の条件または<b>this</b>
-	 *
-	 * @since 1.8.8
-	 */
-	public Condition optimized() {
-		if (condition instanceof Not) return condition;
-		return this;
-	}
+    /**
+     * 否定対象の条件が<b>Not</b>であれば否定対象の条件、そうでなければ<b>this</b>を返します。
+     *
+     * @return 否定対象の条件または<b>this</b>
+     *
+     * @since 1.8.8
+     */
+    public Condition optimized() {
+        if (condition instanceof Not) return condition;
+        return this;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <E> String toString(Database database, Sql<E> sql, List<Object> parameters) {
+        return null;
+    }
 }

@@ -4,15 +4,15 @@
 package org.lightsleep.test.entity;
 
 /**
- * The entity of phone table.
+ * The entity of Phone table.
  *
  * @since 1.0
  * @author Masato Kokubo
  */
 public class Phone extends Common {
-	/** Identifier of the person */
-	public int contactId;
+    /** Identifier of the person */
+    public int contactId;
 
-	/** Phone Number */
-	public String phoneNumber;
+    /** Phone Number */
+    public String phoneNumber;
 }

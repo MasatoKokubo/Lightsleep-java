@@ -45,9 +45,9 @@ import java.lang.annotation.*;
 @Repeatable(ColumnProperties.class)
 @Target({ElementType.TYPE})
 public @interface ColumnProperty {
-	/** @return the property name that specifies the field */
-	String property();
+    /** @return the property name that specifies the field */
+    String property();
 
-	/** @return the column name */
-	String column();
+    /** @return the column name */
+    String column();
 }

@@ -6,18 +6,18 @@ package org.lightsleep.test.entity;
 import java.sql.Date;
 
 /**
- * The entity of sale table.
+ * The entity of Sale table.
  *
  * @since 1.0
  * @author Masato Kokubo
  */
 public class Sale extends Common {
-	/** Identifier of the sales destination */
-	public int contactId;
+    /** Identifier of the sales destination */
+    public int contactId;
 
-	/** Sale date */
-	public Date saleDate;
+    /** Sale date */
+    public Date saleDate;
 
-	/** Tax rate (%) */
-	public Short taxRate;
+    /** Tax rate (%) */
+    public Short taxRate;
 }

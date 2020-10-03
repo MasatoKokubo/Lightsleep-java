@@ -5,42 +5,123 @@ link:ReleaseNotes.asciidoc[English]
 [[TOC_]]
 === 目次
 
-- <<ReleaseNote3.2.0,[small]#バージョン# 3.2.0 [small]#- 2019-09-25#>>
-- <<ReleaseNote3.1.1,[small]#バージョン# 3.1.1 [small]#- 2019-07-18#>>
-- <<ReleaseNote3.1.0,[small]#バージョン# 3.1.0 [small]#- 2019-07-16#>>
-- <<ReleaseNote3.0.1,[small]#バージョン# 3.0.1 [small]#- 2018-12-01#>>
-- <<ReleaseNote3.0.0,[small]#バージョン# 3.0.0 [small]#- 2018-10-07#>>
-- <<ReleaseNote2.2.1,[small]#バージョン# 2.2.1 [small]#- 2018-02-12#>>
-- <<ReleaseNote2.2.0,[small]#バージョン# 2.2.0 [small]#- 2018-02-04#>>
-- <<ReleaseNote2.1.1,[small]#バージョン# 2.1.1 [small]#- 2017-12-03#>>
-- <<ReleaseNote2.1.0,[small]#バージョン# 2.1.0 [small]#- 2017-11-12#>>
-- <<ReleaseNote2.0.0,[small]#バージョン# 2.0.0 [small]#- 2017-09-09#>>
+- <<ReleaseNote4.0.0,[small]#バージョン# 4.0.0 [small]#- 2020/10/5#>>
+- <<ReleaseNote3.2.0,[small]#バージョン# 3.2.0 [small]#- 2019/9/25#>>
+- <<ReleaseNote3.1.1,[small]#バージョン# 3.1.1 [small]#- 2019/7/18#>>
+- <<ReleaseNote3.1.0,[small]#バージョン# 3.1.0 [small]#- 2019/7/16#>>
+- <<ReleaseNote3.0.1,[small]#バージョン# 3.0.1 [small]#- 2018/12/1#>>
+- <<ReleaseNote3.0.0,[small]#バージョン# 3.0.0 [small]#- 2018/10/7#>>
+- <<ReleaseNote2.2.1,[small]#バージョン# 2.2.1 [small]#- 2018/2/12#>>
+- <<ReleaseNote2.2.0,[small]#バージョン# 2.2.0 [small]#- 2018/2/4#>>
+- <<ReleaseNote2.1.1,[small]#バージョン# 2.1.1 [small]#- 2017/12/3#>>
+- <<ReleaseNote2.1.0,[small]#バージョン# 2.1.0 [small]#- 2017/11/12#>>
+- <<ReleaseNote2.0.0,[small]#バージョン# 2.0.0 [small]#- 2017/9/9#>>
+
+[[ReleaseNote4.0.0]]
+
+=== [small]#バージョン# 4.0.0
+
+1. **新機能**
+  * 以下のSQLを生成できるようになりました。
+  ** ``WITH``句付き``SELECT SQL`` +
+    `[small gray]#WITH W1(\...) AS (#` +
+    `[small gray]#&#xa0;&#xa0;SELECT \...#` +
+    `[small gray]#)#` +
+    `[small gray]#SELECT ... FROM W1 \...#`
+  ** 再帰``SELECT SQL`` +
+    `[small gray]#WITH RECURSIVE W1(\...) AS (#` +
+    `[small gray]#&#xa0;&#xa0;SELECT \...#` +
+    `[small gray]#&#xa0;&#xa0;UNION ALL#` +
+    `[small gray]#&#xa0;&#xa0;SELECT \...#` +
+    `[small gray]#) SELECT \... FROM W1 \...#`
+  ** サブクエリ付き``INSERT SQL`` +
+    `[small gray]#INSERT INTO \... (\...) SELECT \... FROM \...#`
+  ** サブクエリの結合
+    `[small gray]#SELECT \... FROM \... INNER JOIN (SELECT \...) \...#`
+
+1. **追加されたメソッド(コンストラクタ)**
+  * `[small]#org.lightsleep.#[blue]##Sql##`[small]##クラス##
+  ** `[small]#String# [blue]#queryName#[small]##()##`
+  ** `[small]#Sql<E># [blue]#innerJoin#[small]##(Sql<?> joinSql, String tableAlias, Condition on)##`
+  ** `[small]#Sql<E># [blue]#innerJoin#[small]##(Sql<?> joinSql, String tableAlias, String on, Object... arguments)##`
+  ** `[small]#Sql<E># [blue]#leftJoin#[small]##(Sql<?> joinSql, String tableAlias, Condition on)##`
+  ** `[small]#Sql<E># [blue]#leftJoin#[small]##(Sql<?> joinSql, String tableAlias, String on, Object... arguments)##`
+  ** `[small]#Sql<E># [blue]#rightJoin#[small]##(Sql<?> joinSql, String tableAlias, Condition on)##`
+  ** `[small]#Sql<E># [blue]#rightJoin#[small]##(Sql<?> joinSql, String tableAlias, String on, Object... arguments)##`
+  ** `[small]#Sql<E># [blue]#with#[small]##(Sql<?>... withSqls)##`
+  ** `[small]#List<Sql<?>># [blue]#getWithSqls#[small]##()##`
+  ** `[small]#boolean# [blue]#isWithSql#[small]##()##`
+  ** `[small]#Sql<E># [blue]#recursive#[small]##(Sql<?> recursiveSql)##`
+  ** `[small]#Sql<?># [blue]#getRecursiveSql#[small]##()##`
+  ** `[small]#boolean# [blue]#isRecursiveSql#[small]##()##`
+  ** `[small]#boolean# [blue]#isInInsertFrom#[small]##()##`
+  ** `[small]#int# [blue]#insert#[small]##()##`
+
+  * `[small]#org.lightsleep.database.#[blue]##Standard##`[small]##クラス##
+  ** `[small]#<E> void# [blue]#appendInsertColumns#[small]##(StringBuilder buff, Sql<E> sql)##`
+  ** `[small]#<E> void# [blue]#appendInsertValues#[small]##(StringBuilder buff, Sql<E> sql, List<Object> parameters)##`
+  ** `[small]#<E> void# [blue]#appendUpdateColumnsAndValues#[small]##(StringBuilder buff, Sql<E> sql, List<Object> parameters)##`
+
+  * `[small]#org.lightsleep.helper.#[blue]##JoinInfo<JE>##`[small]##クラス##
+  ** `[blue]#JoinInfo# [small]#(JoinType joinType, Sql<JE> joinSql, String tableAlias, Condition on)#`
+  ** `[small]#Sql<JE># [blue]#joinSql#[small]##()##`
+
+  * `[small]#org.lightsleep.helper.#[blue]##TypeConverter<ST, DT>##`[small]##クラス##
+  ** `[small]#static <ST, DT> TypeConverter<ST, DT># [blue]#of#[small]##(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, ? extends DT> function)##`
+  ** `[small]#static <ST, MT, DT> TypeConverter<ST, DT># [blue]#of#[small]##(Map<String, TypeConverter<?, ?>> typeConverterMap, Class<ST> sourceType, Class<MT> middleType, Class<DT> destinType)##`
+  ** `[small]#static <ST, MT, DT> TypeConverter<ST, DT># [blue]#of#[small]##(Map<String, TypeConverter<?, ?>> typeConverterMap, Class<ST> sourceType, Class<MT> middleType, Class<DT> destinType, Function<? super MT, ? extends DT> function)##`
+
+1. **削除されたインタフェース**
+  * `[small]#org.lightsleep.entity.#[blue]##Composite##`
+  * `[small]#org.lightsleep.entity.#[blue]##PostLoad##`
+  * `[small]#org.lightsleep.entity.#[blue]##PreStore##`
+
+1. **削除されたメソッド**
+  * ``[small]#org.lightsleep.#[blue]##Sql##``[small]#クラス#
+  ** `[small]#Sql<E># [blue]#setColumns#[small]##(Set<String> propertyNames)##`
+  ** `[small]#Sql<E># [blue]#setColumns#[small]##(Class<?> resultClass)##`
+  ** `[small]#Sql<E># [blue]#doIf#[small]##(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)##`
+
+1. **引数または戻り値が変更されたメソッド**
+  * `[small]#org.lightsleep.database.#[blue]##Database<ST, DT>##`[small]##インタフェース##
+  ** `[small]#<E> String# [blue]#selectSql#[small]##(Sql<E> sql, List<Object> parameters)##` +
+  -> `[small]#<E># [small red]#CharSequence# [blue]#selectSql#[small]##(Sql<E> sql, List<Object> parameters)##`
+  ** `[small]#<E> String# [blue]#subSelectSql#[small]##(Sql<E> sql, List<Object> parameters)##` +
+  -> `[small]#<E,# [small red]#OE> CharSequence# [blue]#subSelectSql#[small]##(Sql<E> sql,## [small red]#Sql<OE> outerSql,# [small]#List<Object> parameters)#`
+  ** `[small]#<E> String# [blue]#subSelectSql#[small]##(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters)##` +
+  -> `[small]#<E,# [small red]#OE> CharSequence# [blue]#subSelectSql#[small]##(Sql<E> sql,## [small red]#Sql<OE> outerSql,# [small]#Supplier<CharSequence> columnsSupplier, List<Object> parameters)#`
+  ** `[small]#<E> String# [blue]#insertSql#[small]##(Sql<E> sql, List<Object> parameters)##` +
+  -> `[small]#<E># [small red]#CharSequence# [blue]#insertSql#[small]##(Sql<E> sql, List<Object> parameters)##`
+  ** `[small]#<E> String# [blue]#updateSql#[small]##(Sql<E> sql, List<Object> parameters)##` +
+  -> `[small]#<E># [small red]#CharSequence# [blue]#updateSql#[small]##(Sql<E> sql, List<Object> parameters)##`
+  ** `[small]#<E> String# [blue]#deleteSql#[small]##(Sql<E> sql, List<Object> parameters)##` +
+  -> `[small]#<E># [small red]#CharSequence# [blue]#deleteSql#[small]##(Sql<E> sql, List<Object> parameters)##`
 
 [[ReleaseNote3.2.0]]
 
 === [small]#バージョン# 3.2.0
 
-1. ** 追加したインタフェース **
-  * `org.lightsleep.entity.**PostDelete**`
-  * `org.lightsleep.entity.**PostInsert**`
-  * `org.lightsleep.entity.**PostSelect**`
-  * `org.lightsleep.entity.**PostUpdate**`
-  * `org.lightsleep.entity.**PreDelete**`
-  * `org.lightsleep.entity.**PreUpdate**`
+1. **追加されたインタフェース**
+  * `[small]#org.lightsleep.entity.#[blue]##PostDelete##`
+  * `[small]#org.lightsleep.entity.#[blue]##PostInsert##`
+  * `[small]#org.lightsleep.entity.#[blue]##PostSelect##`
+  * `[small]#org.lightsleep.entity.#[blue]##PostUpdate##`
+  * `[small]#org.lightsleep.entity.#[blue]##PreDelete##`
+  * `[small]#org.lightsleep.entity.#[blue]##PreUpdate##`
 
-1. ** 追加したクラス **
-  * `org.lightsleep.database.**MariaDB**`
-  * `org.lightsleep.database.anchor.**mariadb**`
+1. **追加されたクラス**
+  * `[small]#org.lightsleep.database.#[blue]##MariaDB##`
+  * `[small]#org.lightsleep.database.anchor.#[blue]##mariadb##`
 
-1. ** 仕様変更 **
-  * `org.lightsleep.entity.**PreInsert**` インタフェースの `**preInsert**` メソッドの戻り値型を `**int**`  から `**void**` に変更しました。
-  * `org.lightsleep.entity.**Composite**` インタフェースの `**postInsert**`,  `**postUpdate**` および `**postDelete**` メソッドの戻り値型を `**int**`  から `**void**` に変更しました。
-  * `org.lightsleep.database.**DB2**` クラスを `**Db2**` に変更しました。
+1. **仕様変更**
+  * ``[small]##org.lightsleep.entity.##[blue]##PreInsert##``インタフェースの``[blue]#preInsert#``メソッドの戻り値型を``[blue]#int#``から``[blue]#void#``に変更しました。
+  * ``[small]##org.lightsleep.entity.##[blue]##Composite##``インタフェースの``[blue]#postInsert#``,  ``[blue]#postUpdate#``および``[blue]#postDelete#``メソッドの戻り値型を``[blue]#int#``から``[blue]#void#``に変更しました。
+  * ``[small]##org.lightsleep.database.##[blue]##DB2##``クラスを``[blue]#Db2#``に変更しました。
 
-1. ** 非推奨にしたインタフェース **
-  * `org.lightsleep.entity.**Composite**`
-  * `org.lightsleep.entity.**PostLoad**`
-  * `org.lightsleep.entity.**PreStore**`
+1. **非推奨になったインタフェース**
+  * `[small]#org.lightsleep.entity.#[blue]##Composite##`
+  * `[small]#org.lightsleep.entity.#[blue]##PostLoad##`
+  * `[small]#org.lightsleep.entity.#[blue]##PreStore##`
 
 [[ReleaseNote3.1.1]]
 
@@ -53,44 +134,44 @@ link:ReleaseNotes.asciidoc[English]
 
 === [small]#バージョン# 3.1.0
 
-1. **機能追加**
-  * **FROM句** に **サブクエリ** を使用したSELECT SQLの生成
-  * **UNION SQL**の生成
+1. **新機能**
+  * ``FROM``句にサブクエリを使用した``SELECT SQL``の生成
+  * ``UNION SQL``の生成
 
 1. **仕様変更**
-  * `Sql#columns(String ...)` メソッドを複数回呼び出した場合の仕様を変更しました。 +
-    **本バージョンより前:** 引数のカラム配列が累積される。 +
-    **本バージョン:** 引数のカラム配列に置き換えられる。
+  * ``[small]##org.lightsleep.##Sql#columns(String \...)``メソッドを複数回呼び出した場合の仕様を変更しました。 +
+  **本バージョンより前:** 引数のカラム配列が累積される。 +
+  **本バージョン:** 引数のカラム配列に置き換えられる。
 
-1. **追加したメソッド**
-  * `org.lightsleep.**Sql**` クラス
-    ** `Sql<E> **columns**(Collection<String> propertyNames)`
-    ** `<RE> Sql<E> **columns**(Class<RE> resultClass)`
-    ** `Sql<E> **from**(Sql<?> fromSql)`
-    ** `Sql<?> **getFrom**()`
-    ** `<SE> Sql<E> **where**(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> **and**(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> **or**(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> **having**(Sql<SE> subSql, String content)`
-    ** `<UE> Sql<E> **union**(Sql<UE> unionSql)`
-    ** `<UE> Sql<E> **unionAll**(Sql<UE> unionSql)`
-    ** `List<Sql<?>> **getUnionSqls**()`
-    ** `boolean **isUnionAll**()`
+1. **追加されたメソッド**
+  * ``[small]#org.lightsleep.#[blue]##Sql##``[small]#クラス#
+  ** `[small]#Sql<E># [blue]#columns#[small]##(Collection<String> propertyNames)##`
+  ** `[small]#<RE> Sql<E># [blue]#columns#[small]##(Class<RE> resultClass)##`
+  ** `[small]#Sql<E># [blue]#from#[small]##(Sql<?> fromSql)##`
+  ** `[small]#Sql<?># [blue]#getFrom#[small]##()##`
+  ** `[small]#<SE> Sql<E># [blue]#where#[small]##(Sql<SE> subSql, String content)##`
+  ** `[small]#<SE> Sql<E># [blue]#and#[small]##(Sql<SE> subSql, String content)##`
+  ** `[small]#<SE> Sql<E># [blue]#or#[small]##(Sql<SE> subSql, String content)##`
+  ** `[small]#<SE> Sql<E># [blue]#having#[small]##(Sql<SE> subSql, String content)##`
+  ** `[small]#<UE> Sql<E># [blue]#union#[small]##(Sql<UE> unionSql)##`
+  ** `[small]#<UE> Sql<E># [blue]#unionAll#[small]##(Sql<UE> unionSql)##`
+  ** `[small]#List<Sql<?>># [blue]#getUnionSqls#[small]##()##`
+  ** `[small]#boolean# [blue]#isUnionAll#[small]##()##`
 
-  * `org.lightsleep.**Condition**` インターフェース
-    ** `static <E, SE> Condition **of**(Sql<E> outerSql, Sql<SE> subSql, String content)`
-    ** `default <K> Condition **and**(K entity)`
-    ** `default <E, SE> Condition **and**(Sql<E> outerSql, Sql<SE> subSql, String content)`
-    ** `default <K> Condition **or**(K entity)`
-    ** `default <E, SE> Condition **or**(Sql<E> outerSql, Sql<SE> subSql, String content)`
+  * ``[small]#org.lightsleep.#[blue]##Condition##``[small]#インターフェース#
+  ** `[small]#static <E, SE> Condition# [blue]#of#[small]##(Sql<E> outerSql, Sql<SE> subSql, String content)##`
+  ** `[small]#default <K> Condition# [blue]#and#[small]##(K entity)##`
+  ** `[small]#default <E, SE> Condition# [blue]#and#[small]##(Sql<E> outerSql, Sql<SE> subSql, String content)##`
+  ** `[small]#default <K> Condition# [blue]#or#[small]##(K entity)##`
+  ** `[small]#default <E, SE> Condition# [blue]#or#[small]##(Sql<E> outerSql, Sql<SE> subSql, String content)##`
 
-  * `org.lightsleep.**SubqueryCondition**` クラス
-    ** `<E> **SubqueryCondition**(Sql<E> outerSql, Sql<SE> subSql, Expression expression)`
+  * ``[small]#org.lightsleep.component.#[blue]##SubqueryCondition##``[small]#クラス#
+  ** `[small]#<E># [blue]#SubqueryCondition#[small]##(Sql<E> outerSql, Sql<SE> subSql, Expression expression)##`
 
-1. **非推奨にしたメソッド**
-  * `org.lightsleep.**Sql**` クラス
-    ** `**setColumns**(Set<String> propertyNames)`
-    ** `**setColumns**(Class<?> resultClass)`
+1. **非推奨になったメソッド**
+  * ``[small]#org.lightsleep.#[blue]##Sql##``[small]#クラス#
+  ** `[blue]#setColumns#[small]##(Set<String> propertyNames)##`
+  ** `[blue]#setColumns#[small]##(Class<?> resultClass)##`
 
 [[ReleaseNote3.0.1]]
 
@@ -106,57 +187,56 @@ link:ReleaseNotes.asciidoc[English]
 
 1. **改善**
   * 以下のデータ型をサポートしました。エンティティクラスのフィールド型として使用できます。
-    ** `java.time.LocalDate`
-    ** `java.time.LocalTime`
-    ** `java.time.LocalDateTime`
-    ** `java.time.OffsetDateTime`
-    ** `java.time.ZonedDateTime`
-    ** `java.time.Instant`
+  ** `[small]##java.time.##LocalDate`
+  ** `[small]##java.time.##LocalTime`
+  ** `[small]##java.time.##LocalDateTime`
+  ** `[small]##java.time.##OffsetDateTime`
+  ** `[small]##java.time.##ZonedDateTime`
+  ** `[small]##java.time.##Instant`
 
-1. **追加したメソッドおよびコンストラクタ**
-  * `org.lightsleep.**Sql**` クラス
-    ** `**doNotIf**(boolean condition, Consumer<Sql<E>> action)`
-    ** `**doElse**(Consumer<Sql<E>> elseAction)`
-    ** `**executeUpdate**(String sql)`
+1. **追加されたメソッドおよびコンストラクタ**
+  * ``[small]#org.lightsleep.#[blue]##Sql##``[small]#クラス#
+  ** `[blue]#doNotIf#[small]##(boolean condition, Consumer<Sql<E>> action)##`
+  ** `[blue]#doElse#[small]##(Consumer<Sql<E>> elseAction)##`
+  ** `[blue]#executeUpdate#[small]##(String sql)##`
 
-  * `org.lightsleep.database.**Database**` インタフェースおよびこれをインプリメントしているクラス
-    ** `**getObject**(Connection connection, ResultSet resultSet, String columnLabel)`
+  * ``[small]#org.lightsleep.database.#[blue]##Database##``[small]#インタフェースおよびこれをインプリメントしているクラス#
+  ** `[blue]#getObject#[small]##(Connection connection, ResultSet resultSet, String columnLabel)##`
 
-  * `org.lightsleep.helper.ConvertException` クラス
-    ** `**ConvertException**(Class<?> sourceType, Object source, Class<?> destinType, Throwable cause)`
+  * ``[small]#org.lightsleep.helper.#[blue]##ConvertException##``[small]#クラス#
+  ** `[blue]#ConvertException#[small]##(Class<?> sourceType, Object source, Class<?> destinType, Throwable cause)##`
 
-  * `org.lightsleep.helper.TypeConverter` クラス
-    ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT> function1, Function<? super MT, ? extends DT> function2)`
-    ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType,Function<? super ST, ? extends MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends DT> function3)`
-    ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends MT3> function3, Function<? super MT3, ? extends DT> function4)`
+  * `[small]#org.lightsleep.helper.#[blue]##TypeConverter##`[small]#クラス#
+  ** `[blue]#TypeConverter#[small]##(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT> function1, Function<? super MT, ? extends DT> function2)##`
+  ** `[blue]#TypeConverter#[small]##(Class<ST> sourceType, Class<DT> destinType,Function<? super ST, ? extends MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends DT> function3)##`
+  ** `[blue]#TypeConverter#[small]##(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends MT3> function3, Function<? super MT3, ? extends DT> function4)##`
 
-1. **非推奨にしたメソッド**
-  * `org.lightsleep.**Sql**` クラス
-    ** `**doIf**(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)`
+1. **非推奨になったメソッド**
+  * ``[small]#org.lightsleep.#[blue]##Sql##``[small]#クラス#
+  ** `[blue]#doIf#[small]##(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)##`
 
-1. **削除**したメソッドおよびコンストラクタ
-  * `org.lightsleep.**Sql**` クラス
+1. **削除されたメソッドおよびコンストラクタ**
+  * ``[small]#org.lightsleep.#[blue]##Sql##``[small]#クラス#
+  ** `[blue]#select#[small]##(ConnectionWrapper connection, Consumer<? super E> consumer)##`
+  ** `[blue]#select#[small]##(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1)##`
+  ** `[blue]#select#[small]##(ConnectionWrapper connection, Consumer<? super  E > consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)##`
+  ** `[blue]#select#[small]##(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)##`
+  ** `[blue]#select#[small]##(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)##`
+  ** `[blue]#select#[small]##(ConnectionWrapper connection)##`
+  ** `[blue]#selectCount#[small]##(ConnectionWrapper connection)##`
+  ** `[blue]#insert#[small]##(ConnectionWrapper connection, E entity)##`
+  ** `[blue]#insert#[small]##(ConnectionWrapper connection, Iterable<? extends E> entities)##`
+  ** `[blue]#update#[small]##(ConnectionWrapper connection, E entity)##`
+  ** `[blue]#update#[small]##(ConnectionWrapper connection, Iterable<? extends E> entities)##`
+  ** `[blue]#delete#[small]##(ConnectionWrapper connection)##`
+  ** `[blue]#delete#[small]##(ConnectionWrapper connection, E entity)##`
+  ** `[blue]#delete#[small]##(ConnectionWrapper connection, Iterable<? extends E> entities)##`
 
-    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer)`
-    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1)`
-    ** `**select**(ConnectionWrapper connection, Consumer<? super  E > consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)`
-    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)`
-    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)`
-    ** `**select**(ConnectionWrapper connection)`
-    ** `**selectCount**(ConnectionWrapper connection)`
-    ** `**insert**(ConnectionWrapper connection, E entity)`
-    ** `**insert**(ConnectionWrapper connection, Iterable<? extends E> entities)`
-    ** `**update**(ConnectionWrapper connection, E entity)`
-    ** `**update**(ConnectionWrapper connection, Iterable<? extends E> entities)`
-    ** `**delete**(ConnectionWrapper connection)`
-    ** `**delete**(ConnectionWrapper connection, E entity)`
-    ** `**delete**(ConnectionWrapper connection, Iterable<? extends E> entities)`
+  * `[small]#org.lightsleep.database.#[blue]##DB2##`, `[blue]#MySQL#`, `[blue]#Oracle#`, `[blue]#PostgreSQL#`, `[blue]#SQLite#`, `[blue]#SQLServer#`, `[blue]#Standard#`[small]#クラス#
+  ** `[blue]#instance#[small]##()##`
 
-  * `org.lightsleep.database.**DB2**`, `**MySQL**`, `**Oracle**`, `**PostgreSQL**`, `**SQLite**`, `**SQLServer**`, `**Standard**` クラス
-    ** `instance()`
-
-  * `org.lightsleep.helper.TypeConverter` クラス
-    ** `**TypeConverter**(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2)`
+  * ``[small]#org.lightsleep.helper#[blue]##TypeConverter##``[small]#クラス#
+  ** `[blue]#TypeConverter#[small]##(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2)##`
 
 <<TOC_,目次へ>>
 
@@ -176,12 +256,12 @@ link:ReleaseNotes.asciidoc[English]
 1. **改善**
   * SQLのログに接続先のJDBC URLを含めるオプションを *追加* しました。 +
     使用例:::
-    `lightsleep.properties` ファイルに以下を追加 +
+    ``lightsleep.properties``ファイルに以下を追加 +
     `connectionLogFormat = [{0}/{1}/{2}]`
 
-  * ログのパスワード部分を `"xxxx"` でマスクするようにしました。
+  * ログのパスワード部分を``"xxxx"``でマスクするようにしました。
 
-1. `Database` インタフェースおよびその実装クラスに `maskPassword` メソッドを *追加* しました。
+1. ``[blue]#Database#``インタフェースおよびその実装クラスに``[blue]#maskPassword#``メソッドを**追加**しました。
 
 <<TOC_,目次へ>>
 
@@ -190,7 +270,7 @@ link:ReleaseNotes.asciidoc[English]
 === [small]#バージョン# 2.1.1
 
 1. **バグ修正**
-  * [修正済] コネクション･サプライヤが `Jndi` の場合に常に `Standard` データベース･ハンドラが選択される。
+  * [修正済] コネクション･サプライヤが``[blue]#Jndi#``の場合に常に``[blue]#Standard#``データベース･ハンドラが選択される。
 
 1. **その他**
   * ログメッセージの改善
@@ -203,46 +283,46 @@ link:ReleaseNotes.asciidoc[English]
 
 バージョン番号はマイナー･リリースですが、**仕様変更があります**。
 
-1. `lightsleep.properties` ファイルに、複数のJDBC URLの定義を **可能** にしました。
+1. ``lightsleep.properties``ファイルに、複数のJDBC URLの定義を**可能**にしました。
 
-1. JDBC URLに対応するデータベース･ハンドラ･クラス **は自動的に判断** するようにしました。これに伴い `lightsleep.properties` ファイルの `Database` プロパティを **無効** にしました。**(仕様変更)**
+1. JDBC URLに対応するデータベース･ハンドラ･クラス**は自動的に判断**するようにしました。これに伴い``lightsleep.properties``ファイルの``Database``プロパティを**無効**にしました。**(仕様変更)**
 
 1. 以下のメソッド/コンストラクタを **追加** しました。
-  * `Sql` クラス
-    ** `public ConnectionWrapper getConnection()`
+  * ``[small]#org.lightsleep.#[blue]##Sql##``[small]#クラス#
+  ** `[small]#public ConnectionWrapper# [blue]#getConnection#[small]##()##`
 
-  * `org.lightsleep.connection.ConnectionSupplier` インタフェース
-    ** `Database getDatabase()`
-    ** `DataSource getDataSource()`
-    ** `String getUrl()`
-    ** `static ConnectionSupplier of(String supplierName, Properties properties)`
-    ** `static ConnectionSupplier find(String... urlWords)`
+  * ``[small]#org.lightsleep.connection.#[blue]##ConnectionSupplier##``[small]#インタフェース#
+  ** `[small]#Database# [blue]#getDatabase#[small]##()##`
+  ** `[small]#DataSource# [blue]#getDataSource#[small]##()##`
+  ** `[small]#String# [blue]#getUrl#[small]##()##`
+  ** `[small]#static ConnectionSupplier# [blue]#of#[small]##(String supplierName, Properties properties)##`
+  ** `[small]#static ConnectionSupplier# [blue]#find#[small]##(String... urlWords)##`
 
-  * `org.lightsleep.connection.AbstractConnectionSupplier` 抽象クラス
-    ** `protected AbstractConnectionSupplier(Properties properties, Consumer<Properties> modifier)`
-    ** `@Override public Database getDatabase()`
-    ** `@Override public String getUrl()`
-    ** `@Override public String toString()`
+  * ``[small]#org.lightsleep.connection.#[blue]##AbstractConnectionSupplier##``[small]#抽象クラス#
+  ** `[small]#protected# [blue]#AbstractConnectionSupplier#[small]##(Properties properties, Consumer<Properties> modifier)##`
+  ** `[small]#@Override public Database# [blue]#getDatabase#[small]##()##`
+  ** `[small]#@Override public String# [blue]#getUrl#[small]##()##`
+  ** `[small]#@Override public String# [blue]#toString#[small]##()##`
 
-  * `org.lightsleep.database.Database` インタフェース
-    ** `static Database getInstance(String jdbcUrl)`
+  * ``[small]#org.lightsleep.database.#[blue]##Database##``[small]#インタフェース#
+  ** `[small]#static Database# [blue]#getInstance#[small]##(String jdbcUrl)##`
 
-  * `org.lightsleep.helper.Resource` クラス
-      * `public static Resource getGlobal()`
+  * ``[small]#org.lightsleep.helper.#[blue]##Resource##``[small]#クラス#
+  ** `[small]#public static Resource# [blue]#getGlobal#[small]##()##`
 
-1. `org.lightsleep.Sql` クラスの以下のメソッドを **削除** しました。**(仕様変更)**
-  * `public static Database getDatabase()`
-  * `public static void setDatabase(Database database)`
-  * `public static ConnectionSupplier getConnectionSupplier()`
-  * `public static void setConnectionSupplier(ConnectionSupplier supplier)`
+1. ``[small]#org.lightsleep.#[blue]##Sql##``クラスの以下のメソッドを**削除**しました。**(仕様変更)**
+  * `[small]#public static Database# [blue]#getDatabase#[small]##()##`
+  * `[small]#public static void# [blue]#setDatabase#[small]##(Database database)##`
+  * `[small]#public static ConnectionSupplier# [blue]#getConnectionSupplier#[small]##()##`
+  * `[small]#public static void# [blue]#setConnectionSupplier#[small]##(ConnectionSupplier supplier)##`
 
-1. `org.lightsleep.connection.ConnectionWrapper` クラスを追加し、各メソッドの引数の型を `java.sql.Connection` から `ConnectionWrapper` に**変更**しました。**(仕様変更)**
+1. ``[small]#org.lightsleep.connection.#[blue]##ConnectionWrapper##``クラスを追加し、各メソッドの引数の型を``[small]#java.sql.#[blue]##Connection##``から``[blue]#ConnectionWrapper#``に**変更**しました。**(仕様変更)**
 
-1. `org.lightsleep.connection` パッケージの各クラスに `Properties properties` を引数とするコンストラクタを**追加**しました。
+1. ``[blue small]#org.lightsleep.connection#``パッケージの各クラスに``Properties properties``を引数とするコンストラクタを**追加**しました。
 
-1. `org.lightsleep.database.anchor` パッケージと `db2`, `mysql`, `oracle`, `postgresql`, `sqlite`, `sqlserver` クラスを **追加** しました。これらのクラスは、JDBC URLから対応するデータベース･ハンドラ･クラスを見つける際に使用されます。
+1. ``[blue small]#org.lightsleep.database.anchor#``パッケージと``[blue]#db2#``, `[blue]#mysql#`, `[blue]#oracle#`, `[blue]#postgresql#`, `[blue]#sqlite#`, ``[blue]#sqlserver#``クラスを**追加**しました。これらのクラスは、JDBC URLから対応するデータベース･ハンドラ･クラスを見つける際に使用されます。
 
-1. `org.lightsleep.database` パッケージの各クラスの `instance()` メソッドを **非推奨** にし、`instance` 静的変数を **追加** しました。
+1. ``[blue small]#org.lightsleep.database#``パッケージの各クラスの``[blue]#instance#[small]##()##``メソッドを **非推奨** にし、``[blue]#instance#``静的変数を **追加** しました。
 
 <<TOC_,目次へ>>
 
@@ -250,49 +330,49 @@ link:ReleaseNotes.asciidoc[English]
 
 === [small]#バージョン# 2.0.0
 
-1. `org.lightsleep.Sql` クラスの型パラメータとは異なるエンティティ型でSELECT SQLの結果を取得する以下のメソッドを**追加**しました。
-  * `public <R> Optional<R> selectAs(Class<R> resultClass)`
-  * `public <R> void selectAs(Class<R> resultClass, Consumer<? super R> consumer)`
+1. ``[small]#org.lightsleep.#[blue]##Sql##``クラスの型パラメータとは異なるエンティティ型でSELECT SQLの結果を取得する以下のメソッドを**追加**しました。
+  * `[small]#public <R> Optional<R># [blue]#selectAs#[small]##(Class<R> resultClass)##`
+  * `[small]#public <R> void# [blue]#selectAs#[small]##(Class<R> resultClass, Consumer<? super R> consumer)##`
 
-1. `org.lightsleep.Sql` クラスの `Connection` 引数を持つメソッドを**非推奨**にし、`Connection` 引数がない以下のメソッドを**追加**しました。
-  * `public void select(Consumer<? super E> consumer)`
-  * `public <JE1> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1)`
-  * `public <JE1, JE2> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)`
-  * `public <JE1, JE2, JE3> void select(Consumer<? super  E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)`
-  * `public <JE1, JE2, JE3, JE4> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)`
-  * `public Optional<E> select()`
-  * `public int selectCount()`
-  * `public int insert(E entity)`
-  * `public int insert(Iterable<? extends E> entities)`
-  * `public int update(E entity)`
-  * `public int update(Iterable<? extends E> entities)`
-  * `public int delete()`
-  * `public int delete(E entity)`
-  * `public int delete(Iterable<? extends E> entities)`
+1. ``[small]#org.lightsleep.#[blue]##Sql##``クラスの``[blue]#Connection#``引数を持つメソッドを**非推奨**にし、``[blue]#Connection#``引数がない以下のメソッドを**追加**しました。
+  * `[small]#public void# [blue]#select#[small]##(Consumer<? super E> consumer)##`
+  * `[small]#public <JE1> void# [blue]#select#[small]##(Consumer<? super E> consumer, Consumer<? super JE1> consumer1)##`
+  * `[small]#public <JE1, JE2> void# [blue]#select#[small]##(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)##`
+  * `[small]#public <JE1, JE2, JE3> void# [blue]#select#[small]##(Consumer<? super  E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)##`
+  * `[small]#public <JE1, JE2, JE3, JE4> void# [blue]#select#[small]##(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)##`
+  * `[small]#public Optional<E># [blue]#select#[small]##()##`
+  * `[small]#public int# [blue]#selectCount#[small]##()##`
+  * `[small]#public int# [blue]#insert#[small]##(E entity)##`
+  * `[small]#public int# [blue]#insert#[small]##(Iterable<? extends E> entities)##`
+  * `[small]#public int# [blue]#update#[small]##(E entity)##`
+  * `[small]#public int# [blue]#update#[small]##(Iterable<? extends E> entities)##`
+  * `[small]#public int# [blue]#delete#[small]##()##`
+  * `[small]#public int# [blue]#delete#[small]##(E entity)##`
+  * `[small]#public int# [blue]#delete#[small]##(Iterable<? extends E> entities)##`
 
-1. `org.lightsleep.Sql` クラスに以下のメソッドを**追加**しました。
-  * `public Sql<E> connection(Connection connection)`
-  * `public <R> Sql<E> setColumns(Class<R> resultClass)`
-  * `public Sql<E> doAlways(Consumer<Sql<E>> action)`
+1. ``[small]#org.lightsleep.#[blue]##Sql##``クラスに以下のメソッドを**追加**しました。
+  * `[small]#public Sql<E># [blue]#connection#[small]##(Connection connection)##`
+  * `[small]#public <R> Sql<E># [blue]#setColumns#[small]##(Class<R> resultClass)##`
+  * `[small]#public Sql<E># [blue]#doAlways#[small]##(Consumer<Sql<E>> action)##`
 
-1. `org.lightsleep.Sql` クラスが `Cloneable` インタフェースを **実装** するようにしました。
+1. ``[small]#org.lightsleep.#[blue]##Sql##``クラスが``[blue]#Cloneable#``インタフェースを**実装**するようにしました。
 
-1. `org.lightsleep.Sql` クラスの `where` メソッドの引数の仕様を **変更** しました。**(仕様変更)**
+1. ``[small]#org.lightsleep.#[blue]##Sql##``クラスの``[blue]#where#``メソッドの引数の仕様を**変更**しました。**(仕様変更)**
 ```
 public Sql<E> where(E entity)  
     ↓
 public <K> Sql<E> where(K entity)  
 ```
 
-1. `Table` アノテーション･クラスに付与されていた `@Inherited` を **削除** しました。**(仕様変更)**
+1. ``[blue]#Table#``アノテーション･クラスに付与されていた``[blue]#@Inherited#``を**削除**しました。**(仕様変更)**
 
-1. `Key`, `NonColumn`, `NonInsert`, `NonSelect`, `NonUpdate` アノテーション･クラスに `value` プロパティを**追加**しました。
+1. `[blue]#Key#`, `[blue]#NonColumn#`, `[blue]#NonInsert#`, `[blue]#NonSelect#`, ``[blue]#NonUpdate#``アノテーション･クラスに``[blue]#value#``プロパティを**追加**しました。
 
-1. `NonColumnProperty`, `NonInsertProperty`, `NonSelectProperty`, `NonUpdateProperty` アノテーション･クラスに `property` プロパティを**追加**し、`value` プロパティの仕様を**変更**しました。**(仕様変更)**
+1. `[blue]#NonColumnProperty#`, `[blue]#NonInsertProperty#`, `[blue]#NonSelectProperty#`, ``[blue]#NonUpdateProperty#``アノテーション･クラスに``[blue]#property#``プロパティを**追加**し、``[blue]#value#``プロパティの仕様を**変更**しました。**(仕様変更)**
 
-1. `org.lightsleep.component.Expression` クラスの `toString` において、内容文字列の `{}` と引数の数が不一致の際にスローする例外を `IllegalArgumentException` から `MissingArgumentsException`(新規追加)に**変更**にしました。**(仕様変更)**
+1. ``[small]#org.lightsleep.component.#[blue]##Expression##``クラスの``[blue]#toString#``において、内容文字列の``{}``と引数の数が不一致の際にスローする例外を``[blue]#IllegalArgumentException#``から``[blue]#MissingArgumentsException#``(新規追加)に**変更**にしました。**(仕様変更)**
 
-1. `org.lightsleep.helper.Accessor` クラスの `getField`, `getValue`, `setValue` メソッドでスローする例外を `IllegalArgumentException` から `MissingPropertyException`(新規追加)に**変更**にしました。**(仕様変更)**
+1. ``[small]#org.lightsleep.helper.#[blue]##Accessor##``クラスの``[blue]#getField#``, `[blue]#getValue#`, ``[blue]#setValue#``メソッドでスローする例外を``[blue]#IllegalArgumentException#``から``[blue]#MissingPropertyException#``(新規追加)に**変更**にしました。**(仕様変更)**
 
 <<TOC_,目次へ>>
 

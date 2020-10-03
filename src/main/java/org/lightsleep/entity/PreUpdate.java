@@ -14,12 +14,12 @@ import org.lightsleep.connection.ConnectionWrapper;
  * @author Masato Kokubo
  */
 public interface PreUpdate {
-	/**
-	 * Invoked before executing UPDATE SQL.
-	 *
-	 * @param conn the connection wrapper
-	 *
-	 * @throws NullPointerException if <b>conn</b> is <b>null</b>
-	 */
-	void preUpdate(ConnectionWrapper conn);
+    /**
+     * Invoked before executing UPDATE SQL.
+     *
+     * @param conn the connection wrapper
+     *
+     * @throws NullPointerException if <b>conn</b> is <b>null</b>
+     */
+    void preUpdate(ConnectionWrapper conn);
 }

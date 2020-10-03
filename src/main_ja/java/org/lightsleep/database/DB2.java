@@ -9,7 +9,7 @@ import org.lightsleep.helper.TypeConverter;
 
 /**
  * <a href="https://www.ibm.com/us-en/marketplace/db2-express-c" target="Db2">Db2</a>
- * 用のデータベース･ハンドラです。
+ * 用のデータベースハンドラです。
  *
  * <p>
  * このクラスのオブジェクトは、{@linkplain Standard#typeConverterMap}
@@ -36,48 +36,40 @@ import org.lightsleep.helper.TypeConverter;
  * @see org.lightsleep.database.Standard
  */
 public class Db2 extends Standard {
-	/**
-	 * パスワードのパターン文字列
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_PATTERN = "";
+    /**
+     * パスワードのパターン文字列
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_PATTERN = "";
 
-	/**
-	 * このクラスの唯一のインスタンス
-	 *
-	 * @since 2.1.0
-	 */
-	public static final Db2 instance = new Db2();
+    /**
+     * このクラスの唯一のインスタンス
+     *
+     * @since 2.1.0
+     */
+    public static final Db2 instance = new Db2();
 
-	/**
-	 * <b>Db2</b>を構築します。
-	 */
-	protected Db2() {
-	}
+    /**
+     * <b>Db2</b>を構築します。
+     */
+    protected Db2() {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
-	}
+    @Override
+    protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean supportsOffsetLimit() {
-		return true;
-	}
+    @Override
+    public boolean supportsOffsetLimit() {
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return null;
-	}
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return null;
+    }
 }

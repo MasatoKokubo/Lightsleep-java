@@ -15,36 +15,36 @@ import java.util.stream.Stream;
  * @author Masato Kokubo
  */
 public class Or extends LogicalCondition {
-	/**
-	 * Constructs an <b>Or</b> consisting of the conditions.
-	 *
-	 * @param conditionStream the stream of conditions
-	 *
-	 * @throws NullPointerException <b>conditionStream</b> or any of <b>conditionStream</b> is <b>null</b>
-	 */
-	public Or(Stream<Condition> conditionStream) {
-		super(Operator.OR, conditionStream);
-	}
+    /**
+     * Constructs an <b>Or</b> consisting of the conditions.
+     *
+     * @param conditionStream the stream of conditions
+     *
+     * @throws NullPointerException <b>conditionStream</b> or any of <b>conditionStream</b> is <b>null</b>
+     */
+    public Or(Stream<Condition> conditionStream) {
+        super(Operator.OR, conditionStream);
+    }
 
-	/**
-	 * Constructs an <b>Or</b> consisting of the conditions.
-	 *
-	 * @param conditions the collection of conditions
-	 *
-	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is <b>null</b>
-	 */
-	public Or(Collection<Condition> conditions) {
-		super(Operator.OR, Objects.requireNonNull(conditions, "Collection<Condition> conditions is null").stream());
-	}
+    /**
+     * Constructs an <b>Or</b> consisting of the conditions.
+     *
+     * @param conditions the collection of conditions
+     *
+     * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is <b>null</b>
+     */
+    public Or(Collection<Condition> conditions) {
+        super(Operator.OR, Objects.requireNonNull(conditions, "Collection<Condition> conditions is null").stream());
+    }
 
-	/**
-	 * Constructs an <b>Or</b> consisting of the conditions.
+    /**
+     * Constructs an <b>Or</b> consisting of the conditions.
 
-	 * @param conditions the array of conditions
+     * @param conditions the array of conditions
 
-	 * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is <b>null</b>
-	 */
-	public Or(Condition... conditions) {
-		super(Operator.OR, Arrays.stream(Objects.requireNonNull(conditions, "Condition[] conditions is null")));
-	}
+     * @throws NullPointerException <b>conditions</b> or any of <b>conditions</b> is <b>null</b>
+     */
+    public Or(Condition... conditions) {
+        super(Operator.OR, Arrays.stream(Objects.requireNonNull(conditions, "Condition[] conditions is null")));
+    }
 }

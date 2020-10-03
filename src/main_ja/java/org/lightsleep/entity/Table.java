@@ -6,7 +6,7 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * クラスに関連するデータベース･テーブル名を示します。
+ * クラスに関連するデータベーステーブル名を示します。
  *
  * <p>
  * テーブル名がクラス名と同じであれば、このアノテーションを指定する必要はありません。<br>
@@ -39,6 +39,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Table {
-	/** @return テーブル名 */
-	String value();
+    /** @return テーブル名 */
+    String value();
 }

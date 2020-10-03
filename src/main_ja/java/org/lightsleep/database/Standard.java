@@ -12,7 +12,7 @@ import org.lightsleep.helper.TypeConverter;
 import org.lightsleep.Sql;
 
 /**
- * 特定のDBMSに依存しないデータベース･ハンドラです。
+ * 特定のDBMSに依存しないデータベースハンドラです。
  *
  * <p>
  * {@linkplain org.lightsleep.helper.TypeConverter}クラスが持つ
@@ -168,342 +168,343 @@ import org.lightsleep.Sql;
  * @see org.lightsleep.helper.TypeConverter
  */
 public class Standard implements Database {
-	/**
-	 * 制御文字を以外ASCII文字からなる文字列
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String ASCII_CHARS = "";
+    /**
+     * 制御文字を以外ASCII文字からなる文字列
+     *
+     * @since 2.2.0
+     */
+    protected static final String ASCII_CHARS = "";
 
-	/**
-	 * パスワードのパターン文字列
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_PATTERN = "";
+    /**
+     * パスワードのパターン文字列
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_PATTERN = "";
 
-	/**
-	 * SQLが生成される時の文字列リテラルの最大長
-	 *
-	 * <p>
-	 * 文字列リテラルがこの長さを超える場合、SQLのパラメータ(?)として生成します。<br>
-	 * lightsleep.propertiesの<b>maxStringLiteralLength</b>の値が設定されます。(未定義の場合は 128)
-	 * </p>
-	 */
-	public final int maxStringLiteralLength = 0;
+    /**
+     * SQLが生成される時の文字列リテラルの最大長
+     *
+     * <p>
+     * 文字列リテラルがこの長さを超える場合、SQLのパラメータ(?)として生成します。<br>
+     * lightsleep.propertiesの<b>maxStringLiteralLength</b>の値が設定されます。(未定義の場合は 128)
+     * </p>
+     */
+    public final int maxStringLiteralLength = 0;
 
-	/**
-	 * SQLが生成される時のバイナリ列リテラルの最大長
-	 *
-	 * <p>
-	 * バイナリ列リテラルがこの長さを超える場合、SQLのパラメータ(?)として生成します。<br>
-	 * lightsleep.propertiesの<b>maxBinaryLiteralLength</b>の値が設定されます。(未定義の場合は 128)
-	 * </p>
-	 */
-	public final int maxBinaryLiteralLength = 0;
+    /**
+     * SQLが生成される時のバイナリ列リテラルの最大長
+     *
+     * <p>
+     * バイナリ列リテラルがこの長さを超える場合、SQLのパラメータ(?)として生成します。<br>
+     * lightsleep.propertiesの<b>maxBinaryLiteralLength</b>の値が設定されます。(未定義の場合は 128)
+     * </p>
+     */
+    public final int maxBinaryLiteralLength = 0;
 
-	/**
-	 * <b>boolean</b>から<b>SqlString</b>(0か1)へ変換する
-	 * <b>TypeConverter</b>オブジェクト
-	 */
-	protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter = null;
+    /**
+     * <b>boolean</b>から<b>SqlString</b>(0か1)へ変換する
+     * <b>TypeConverter</b>オブジェクト
+     */
+    protected static final TypeConverter<Boolean, SqlString> booleanToSql01Converter = null;
 
-	/**
-	 * このクラスの唯一のインスタンス
-	 *
-	 * @since 2.1.0
-	 */
-	public static final Standard instance = new Standard();
+    /**
+     * このクラスの唯一のインスタンス
+     *
+     * @since 2.1.0
+     */
+    public static final Standard instance = new Standard();
 
-	/**
-	 * 以下のデータ型変換で使用する<b>TypeConverter</b>マップ
-	 * <ul>
-	 *   <li>SQL 生成時</li>
-	 *   <li>SELECT SQLで取得した値をエンティティに格納する際</li>
-	 * </ul>
-	 */
-	protected final Map<String, TypeConverter<?, ?>> typeConverterMap = null;
+    /**
+     * 以下のデータ型変換で使用する<b>TypeConverter</b>マップ
+     * <ul>
+     *   <li>SQL 生成時</li>
+     *   <li>SELECT SQLで取得した値をエンティティに格納する際</li>
+     * </ul>
+     */
+    protected final Map<String, TypeConverter<?, ?>> typeConverterMap = null;
 
-	/**
-	 * <b>Standard</b>を構築します。
-	 */
-	protected Standard() {
-	}
+    /**
+     * <b>Standard</b>を構築します。
+     */
+    protected Standard() {
+    }
 
-	/**
-	 * java.sql.Arrayを配列に変換します。
-	 *
-	 * @param <AT> 配列の型
-	 * @param <CT> コンポーネントの型
-	 * @param object 変換するオブジェクト
-	 * @param arrayType 配列の型
-	 * @param componentType コンポーネントの型
-	 * @return 変換された配列
-	 */
-	protected <AT, CT> AT toArray(java.sql.Array object, Class<AT> arrayType, Class<CT> componentType) {
-		return null;
-	}
+    /**
+     * java.sql.Arrayを配列に変換します。
+     *
+     * @param <AT> 配列の型
+     * @param <CT> コンポーネントの型
+     * @param object 変換するオブジェクト
+     * @param arrayType 配列の型
+     * @param componentType コンポーネントの型
+     * @return 変換された配列
+     */
+    protected <AT, CT> AT toArray(java.sql.Array object, Class<AT> arrayType, Class<CT> componentType) {
+        return null;
+    }
 
-	/**
-	 * 配列オブジェクトを<b>SqlString</b>に変換します。
-	 *
-	 * @param <CT> コンポーネントの型
-	 * @param array 変換する配列
-	 * @param componentType コンポーネントの型
-	 * @return 変換された<b>SqlString</b>
-	 */
-	protected <CT> SqlString toSqlString(Object array, Class<CT> componentType) {
-		return null;
-	}
+    /**
+     * 配列オブジェクトを<b>SqlString</b>に変換します。
+     *
+     * @param <CT> コンポーネントの型
+     * @param array 変換する配列
+     * @param componentType コンポーネントの型
+     * @return 変換された<b>SqlString</b>
+     */
+    protected <CT> SqlString toSqlString(Object array, Class<CT> componentType) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <E> CharSequence selectSql(Sql<E> sql, List<Object> parameters) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String subSelectSql(Sql<E> sql, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <E, OE> CharSequence subSelectSql(Sql<E> sql, Sql<OE> outerSql, List<Object> parameters) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <E, OE> CharSequence subSelectSql(Sql<E> sql, Sql<OE> outerSql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String insertSql(Sql<E> sql, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <E> CharSequence insertSql(Sql<E> sql, List<Object> parameters) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <E> CharSequence updateSql(Sql<E> sql, List<Object> parameters) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <E> String deleteSql(Sql<E> sql, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <E> CharSequence deleteSql(Sql<E> sql, List<Object> parameters) {
+        return null;
+    }
 
-	/**
-	 * DISTINCT を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendDistinct(StringBuilder buff, Sql<E> sql) {
-	}
+    /**
+     * DISTINCTを<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendDistinct(StringBuilder buff, Sql<E> sql) {
+    }
 
-	/**
-	 * メインテーブルの名前と別名を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendMainTable(StringBuilder buff, Sql<E> sql) {
-	}
+    /**
+     * FORM句をを<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param <OE> <b>outerSql</b>のエンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     * @param outerSql 構文上<b>sql</b>の外側にある<b>Sql</b>オブジェクト
+     * @param parameters the list to add the parameters of the SQL
+     *
+     * @since 4.0.0
+     */
+    protected <E, OE> void appendFrom(StringBuilder buff, Sql<E> sql, Sql<OE> outerSql, List<Object> parameters) {
+    }
 
-	/**
-	 * 結合テーブルの名前と別名を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 * @param parameters SQLのパラメータを格納するリスト
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendJoinTables(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-	}
+    /**
+     * メインテーブルの名前と別名を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendMainTable(StringBuilder buff, Sql<E> sql) {
+    }
 
-	/**
-	 * SELECT SQLのカラム別名を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 * @param parameters SQLのパラメータを格納するリスト
-	 *
-	 * @since 3.1.0
-	 */
-	protected <E> void appendSelectColumnAliases(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-	}
+    /**
+     * 結合テーブルの名前と別名を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     * @param parameters SQLのパラメータを格納するリスト
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendJoinTables(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+    }
 
-	/**
-	 * SELECT SQLのカラム名を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 * @param parameters SQLのパラメータを格納するリスト
-	 *
-	 * @since 3.1.0
-	 */
-	protected <E> void appendSelectColumns(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-	}
+    /**
+     * SELECT SQLのカラム別名を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     * @param parameters SQLのパラメータを格納するリスト
+     *
+     * @since 3.1.0
+     */
+    protected <E> void appendSelectColumnAliases(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+    }
 
-	/**
-	 * 挿入するカラム名と値を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 * @param parameters SQLのパラメータを格納するリスト
-	 *
-	 * @since 1.8.4
-	 */
-	protected <E> void appendInsertColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-	}
+    /**
+     * SELECT SQLのカラム名を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     * @param parameters SQLのパラメータを格納するリスト
+     *
+     * @since 3.1.0
+     */
+    protected <E> void appendSelectColumns(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+    }
 
-	/**
-	 * 更新するカラム名と値を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 * @param parameters SQLのパラメータを格納するリスト
-	 *
-	 * @since 1.8.4
-	 */
-	protected <E> void appendUpdateColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-	}
+    /**
+     * 挿入するカラム名を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     *
+     * @since 4.0.0
+     */
+    protected <E> void appendInsertColumns(StringBuilder buff, Sql<E> sql) {
+    }
 
-	/**
-	 * WHERE句を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 * @param parameters SQLのパラメータを格納するリスト
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-	}
+    /**
+     * 挿入するカラム名と値を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     * @param parameters SQLのパラメータを格納するリスト
+     *
+     * @since 4.0.0
+     */
+    protected <E> void appendInsertValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+    }
 
-	/**
-	 * GROUP BY句を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 * @param parameters SQLのパラメータを格納するリスト
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-	}
+    /**
+     * 更新するカラム名と値を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     * @param parameters SQLのパラメータを格納するリスト
+     *
+     * @since 1.8.4
+     */
+    protected <E> void appendUpdateColumnsAndValues(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+    }
 
-	/**
-	 * HAVING句を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 * @param parameters SQLのパラメータを格納するリスト
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-	}
+    /**
+     * WHERE句を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     * @param parameters SQLのパラメータを格納するリスト
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendWhere(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+    }
 
-	/**
-	 * ORDER BY句を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 * @param parameters SQLのパラメータを格納するリスト
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
-	}
+    /**
+     * GROUP BY句を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     * @param parameters SQLのパラメータを格納するリスト
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendGroupBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+    }
 
-	/**
-	 * LIMIT句を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendLimit(StringBuilder buff, Sql<E> sql) {
-	}
+    /**
+     * HAVING句を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     * @param parameters SQLのパラメータを格納するリスト
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendHaving(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+    }
 
-	/**
-	 * OFFSET句を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendOffset(StringBuilder buff, Sql<E> sql) {
-	}
+    /**
+     * ORDER BY句を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     * @param parameters SQLのパラメータを格納するリスト
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendOrderBy(StringBuilder buff, Sql<E> sql, List<Object> parameters) {
+    }
 
-	/**
-	 * FOR UPDATE句を<b>buff</b>に追加します。
-	 *
-	 * @param <E> エンティティの型
-	 * @param buff 追加される文字列バッファ
-	 * @param sql <b>Sql</b>オブジェクト
-	 *
-	 * @since 1.8.2
-	 */
-	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
-	}
+    /**
+     * LIMIT句を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendLimit(StringBuilder buff, Sql<E> sql) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Map<String, TypeConverter<?, ?>> typeConverterMap() {
-		return null;
-	}
+    /**
+     * OFFSET句を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendOffset(StringBuilder buff, Sql<E> sql) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <T> T convert(Object value, Class<T> type) {
-		return null;
-	}
+    /**
+     * FOR UPDATE句を<b>buff</b>に追加します。
+     *
+     * @param <E> エンティティの型
+     * @param buff 追加される文字列バッファ
+     * @param sql SQLの生成情報を含む<b>Sql</b>オブジェクト
+     *
+     * @since 1.8.2
+     */
+    protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return null;
-	}
+    @Override
+    public Map<String, TypeConverter<?, ?>> typeConverterMap() {
+        return null;
+    }
+
+    @Override
+    public <T> T convert(Object value, Class<T> type) {
+        return null;
+    }
+
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return null;
+    }
 }

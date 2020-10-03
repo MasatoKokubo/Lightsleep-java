@@ -3,6 +3,8 @@
 
 package org.lightsleep.database;
 
+import java.util.List;
+
 import org.lightsleep.Sql;
 import org.lightsleep.component.SqlString;
 import org.lightsleep.helper.TypeConverter;
@@ -37,74 +39,77 @@ import org.lightsleep.helper.TypeConverter;
  * @see org.lightsleep.database.Standard
  */
 public class Db2 extends Standard {
-	/**
-	 * The pattern string of passwords
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_PATTERN =
-		'['
-		+ ASCII_CHARS
-			.replace(":;", "")
-			.replace("[\\]", "\\[\\\\\\]")
-			.replace("^", "\\^")
-		+ "]*";
+    /**
+     * The pattern string of passwords
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_PATTERN =
+        '['
+        + ASCII_CHARS
+            .replace(":;", "")
+            .replace("[\\]", "\\[\\\\\\]")
+            .replace("^", "\\^")
+        + "]*";
 
-	/**
-	 * The only instance of this class
-	 *
-	 * @since 2.1.0
-	 */
-	public static final Db2 instance = new Db2();
+    /**
+     * The only instance of this class
+     *
+     * @since 2.1.0
+     */
+    public static final Db2 instance = new Db2();
 
-	/**
-	 * Constructs a new <b>Db2</b>.
-	 */
-	protected Db2() {
-		// byte[] -> SqlString
-		TypeConverter.put(typeConverterMap,
-			new TypeConverter<>(byte[].class, SqlString.class,
-				TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function(),
-				object -> object.parameters().length > 0
-					? object : new SqlString('B' + object.content()) // X'...' -> BX'...'
-			)
-		);
-	}
+    /**
+     * Constructs a new <b>Db2</b>.
+     */
+    protected Db2() {
+        // byte[] -> SqlString
+        TypeConverter.put(typeConverterMap,
+        // 4.0.0
+        //    new TypeConverter<>(byte[].class, SqlString.class,
+        //        TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function(),
+        //        object -> object.parameters().length > 0
+        //            ? object : new SqlString('B' + object.content()) // X'...' -> BX'...'
+        //    )
+            TypeConverter.of(typeConverterMap, byte[].class, SqlString.class, SqlString.class,
+                object -> object.parameters().length > 0
+                    ? object : new SqlString('B' + object.content()) // X'...' -> BX'...')
+            )
+        ////
+        );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
-		// FOR UPDATE
-		if (sql.isForUpdate()) {
-			buff.append(" FOR UPDATE WITH RS");
+    @Override
+    protected <E> CharSequence withSelectSql(Sql<E> sql, List<Object> parameters) {
+        return onlyWithSelectSql(sql, parameters);
+    }
 
-			// NO WAIT
-			if (sql.isNoWait())
-				throw new UnsupportedOperationException("noWait");
+    @Override
+    protected <E> void appendForUpdate(StringBuilder buff, Sql<E> sql) {
+        // FOR UPDATE
+        if (sql.isForUpdate()) {
+            buff.append(" FOR UPDATE WITH RS");
 
-			// WAIT n
-			else if (!sql.isWaitForever())
-				throw new UnsupportedOperationException("wait N");
-		}
-	}
+            // NO WAIT
+            if (sql.isNoWait())
+                throw new UnsupportedOperationException("noWait");
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean supportsOffsetLimit() {
-		return true;
-	}
+            // WAIT n
+            else if (!sql.isWaitForever())
+                throw new UnsupportedOperationException("wait N");
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
-	}
+    @Override
+    public boolean supportsOffsetLimit() {
+        return true;
+    }
+
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return jdbcUrl.replaceAll("password *=" + PASSWORD_PATTERN, "password=" + PASSWORD_MASK);
+    }
 }

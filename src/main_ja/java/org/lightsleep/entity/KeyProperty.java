@@ -6,7 +6,7 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * プロパティに関連するカラムがプライマリー･キーの一部である事を示します。<br>
+ * プロパティに関連するカラムがプライマリーキーの一部である事を示します。<br>
  *
  * <p>
  * このアノテーションは、スーパークラスで定義されているフィールドに対して指定する場合に使用します。
@@ -45,12 +45,12 @@ import java.lang.annotation.*;
 @Repeatable(KeyProperties.class)
 @Target({ElementType.TYPE})
 public @interface KeyProperty {
-	/**
-	 * @return フィールドを指定するプロパティ名
-	 * @since 2.0.0
-	 */
-	String property();
+    /**
+     * @return フィールドを指定するプロパティ名
+     * @since 2.0.0
+     */
+    String property();
 
-	/** @return フィールドに関連するカラムがキーの一部であれば<b>true</b>、そうでなければ<b>false</b> */
-	boolean value() default true;
+    /** @return フィールドに関連するカラムがキーの一部であれば<b>true</b>、そうでなければ<b>false</b> */
+    boolean value() default true;
 }

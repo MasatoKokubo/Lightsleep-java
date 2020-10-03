@@ -6,15 +6,15 @@ package org.lightsleep.test.entity;
 import java.sql.Date;
 
 /**
- * The entity of contact table.
+ * The entity of Contact table.
  */
 public class Contact extends Common {
-	/** Person Name */
-	public final PersonName name = new PersonName();
+    /** Person Name */
+    public final PersonName name = new PersonName();
 
-	/** Birthday */
-	public Date birthday;
+    /** Birthday */
+    public Date birthday;
 
-	/** Address Identifier */
-	public int addressId;
+    /** Address Identifier */
+    public int addressId;
 }

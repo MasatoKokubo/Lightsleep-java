@@ -1,4 +1,4 @@
-= Lightsleep [.small]#3.2.0 User's Guide#
+= Lightsleep [.small]#4.0.0 User's Guide#
 
 link:UserGuide_ja.asciidoc[Japanese]
 
@@ -28,9 +28,6 @@ link:UserGuide_ja.asciidoc[Japanese]
 2-2-5. <<Entity-PostUpdate,PostUpdate [small]#Interface#>> [small fuchsia]#_(since 3.2.0)_# +
 2-2-6. <<Entity-PostDelete,PostDelete [small]#Interface#>> [small fuchsia]#_(since 3.2.0)_# +
 2-2-7. <<Entity-PostSelect,PostSelect [small]#Interface#>> [small fuchsia]#_(since 3.2.0)_# +
-2-2-8. <<Entity-Composite,Composite [small]#Interface#>> [small fuchsia]#_(deprecated since 3.2.0)_# +
-2-2-9. <<Entity-PreStore,PreStore [small]#Interface#>> [small fuchsia]#_(deprecated since 3.2.0)_# +
-2-2-10. <<Entity-PostLoad,PostLoad [small]#Interface#>> [small fuchsia]#_(deprecated since 3.2.0)_# +
 3. <<lightsleep-properties,Definition of lightsleep.properties file>> +
 3-1. <<Logger,Logging library class>> +
 3-2. <<Database,Database handler class>> +
@@ -55,6 +52,8 @@ link:UserGuide_ja.asciidoc[Japanese]
 5-1-15. <<ExecuteSQL-select-count,SELECT COUNT(*)>> +
 5-1-16. <<ExecuteSQL-select-fromSubquery,SELECT FROM Clause Subquery [small fuchsia]#_(since 3.1.0)_#>> +
 5-1-17. <<ExecuteSQL-select-union,SELECT UNION, UNION ALL [small fuchsia]#_(since 3.1.0)_#>> +
+5-1-18. <<ExecuteSQL-select-with,SELECT WITH clause [small fuchsia]#_(since 4.0.0)_#>> +
+5-1-19. <<ExecuteSQL-select-recursive,SELECT RECURSIVE [small fuchsia]#_(since 4.0.0)_#>> +
 5-2. <<ExecuteSQL-insert,INSERT>> +
 5-2-1. <<ExecuteSQL-insert-1,INSERT 1 row>> +
 5-2-2. <<ExecuteSQL-insert-N,INSERT multiple rows>> +
@@ -89,14 +88,14 @@ Has the following packages.
 [options="header", width="80%"]
 |===
 |Package|Contained classes and interfaces
-|org.lightsleep                |Classes you use primarily
-|org.lightsleep.component      |Classes you use to create SQL components such as conditions and expressions
-|org.lightsleep.connection     |Classes that supply connection wrapper classes to this library using various connection pool libraries
-|org.lightsleep.database       |Classes for generating SQL for various DBMSs
-|org.lightsleep.database.anchor|Classes used in mapping words contained in JDBC URLs to classes in the *org.lightsleep.database* package
-|org.lightsleep.entity         |Annotation classes and interfaces you use when creating entity classes
-|org.lightsleep.helper         |Helper classes used inside this library
-|org.lightsleep.logger         |Classes that output logs inside this library using various logging libraries
+|`org.lightsleep`                |Classes you use primarily
+|`org.lightsleep.component`      |Classes you use to create SQL components such as conditions and expressions
+|`org.lightsleep.connection`     |Classes that supply connection wrapper classes to this library using various connection pool libraries
+|`org.lightsleep.database`       |Classes for generating SQL for various DBMSs
+|`org.lightsleep.database.anchor`|Classes used in mapping words contained in JDBC URLs to classes in the `org.lightsleep.database`package
+|`org.lightsleep.entity`         |Annotation classes and interfaces you use when creating entity classes
+|`org.lightsleep.helper`         |Helper classes used inside this library
+|`org.lightsleep.logger`         |Classes that output logs inside this library using various logging libraries
 |===
 
 [[EntityClass]]
@@ -573,7 +572,10 @@ If an entity class implements this interface,
 If an entity class implements this interface,
 `insert(E)` and `insert(Iterable)` method of Sql<E> class invoke `postInsert` method of the entity class after executing INSERT SQL.
 
-You can use `postInsert` method to get the value automatically numbered at the time of insertion.
+If an entity is enclose another entity, by implementing this interface,
+You can perform SQL processing to the enclosed entity in conjunction the entity which encloses.
+
+And you can use `postInsert` method to get the value automatically numbered at the time of insertion.
 
 [source,java]
 .Example in Java
@@ -615,6 +617,8 @@ public class Contact extends Common {
 If an entity class implements this interface,
 `update(E)` and `update(Iterable)` methods of Sql<E> class invoke `postUpdate` method of the entity class after executing UPDATE SQL.
 
+If an entity is enclose another entity, by implementing this interface,
+You can perform SQL processing to the enclosed entity in conjunction the entity which encloses.
 [[Entity-PostDelete]]
 
 <<TOC_,To TOC>>
@@ -623,6 +627,8 @@ If an entity class implements this interface,
 If an entity class implements this interface,
 `delete(E)` and `delete(Iterable)` method of Sql<E> class invoke `postDelete` method of the entity class after executing DELETE SQL.
 
+If an entity is enclose another entity, by implementing this interface,
+You can perform SQL processing to the enclosed entity in conjunction the entity which encloses.
 [[Entity-PostSelect]]
 
 <<TOC_,To TOC>>
@@ -631,6 +637,8 @@ If an entity class implements this interface,
 If an entity class implements this interface,
 `select` methods of Sql<E> class invoke `postSelect` method of the entity class after each entity is retrieved by executing SELECT SQL.
 
+If an entity is enclose another entity, by implementing this interface,
+You can perform SQL processing to the enclosed entity in conjunction the entity which encloses.
 [[Entity-Composite]]
 
 <<TOC_,To TOC>>
@@ -648,7 +656,7 @@ You can perform SQL processing to the enclosed entity in conjunction the entity 
 @Table("super")
 public class ContactComposite extends Contact implements Composite {
     @NonColumn
-    public final List<Phone> phones = new ArrayList<>();
+    public final var phones = new ArrayList<Phone>();
 
     @Override
     public void postSelect(ConnectionWrapper conn) {
@@ -709,43 +717,6 @@ public class ContactComposite extends Contact implements Composite {
     }
 ----
 
-[[Entity-PreStore]]
-
-<<TOC_,To TOC>>
-
-==== 2-2-9. PreStore [small]#Interface# [small fuchsia]#_(deprecated since 3.2.0)_#
-If an entity class implements this interface,
-`insert(E)` and `insert(Iterable)`, `update(E)` and `update(Iterable)` methods of Sql<E> class invoke
-`preStore` method of the entity class before executing INSERT and UPDATE SQL.
-
-[[Entity-PostLoad]]
-
-==== 2-2-10. PostLoad [small]#Interface# [small fuchsia]#_(deprecated since 3.2.0)_#
-If an entity class implements this interface,
-`select` methods of Sql&lt;E&gt; class invoke `postLoad` method of the entity class after each entity is retrieved by executing SELECT SQL.
-
-[source,java]
-.Example in Java
-----
-import org.lightsleep.entity.*;
-
-public class Contact implements PreStore, PostLoad {
-
-    @Column("phone")
-    public String[] phones_
-
-    @NonColumn
-    public final List<String> phones = new ArrayList<>();
-
-    public void preStore() {
-        phones_ = phones.toArray(new String[phones.size()]);
-    }
-
-    public void postLoad() {
-        phones.clear();
-        Arrays.stream(phones_).forEach(phones::add);
-    }
-----
 [[lightsleep-properties]]
 
 <<TOC_,To TOC>>
@@ -1035,7 +1006,7 @@ The lambda expression is equivalent to the contents of `Transaction.executeBody`
 [source,java]
 .Example in Java
 ----
-Contact contact = new Contact(1, "Akane", "Apple");
+var contact = new Contact(1, "Akane", "Apple");
 
 Transaction.execute(conn -> {
     // Start of transaction
@@ -1072,7 +1043,7 @@ An exception will be thrown if more than one is found or if it can not be found.
 public static final ConnectionSupplier supplier1 = ConnectionSupplier.find("example1");
     ...
 
-Contact contact = new Contact(1, "Akane", "Apple");
+var contact = new Contact(1, "Akane", "Apple");
 
 Transaction.execute(supplier1, conn -> {
     // Start of transaction
@@ -1159,7 +1130,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 [source,java]
 .Example in Java
 ----
-Contact contact = new Contact();
+var contact = new Contact();
 contact.id = 1;
 Transaction.execute(conn -> {
     Optional<Contact> contactOpt = new Sql<>(Contact.class)
@@ -1199,7 +1170,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
@@ -1237,7 +1208,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C")
         .where("EXISTS",
@@ -1281,7 +1252,7 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
@@ -1321,7 +1292,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
@@ -1361,7 +1332,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where(Condition
@@ -1413,7 +1384,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
@@ -1451,7 +1422,7 @@ SELECT firstName, lastName FROM Contact WHERE lastName='Apple'
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C")
         .columns("lastName")
@@ -1494,7 +1465,7 @@ SELECT MIN(C.lastName) C_lastName
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .orderBy("{lastName}")
@@ -1522,7 +1493,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2, MariaDB, MySQL, PostgreSQL, SQLite
+.Generated SQL for DB2, MariaDB, MySQL, PostgreSQL and SQLite
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1531,7 +1502,7 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 ----
 
 [source,sql]
-.Generated SQL - Oracle, SQLServer (Skip rows during getting)
+.Generated SQL for Oracle and SQLServer (Skip rows during getting)
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact
@@ -1569,27 +1540,27 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2
+.Generated SQL for DB2
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1 FOR UPDATE WITH RS
 ----
 
 [source,sql]
-.Generated SQL - MariaDB, MySQL, Oracle, PostgreSQL
+.Generated SQL for MariaDB, MySQL, Oracle and PostgreSQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1 FOR UPDATE
 ----
 
 [source,sql]
-.Generated SQL - SQLite
+.Generated SQL for SQLite
 ----
 -- UnsupportedOperationException is thrown on SQLite because FOR UPDATE is not supported.
 ----
 
 [source,sql]
-.Generated SQL - SQLServer
+.Generated SQL for SQLServer
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WITH (ROWLOCK,UPDLOCK) WHERE id=1
@@ -1604,14 +1575,14 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
-List<Phone> phones = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
+var phones = new ArrayList<Phone>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C")
         .innerJoin(Phone.class, "P", "{P.contactId}={C.id}")
         .where("{C.id}={}", 1)
         .connection(conn)
-        .<Phone>select(contacts::add, phones::add)
+        .select(contacts::add, phones::add)
 );
 ----
 
@@ -1647,14 +1618,14 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
-List<Phone> phones = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
+var phones = new ArrayList<Phone>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C")
         .leftJoin(Phone.class, "P", "{P.contactId}={C.id}")
         .where("{C.lastName}={}", "Apple")
         .connection(conn)
-        .<Phone>select(contacts::add, phones::add)
+        .select(contacts::add, phones::add)
 );
 ----
 
@@ -1690,14 +1661,14 @@ SELECT C.id C_id, C.firstName C_firstName, C.lastName C_lastName, C.birthday C_b
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
-List<Phone> phones = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
+var phones = new ArrayList<Phone>();
 Transaction.execute(conn ->
     new Sql<>(Contact.class, "C")
         .rightJoin(Phone.class, "P", "{P.contactId}={C.id}")
         .where("{P.label}={}", "Main")
         .connection(conn)
-        .<Phone>select(contacts::add, phones::add)
+        .select(contacts::add, phones::add)
 );
 ----
 
@@ -1770,7 +1741,7 @@ SELECT COUNT(*) FROM Contact WHERE lastName='Apple'
 [source,java]
 .Example in Java
 ----
-List<Contact> contacts = new ArrayList<>();
+var contacts = new ArrayList<Contact>();
 Transaction.execute(conn -> {
     Class<? extends Contact.Ex> contactClass = Contact.Ex.targetClass(conn.getDatabase());
     new Sql<>(contactClass)
@@ -1816,9 +1787,9 @@ SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime,
 [source,java]
 .Example in Java
 ----
-List<ContactFeature> features = new ArrayList<>();
-String targetFirstName = "Setoka";
-String targetLastName = "Orange";
+var features = new ArrayList<ContactFeature>();
+var targetFirstName = "Setoka";
+var targetLastName = "Orange";
 Transaction.execute(conn -> {
     new Sql<>(ContactFeature.class, "F")
         .columns(ContactFeature.class)
@@ -1855,7 +1826,7 @@ Transaction.execute(conn -> {
 [source,groovy]
 .Example in Groovy
 ----
-def features = []
+List<ContactFeature> features = []
 def targetFirstName = 'Setoka'
 def targetLastName = 'Orange'
 Transaction.execute {
@@ -1916,6 +1887,113 @@ SELECT F.contactId F_contactId, F.featureIndex F_featureIndex, F.label F_label, 
 ORDER BY F_label ASC
 ----
 
+[[ExecuteSQL-select-with]]
+
+<<TOC_,To TOC>>
+
+==== 5-1-18. SELECT WITH clause
+
+[source,java]
+.Example in Java
+----
+var nodes = new ArrayList<Node>();
+var nodeSql = new Sql<>(Node.class)
+    .where("{name} LIKE {}", "%-%");
+Transaction.execute(conn ->
+    new Sql<>(Node.class)
+        .with(nodeSql)
+        .from(nodeSql)
+        .connection(conn)
+        .select(nodes::add)
+);
+----
+
+[source,groovy]
+.Example in Groovy
+----
+List<Node> nodes = []
+def nodeSql = new Sql<>(Node)
+    .where('{name} LIKE {}', '%-%')
+Transaction.execute {
+    new Sql<>(Node)
+        .with(nodeSql)
+        .from(nodeSql)
+        .connection(it)
+        .select({nodes << it})
+}
+----
+
+[source,sql]
+.Generated SQL
+----
+WITH W1(id, parentId, name) AS (
+  SELECT id, parentId, name FROM Node WHERE name LIKE '%-%'
+)
+SELECT id, parentId, name FROM W1
+----
+
+[[ExecuteSQL-select-recursive]]
+
+<<TOC_,To TOC>>
+
+==== 5-1-19. SELECT RECURSIVE
+
+[source,java]
+.Example in Java
+----
+var nodes = new ArrayList<Node>();
+var nodeSql = new Sql<>(Node.class).where(rootNode)
+    .recursive(new Sql<>(Node.class, "node").where("{node.parentId}={W1.id}"));
+Transaction.execute(conn ->
+    new Sql<>(Node.class)
+        .with(nodeSql)
+        .from(nodeSql)
+        .connection(conn)
+        .select(nodes::add)
+);
+----
+
+[source,groovy]
+.Example in Groovy
+----
+List<Node> nodes = []
+def nodeSql = new Sql<>(Node).where(rootNode)
+    .recursive(new Sql<>(Node, 'node').where('{node.parentId}={W1.id}'))
+Transaction.execute {
+    new Sql<>(Node)
+        .with(nodeSql)
+        .from(nodeSql)
+        .connection(it)
+        .select({nodes << it})
+}
+----
+
+[source,sql]
+.Generated SQL for MariaDB, MySQL, PostgreSQL and SQLite
+----
+WITH RECURSIVE W1(id, parentId, name) AS (
+  SELECT id, parentId, name FROM Node WHERE id=1
+  UNION ALL
+  SELECT node.id node_id, node.parentId node_parentId, node.name node_name
+    FROM Node node,W1
+    WHERE node.parentId=W1.id
+)
+SELECT id, parentId, name FROM W1
+----
+
+[source,sql]
+.Generated SQL for DB2, Oracle and SQL Server
+----
+WITH W1(id, parentId, name) AS (
+  SELECT id, parentId, name FROM Node WHERE id=1
+  UNION ALL
+  SELECT node.id node_id, node.parentId node_parentId, node.name node_name
+    FROM Node node,W1
+    WHERE node.parentId=W1.id
+)
+SELECT id, parentId, name FROM W1
+----
+
 [[ExecuteSQL-insert]]
 
 <<TOC_,To TOC>>
@@ -1946,7 +2024,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
+.Generated SQL for DB2, MariaDB, MySQL, Oracle and PostgreSQL
 ----
 INSERT INTO Contact
   (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
@@ -1955,7 +2033,7 @@ INSERT INTO Contact
 ----
 
 [source,sql]
-.Generated SQL - SQLite
+.Generated SQL for SQLite
 ----
 INSERT INTO Contact
   (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
@@ -1964,7 +2042,7 @@ INSERT INTO Contact
 ----
 
 [source,sql]
-.Generated SQL - SQLServer
+.Generated SQL for SQLServer
 ----
 INSERT INTO Contact
   (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
@@ -2004,7 +2082,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
+.Generated SQL for DB2, MariaDB, MySQL, Oracle and PostgreSQL
 ----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
   VALUES
@@ -2015,7 +2093,7 @@ INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime
 ----
 
 [source,sql]
-.Generated SQL - SQLite
+.Generated SQL for SQLite
 ----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
   VALUES
@@ -2026,7 +2104,7 @@ INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime
 ----
 
 [source,sql]
-.Generated SQL - SQLServer
+.Generated SQL for SQLServer
 ----
 INSERT INTO Contact (id, firstName, lastName, birthday, updateCount, createdTime, updatedTime)
   VALUES
@@ -2081,7 +2159,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
+.Generated SQL for DB2, MariaDB, MySQL, Oracle, PostgreSQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1
@@ -2090,7 +2168,7 @@ UPDATE Contact SET
 ----
 
 [source,sql]
-.Generated SQL - SQLite
+.Generated SQL for SQLite
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1
@@ -2099,7 +2177,7 @@ UPDATE Contact SET
 ----
 
 [source,sql]
-.Generated SQL - SQLServer
+.Generated SQL for SQLServer
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE id=1
@@ -2117,7 +2195,7 @@ UPDATE Contact SET
 .Example in Java
 ----
 Transaction.execute(conn -> {
-    List<Contact> contacts = new ArrayList<>();
+    var contacts = new ArrayList<Contact>();
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Apple")
         .connection(conn)
@@ -2150,7 +2228,7 @@ Transaction.execute {
 ----
 
 [source,sql]
-.Generated SQL - DB2, MariaDB, MySQL, Oracle, PostgreSQL
+.Generated SQL for DB2, MariaDB, MySQL, Oracle, PostgreSQL
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE lastName='Apple'
@@ -2166,7 +2244,7 @@ UPDATE Contact SET
 ----
 
 [source,sql]
-.Generated SQL - SQLite
+.Generated SQL for SQLite
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE lastName='Apple'
@@ -2182,7 +2260,7 @@ UPDATE Contact SET
 ----
 
 [source,sql]
-.Generated SQL - SQLServer
+.Generated SQL for SQLServer
 ----
 SELECT id, firstName, lastName, birthday, updateCount, createdTime, updatedTime
   FROM Contact WHERE lastName='Apple'
@@ -2206,7 +2284,7 @@ UPDATE Contact
 [source,java]
 .Example in Java
 ----
-Contact contact = new Contact();
+var contact = new Contact();
 contact.lastName = "Pomme";
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
@@ -2246,7 +2324,7 @@ UPDATE Contact SET lastName='Pomme' WHERE lastName='Apfel'
 [source,java]
 .Example in Java
 ----
-Contact contact = new Contact();
+var contact = new Contact();
 Transaction.execute(conn ->
     new Sql<>(Contact.class)
         .where(Condition.ALL)
@@ -2334,7 +2412,7 @@ DELETE FROM Contact WHERE id=1
 .Example in Java
 ----
 Transaction.execute(conn -> {
-    List<Contact> contacts = new ArrayList<>();
+    var contacts = new ArrayList<Contact>();
     new Sql<>(Contact.class)
         .where("{lastName}={}", "Pomme")
         .connection(conn)
@@ -2475,7 +2553,7 @@ When generating SQL, evaluates the following character string as an expression a
 * Arguments of the following constructor of the `Expression` class
 ** `Expression(String content, Object... arguments)`
 
-Conversion of expressions has the followings.
+Conversion of expressions has the following.
 
 [options="header", width="80%"]
 |===

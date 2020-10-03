@@ -10,7 +10,7 @@ import org.lightsleep.Sql;
 
 /**
  * <a href="https://www.oracle.com/database/index.html" target="Oracle">Oracle Database</a>
- * 用のデータベース･ハンドラです。
+ * 用のデータベースハンドラです。
  *
  * <p>
  * このクラスのオブジェクトは、{@linkplain Standard#typeConverterMap}
@@ -37,43 +37,39 @@ import org.lightsleep.Sql;
  * @see org.lightsleep.database.Standard
  */
 public class Oracle extends Standard {
-	/**
-	 * パスワードのパターン文字列
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_PATTERN = "";
+    /**
+     * パスワードのパターン文字列
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_PATTERN = "";
 
-	/**
-	 * このクラスの唯一のインスタンス
-	 *
-	 * @since 2.1.0
-	 */
-	public static final Oracle instance = new Oracle();
+    /**
+     * このクラスの唯一のインスタンス
+     *
+     * @since 2.1.0
+     */
+    public static final Oracle instance = new Oracle();
 
-	/**
-	 * <b>Oracle</b>を構築します。
-	 */
-	protected Oracle() {
-	}
+    /**
+     * <b>Oracle</b>を構築します。
+     */
+    protected Oracle() {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return null;
-	}
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 3.0.0
-	 */
-	@Override
-	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
-		return null;
-	}
+    /**
+     * @since 3.0.0
+     */
+    @Override
+    public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+        return null;
+    }
 }

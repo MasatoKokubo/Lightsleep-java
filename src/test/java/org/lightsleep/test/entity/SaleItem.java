@@ -6,23 +6,23 @@ package org.lightsleep.test.entity;
 import org.lightsleep.entity.Key;
 
 /**
- * The entity of saleitem table.
+ * The entity of SaleItem table.
  *
  * @since 1.0
  * @author Masato Kokubo
  */
 public class SaleItem {
-	/** Identifier of the sale */
-	@Key
-	public int saleId;
+    /** Identifier of the sale */
+    @Key
+    public int saleId;
 
-	/** Item index (0～) */
-	@Key
-	public int itemIndex;
+    /** Item index (0～) */
+    @Key
+    public int itemIndex;
 
-	/** Identifier of the product */
-	public int productId;
+    /** Identifier of the product */
+    public int productId;
 
-	/** Quantity */
-	public short quantity;
+    /** Quantity */
+    public short quantity;
 }

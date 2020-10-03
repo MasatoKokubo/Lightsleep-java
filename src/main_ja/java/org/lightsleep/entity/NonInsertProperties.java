@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface NonInsertProperties {
-	/** @return <b>NonInsertProperty</b>アノテーションの配列 */
-	NonInsertProperty[] value();
+    /** @return <b>NonInsertProperty</b>アノテーションの配列 */
+    NonInsertProperty[] value();
 }

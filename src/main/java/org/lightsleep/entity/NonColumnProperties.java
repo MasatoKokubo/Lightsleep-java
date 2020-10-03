@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface NonColumnProperties {
-	/** @return the array of <b>NonColumnProperty</b> annotations */
-	NonColumnProperty[] value();
+    /** @return the array of <b>NonColumnProperty</b> annotations */
+    NonColumnProperty[] value();
 }

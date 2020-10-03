@@ -42,6 +42,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Column {
-	/** @return カラム名 */
-	String value();
+    /** @return カラム名 */
+    String value();
 }

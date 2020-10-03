@@ -9,7 +9,7 @@ import org.lightsleep.Sql;
 import org.lightsleep.database.Database;
 
 /**
- * エンティティのプライマリー･キーの値を使用して条件を構成します。
+ * エンティティのプライマリーキーの値を使用して条件を構成します。
  *
  * @param <E> エンティティの型
  *
@@ -17,29 +17,23 @@ import org.lightsleep.database.Database;
  * @author Masato Kokubo
  */
 public class EntityCondition<E> implements Condition {
-	/**
-	 * EntityConditionを構築します。
-	 *
-	 * @param entity エンティティ
-	 *
-	 * @throws NullPointerException <b>entity</b>が<b>null</b>の場合
-	 */
-	public EntityCondition(E entity) {
-	}
+    /**
+     * EntityConditionを構築します。
+     *
+     * @param entity エンティティ
+     *
+     * @throws NullPointerException <b>entity</b>が<b>null</b>の場合
+     */
+    public EntityCondition(E entity) {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <T> String toString(Database database, Sql<T> sql, List<Object> parameters) {
-		return null;
-	}
+    @Override
+    public <T> String toString(Database database, Sql<T> sql, List<Object> parameters) {
+        return null;
+    }
 }

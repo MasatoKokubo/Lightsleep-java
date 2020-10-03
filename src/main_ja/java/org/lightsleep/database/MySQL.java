@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 
 /**
  * <a href="http://www.mysql.com/" target="MySQL">MySQL</a>
- * 用のデータベース･ハンドラです。
+ * 用のデータベースハンドラです。
  *
  * <p>
  * このクラスのオブジェクトは、{@linkplain Standard#typeConverterMap}
@@ -43,51 +43,44 @@ import java.sql.ResultSet;
  * @see org.lightsleep.database.Standard
  */
 public class MySQL extends Standard {
-	/**
-	 * パスワードのパターン文字列
-	 *
-	 * @since 2.2.0
-	 */
-	protected static final String PASSWORD_PATTERN = "";
+    /**
+     * パスワードのパターン文字列
+     *
+     * @since 2.2.0
+     */
+    protected static final String PASSWORD_PATTERN = "";
 
-	/**
-	 * このクラスの唯一のインスタンス
-	 *
-	 * @since 2.1.0
-	 */
-	public static final MySQL instance = new MySQL();
+    /**
+     * このクラスの唯一のインスタンス
+     *
+     * @since 2.1.0
+     */
+    public static final MySQL instance = new MySQL();
 
-	/**
-	 * <b>MySQL</b>を構築します。
-	 */
-	protected MySQL() {
-	}
+    /**
+     * <b>MySQL</b>を構築します。
+     */
+    protected MySQL() {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean supportsOffsetLimit() {
-		return true;
-	}
+    @Override
+    public boolean supportsOffsetLimit() {
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return null;
-	}
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 3.0.0
-	 */
-	@Override
-	public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
-		return null;
-	}
+    /**
+     * @since 3.0.0
+     */
+    @Override
+    public Object getObject(Connection connection, ResultSet resultSet, String columnLabel) {
+        return null;
+    }
 }

@@ -17,6 +17,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface UpdateProperties {
-	/** @return <b>UpdateProperty</b>アノテーションの配列 */
-	UpdateProperty[] value();
+    /** @return <b>UpdateProperty</b>アノテーションの配列 */
+    UpdateProperty[] value();
 }

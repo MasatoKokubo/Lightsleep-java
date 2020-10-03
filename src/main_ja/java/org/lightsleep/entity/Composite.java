@@ -6,7 +6,7 @@ package org.lightsleep.entity;
 import org.lightsleep.connection.ConnectionWrapper;
 
 /**
- * エンティティ･クラスがこのインターフェースを実装している場合、
+ * エンティティクラスがこのインターフェースを実装している場合、
  * <b>Sql&lt;E&gt;</b>クラスの
  * <b>select</b>, <b>insert(E)</b>, <b>update(E)</b>および<b>delete(E)</b>メソッドの各SQLの実行後に
  * <b>postSelect</b>, <b>postInsert</b>, <b>postUpdate</b>または<b>postDelete</b>メソッドが呼び出されます。<br>

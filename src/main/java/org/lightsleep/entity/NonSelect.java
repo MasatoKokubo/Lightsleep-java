@@ -33,9 +33,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface NonSelect {
-	/**
-	 * @return true if the column related the field is not used in SELECT SQL, false otherwise
-	 * @since 2.0.0
-	 */
-	boolean value() default true;
+    /**
+     * @return true if the column related the field is not used in SELECT SQL, false otherwise
+     * @since 2.0.0
+     */
+    boolean value() default true;
 }

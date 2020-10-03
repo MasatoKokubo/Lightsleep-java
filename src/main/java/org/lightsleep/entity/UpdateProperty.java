@@ -45,9 +45,9 @@ import java.lang.annotation.*;
 @Repeatable(UpdateProperties.class)
 @Target({ElementType.TYPE})
 public @interface UpdateProperty {
-	/** @return the property name that specifies the field */
-	String property();
+    /** @return the property name that specifies the field */
+    String property();
 
-	/** @return the expression */
-	String expression();
+    /** @return the expression */
+    String expression();
 }

@@ -11,14 +11,14 @@ package org.lightsleep.helper;
  */
 @SuppressWarnings("serial")
 public class MissingPropertyException extends RuntimeException {
-	/**
-	 * Constructs a new <b>MissingPropertyException</b> with the specified detail message.
-	 *
-	 * @param message the detail message
-	 *
-	 * @since 2.0.0
-	 */
-	public MissingPropertyException(String message) {
-		super(message);
-	}
+    /**
+     * Constructs a new <b>MissingPropertyException</b> with the specified detail message.
+     *
+     * @param message the detail message
+     *
+     * @since 2.0.0
+     */
+    public MissingPropertyException(String message) {
+        super(message);
+    }
 }

@@ -5,6 +5,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 [[TOC_]]
 === Table of Contents
 
+- <<ReleaseNote4.0.0,[small]#version# 4.0.0 [small]#- October    5, 2020#>>
 - <<ReleaseNote3.2.0,[small]#version# 3.2.0 [small]#- September 25, 2019#>>
 - <<ReleaseNote3.1.1,[small]#version# 3.1.1 [small]#- July      18, 2019#>>
 - <<ReleaseNote3.1.0,[small]#version# 3.1.0 [small]#- July      16, 2019#>>
@@ -16,31 +17,109 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 - <<ReleaseNote2.1.0,[small]#version# 2.1.0 [small]#- November  12, 2017#>>
 - <<ReleaseNote2.0.0,[small]#version# 2.0.0 [small]#- September  9, 2017#>>
 
+=== [small]#version# 4.0.0
+
+1. ** NEW Features **
+  * You can now generate the following SQLs.
+  ** `SELECT SQL` with `WITH` clauses +
+    `[small gray]#WITH W1(\...) AS (#` +
+    `[small gray]#&#xa0;&#xa0;SELECT \...#` +
+    `[small gray]#)#` +
+    `[small gray]#SELECT ... FROM W1 \...#`
+  ** Recursive `SELECT SQL` +
+    `[small gray]#WITH RECURSIVE W1(\...) AS (#` +
+    `[small gray]#&#xa0;&#xa0;SELECT \...#` +
+    `[small gray]#&#xa0;&#xa0;UNION ALL#` +
+    `[small gray]#&#xa0;&#xa0;SELECT \...#` +
+    `[small gray]#) SELECT \... FROM W1 \...#`
+  ** `INSERT SQL` with subquery +
+    `[small gray]#INSERT INTO \... (\...) SELECT \... FROM \...#`
+  ** Join subqueries +
+    `[small gray]#SELECT \... FROM \... INNER JOIN (SELECT \...) \...#`
+
+1. **Added Methods**
+  * `[small]#org.lightsleep.#[blue]##Sql##` class
+  ** `[small]#String# [blue]#queryName#[small]##()##`
+  ** `[small]#Sql<E># [blue]#innerJoin#[small]##(Sql<?> joinSql, String tableAlias, Condition on)##`
+  ** `[small]#Sql<E># [blue]#innerJoin#[small]##(Sql<?> joinSql, String tableAlias, String on, Object... arguments)##`
+  ** `[small]#Sql<E># [blue]#leftJoin#[small]##(Sql<?> joinSql, String tableAlias, Condition on)##`
+  ** `[small]#Sql<E># [blue]#leftJoin#[small]##(Sql<?> joinSql, String tableAlias, String on, Object... arguments)##`
+  ** `[small]#Sql<E># [blue]#rightJoin#[small]##(Sql<?> joinSql, String tableAlias, Condition on)##`
+  ** `[small]#Sql<E># [blue]#rightJoin#[small]##(Sql<?> joinSql, String tableAlias, String on, Object... arguments)##`
+  ** `[small]#Sql<E># [blue]#with#[small]##(Sql<?>... withSqls)##`
+  ** `[small]#List<Sql<?>># [blue]#getWithSqls#[small]##()##`
+  ** `[small]#boolean# [blue]#isWithSql#[small]##()##`
+  ** `[small]#Sql<E># [blue]#recursive#[small]##(Sql<?> recursiveSql)##`
+  ** `[small]#Sql<?># [blue]#getRecursiveSql#[small]##()##`
+  ** `[small]#boolean# [blue]#isRecursiveSql#[small]##()##`
+  ** `[small]#boolean# [blue]#isInInsertFrom#[small]##()##`
+  ** `[small]#int# [blue]#insert#[small]##()##`
+
+  * `[small]#org.lightsleep.database.#[blue]##Standard##` class
+  ** `[small]#<E> void# [blue]#appendInsertColumns#[small]##(StringBuilder buff, Sql<E> sql)##`
+  ** `[small]#<E> void# [blue]#appendInsertValues#[small]##(StringBuilder buff, Sql<E> sql, List<Object> parameters)##`
+  ** `[small]#<E> void# [blue]#appendUpdateColumnsAndValues#[small]##(StringBuilder buff, Sql<E> sql, List<Object> parameters)##`
+
+  * `[small]#org.lightsleep.helper.#[blue]##JoinInfo<JE>##` class
+  ** `[blue]#JoinInfo# [small]#(JoinType joinType, Sql<JE> joinSql, String tableAlias, Condition on)#`
+  ** `[small]#Sql<JE># [blue]#joinSql#[small]##()##`
+
+  * `[small]#org.lightsleep.helper.#[blue]##TypeConverter<ST, DT>##` class
+  ** `[small]#static <ST, DT> TypeConverter<ST, DT># [blue]#of#[small]##(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, ? extends DT> function)##`
+  ** `[small]#static <ST, MT, DT> TypeConverter<ST, DT># [blue]#of#[small]##(Map<String, TypeConverter<?, ?>> typeConverterMap, Class<ST> sourceType, Class<MT> middleType, Class<DT> destinType)##`
+  ** `[small]#static <ST, MT, DT> TypeConverter<ST, DT># [blue]#of#[small]##(Map<String, TypeConverter<?, ?>> typeConverterMap, Class<ST> sourceType, Class<MT> middleType, Class<DT> destinType, Function<? super MT, ? extends DT> function)##`
+
+1. **Deleted Interfaces**
+  * `[small]#org.lightsleep.entity.#[blue]##Composite##`
+  * `[small]#org.lightsleep.entity.#[blue]##PostLoad##`
+  * `[small]#org.lightsleep.entity.#[blue]##PreStore##`
+
+1. **Deleted Methods**
+  * `[small]#org.lightsleep.#[blue]##Sql## [small]#class#`
+  ** `[small]#Sql<E># [blue]#setColumns#[small]##(Set<String> propertyNames)##`
+  ** `[small]#Sql<E># [blue]#setColumns#[small]##(Class<?> resultClass)##`
+  ** `[small]#Sql<E># [blue]#doIf#[small]##(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)##`
+
+1. **Methods with modified argument or return value**
+  * `[small]#org.lightsleep.database.#[blue]##Database<ST, DT>## [small]##interface##`
+  ** `[small]#<E> String# [blue]#selectSql#[small]##(Sql<E> sql, List<Object> parameters)##` +
+  -> `[small]#<E># [small red]#CharSequence# [blue]#selectSql#[small]##(Sql<E> sql, List<Object> parameters)##`
+  ** `[small]#<E> String# [blue]#subSelectSql#[small]##(Sql<E> sql, List<Object> parameters)##` +
+  -> `[small]#<E,# [small red]#OE> CharSequence# [blue]#subSelectSql#[small]##(Sql<E> sql,## [small red]#Sql<OE> outerSql,# [small]#List<Object> parameters)#`
+  ** `[small]#<E> String# [blue]#subSelectSql#[small]##(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters)##` +
+  -> `[small]#<E,# [small red]#OE> CharSequence# [blue]#subSelectSql#[small]##(Sql<E> sql,## [small red]#Sql<OE> outerSql,# [small]#Supplier<CharSequence> columnsSupplier, List<Object> parameters)#`
+  ** `[small]#<E> String# [blue]#insertSql#[small]##(Sql<E> sql, List<Object> parameters)##` +
+  -> `[small]#<E># [small red]#CharSequence# [blue]#insertSql#[small]##(Sql<E> sql, List<Object> parameters)##`
+  ** `[small]#<E> String# [blue]#updateSql#[small]##(Sql<E> sql, List<Object> parameters)##` +
+  -> `[small]#<E># [small red]#CharSequence# [blue]#updateSql#[small]##(Sql<E> sql, List<Object> parameters)##`
+  ** `[small]#<E> String# [blue]#deleteSql#[small]##(Sql<E> sql, List<Object> parameters)##` +
+  -> `[small]#<E># [small red]#CharSequence# [blue]#deleteSql#[small]##(Sql<E> sql, List<Object> parameters)##`
+
 [[ReleaseNote3.2.0]]
 
 === [small]#version# 3.2.0
 
 1. **Added Interfaces**
-  * `org.lightsleep.entity.**PostDelete**`
-  * `org.lightsleep.entity.**PostInsert**`
-  * `org.lightsleep.entity.**PostSelect**`
-  * `org.lightsleep.entity.**PostUpdate**`
-  * `org.lightsleep.entity.**PreDelete**`
-  * `org.lightsleep.entity.**PreUpdate**`
+  * `[small]#org.lightsleep.entity.#[blue]##PostDelete##`
+  * `[small]#org.lightsleep.entity.#[blue]##PostInsert##`
+  * `[small]#org.lightsleep.entity.#[blue]##PostSelect##`
+  * `[small]#org.lightsleep.entity.#[blue]##PostUpdate##`
+  * `[small]#org.lightsleep.entity.#[blue]##PreDelete##`
+  * `[small]#org.lightsleep.entity.#[blue]##PreUpdate##`
 
 1. **Added Classes**
-  * `org.lightsleep.database.**MariaDB**`
-  * `org.lightsleep.database.anchor.**mariadb**`
+  * `[small]#org.lightsleep.database.#[blue]##MariaDB##`
+  * `[small]#org.lightsleep.database.anchor.#[blue]##mariadb##`
 
 1. **Specification Changes**
-  * Changed the return type of `**preInsert**` method of `**PreInsert**` interface from `**int**` to `**void**`.
-  * Changed the return type of `**postInsert**`, `**postUpdate**` and `**postDelete**` method of `**Composite**` interface from `**int**` to `**void**`.
-  * Changed `org.lightsleep.database.**DB2**` class to `**Db2**`.
+  * Changed the return type of `[small]##org.lightsleep.entity.##[blue]##PreInsert##` method of `[blue]#preInsert#` interface from `[blue]#int#` to `[blue]#void#`.
+  * Changed the return type of `[blue]#postInsert#`, `[blue]#postUpdate#` and `[blue]#postDelete#` method of `[small]##org.lightsleep.entity.##[blue]##Composite##` interface from `[blue]#int#` to `[blue]#void#`.
+  * Changed `[small]##org.lightsleep.database.##[blue]##DB2##` class to `[blue]#Db2#`.
 
 1. **Deprecated Interfaces**
-  * `org.lightsleep.entity.**Composite**`
-  * `org.lightsleep.entity.**PostLoad**`
-  * `org.lightsleep.entity.**PreStore**`
+  * `[small]#org.lightsleep.entity.#[blue]##Composite##`
+  * `[small]#org.lightsleep.entity.#[blue]##PostLoad##`
+  * `[small]#org.lightsleep.entity.#[blue]##PreStore##`
 
 [[ReleaseNote3.1.1]]
 
@@ -53,45 +132,44 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 === [small]#version# 3.1.0
 
-1. **Added Features**
-  * Generates SELECT SQL using **subqueries** in the **FROM clause**.
-  * Generates **UNION SQL**
+1. **NEW Features**
+  * You can now generate `SELECT SQL` using subqueries in the `FROM` clause.
+  * You can now generate `UNION SQL`
 
 1. **Specification Change**
-  * Changed the specification when calling the `Sql#columns(String ...)` method multiple times. +
+  * Changed the specification when calling the `[small]##org.lightsleep.##Sql#columns(String \...)` method multiple times. +
     **Prior to this version:** Columns of the argument value are accumulated. +
     **This version:** Replaced by the columns of the argument value.
 
 1. **Added Methods**
-  * `org.lightsleep.**Sql**` Class
-    ** `Sql<E> **columns**(Collection<String> propertyNames)`
-    ** `<RE> Sql<E> **columns**(Class<RE> resultClass)`
-    ** `Sql<E> **from**(Sql<?> fromSql)`
-    ** `Sql<?> **getFrom**()`
-    ** `<SE> Sql<E> **where**(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> **and**(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> **or**(Sql<SE> subSql, String content)`
-    ** `<SE> Sql<E> **having**(Sql<SE> subSql, String content)`
-    ** `<UE> Sql<E> **union**(Sql<UE> unionSql)`
-    ** `<UE> Sql<E> **unionAll**(Sql<UE> unionSql)`
-    ** `List<Sql<?>> **getUnionSqls**()`
-    ** `boolean **isUnionAll**()`
+  * `[small]#org.lightsleep.#[blue]##Sql##` class
+  ** `[small]#Sql<E># [blue]#columns#[small]##(Collection<String> propertyNames)##`
+  ** `[small]#<RE> Sql<E># [blue]#columns#[small]##(Class<RE> resultClass)##`
+  ** `[small]#Sql<E># [blue]#from#[small]##(Sql<?> fromSql)##`
+  ** `[small]#Sql<?># [blue]#getFrom#[small]##()##`
+  ** `[small]#<SE> Sql<E># [blue]#where#[small]##(Sql<SE> subSql, String content)##`
+  ** `[small]#<SE> Sql<E># [blue]#and#[small]##(Sql<SE> subSql, String content)##`
+  ** `[small]#<SE> Sql<E># [blue]#or#[small]##(Sql<SE> subSql, String content)##`
+  ** `[small]#<SE> Sql<E># [blue]#having#[small]##(Sql<SE> subSql, String content)##`
+  ** `[small]#<UE> Sql<E># [blue]#union#[small]##(Sql<UE> unionSql)##`
+  ** `[small]#<UE> Sql<E># [blue]#unionAll#[small]##(Sql<UE> unionSql)##`
+  ** `[small]#List<Sql<?>># [blue]#getUnionSqls#[small]##()##`
+  ** `[small]#boolean# [blue]#isUnionAll#[small]##()##`
 
-  * `org.lightsleep.**Condition**` Interface
-    ** `static <E, SE> Condition **of**(Sql<E> outerSql, Sql<SE> subSql, String content)`
-    ** `default <K> Condition **and**(K entity)`
-    ** `default <E, SE> Condition **and**(Sql<E> outerSql, Sql<SE> subSql, String content)`
-    ** `default <K> Condition **or**(K entity)`
-    ** `default <E, SE> Condition **or**(Sql<E> outerSql, Sql<SE> subSql, String content)`
+  * `[small]#org.lightsleep.#[blue]##Condition##` [small]#interface#
+  ** `[small]#static <E, SE> Condition# [blue]#of#[small]##(Sql<E> outerSql, Sql<SE> subSql, String content)##`
+  ** `[small]#default <K> Condition# [blue]#and#[small]##(K entity)##`
+  ** `[small]#default <E, SE> Condition# [blue]#and#[small]##(Sql<E> outerSql, Sql<SE> subSql, String content)##`
+  ** `[small]#default <K> Condition# [blue]#or#[small]##(K entity)##`
+  ** `[small]#default <E, SE> Condition# [blue]#or#[small]##(Sql<E> outerSql, Sql<SE> subSql, String content)##`
 
-  * `org.lightsleep.**SubqueryCondition**` Class
-    ** `<E> **SubqueryCondition**(Sql<E> outerSql, Sql<SE> subSql, Expression expression)`
+  * `[small]#org.lightsleep.component.#[blue]##SubqueryCondition##` class
+  ** `[small]#<E># [blue]#SubqueryCondition#[small]##(Sql<E> outerSql, Sql<SE> subSql, Expression expression)##`
 
 1. **Deprecated Methods**
-  * `org.lightsleep.**Sql**` Class
-    ** `**setColumns**(Set<String> propertyNames)`
-    ** `**setColumns**(Class<?> resultClass)`
-
+  * ``[small]#org.lightsleep.#[blue]##Sql##``[small]#クラス#
+  ** `[blue]#setColumns#[small]##(Set<String> propertyNames)##`
+  ** `[blue]#setColumns#[small]##(Class<?> resultClass)##`
 
 [[ReleaseNote3.0.1]]
 
@@ -107,57 +185,56 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 
 1. **Improvement**
   * Supported the following data types. You can use them as a field type for entity classes.
-    ** `java.time.LocalDate`
-    ** `java.time.LocalTime`
-    ** `java.time.LocalDateTime`
-    ** `java.time.OffsetDateTime`
-    ** `java.time.ZonedDateTime`
-    ** `java.time.Instant`
+  ** `[small]##java.time.##LocalDate`
+  ** `[small]##java.time.##LocalTime`
+  ** `[small]##java.time.##LocalDateTime`
+  ** `[small]##java.time.##OffsetDateTime`
+  ** `[small]##java.time.##ZonedDateTime`
+  ** `[small]##java.time.##Instant`
 
 1. **Added Methods and Constructors**
-  * `org.lightsleep.**Sql**` Class
-    ** `**doNotIf**(boolean condition, Consumer<Sql<E>> action)`
-    ** `**doElse**(Consumer<Sql<E>> elseAction)`
-    ** `**executeUpdate**(String sql)`
+  * `[small]#org.lightsleep.#[blue]##Sql##` class
+  ** `[blue]#doNotIf#[small]##(boolean condition, Consumer<Sql<E>> action)##`
+  ** `[blue]#doElse#[small]##(Consumer<Sql<E>> elseAction)##`
+  ** `[blue]#executeUpdate#[small]##(String sql)##`
 
-  * `org.lightsleep.database.**Database**` Interface and classes implementing it.
-    ** `**getObject**(Connection connection, ResultSet resultSet, String columnLabel)`
+  * `[small]#org.lightsleep.database.#[blue]##Database##` [small]#interface and classes implementing it#
+  ** `[blue]#getObject#[small]##(Connection connection, ResultSet resultSet, String columnLabel)##`
 
-  * `org.lightsleep.helper.ConvertException` Class
-    ** `**ConvertException**(Class<?> sourceType, Object source, Class<?> destinType, Throwable cause)`
+  * `[small]#org.lightsleep.helper.#[blue]##ConvertException##` class
+  ** `[blue]#ConvertException#[small]##(Class<?> sourceType, Object source, Class<?> destinType, Throwable cause)##`
 
-  * `org.lightsleep.helper.TypeConverter` Class
-    ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT> function1, Function<? super MT, ? extends DT> function2)`
-    ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType,Function<? super ST, ? extends MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends DT> function3)`
-    ** `**TypeConverter**(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends MT3> function3, Function<? super MT3, ? extends DT> function4)`
+  * `[small]#org.lightsleep.helper.#[blue]##TypeConverter##` class
+  ** `[blue]#TypeConverter#[small]##(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT> function1, Function<? super MT, ? extends DT> function2)##`
+  ** `[blue]#TypeConverter#[small]##(Class<ST> sourceType, Class<DT> destinType,Function<? super ST, ? extends MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends DT> function3)##`
+  ** `[blue]#TypeConverter#[small]##(Class<ST> sourceType, Class<DT> destinType, Function<? super ST, MT1> function1, Function<? super MT1, ? extends MT2> function2, Function<? super MT2, ? extends MT3> function3, Function<? super MT3, ? extends DT> function4)##`
 
 1. **Deprecated Method**
-  * `org.lightsleep.**Sql**` Class
-    ** `**doIf**(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)`
+  * `[small]#org.lightsleep.#[blue]##Sql##` class
+  ** `[blue]#doIf#[small]##(boolean condition, Consumer<Sql<E>> action, Consumer<Sql<E>> elseAction)##`
 
 1. **Deleted** Methods and Constructor
-  * `org.lightsleep.**Sql**` Class
+  * `[small]#org.lightsleep.#[blue]##Sql##` class
+  ** `[blue]#select#[small]##(ConnectionWrapper connection, Consumer<? super E> consumer)##`
+  ** `[blue]#select#[small]##(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1)##`
+  ** `[blue]#select#[small]##(ConnectionWrapper connection, Consumer<? super  E > consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)##`
+  ** `[blue]#select#[small]##(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)##`
+  ** `[blue]#select#[small]##(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)##`
+  ** `[blue]#select#[small]##(ConnectionWrapper connection)##`
+  ** `[blue]#selectCount#[small]##(ConnectionWrapper connection)##`
+  ** `[blue]#insert#[small]##(ConnectionWrapper connection, E entity)##`
+  ** `[blue]#insert#[small]##(ConnectionWrapper connection, Iterable<? extends E> entities)##`
+  ** `[blue]#update#[small]##(ConnectionWrapper connection, E entity)##`
+  ** `[blue]#update#[small]##(ConnectionWrapper connection, Iterable<? extends E> entities)##`
+  ** `[blue]#delete#[small]##(ConnectionWrapper connection)##`
+  ** `[blue]#delete#[small]##(ConnectionWrapper connection, E entity)##`
+  ** `[blue]#delete#[small]##(ConnectionWrapper connection, Iterable<? extends E> entities)##`
 
-    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer)`
-    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1)`
-    ** `**select**(ConnectionWrapper connection, Consumer<? super  E > consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)`
-    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)`
-    ** `**select**(ConnectionWrapper connection, Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)`
-    ** `**select**(ConnectionWrapper connection)`
-    ** `**selectCount**(ConnectionWrapper connection)`
-    ** `**insert**(ConnectionWrapper connection, E entity)`
-    ** `**insert**(ConnectionWrapper connection, Iterable<? extends E> entities)`
-    ** `**update**(ConnectionWrapper connection, E entity)`
-    ** `**update**(ConnectionWrapper connection, Iterable<? extends E> entities)`
-    ** `**delete**(ConnectionWrapper connection)`
-    ** `**delete**(ConnectionWrapper connection, E entity)`
-    ** `**delete**(ConnectionWrapper connection, Iterable<? extends E> entities)`
+  * `[small]#org.lightsleep.database.#[blue]##DB2##`, `[blue]#MySQL#`, `[blue]#Oracle#`, `[blue]#PostgreSQL#`, `[blue]#SQLite#`, `[blue]#SQLServer#` and `[blue]#Standard#` class
+  ** `[blue]#instance#[small]##()##`
 
-  * `org.lightsleep.database.**DB2**`, `**MySQL**`, `**Oracle**`, `**PostgreSQL**`, `**SQLite**`, `**SQLServer**` and `**Standard**` Class
-    ** `instance()`
-
-  * `org.lightsleep.helper.TypeConverter` Class
-    ** `**TypeConverter**(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2)`
+  * `[small]#org.lightsleep.helper#[blue]##TypeConverter##` class
+  ** `[blue]#TypeConverter#[small]##(TypeConverter<ST, MT> typeConverter1, TypeConverter<MT, DT> typeConverter2)##`
 
 [[ReleaseNote2.2.1]]
 
@@ -189,7 +266,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 === [small]#version# 2.1.1
 
 1. **Bug fix**
-  * [Fixed] `Standard` database handler is always selected when connection supplier is `Jndi`.
+  * [Fixed] `[blue]#Standard#` database handler is always selected when connection supplier is `[blue]#Jndi#`.
 
 1. **Other**
   * Improve log messages
@@ -208,41 +285,41 @@ Version number is a minor release, but there are **some specification changes**.
 
 
 1. **Added** the following methods and constructor.
-  * Sql *class*
-    ** public ConnectionWrapper getConnection()
+  * `[small]#org.lightsleep.#[blue]##Sql##` class
+  ** `[small]#public ConnectionWrapper# [blue]#getConnection#[small]##()##`
 
-  * `org.lightsleep.connection.ConnectionSupplier` *interface*
-    ** `Database getDatabase()`
-    ** `DataSource getDataSource()`
-    ** `String getUrl()`
-    ** `static ConnectionSupplier of(String supplierName, Properties properties)`
-    ** `static ConnectionSupplier find(String... urlWords)`
+  * `[small]#org.lightsleep.connection.#[blue]##ConnectionSupplier##` [small]#interface#
+  ** `[small]#Database# [blue]#getDatabase#[small]##()##`
+  ** `[small]#DataSource# [blue]#getDataSource#[small]##()##`
+  ** `[small]#String# [blue]#getUrl#[small]##()##`
+  ** `[small]#static ConnectionSupplier# [blue]#of#[small]##(String supplierName, Properties properties)##`
+  ** `[small]#static ConnectionSupplier# [blue]#find#[small]##(String... urlWords)##`
 
-  * `org.lightsleep.connection.AbstractConnectionSupplier` *abstract class*
-    ** `protected AbstractConnectionSupplier(Properties properties, Consumer<Properties> modifier)`
-    ** `@Override public Database getDatabase()`
-    ** `@Override public String getUrl()`
-    ** `@Override public String toString()`
+  * `[small]#org.lightsleep.connection.#[blue]##AbstractConnectionSupplier##` [small]#abstract class#
+  ** `[small]#protected# [blue]#AbstractConnectionSupplier#[small]##(Properties properties, Consumer<Properties> modifier)##`
+  ** `[small]#@Override public Database# [blue]#getDatabase#[small]##()##`
+  ** `[small]#@Override public String# [blue]#getUrl#[small]##()##`
+  ** `[small]#@Override public String# [blue]#toString#[small]##()##`
 
-  * `org.lightsleep.database.Database` *interface*
-    ** `static Database getInstance(String jdbcUrl)`
+  * `[small]#org.lightsleep.database.#[blue]##Database##` [small]#interface#
+  ** `[small]#static Database# [blue]#getInstance#[small]##(String jdbcUrl)##`
 
-  * org.lightsleep.helper.Resource *class*
-    ** `public static Resource getGlobal()`
+  * `[small]#org.lightsleep.helper.#[blue]##Resource##` class
+  ** `[small]#public static Resource# [blue]#getGlobal#[small]##()##`
 
-1. **Deleted** the following methods of the `org.lightsleep.Sql` *class*. **(Specification change)**
-  * `public static Database getDatabase()`
-  * `public static void setDatabase(Database database)`
-  * `public static ConnectionSupplier getConnectionSupplier()`
-  * `public static void setConnectionSupplier(ConnectionSupplier supplier)`
+1. **Deleted** the following methods of the `[small]#org.lightsleep.#[blue]##Sql##` *class*. **(Specification change)**
+  * `[small]#public static Database# [blue]#getDatabase#[small]##()##`
+  * `[small]#public static void# [blue]#setDatabase#[small]##(Database database)##`
+  * `[small]#public static ConnectionSupplier# [blue]#getConnectionSupplier#[small]##()##`
+  * `[small]#public static void# [blue]#setConnectionSupplier#[small]##(ConnectionSupplier supplier)##`
 
-1. **Added** the `org.lightsleep.connection.ConnectionWrapper` class, and **changed** the argument type of each method from `java.sql.Connection` to `ConnectionWrapper`. **(Specification change)**
+1. **Added** the `[small]#org.lightsleep.connection.#[blue]##ConnectionWrapper##` class, and **changed** the argument type of each method from `[small]#java.sql.#[blue]##Connection##` to `[blue]#ConnectionWrapper#`. **(Specification change)**
 
-1. **Added** a constructor with `Properties properties` argument to each class of the `org.lightsleep.connection` package.
+1. **Added** a constructor with `Properties properties` argument to each class of the `[blue small]#org.lightsleep.connection#` package.
 
-1. **Added** the `org.lightsleep.database.anchor` package and `db2`, `mysql`,` oracle`, `postgresql`,` sqlite` and `sqlserver` classes. These classes are used to find the corresponding database handler class from the JDBC URL.
+1. **Added** the `[blue small]#org.lightsleep.database.anchor#` package and `[blue]#db2#`, `[blue]#mysql#`, `[blue]#oracle#`, `[blue]#postgresql#`, `[blue]#sqlite#` and `[blue]#sqlserver#` classes. These classes are used to find the corresponding database handler class from the JDBC URL.
 
-1. **Deprecated** the `instance()` methods and **added** `instance` static variables of each class in the `org.lightsleep.database` package.
+1. **Deprecated** the `[blue]#instance#[small]##()##` methods and **added** `[blue]#instance#` static variables of each class in the `[blue small]#org.lightsleep.database#` package.
 
 <<TOC_,To TOC>>
 
@@ -250,49 +327,49 @@ Version number is a minor release, but there are **some specification changes**.
 
 === [small]#version# 2.0.0
 
-1. Added the following method to get the result of SELECT SQL with entity type different from type parameter of `org.lightsleep.Sql` class.
-  * public <R> Optional<R> selectAs(Class<R> resultClass)
-  * public <R> void selectAs(Class<R> resultClass, Consumer<? super R> consumer)
+1. Added the following method to get the result of SELECT SQL with entity type different from type parameter of `[small]#org.lightsleep.#[blue]##Sql##` class.
+  * `[small]#public <R> Optional<R># [blue]#selectAs#[small]##(Class<R> resultClass)##`
+  * `[small]#public <R> void# [blue]#selectAs#[small]##(Class<R> resultClass, Consumer<? super R> consumer)##`
 
-1. **Deprecated** the method with the `Connection` argument of the `org.lightsleep.Sql` class and **added** the following method with no `Connection` argument.
-  * `public void select(Consumer<? super E> consumer)`
-  * `public <JE1> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1)`
-  * `public <JE1, JE2> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)`
-  * `public <JE1, JE2, JE3> void select(Consumer<? super  E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)`
-  * `public <JE1, JE2, JE3, JE4> void select(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)`
-  * `public Optional<E> select()`
-  * `public int selectCount()`
-  * `public int insert(E entity)`
-  * `public int insert(Iterable<? extends E> entities)`
-  * `public int update(E entity)`
-  * `public int update(Iterable<? extends E> entities)`
-  * `public int delete()`
-  * `public int delete(E entity)`
-  * `public int delete(Iterable<? extends E> entities)`
+1. **Deprecated** the method with the `[blue]#Connection#` argument of the `[small]#org.lightsleep.#[blue]##Sql##` class and **added** the following method with no `[blue]#Connection#` argument.
+  * `[small]#public void# [blue]#select#[small]##(Consumer<? super E> consumer)##`
+  * `[small]#public <JE1> void# [blue]#select#[small]##(Consumer<? super E> consumer, Consumer<? super JE1> consumer1)##`
+  * `[small]#public <JE1, JE2> void# [blue]#select#[small]##(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2)##`
+  * `[small]#public <JE1, JE2, JE3> void# [blue]#select#[small]##(Consumer<? super  E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3)##`
+  * `[small]#public <JE1, JE2, JE3, JE4> void# [blue]#select#[small]##(Consumer<? super E> consumer, Consumer<? super JE1> consumer1, Consumer<? super JE2> consumer2, Consumer<? super JE3> consumer3, Consumer<? super JE4> consumer4)##`
+  * `[small]#public Optional<E># [blue]#select#[small]##()##`
+  * `[small]#public int# [blue]#selectCount#[small]##()##`
+  * `[small]#public int# [blue]#insert#[small]##(E entity)##`
+  * `[small]#public int# [blue]#insert#[small]##(Iterable<? extends E> entities)##`
+  * `[small]#public int# [blue]#update#[small]##(E entity)##`
+  * `[small]#public int# [blue]#update#[small]##(Iterable<? extends E> entities)##`
+  * `[small]#public int# [blue]#delete#[small]##()##`
+  * `[small]#public int# [blue]#delete#[small]##(E entity)##`
+  * `[small]#public int# [blue]#delete#[small]##(Iterable<? extends E> entities)##`
 
-1. **Added** the following method to the `org.lightsleep.Sql` class.
-  * `public Sql<E> connection(Connection connection)`
-  * `public <R> Sql<E> setColumns(Class<R> resultClass)`
-  * `public Sql<E> doAlways(Consumer<Sql<E>> action)`
+1. **Added** the following method to the `[small]#org.lightsleep.#[blue]##Sql##` class.
+  * `[small]#public Sql<E># [blue]#connection#[small]##(Connection connection)##`
+  * `[small]#public <R> Sql<E># [blue]#setColumns#[small]##(Class<R> resultClass)##`
+  * `[small]#public Sql<E># [blue]#doAlways#[small]##(Consumer<Sql<E>> action)##`
 
-1. The `org.lightsleep.Sql` class now **implements** the `Cloneable` interface.
+1. The `[small]#org.lightsleep.#[blue]##Sql##` class now **implements** the `[blue]#Cloneable#` interface.
 
-1. **Changed** the specification of the argument of the `where` method of the `org.lightsleep.Sql` class **(Specification change)**
+1. **Changed** the specification of the argument of the `where` method of the `[small]#org.lightsleep.#[blue]##Sql##` class **(Specification change)**
 ```
 public Sql<E> where(E entity)
     ↓
 public <K> Sql<E> where(K entity)
 ```
 
-1. **Deleted** `@Inherited` attached to `Table` annotation class. **(Specification change)**
+1. **Deleted** `[blue]#@Inherited#` attached to `[blue]#Table#` annotation class. **(Specification change)**
 
-1. **Added** `value` property to `Key`, `NonColumn`, `NonInsert`, `NonSelect` and `NonUpdate` annotation classes.
+1. **Added** `value` property to `[blue]#Key#`, `[blue]#NonColumn#`, `[blue]#NonInsert#`, `[blue]#NonSelect#` and `[blue]#NonUpdate#` annotation classes.
 
-1. **Added** a `property` property to the `NonColumnProperty`, `NonInsertProperty`, `NonSelectProperty` and `NonUpdateProperty` annotation classes and changed the specification of the `value` property. **(Specification change)**
+1. **Added** a `property` property to the `[blue]#NonColumnProperty#`, `[blue]#NonInsertProperty#`, `[blue]#NonSelectProperty#` and `[blue]#NonUpdateProperty#` annotation classes and changed the specification of the `[blue]#value#` property. **(Specification change)**
 
-1. **Changed** the exception thrown on `toString` of `org.lightsleep.component.Expression` class when number of `{}` in the content string and arguments dose not match from `IllegalArgumentException` to `MissingArgumentsException` *(new class)*. **(Specification change)**
+1. **Changed** the exception thrown on `[blue]#toString#` of `[small]#org.lightsleep.component.#[blue]##Expression##` class when number of `{}` in the content string and arguments dose not match from `[blue]#IllegalArgumentException#` to `[blue]#MissingArgumentsException#` *(new class)*. **(Specification change)**
 
-1. **Changed** the exception thrown on `getField`, `getValue` and `setValue` methods of `org.lightsleep.helper.Accessor` class from `IllegalArgumentException` to `MissingPropertyException` *(new class)*. **(Specification change)**
+1. **Changed** the exception thrown on `[blue]#getField#`, `[blue]#getValue#` and `[blue]#setValue#` methods of `[small]#org.lightsleep.helper.#[blue]##Accessor##` class from `[blue]#IllegalArgumentException#` to `[blue]#MissingPropertyException#` *(new class)*. **(Specification change)**
 
 <<TOC_,To TOC>>
 

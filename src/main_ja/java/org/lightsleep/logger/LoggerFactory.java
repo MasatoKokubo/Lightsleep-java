@@ -36,23 +36,23 @@ package org.lightsleep.logger;
  * @author Masato Kokubo
  */
 public class LoggerFactory {
-	/**
-	 * 指定の名前のロガーを返します。
-	 *
-	 * @param name 名前
-	 * @return Logger
-	 */
-	public static Logger getLogger(String name) {
-		return null;
-	}
+    /**
+     * 指定の名前のロガーを返します。
+     *
+     * @param name 名前
+     * @return Logger
+     */
+    public static Logger getLogger(String name) {
+        return null;
+    }
 
-	/**
-	 * 指定のクラス名のロガーを返します。
-	 *
-	 * @param clazz クラス
-	 * @return Logger
-	 */
-	public static Logger getLogger(Class<?> clazz) {
-		return null;
-	}
+    /**
+     * 指定のクラス名のロガーを返します。
+     *
+     * @param clazz クラス
+     * @return Logger
+     */
+    public static Logger getLogger(Class<?> clazz) {
+        return null;
+    }
 }

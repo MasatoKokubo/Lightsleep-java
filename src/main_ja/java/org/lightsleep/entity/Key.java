@@ -6,7 +6,7 @@ package org.lightsleep.entity;
 import java.lang.annotation.*;
 
 /**
- * フィールドに関連するカラムがプライマリー･キーの一部である事を示します。
+ * フィールドに関連するカラムがプライマリーキーの一部である事を示します。
  *
  * <div class="exampleTitle"><span>使用例/Java</span></div>
  * <div class="exampleCode"><pre>
@@ -38,9 +38,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Key {
-	/**
-	 * @return フィールドに関連するカラムがキーの一部であれば<b>true</b>、そうでなければ<b>false</b>
-	 * @since 2.0.0
-	 */
-	boolean value() default true;
+    /**
+     * @return フィールドに関連するカラムがキーの一部であれば<b>true</b>、そうでなければ<b>false</b>
+     * @since 2.0.0
+     */
+    boolean value() default true;
 }

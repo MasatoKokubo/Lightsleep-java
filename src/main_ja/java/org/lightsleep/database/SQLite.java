@@ -5,7 +5,7 @@ package org.lightsleep.database;
 
 /**
  * <a href="https://www.sqlite.org/index.html" target="SQLite">SQLite</a>
- * 用のデータベース･ハンドラです。<br>
+ * 用のデータベースハンドラです。<br>
  *
  * スーパークラスで追加された<b>TypeConverter</b>オブジェクトに以下を追加するか置き換えます。<br>
  * <br>
@@ -70,36 +70,32 @@ package org.lightsleep.database;
  * @see org.lightsleep.database.Standard
  */
 public class SQLite extends Standard {
-	/**
-	 * このクラスの唯一のインスタンス
-	 *
-	 * @since 2.1.0
-	 */
-	public static final SQLite instance = new SQLite();
+    /**
+     * このクラスの唯一のインスタンス
+     *
+     * @since 2.1.0
+     */
+    public static final SQLite instance = new SQLite();
 
-	/**
-	 * <b>SQLite</b>を構築します。
-	 */
-	protected SQLite() {
-	}
+    /**
+     * <b>SQLite</b>を構築します。
+     */
+    protected SQLite() {
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 1.8.2
-	 */
-	@Override
-	public boolean supportsOffsetLimit() {
-		return true;
-	}
+    /**
+     * @since 1.8.2
+     */
+    @Override
+    public boolean supportsOffsetLimit() {
+        return true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.2.0
-	 */
-	@Override
-	public String maskPassword(String jdbcUrl) {
-		return null;
-	}
+    /**
+     * @since 2.2.0
+     */
+    @Override
+    public String maskPassword(String jdbcUrl) {
+        return null;
+    }
 }

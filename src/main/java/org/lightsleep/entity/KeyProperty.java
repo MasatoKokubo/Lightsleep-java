@@ -45,12 +45,12 @@ import java.lang.annotation.*;
 @Repeatable(KeyProperties.class)
 @Target({ElementType.TYPE})
 public @interface KeyProperty {
-	/**
-	 * @return the property name of the specified field
-	 * @since 2.0.0
-	 */
-	String property();
+    /**
+     * @return the property name of the specified field
+     * @since 2.0.0
+     */
+    String property();
 
-	/** @return true if the column related to the field is part of the primary key, false otherwise */
-	boolean value() default true;
+    /** @return true if the column related to the field is part of the primary key, false otherwise */
+    boolean value() default true;
 }

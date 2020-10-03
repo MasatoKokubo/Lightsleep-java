@@ -43,9 +43,9 @@ import java.lang.annotation.*;
 @Repeatable(SelectProperties.class)
 @Target({ElementType.TYPE})
 public @interface SelectProperty {
-	/** @return フィールドを指定するプロパティ名 */
-	String property();
+    /** @return フィールドを指定するプロパティ名 */
+    String property();
 
-	/** @return 式 */
-	String expression();
+    /** @return 式 */
+    String expression();
 }
