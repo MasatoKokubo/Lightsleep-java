@@ -573,111 +573,110 @@ div.contentContainer ul.blockList li.blockList h2{
     padding-bottom:0px;
 }
 
-/* The following is added for Lightsleep. */
+/* The following are added for Lightsleep. */
 body, div.block, dd {
-	font-family: 'Segoe UI', sans-serif;
-	font-size: 14px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
 }
 
 .contentContainer .description dl dd, .contentContainer .details dl dd, .serializedFormContainer dl dd {
-	font-family: 'Segoe UI', sans-serif;
-	font-size: 14px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
 }
 
 pre, code, .code, tt, dt code, table tr td dt code {
-	font-family: Consolas, monospace;
+    font-family: Consolas, monospace;
+    font-size: 14px;
 }
 
 i {
-	font-style: italic;
-	color: #CC5555;
+    font-family: Consolas, monospace;
+    font-style: normal;
+    text-shadow: 1px 1px 1px #FFFF99;
 }
 
-b, b i {
-	font-family: Consolas, monospace;
-	font-weight: normal;
-	background-color: #EEE7E7;
-	border-radius: 6px;
-	padding: 0px 2px 0px 2px;
+b {
+    font-family: Consolas, monospace;
+    font-weight: normal;
+    text-shadow: 1px 1px 1px #BBBBFF;
 }
 
 a code, dd code a, dd a {
-	color: #4444DD;
+    color: #4444DD;
 }
 
 a:link, a:visited {
-	text-decoration:none;
-	color:#0033AA;
+    text-decoration:none;
+    color:#0033AA;
 }
 
 a:hover, a:focus {
-	text-decoration:none;
-	color:#002288;
-	background-color: #FFFF99;
-	border-radius: 6px;
+    text-decoration:none;
+    color:#002288;
+    background-color: #EEDDDD;
 }
 
 .title {
-	font-family: 'Segoe UI', sans-serif;
-	font-weight: bold;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: bold;
 }
 
 .indent {
-	margin-left: 20px;
+    margin-left: 20px;
 }
 
 .blankline {
-	margin-top: -6px;
-	margin-bottom: -6px;
+    margin-top: -6px;
+    margin-bottom: -6px;
 }
 
 .parameter {
-	color: #CC2222;
-	background-color: #F7EEFF;
-	border-radius: 6px;
-	padding: 2px 3px 2px 3px;
+    color: #CC2222;
+    background-color: #F7EEFF;
+    border-radius: 6px;
+    padding: 2px 3px 2px 3px;
 }
 
 .selection {
-	color: #0055DD;
-	font-weight: bold;
+    color: #0055DD;
+    font-weight: bold;
 }
 
 .copyright {
-	font-family: 'Segoe UI', sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     font-size: 16px;
-	font-style: italic;
-	color: #666666;
-	text-align: center;
-	margin-top: 110px;
+    font-style: italic;
+    color: #3366BB;
+    text-align: center;
+    margin-top: 110px;
 }
 
 .exampleTitle {
-	margin: 12px 0px -4px 12px;
+    margin: 12px 0px -4px 12px;
 }
 
 table.additional caption {
-	margin: 0px 0px 4px 4px;
-	text-align: left;
+    margin: 0px 0px 4px 4px;
+    text-align: left;
 }
 
 .exampleTitle span, table.additional caption span {
-	background-color: #F8981D;
-	padding: 2px 6px 2px 6px;
-	font-family: 'Segoe UI', sans-serif;
-    font-size: 12px;
-	font-weight: bold;
+    background-color: #F8981D;
+    padding: 2px 6px 2px 6px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
 }
 
 .exampleCode {
-	margin: 8px 8px 12px 8px;
-	padding: 4px 0px 0px 12px;
-	font-family: Consolas, monospace;
-	color: #003388;
-	background-color: #F4F4F4;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #AAAAAA;
+    margin: 8px 8px 12px 8px;
+    padding: 4px 0px 0px 4px;
+    font-family: Consolas, monospace;
+    color: #003388;
+    background-color: #F4F4F4;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #AAAAAA;
 }
 
 .exampleCode pre {
@@ -685,77 +684,73 @@ table.additional caption {
 }
 
 .exampleCode pre b {
-	color: #2266FF;
-	background-color: #FFFFAA;
-	font-weight: normal;
-	padding: 0px 2px 0px 2px;
+    text-shadow: 2px 2px 2px #FFFF00;
 }
 
 .exampleCode pre i {
-	color: #00AA00;
+    color: #00AA00;
 }
 
 ul.additional {
-	list-style-type: disc;
+    list-style-type: disc;
 }
 
 ol.additional {
-	list-style-type: decimal;
+    list-style-type: decimal;
 }
 
 ul.additional li, ol.additional li {
-	margin: 2px 0px 6px 0px;
+    margin: 2px 0px 6px 0px;
 }
 
 table.additional {
-	margin: 8px;
-	border-collapse: collapse;
-	font-family: 'Segoe UI', sans-serif;
+    margin: 8px;
+    border-collapse: collapse;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     font-size: 14px;
 }
 
 table.additional tr th {
-	background-color: #E0E0E0;
-	border-width: 1px;
-	border-style: solid;
-	border-color: #808080;
-	padding: 4px;
+    background-color: #E0E0E0;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #808080;
+    padding: 4px;
 }
 
 table.additional tr td {
-	background-color: #FFFFFF;
-	border-width: 1px;
-	border-style: solid;
-	border-color: #808080;
-	padding: 4px;
+    background-color: #FFFFFF;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #808080;
+    padding: 4px;
 }
 
 .arrow {
-	margin: 4px 0px -6px 60px;
-	color: #DD4400;
+    margin: 4px 0px -6px 60px;
+    color: #DD4400;
 }
 
 .langLink {
-	margin: 12px 32px 2px 32px;
-	text-align: right;
+    margin: 12px 32px 2px 32px;
+    text-align: right;
 }
 
 .langLink a {
-	background-color: #FFFF44;
-	padding: 2px 8px 5px 8px;
-	border-radius: 6px;
+    background-color: #F8981D;
+    padding: 2px 8px 5px 8px;
 }
 
 .comment {
-	font-style: italic;
-	color: #005599;
-	margin-top: 4px;
+    font-style: italic;
+    color: #005599;
+    margin-top: 4px;
 }
 
 .warning {
-	font-style: italic;
-	color: #DD6666;
-	margin-top: 4px;
+    font-style: italic;
+    color: #DD6666;
+    margin-top: 4px;
 }
 
 .ja {display: none;}
