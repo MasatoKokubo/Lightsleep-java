@@ -5,7 +5,7 @@ link:ReleaseNotes.asciidoc[English]
 [[TOC_]]
 === 目次
 
-- <<ReleaseNote4.0.0,[small]#バージョン# 4.0.0 [small]#- 2020/10/5#>>
+- <<ReleaseNote4.0.0,[small]#バージョン# 4.0.0 [small]#- 2020/10/3#>>
 - <<ReleaseNote3.2.0,[small]#バージョン# 3.2.0 [small]#- 2019/9/25#>>
 - <<ReleaseNote3.1.1,[small]#バージョン# 3.1.1 [small]#- 2019/7/18#>>
 - <<ReleaseNote3.1.0,[small]#バージョン# 3.1.0 [small]#- 2019/7/16#>>
