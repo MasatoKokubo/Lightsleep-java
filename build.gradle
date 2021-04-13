@@ -1,254 +1,273 @@
 // (C) 2016 Masato Kokubo
 plugins {
-	id 'com.jfrog.bintray' version '1.8.4'
+    id 'maven-publish'
+    id 'signing'
 }
 
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'java-library'
 apply plugin: 'groovy'
 
 repositories {
-	jcenter()
+    mavenCentral()
 }
 
 dependencies {
-	compileOnly        'log4j:log4j:1.+'
-	testRuntimeOnly    'log4j:log4j:1.+'
-	compileOnly        'org.apache.logging.log4j:log4j-api:2.+'
-	testRuntimeOnly    'org.apache.logging.log4j:log4j-core:2.+'
-	compileOnly        'org.slf4j:slf4j-api:1.7.+'
-	testRuntimeOnly    'ch.qos.logback:logback-classic:1.2.+'
+    compileOnly        'log4j:log4j:1.+'
+    testRuntimeOnly    'log4j:log4j:1.+'
+    compileOnly        'org.apache.logging.log4j:log4j-api:2.+'
+    testRuntimeOnly    'org.apache.logging.log4j:log4j-core:2.+'
+    compileOnly        'org.slf4j:slf4j-api:1.7.+'
+    testRuntimeOnly    'ch.qos.logback:logback-classic:1.2.+'
 
-	compileOnly        'com.mchange:c3p0:0.+'
-	testRuntimeOnly    'com.mchange:c3p0:0.+'
-	compileOnly        'com.zaxxer:HikariCP:3.+'
-	testRuntimeOnly    'com.zaxxer:HikariCP:3.+'
-	compileOnly        'org.apache.commons:commons-dbcp2:2.+'
-	testRuntimeOnly    'org.apache.commons:commons-dbcp2:2.+'
-	compileOnly        'org.apache.tomcat:tomcat-jdbc:9.+'
-	testRuntimeOnly    'org.apache.tomcat:tomcat-jdbc:9.+'
+    compileOnly        'com.mchange:c3p0:0.+'
+    testRuntimeOnly    'com.mchange:c3p0:0.+'
+    compileOnly        'com.zaxxer:HikariCP:4.+'
+    testRuntimeOnly    'com.zaxxer:HikariCP:4.+'
+    compileOnly        'org.apache.commons:commons-dbcp2:2.+'
+    testRuntimeOnly    'org.apache.commons:commons-dbcp2:2.+'
+    compileOnly        'org.apache.tomcat:tomcat-jdbc:10.+'
+    testRuntimeOnly    'org.apache.tomcat:tomcat-jdbc:10.+'
 
-	testRuntimeOnly    'com.ibm.db2.jcc:db2jcc:db2jcc4'
-	testRuntimeOnly    'org.mariadb.jdbc:mariadb-java-client:2.+'
-	testRuntimeOnly    'mysql:mysql-connector-java:8.+'
-	compileOnly        'com.oracle.ojdbc:ojdbc8:19.+'
-	testRuntimeOnly    'com.oracle.ojdbc:ojdbc8:19.+'
-	testRuntimeOnly    'org.postgresql:postgresql:42.+'
-	testRuntimeOnly    'org.xerial:sqlite-jdbc:3.+'
-	compileOnly        'com.microsoft.sqlserver:mssql-jdbc:8.4.1.jre8'
-	testRuntimeOnly    'com.microsoft.sqlserver:mssql-jdbc:8.4.1.jre8'
+    testRuntimeOnly    'com.ibm.db2.jcc:db2jcc:db2jcc4'
+    testRuntimeOnly    'org.mariadb.jdbc:mariadb-java-client:2.+'
+    testRuntimeOnly    'mysql:mysql-connector-java:8.+'
+    compileOnly        'com.oracle.database.jdbc:ojdbc8:21.+'
+    testRuntimeOnly    'com.oracle.database.jdbc:ojdbc8:21.+'
+    testRuntimeOnly    'org.postgresql:postgresql:42.+'
+    testRuntimeOnly    'org.xerial:sqlite-jdbc:3.+'
+    compileOnly        'com.microsoft.sqlserver:mssql-jdbc:9.2.1.jre8'
+    testRuntimeOnly    'com.microsoft.sqlserver:mssql-jdbc:9.2.1.jre8'
 
-	testCompileOnly    'org.junit.jupiter:junit-jupiter-api:5.7.+'
-	testRuntimeOnly    'org.junit.vintage:junit-vintage-engine:5.7.+'
-	testImplementation 'org.codehaus.groovy:groovy-all:2.5.+'
-	testCompileOnly    'org.spockframework:spock-core:1.3-groovy-2.5'
+    testCompileOnly    'org.junit.jupiter:junit-jupiter-api:5.7.+'
+    testRuntimeOnly    'org.junit.vintage:junit-vintage-engine:5.7.+'
+    testImplementation 'org.codehaus.groovy:groovy-all:2.5.+'
+    testCompileOnly    'org.spockframework:spock-core:1.3-groovy-2.5'
 
-	testRuntimeOnly    'tomcat:naming-java:5.+'
-	testRuntimeOnly    'tomcat:naming-factory:5.+'
-	testRuntimeOnly    'tomcat:naming-resources:5.+'
+    testRuntimeOnly    'tomcat:naming-java:5.+'
+    testRuntimeOnly    'tomcat:naming-factory:5.+'
+    testRuntimeOnly    'tomcat:naming-resources:5.+'
 
-	compileOnly        'org.debugtrace:debugtrace:3.+'
-	testImplementation 'org.debugtrace:debugtrace:3.+'
+    compileOnly        'org.debugtrace:debugtrace:3.+'
+    testImplementation 'org.debugtrace:debugtrace:3.+'
 }
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = 8
+targetCompatibility = 8
 group               = 'org.lightsleep'
 archivesBaseName    = 'lightsleep'
 version             = '4.0.0'
 
 sourceSets {
-	main {
-		java {
-			srcDir 'src/main/java'
-		}
-		resources {
-			srcDir 'src/main/resources'
-		}
-	}
-	test {
-		java {
-			srcDir 'src/test/java'
-		}
-		groovy {
-			srcDir 'src/test/groovy'
-		}
-		resources {
-			srcDir 'src/test/resources'
-		}
-	}
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+        groovy {
+            srcDir 'src/test/groovy'
+        }
+        resources {
+            srcDir 'src/test/resources'
+        }
+    }
 }
 
 wrapper {
-	gradleVersion = '6.6.1'
+    gradleVersion = '6.8.3'
 }
 
 compileJava {
-	options.encoding     = 'UTF-8'
-	options.deprecation  = true
-	options.debug        = true
-	options.compilerArgs = ['-Xlint']
+    options.encoding     = 'UTF-8'
+    options.deprecation  = true
+    options.debug        = true
+    options.compilerArgs = ['-Xlint']
 }
 
 compileTestJava {
-	options.encoding     = compileJava.options.encoding
-	options.deprecation  = compileJava.options.deprecation
-	options.debug        = compileJava.options.debug
-	options.compilerArgs = compileJava.options.compilerArgs
+    options.encoding     = compileJava.options.encoding
+    options.deprecation  = compileJava.options.deprecation
+    options.debug        = compileJava.options.debug
+    options.compilerArgs = compileJava.options.compilerArgs
 }
 
 task compileJava_ja(type:JavaCompile) {
-	options.encoding     = compileJava.options.encoding
-	options.deprecation  = compileJava.options.deprecation
-	options.debug        = compileJava.options.debug
-	options.compilerArgs = compileJava.options.compilerArgs
+    options.encoding     = compileJava.options.encoding
+    options.deprecation  = compileJava.options.deprecation
+    options.debug        = compileJava.options.debug
+    options.compilerArgs = compileJava.options.compilerArgs
 
-	classpath      = compileJava.classpath
-	source         = files('src/main_ja/java')
-	destinationDir = file('build/classes/main_ja')
+    classpath      = compileJava.classpath
+    source         = files('src/main_ja/java')
+    destinationDir = file('build/classes/main_ja')
 }
 
 jar {
-	manifest {
-		attributes	'Implementation-Title'    : project.name,
-					'Implementation-Version'  : version,
-					'Implementation-Vendor'   : 'Masato Kokubo',
-					'Implementation-Vendor-Id': 'jp.masatokokubo'
-	}
+    manifest {
+        attributes  'Implementation-Title'    : project.name,
+                    'Implementation-Version'  : version,
+                    'Implementation-Vendor'   : 'Masato Kokubo',
+                    'Implementation-Vendor-Id': 'jp.masatokokubo'
+    }
 }
 
 javadoc {
-	title               = "$project.name $version API Specification"
-	options.charSet     = 'UTF-8'
-	options.encoding    = 'UTF-8'
-	options.locale      = 'en'
-	options.windowTitle = "$project.name"
-	options.overview    = 'src/main/java/overview.html'
-    options.author      = true
-    options.bottom      = '<div class="copyright">&copy; 2016 Masato Kokubo</div>'
+    title               = "$project.name $version API Specification"
+    options.charSet     = 'UTF-8'
+    options.encoding    = 'UTF-8'
+    options.locale      = 'en'
+    options.windowTitle = "$project.name"
+    options.overview    = 'src/main/java/overview.html'
+    options.addBooleanOption('author', true)
+    options.addStringOption ('bottom', '<div class="copyright">&copy; 2016 Masato Kokubo</div>')
 }
 
 javadoc.doFirst {
-	def cssFile = file('build/docs/javadoc/stylesheet.css')
-	if (cssFile.exists())
-		cssFile.delete()
+    def cssFile = file('build/docs/javadoc/stylesheet.css')
+    if (cssFile.exists())
+        cssFile.delete()
 }
 
 javadoc.doLast {
-	def cssFile = file('build/docs/javadoc/stylesheet.css')
-	file('src/main/java/addtional.css').eachLine {
-		cssFile.append("$it\n")
-	}
+    def cssFile = file('build/docs/javadoc/stylesheet.css')
+    file('src/main/java/addtional.css').eachLine {
+        cssFile.append("$it\n")
+    }
 }
 
 task javadoc_ja(type:Javadoc) {
-	dependsOn = ['compileJava_ja']
+    dependsOn = ['compileJava_ja']
 
-	title               = "$project.name $version API Specification"
-	options.charSet     = javadoc.options.charSet
-	options.encoding    = javadoc.options.encoding
-	options.locale      = 'ja'
-	options.windowTitle = javadoc.options.windowTitle
-	options.overview    = 'src/main/java/overview_ja.html'
+    title               = "$project.name $version API Specification"
+    options.charSet     = javadoc.options.charSet
+    options.encoding    = javadoc.options.encoding
+    options.locale      = 'ja'
+    options.windowTitle = javadoc.options.windowTitle
+    options.overview    = 'src/main/java/overview_ja.html'
     options.author      = true
     options.bottom      = '<div class="copyright">&copy; 2016 Masato Kokubo</div>'
 
-	classpath      = javadoc.classpath
-	source         = fileTree('src/main_ja/java').include('**/*.java')
-	destinationDir = file('build/docs/javadoc_ja')
+    classpath      = javadoc.classpath
+    source         = fileTree('src/main_ja/java').include('**/*.java')
+    destinationDir = file('build/docs/javadoc_ja')
 }
 
 javadoc_ja.doFirst {
-	def cssFile = file('build/docs/javadoc_ja/stylesheet.css')
-	if (cssFile.exists())
-		cssFile.delete()
+    def cssFile = file('build/docs/javadoc_ja/stylesheet.css')
+    if (cssFile.exists())
+        cssFile.delete()
 }
 
 javadoc_ja.doLast {
-	def cssFile = file('build/docs/javadoc_ja/stylesheet.css')
-	file('src/main/java/addtional_ja.css').eachLine {
-		cssFile.append("$it\n")
-	}
+    def cssFile = file('build/docs/javadoc_ja/stylesheet.css')
+    file('src/main/java/addtional_ja.css').eachLine {
+        cssFile.append("$it\n")
+    }
 }
 
 task copyImages(type: Copy) {
-	from 'images'
-	into 'build/docs/images'
-	include '**/*.gif'
+    from 'images'
+    into 'build/docs/images'
+    include '**/*.gif'
 }
 
 build.dependsOn javadoc_ja, copyImages
 
 task zip(type: Zip) {
-	classifier = 'bin'
+    classifier = 'bin'
 
-	into('/'         , {from "build/libs/${archivesBaseName}-${version}.jar"})
-	into('/'         , {from 'LICENSE.txt'})
-	into('/'         , {from 'README.asciidoc', 'ReleaseNotes.asciidoc', 'Tutorial.asciidoc', 'UserGuide.asciidoc'})
-	into('/'         , {from 'README_ja.asciidoc', 'ReleaseNotes_ja.asciidoc', 'Tutorial_ja.asciidoc', 'UserGuide_ja.asciidoc'})
-	into('javadoc'   , {from 'build/docs/javadoc'})
-	into('javadoc_ja', {from 'build/docs/javadoc_ja'})
+    into('/'         , {from "build/libs/${archivesBaseName}-${version}.jar"})
+    into('/'         , {from 'LICENSE.txt'})
+    into('/'         , {from 'README.asciidoc', 'ReleaseNotes.asciidoc', 'Tutorial.asciidoc', 'UserGuide.asciidoc'})
+    into('/'         , {from 'README_ja.asciidoc', 'ReleaseNotes_ja.asciidoc', 'Tutorial_ja.asciidoc', 'UserGuide_ja.asciidoc'})
+    into('javadoc'   , {from 'build/docs/javadoc'})
+    into('javadoc_ja', {from 'build/docs/javadoc_ja'})
 }
 
 task sourcesJar(type: Jar) {
-	classifier = 'sources'
+    classifier = 'sources'
 
-	manifest {
-		attributes	'Implementation-Title'    : project.name,
-					'Implementation-Version'  : version,
-					'Implementation-Vendor'   : 'Masato Kokubo',
-					'Implementation-Vendor-Id': 'jp.masatokokubo'
-	}
+    manifest {
+        attributes    'Implementation-Title'    : project.name,
+                    'Implementation-Version'  : version,
+                    'Implementation-Vendor'   : 'Masato Kokubo',
+                    'Implementation-Vendor-Id': 'jp.masatokokubo'
+    }
 
-	into('/org', {from 'src/main/java/org'})
+    into('/org', {from 'src/main/java/org'})
 }
 
 task javadocJar(type: Jar, dependsOn:javadoc) {
-	classifier = 'javadoc'
-	from javadoc.destinationDir
+    classifier = 'javadoc'
+    from javadoc.destinationDir
 }
 
 artifacts {
-	archives jar
-	archives sourcesJar
-	archives javadocJar
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
-	publications {
-		mavenPublication(MavenPublication) {
-//			from components.java
-			groupId    group
-			artifactId archivesBaseName
-			version    version
-		}
-	}
+    publications {
+//      mavenPublication(MavenPublication) {
+////          from components.java
+//          groupId    group
+//          artifactId archivesBaseName
+//          version    version
+//      }
+        mavenJava(MavenPublication) {
+            artifactId = archivesBaseName
+            from components.java
+            pom {
+                name = 'Lightsleep-java'
+                description = 'Lightsleep is a lightweight Object-Relational (O/R) mapping library and is available in Java 8 or later.'
+                url = 'https://github.com/MasatoKokubo/Lightsleep-java'
+                licenses {
+                    license {
+                        name = 'The MIT License (MIT)'
+                        url = 'https://github.com/MasatoKokubo/Lightsleep-java/blob/master/LICENSE.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'MasatoKokubo'
+                        name = 'Masato Kokubo'
+                        email = 'masatokokubo@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'https://github.com/MasatoKokubo/Lightsleep-java.git'
+                    developerConnection = 'https://github.com/MasatoKokubo/Lightsleep-java.git'
+                    url = 'https://github.com/MasatoKokubo/Lightsleep-java'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'OSSRH'
+            url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2'
+            credentials {
+                username = "$sonatypeUsername"
+                password = "$sonatypePassword"
+            }
+        }
+    }
 }
 
-bintray {
-	user = project.hasProperty('bintray_user') ? bintray_user : ''
-	key  = project.hasProperty('bintray_api_key') ? bintray_api_key : ''
-	configurations = ['archives']
-	publications   = ['mavenPublication']
-
-//	dryRun = true
-
-	pkg {
-		repo            = 'maven'
-		name            = 'Lightsleep'
-		websiteUrl      = 'https://github.com/MasatoKokubo/Lightsleep-java'
-		issueTrackerUrl = 'https://github.com/MasatoKokubo/Lightsleep-java/issues'
-		vcsUrl          = 'https://github.com/MasatoKokubo/Lightsleep-java.git'
-		licenses        = ['MIT']
-		version {
-			name           = project.version
-			released       = new Date()
-			vcsTag         = project.version
-			gpg {
-				sign       = true
-				passphrase = project.hasProperty('bintray_gpg_password') ? bintray_gpg_password : ''
-			}
-		}
-	}
+signing {
+    sign publishing.publications.mavenJava
 }
