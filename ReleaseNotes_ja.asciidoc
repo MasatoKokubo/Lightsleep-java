@@ -5,6 +5,7 @@ link:ReleaseNotes.asciidoc[English]
 [[TOC_]]
 === 目次
 
+- <<ReleaseNote4.0.1,[small]#バージョン# 4.0.1 [small]#- 2022/7/9#>>
 - <<ReleaseNote4.0.0,[small]#バージョン# 4.0.0 [small]#- 2020/10/3#>>
 - <<ReleaseNote3.2.0,[small]#バージョン# 3.2.0 [small]#- 2019/9/25#>>
 - <<ReleaseNote3.1.1,[small]#バージョン# 3.1.1 [small]#- 2019/7/18#>>
@@ -16,6 +17,12 @@ link:ReleaseNotes.asciidoc[English]
 - <<ReleaseNote2.1.1,[small]#バージョン# 2.1.1 [small]#- 2017/12/3#>>
 - <<ReleaseNote2.1.0,[small]#バージョン# 2.1.0 [small]#- 2017/11/12#>>
 - <<ReleaseNote2.0.0,[small]#バージョン# 2.0.0 [small]#- 2017/9/9#>>
+
+[[ReleaseNote4.0.1]]
+
+=== [small]#バージョン# 4.0.1
+
+* エラーメッセージを改善しました。
 
 [[ReleaseNote4.0.0]]
 

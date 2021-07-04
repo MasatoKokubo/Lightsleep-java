@@ -81,8 +81,15 @@ public class LoggerFactory {
             }
         }
 
+        // Get the Java vendor, runtime name and runtime version
+        String javaVendor = System.getProperty("java.vendor");
+        String javaRuntimeName = System.getProperty("java.runtime.name");
+        String javaRuntimeVersion = System.getProperty("java.runtime.version");
+
         String version = new Resource("org.lightsleep.lightsleep-version").getString("version");
-        logger.info("Lightsleep " + version + " / logger: " + loggerClass.getName());
+        logger.info("Lightsleep " + version + " on " +
+            javaVendor + " " + javaRuntimeName + " " + javaRuntimeVersion);
+        logger.info("  logger: " + loggerClass.getName());
     }
 
     // Returns the logger

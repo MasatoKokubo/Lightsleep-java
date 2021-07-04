@@ -101,9 +101,6 @@ class TypeConverterSpec extends Specification {
 
     // get
     def "TypeConverterSpec get"() {
-    // 3.2.1
-    //    when: TypeConverter.get(null, null, null)
-    //    then: thrown NullPointerException
         when: TypeConverter.get(null, String, Integer)
         then: thrown NullPointerException
 
@@ -117,13 +114,9 @@ class TypeConverterSpec extends Specification {
         then: thrown NullPointerException
 
         when: TypeConverter.get(map, Cloneable, Iterable)
-        then: thrown IllegalArgumentException
-    ////
+        then: thrown ConvertException
 
         expect:
-        // 3.2.1
-        //    TypeConverter.get(map, Cloneable, Iterable) == null
-        ////
             TypeConverter.get(map, String, Integer).sourceType() == String
             TypeConverter.get(map, String, Integer).destinType() == Integer
             TypeConverter.get(map, String, Integer).key() == 'String->Integer'

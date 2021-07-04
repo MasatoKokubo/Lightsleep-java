@@ -81,12 +81,8 @@ public class SubqueryCondition<SE> implements Condition {
         buff.append(leftExpression.toString(database, sql, parameters));
         buff.append(leftExpression.isEmpty() ? "(" : " (")
             .append(subSql.getColumns().isEmpty()
-            // 4.0.0
-            //  ? database.subSelectSql(subSql, () -> "*", parameters)
-            //  : database.subSelectSql(subSql, parameters)
                 ? database.subSelectSql(subSql, sql, () -> "*", parameters)
                 : database.subSelectSql(subSql, sql, parameters)
-            ////
             )
             .append(rightExpression.isEmpty() ? ")" : ") ");
         buff.append(rightExpression.toString(database, sql, parameters));

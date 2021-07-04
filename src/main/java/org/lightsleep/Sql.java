@@ -219,10 +219,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
     private transient ConnectionWrapper connection;
 
     // The generated SQL @since 1.5.0
-//4.0.0
-//  private transient String generatedSql;
     private transient CharSequence generatedSql;
-////
 
     // For storing doIf method condition @since 3.0.0
     private transient Boolean doIfCondition;
@@ -1874,11 +1871,9 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
                         entityInfo.entityClass().getName()));
         }
 
-    // 4.0.0
         if (unionSql.isWithSql() && unionSql.fromSql == null)
             // uses WITH clause
             unionSql = unionSql.clone().from(unionSql).where(Condition.ALL);
-    ////
 
         unionSqls.add(unionSql);
 
@@ -1888,10 +1883,8 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
         // synchronize columns with unionSqls
         synchronizeColumns();
 
-    // 4.0.0
         if (unionSql.where.isEmpty())
             unionSql.where = Condition.ALL;
-    ////
 
         return this;
     }
@@ -1904,10 +1897,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
      * @since 3.1.0
      */
     public List<Sql<?>> getUnionSqls() {
-    // 4.0.0
-    //  return unionSqls;
         return Collections.unmodifiableList(unionSqls);
-    ////
     }
 
     /**
@@ -2310,10 +2300,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
      * @since 1.8.4
      */
     public String generatedSql() {
-    // 4.0.0
-    //  return generatedSql;
         return generatedSql.toString();
-    ////
     }
 
     /**
@@ -3107,10 +3094,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
         List<RE> entities = new ArrayList<>();
         selectAs(resultClass, entity -> {
             if (entities.size() > 0)
-            // 4.0.0
-            //  throw new ManyRowsException(generatedSql);
                 throw new ManyRowsException(generatedSql.toString());
-            ////
             entities.add(entity);
         });
         return entities.isEmpty() ? Optional.empty() : Optional.of(entities.get(0));
@@ -3158,10 +3142,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
         Sql<E> sql = where.isEmpty() ? clone().where(Condition.ALL) : this;
 
         List<Object> parameters = new ArrayList<>();
-    // 4.0.0
-    //  String sqlString = connection.getDatabase().subSelectSql(sql, null, () -> "COUNT(*)", parameters);
         CharSequence sqlString = connection.getDatabase().subSelectSql(sql, null, () -> "COUNT(*)", parameters);
-    ////
 
         int[] count = new int[1];
         executeQuery(sqlString, parameters, resultSet -> {
@@ -3240,11 +3221,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 
         if (connection == null)
             throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
-    
-    // 4.0.0
-    //    if (entity instanceof PreStore)
-    //        ((PreStore)entity).preStore();
-    ////
     
         Sql<E> sql = clone().setEntity(entity);
     
@@ -3376,11 +3352,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
 
         if (connection == null)
             throw new IllegalStateException(MessageFormat.format(messageNoConnection, entityInfo.entityClass().getName()));
-
-    // 4.0.0
-    //    if (entity instanceof PreStore)
-    //        ((PreStore)entity).preStore();
-    ////
 
         Sql<E> sql = clone().setEntity(entity);
         if (sql.where.isEmpty())
@@ -3531,10 +3502,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
         }
 
         List<Object> parameters = new ArrayList<>();
-    // 4.0.0
-    //  String sqlString = connection.getDatabase().deleteSql(this, parameters);
         CharSequence sqlString = connection.getDatabase().deleteSql(this, parameters);
-    ////
         return executeUpdate(sqlString, parameters);
     }
 
@@ -3690,7 +3658,9 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
                         }
                         catch (ConvertException e) {
                             if (columnInfo.columnType() == null)
-                                throw e;
+                                throw new RuntimeException("property: "
+                                    + entityInfo.entityClass().getName() + "." + columnInfo.propertyName()
+                                    + ", value: " + Utils.toLogString(value), e);
 
                             logger.debug(() -> e.toString());
                             value = connection.getDatabase().convert(value, columnInfo.columnType());
@@ -3700,11 +3670,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
                     });
 
                 // After get
-            // 4.0.0
-            //    if (entity instanceof PostLoad)
-            //        ((PostLoad)entity).postLoad();
-            ////
-
                 if (entity instanceof PostSelect)
                     ((PostSelect)entity).postSelect(connection);
 
@@ -3727,10 +3692,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
      *
      * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
      */
-// 4.0.0
-//  private void executeQuery(String sql, List<Object> parameters, Consumer<ResultSet> consumer) {
     private void executeQuery(CharSequence sql, List<Object> parameters, Consumer<ResultSet> consumer) {
-////
         Objects.requireNonNull(sql, "sql");
         Objects.requireNonNull(parameters, "parameters is null");
         Objects.requireNonNull(consumer, "consumer is null");
@@ -3743,10 +3705,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
                 + connection.toString() + ' ' + sql);
 
         // Prepares SQL
-    // 4.0.0
-    //  try (PreparedStatement statement = connection.prepareStatement(sql)) {
         try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
-    ////
             //  Sets the parameter values
             for (int index = 0; index < parameters.size(); ++index) {
                 Object parameter = parameters.get(index);
@@ -3844,10 +3803,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
      *
      * @throws RuntimeSQLException if a <b>SQLException</b> is thrown while accessing the database, replaces it with this exception
      */
-// 4.0.0
-//  private int executeUpdate(String sql, List<Object> parameters) {
     private int executeUpdate(CharSequence sql, List<Object> parameters) {
-////
         Objects.requireNonNull(sql, "sql is null");
         Objects.requireNonNull(parameters, "parameters is null");
         if (connection == null)
@@ -3861,10 +3817,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
             ////
 
         // Prepares SQL
-    // 4.0.0
-    //  try (PreparedStatement statement = connection.prepareStatement(sql)) {
         try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
-    ////
             //  Sets the parameter values
             for (int index = 0; index < parameters.size(); ++index) {
                 Object parameter = parameters.get(index);
@@ -3887,9 +3840,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
                 double execTime = (execTimeAfter - execTimeBefore) / 1_000_000.0;
                 String sqlNoStr = "#" + Integer.toUnsignedString(sqlNo) + ' ';
 
-            // 4.0.0
                 if (sql.toString().startsWith("INSERT ")) {
-            ////
                     switch (rowCount) {
                     case 0:
                         logger.info(sqlNoStr + MessageFormat.format(messageInserted0Rows, timeFormat.format(execTime)));
@@ -3901,10 +3852,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
                         logger.info(sqlNoStr + MessageFormat.format(messageInsertedRows, rowCount, timeFormat.format(execTime)));
                         break;
                     }
-            // 4.0.0
-            //  } else if (sql.startsWith("DELETE ")) {
                 } else if (sql.toString().startsWith("DELETE ")) {
-            ////
                     switch (rowCount) {
                     case 0:
                         logger.info(sqlNoStr + MessageFormat.format(messageDeleted0Rows, timeFormat.format(execTime)));
@@ -3984,10 +3932,7 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
      */
     private void synchronizeTableAliases() {
         // synchronize table aliases with fromSql
-    // 4.0.0
-    //  if (fromSql != null) {
         if (fromSql != null && !fromSql.isWithSql()) {
-    ////
             if (!tableAlias.isEmpty()) {
                 if (!fromSql.tableAlias.isEmpty()) {
                     if (!tableAlias.equals(fromSql.tableAlias))
@@ -4010,10 +3955,8 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
         // synchronize table aliases with unionSqls
         int index = 0;
         for (Sql<?> unionSql : unionSqls) {
-        // 4.0.0
             if (unionSql.isWithSql()) continue;
 
-        ////
             if (!tableAlias.isEmpty()) {
                 if (!unionSql.tableAlias.isEmpty()) {
                     if (!tableAlias.equals(unionSql.tableAlias))
@@ -4085,7 +4028,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
             ++index;
         }
 
-    // 4.0.0
         // synchronize columns with recursiveSql
         if (recursiveSql != null) {
             if (!columns.isEmpty()) {
@@ -4106,7 +4048,6 @@ public class Sql<E> implements Cloneable, SqlEntityInfo<E> {
                 }
             }
         }
-    ////
     }
 
     /**

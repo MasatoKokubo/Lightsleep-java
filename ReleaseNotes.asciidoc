@@ -5,6 +5,7 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 [[TOC_]]
 === Table of Contents
 
+- <<ReleaseNote4.0.1,[small]#version# 4.0.1 [small]#- July       9, 2022#>>
 - <<ReleaseNote4.0.0,[small]#version# 4.0.0 [small]#- October    3, 2020#>>
 - <<ReleaseNote3.2.0,[small]#version# 3.2.0 [small]#- September 25, 2019#>>
 - <<ReleaseNote3.1.1,[small]#version# 3.1.1 [small]#- July      18, 2019#>>
@@ -16,6 +17,14 @@ link:ReleaseNotes_ja.asciidoc[Japanese]
 - <<ReleaseNote2.1.1,[small]#version# 2.1.1 [small]#- December   3, 2017#>>
 - <<ReleaseNote2.1.0,[small]#version# 2.1.0 [small]#- November  12, 2017#>>
 - <<ReleaseNote2.0.0,[small]#version# 2.0.0 [small]#- September  9, 2017#>>
+
+[[ReleaseNote4.0.1]]
+
+=== [small]#version# 4.0.1
+
+* Improved error messages.
+
+[[ReleaseNote4.0.0]]
 
 === [small]#version# 4.0.0
 

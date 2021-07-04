@@ -103,7 +103,6 @@ public class MariaDB extends Standard {
             })
         );
 
-        // 4.0.0
         // Character -> String -> SqlString
         TypeConverter.put(typeConverterMap,
             TypeConverter.of(typeConverterMap, Character.class, String.class, SqlString.class)

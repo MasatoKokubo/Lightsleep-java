@@ -161,13 +161,19 @@ extends java.lang.RuntimeException</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../org/lightsleep/helper/ConvertException.html#ConvertException-java.lang.Class-java.lang.Class-">ConvertException</a></span>(java.lang.Class&lt;?&gt;&nbsp;sourceType,
+                java.lang.Class&lt;?&gt;&nbsp;destinType)</code>
+<div class="block">Constructs a new <b>ConvertException</b>.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../org/lightsleep/helper/ConvertException.html#ConvertException-java.lang.Class-java.lang.Object-java.lang.Class-">ConvertException</a></span>(java.lang.Class&lt;?&gt;&nbsp;sourceType,
                 java.lang.Object&nbsp;source,
                 java.lang.Class&lt;?&gt;&nbsp;destinType)</code>
 <div class="block">Constructs a new <b>ConvertException</b>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../org/lightsleep/helper/ConvertException.html#ConvertException-java.lang.Class-java.lang.Object-java.lang.Class-java.lang.Object-">ConvertException</a></span>(java.lang.Class&lt;?&gt;&nbsp;sourceType,
                 java.lang.Object&nbsp;source,
                 java.lang.Class&lt;?&gt;&nbsp;destinType,
@@ -175,7 +181,7 @@ extends java.lang.RuntimeException</pre>
 <div class="block">Constructs a new <b>ConvertException</b>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../org/lightsleep/helper/ConvertException.html#ConvertException-java.lang.Class-java.lang.Object-java.lang.Class-java.lang.Object-java.lang.Throwable-">ConvertException</a></span>(java.lang.Class&lt;?&gt;&nbsp;sourceType,
                 java.lang.Object&nbsp;source,
                 java.lang.Class&lt;?&gt;&nbsp;destinType,
@@ -184,7 +190,7 @@ extends java.lang.RuntimeException</pre>
 <div class="block">Constructs a new <b>ConvertException</b>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../org/lightsleep/helper/ConvertException.html#ConvertException-java.lang.Class-java.lang.Object-java.lang.Class-java.lang.Throwable-">ConvertException</a></span>(java.lang.Class&lt;?&gt;&nbsp;sourceType,
                 java.lang.Object&nbsp;source,
                 java.lang.Class&lt;?&gt;&nbsp;destinType,
@@ -192,18 +198,18 @@ extends java.lang.RuntimeException</pre>
 <div class="block">Constructs a new <b>ConvertException</b>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../org/lightsleep/helper/ConvertException.html#ConvertException-java.lang.String-">ConvertException</a></span>(java.lang.String&nbsp;message)</code>
 <div class="block">Constructs a new <b>ConvertException</b> with the specified detail message.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../org/lightsleep/helper/ConvertException.html#ConvertException-java.lang.String-java.lang.Throwable-">ConvertException</a></span>(java.lang.String&nbsp;message,
                 java.lang.Throwable&nbsp;cause)</code>
 <div class="block">Constructs a new <b>ConvertException</b> with the specified detail message and cause.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../org/lightsleep/helper/ConvertException.html#ConvertException-java.lang.Throwable-">ConvertException</a></span>(java.lang.Throwable&nbsp;cause)</code>
 <div class="block">Constructs a new <b>ConvertException</b> with the specified cause.</div>
 </td>
@@ -330,6 +336,23 @@ extends java.lang.RuntimeException</pre>
 </dl>
 </li>
 </ul>
+<a name="ConvertException-java.lang.Class-java.lang.Class-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ConvertException</h4>
+<pre>public&nbsp;ConvertException(java.lang.Class&lt;?&gt;&nbsp;sourceType,
+                        java.lang.Class&lt;?&gt;&nbsp;destinType)</pre>
+<div class="block">Constructs a new <b>ConvertException</b>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>sourceType</code> - the source data type</dd>
+<dd><code>destinType</code> - the destination data type
+ since 4.0.1</dd>
+</dl>
+</li>
+</ul>
 <a name="ConvertException-java.lang.Class-java.lang.Object-java.lang.Class-">
 <!--   -->
 </a>
@@ -343,7 +366,7 @@ extends java.lang.RuntimeException</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sourceType</code> - the source data type</dd>
-<dd><code>source</code> - the source object (permit null)</dd>
+<dd><code>source</code> - the source object</dd>
 <dd><code>destinType</code> - the destination data type</dd>
 </dl>
 </li>
@@ -362,9 +385,9 @@ extends java.lang.RuntimeException</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sourceType</code> - the source data type</dd>
-<dd><code>source</code> - the source object (permit null)</dd>
+<dd><code>source</code> - the source object</dd>
 <dd><code>destinType</code> - the destination data type</dd>
-<dd><code>destin</code> - the destination object (permit null)</dd>
+<dd><code>destin</code> - the destination object</dd>
 </dl>
 </li>
 </ul>
@@ -382,7 +405,7 @@ extends java.lang.RuntimeException</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sourceType</code> - the source data type</dd>
-<dd><code>source</code> - the source object (permit null)</dd>
+<dd><code>source</code> - the source object</dd>
 <dd><code>destinType</code> - the destination data type</dd>
 <dd><code>cause</code> - the cause</dd>
 <dt><span class="simpleTagLabel">Since:</span></dt>
@@ -405,9 +428,9 @@ extends java.lang.RuntimeException</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>sourceType</code> - the source data type</dd>
-<dd><code>source</code> - the source object (permit null)</dd>
+<dd><code>source</code> - the source object</dd>
 <dd><code>destinType</code> - the destination data type</dd>
-<dd><code>destin</code> - the destination object (permit null)</dd>
+<dd><code>destin</code> - the destination object</dd>
 <dd><code>cause</code> - the cause</dd>
 </dl>
 </li>

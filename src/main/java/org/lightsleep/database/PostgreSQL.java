@@ -116,7 +116,6 @@ public class PostgreSQL extends Standard {
             })
         );
 
-        // 4.0.0
         // Character -> String -> SqlString
         TypeConverter.put(typeConverterMap,
             TypeConverter.of(typeConverterMap, Character.class, String.class, SqlString.class)
@@ -124,17 +123,10 @@ public class PostgreSQL extends Standard {
 
         // byte[].class -> SqlString.class
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(byte[].class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function(),
-        //        object -> object.parameters().length > 0
-        //            ? object : new SqlString("E'\\\\x" + object.content().substring(2)) // X'...' -> E'\\x...'
-        //    )
             TypeConverter.of(typeConverterMap, byte[].class, SqlString.class, SqlString.class,
                 object -> object.parameters().length > 0
                     ? object : new SqlString("E'\\\\x" + object.content().substring(2)) // X'...' -> E'\\x...'
             )
-        ////
         );
     }
 

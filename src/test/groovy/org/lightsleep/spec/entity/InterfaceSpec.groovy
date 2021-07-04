@@ -16,73 +16,6 @@ import spock.lang.*
 // AnnotationSpec
 @Unroll
 class InterfaceSpec extends Base {
-// 4.0.0
-//    @Table("super")
-//    static class Contact2 extends Contact implements PreStore, PostLoad {
-//        @NonColumn public int preStoreCount
-//        @NonColumn public int postLoadCount
-//
-//        @Override
-//        public void preStore() {
-//            ++preStoreCount
-//        }
-//
-//        @Override
-//        public void postLoad() {
-//            ++postLoadCount
-//        }
-//    }
-////
-
-// 4.0.0
-//    // PreStore PostLoad
-//    def "PreStore PostLoad #connectionSupplier "(ConnectionSupplier connectionSupplier) {
-//        DebugTrace.enter() // for Debugging
-//        DebugTrace.print('connectionSupplier', connectionSupplier.toString()) // for Debugging
-//        when:
-//            def contact = new Contact2()
-//            contact.name.first = 'Madoka'
-//            contact.name.last  = 'Peach'
-//
-//        then:
-//            assert contact.preStoreCount == 0
-//            assert contact.postLoadCount == 0
-//
-//            Transaction.execute(connectionSupplier) {
-//                new Sql<>(Contact2).where(Condition.ALL).connection(it).delete()
-//                assert contact.preStoreCount == 0
-//                assert contact.postLoadCount == 0
-//
-//                new Sql<>(Contact2).connection(it).insert(contact)
-//                assert contact.preStoreCount == 1
-//                assert contact.postLoadCount == 0
-//
-//                contact.name.first = 'Akane'
-//                contact.name.last  = 'Apple'
-//
-//                new Sql<>(Contact2).connection(it).update(contact)
-//                assert contact.preStoreCount == 2
-//                assert contact.postLoadCount == 0
-//
-//                contact.name.first = 'Haruka'
-//                contact.name.last  = 'Orange'
-//
-//                new Sql<>(Contact2).where(Condition.ALL).connection(it).update(contact)
-//                assert contact.preStoreCount == 3
-//                assert contact.postLoadCount == 0
-//
-//                Optional<Contact2> contactOpt = new Sql<>(Contact2).where('{id}={}', contact.id).connection(it).select()
-//                assert contactOpt.isPresent()
-//                assert contactOpt.get().preStoreCount == 0
-//                assert contactOpt.get().postLoadCount == 1
-//            }
-//
-//        DebugTrace.leave() // for Debugging
-//        where:
-//            connectionSupplier << connectionSuppliers
-//    }
-////
-
     @Table("super")
     static class Contact3 extends Contact implements 
             PreInsert, PreUpdate, PreDelete, PostInsert, PostUpdate, PostDelete, PostSelect {
@@ -141,7 +74,7 @@ class InterfaceSpec extends Base {
                 def count = new Sql<>(Contact3).where(Condition.ALL).connection(it).delete()
             }
 
-        // isnert
+        // insert
         when:
             def contact = new Contact3()
             contact.name.first = 'Madoka'
@@ -223,7 +156,7 @@ class InterfaceSpec extends Base {
                 new Sql<>(Contact3).where(Condition.ALL).connection(it).delete()
             }
 
-        // isnert
+        // insert
         when:
             def contacts = [new Contact3(), new Contact3()]
             contacts[0].name.first = 'Madoka'

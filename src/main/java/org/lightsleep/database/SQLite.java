@@ -123,7 +123,6 @@ public class SQLite extends Standard {
             })
         );
 
-        // 4.0.0
         // Character -> String -> SqlString
         TypeConverter.put(typeConverterMap,
             TypeConverter.of(typeConverterMap, Character.class, String.class, SqlString.class)
@@ -133,112 +132,52 @@ public class SQLite extends Standard {
 
         // java.util.Date -> String -> SqlString
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(java.util.Date.class, SqlString.class, 
-        //        TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function(),
-        //        toSimpleSqlString
-        //    )
             TypeConverter.of(typeConverterMap, java.util.Date.class, String.class, SqlString.class, toSimpleSqlString)
-        ////
         );
 
         // java.sql.Date -> String -> SqlString
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Date.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, Date.class, String.class).function(),
-        //        toSimpleSqlString
-        //    )
             TypeConverter.of(typeConverterMap, Date.class, String.class, SqlString.class, toSimpleSqlString)
-        ////
         );
 
         // Time -> String -> SqlString
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Time.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
-        //        toSimpleSqlString
-        //    )
             TypeConverter.of(typeConverterMap, Time.class, String.class, SqlString.class, toSimpleSqlString)
-        ////
         );
 
         // Timestamp -> String -> SqlString
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Timestamp.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function(),
-        //        toSimpleSqlString
-        //    )
             TypeConverter.of(typeConverterMap, Timestamp.class, String.class, SqlString.class, toSimpleSqlString)
-        ////
         );
 
         // LocalDate -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalDate.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, LocalDate.class, String.class).function(),
-        //        toSimpleSqlString
-        //    )
             TypeConverter.of(typeConverterMap, LocalDate.class, String.class, SqlString.class, toSimpleSqlString)
-        ////
         );
 
         // LocalTime -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalTime.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
-        //        toSimpleSqlString
-        //    )
             TypeConverter.of(typeConverterMap, LocalTime.class, String.class, SqlString.class, toSimpleSqlString)
-        ////
         );
 
         // LocalDateTime -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalDateTime.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, LocalDateTime.class, String.class).function(),
-        //        toSimpleSqlString
-        //    )
             TypeConverter.of(typeConverterMap, LocalDateTime.class, String.class, SqlString.class, toSimpleSqlString)
-        ////
         );
 
         // OffsetDateTime -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(OffsetDateTime.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, OffsetDateTime.class, String.class).function(),
-        //        toSimpleSqlString
-        //    )
             TypeConverter.of(typeConverterMap, OffsetDateTime.class, String.class, SqlString.class, toSimpleSqlString)
-        ////
         );
 
         // ZonedDateTime -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(ZonedDateTime.class, SqlString.class, 
-        //        TypeConverter.get(typeConverterMap, ZonedDateTime.class, String.class).function(),
-        //        toSimpleSqlString
-        //    )
             TypeConverter.of(typeConverterMap, ZonedDateTime.class, String.class, SqlString.class, toSimpleSqlString)
-        ////
         );
 
         // Instant -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Instant.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, Instant.class, String.class).function(),
-        //        toSimpleSqlString
-        //    )
             TypeConverter.of(typeConverterMap, Instant.class, String.class, SqlString.class, toSimpleSqlString)
-        ////
         );
     }
 

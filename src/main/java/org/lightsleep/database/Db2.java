@@ -65,17 +65,10 @@ public class Db2 extends Standard {
     protected Db2() {
         // byte[] -> SqlString
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(byte[].class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, byte[].class, SqlString.class).function(),
-        //        object -> object.parameters().length > 0
-        //            ? object : new SqlString('B' + object.content()) // X'...' -> BX'...'
-        //    )
             TypeConverter.of(typeConverterMap, byte[].class, SqlString.class, SqlString.class,
                 object -> object.parameters().length > 0
                     ? object : new SqlString('B' + object.content()) // X'...' -> BX'...')
             )
-        ////
         );
     }
 

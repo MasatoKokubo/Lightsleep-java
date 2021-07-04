@@ -18,13 +18,19 @@ pre, code, .code, tt, dt code, table tr td dt code {
 i {
     font-family: Consolas, monospace;
     font-style: normal;
-    text-shadow: 1px 1px 1px #FFFF99;
+    text-shadow: 1px 1px 1px #FFEEFF;
+    background-color: #DFDFDF;
+    border-radius: 4px;
+    padding: 1px 2px 1px 2px;
 }
 
 b {
     font-family: Consolas, monospace;
     font-weight: normal;
-    text-shadow: 1px 1px 1px #BBBBFF;
+    text-shadow: 1px 1px 1px #FFFF88;
+    background-color: #DFDFDF;
+    border-radius: 4px;
+    padding: 1px 2px 1px 2px;
 }
 
 a code, dd code a, dd a {
@@ -110,7 +116,7 @@ table.additional caption {
 }
 
 .exampleCode pre b {
-    text-shadow: 2px 2px 2px #FFFF00;
+    text-shadow: 1px 1px 1px #FFFF00;
 }
 
 .exampleCode pre i {
@@ -175,7 +181,7 @@ table.additional tr td {
 
 .warning {
     font-style: italic;
-    color: #DD6666;
+    color: #AA3333;
     margin-top: 4px;
 }
 

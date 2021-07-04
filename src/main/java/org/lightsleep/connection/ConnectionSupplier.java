@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 import org.lightsleep.database.Database;
 
 /**
- * The interface of the supplier of the connection wrapeprs.
+ * The interface of the supplier of the connection wrappers.
  *
  * @since 1.0.0
  * @author Masato Kokubo

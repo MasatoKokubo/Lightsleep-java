@@ -53,9 +53,7 @@ public class JoinInfo<JE> implements SqlEntityInfo<JE> {
     // The type type
     private final JoinType joinType;
 
-// 4.0.0
     private final Sql<JE> joinSql;
-////
 
     // The entity information
     private final EntityInfo<JE> entityInfo;
@@ -78,9 +76,7 @@ public class JoinInfo<JE> implements SqlEntityInfo<JE> {
      */
     public JoinInfo(JoinType joinType, EntityInfo<JE> entityInfo, String tableAlias, Condition on) {
         this.joinType   = Objects.requireNonNull(joinType  , "joinType is null");
-// 4.0.0
         this.joinSql    = null;
-////
         this.entityInfo = Objects.requireNonNull(entityInfo, "entityInfo is null");
         this.tableAlias = Objects.requireNonNull(tableAlias, "tableAlias is null");
         this.on         = Objects.requireNonNull(on        , "on is null");

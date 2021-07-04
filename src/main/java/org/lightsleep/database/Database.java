@@ -42,10 +42,7 @@ public interface Database {
      *
      * @throws IllegalStateException if SELECT SQL without columns was generated
      */
-// 4.0.0
-//  <E> String selectSql(Sql<E> sql, List<Object> parameters);
     <E> CharSequence selectSql(Sql<E> sql, List<Object> parameters);
-////
 
     /**
      * Creates and returns a SELECT SQL excluding
@@ -62,10 +59,7 @@ public interface Database {
      *
      * @throws IllegalStateException if SELECT SQL without columns was generated
      */
-// 4.0.0
-//  <E> String subSelectSql(Sql<E> sql, List<Object> parameters);
     <E, OE> CharSequence subSelectSql(Sql<E> sql, Sql<OE> outerSql, List<Object> parameters);
-////
 
     /**
      * Creates and returns a SELECT SQL excluding
@@ -81,10 +75,7 @@ public interface Database {
      * @param parameters the list to add the parameters of the SQL
      * @return a <b>CharSequence</b> including SELECT SQL
      */
-// 4.0.0
-//  <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters);
     <E, OE> CharSequence subSelectSql(Sql<E> sql, Sql<OE> outerSql, Supplier<CharSequence> columnsSupplier, List<Object> parameters);
-////
 
     /**
      * Creates and returns a INSERT SQL.
@@ -94,10 +85,7 @@ public interface Database {
      * @param parameters the list to add the parameters of the SQL
      * @return a <b>CharSequence</b> including INSERT SQL
      */
-// 4.0.0
-//   <E> String insertSql(Sql<E> sql, List<Object> parameters);
      <E> CharSequence insertSql(Sql<E> sql, List<Object> parameters);
-////
 
     /**
      * Creates and returns a UPDATE SQL.
@@ -107,10 +95,7 @@ public interface Database {
      * @param parameters the list to add the parameters of the SQL
      * @return a <b>CharSequence</b> including INSERT SQL
      */
-// 4.0.0
-//  <E> String updateSql(Sql<E> sql, List<Object> parameters);
     <E> CharSequence updateSql(Sql<E> sql, List<Object> parameters);
-////
 
     /**
      * Creates and returns a DELETE SQL.
@@ -120,10 +105,7 @@ public interface Database {
      * @param parameters the list to add the parameters of the SQL
      * @return a <b>CharSequence</b> including INSERT SQL
      */
-// 4.0.0
-//  <E> String deleteSql(Sql<E> sql, List<Object> parameters);
     <E> CharSequence deleteSql(Sql<E> sql, List<Object> parameters);
-////
 
     /**
      * Returns the <b>TypeConverter</b> map.
@@ -143,7 +125,7 @@ public interface Database {
     <T> T convert(Object value, Class<T> type);
 
     /**
-     * Masks ths password of the JDBC URL.
+     * Masks the password of the JDBC URL.
      *
      * @param jdbcUrl a JDBC URL
      * @return the JDBC URL masked the password

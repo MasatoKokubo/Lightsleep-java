@@ -687,13 +687,7 @@ public class TypeConverter<ST, DT> {
         }
 
         if (typeConverter == null)
-        // 4.0.0
-        //    logger.error("get: search("+ TypeConverter.key(sourceType, destinType) + ") -> not found"
-            throw new IllegalArgumentException("get: search("+ TypeConverter.key(sourceType, destinType) + ") -> not found"
-        ////
-                + ", sourceType: " + sourceType.getCanonicalName()
-                + ", destinType: " + destinType.getCanonicalName()
-                );
+            throw new ConvertException(sourceType, destinType);
 
         return typeConverter;
     }
@@ -925,95 +919,6 @@ public class TypeConverter<ST, DT> {
         hashCode = key.hashCode();
     }
 
-// 4.0.0,
-//    /**
-//     * Constructs a new <b>TypeConverter</b> by combining the two functions.
-//     *
-//     * @param <MT> the middle type of function 1 and function 2
-//     * @param sourceType the class of the source type
-//     * @param destinType the class of the destination type
-//     * @param function1 the function that the source type convert to the middle type
-//     * @param function2 the function that the middle type convert to the destination type
-//     *
-//     * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b>, <b>function1</b> or <b>function2</b> is <b>null</b>
-//     *
-//     * @since 3.0.0
-//     */
-//    public <MT> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
-//            Function<? super ST, ? extends MT> function1, Function<? super MT, ? extends DT> function2) {
-//        this(
-//            sourceType,
-//            destinType,
-//            Objects.requireNonNull(function1, "function1 is null")
-//                .andThen(Objects.requireNonNull(function2, "function2 is null"))
-//        );
-//    }
-////
-
-// 4.0.0,
-//    /**
-//     * Constructs a new <b>TypeConverter</b> by combining the three functions.
-//     *
-//     * @param <MT1> the middle type of function 1 and function 2
-//     * @param <MT2> the middle type of function 2 and function 3
-//     * @param sourceType the class of the source type
-//     * @param destinType the class of the destination type
-//     * @param function1 the function that the source type convert to the middle 1 type
-//     * @param function2 the function that the middle 1 type convert to the middle 2 type
-//     * @param function3 the function that the middle 2 type convert to the destination type
-//     *
-//     * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b>, <b>function1</b>, <b>function2</b> or <b>function3</b> is <b>null</b>
-//     *
-//     * @since 3.0.0
-//     */
-//    public <MT1, MT2> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
-//            Function<? super ST, ? extends MT1> function1,
-//            Function<? super MT1, ? extends MT2> function2,
-//            Function<? super MT2, ? extends DT> function3) {
-//        this(
-//            sourceType,
-//            destinType,
-//            Objects.requireNonNull(function1, "function1 is null")
-//                .andThen(Objects.requireNonNull(function2, "function2 is null"))
-//                .andThen(Objects.requireNonNull(function3, "function3 is null"))
-//        );
-//    }
-////
-
-// 4.0.0,
-//    /**
-//     * Constructs a new <b>TypeConverter</b> by combining the four functions.
-//     *
-//     * @param <MT1> the middle type of function 1 and function 2
-//     * @param <MT2> the middle type of function 2 and function 3
-//     * @param <MT3> the middle type of function 3 and function 4
-//     * @param sourceType the class of the source type
-//     * @param destinType the class of the destination type
-//     * @param function1 the function that the source type convert to the middle 1 type
-//     * @param function2 the function that the middle 1 type convert to the middle 2 type
-//     * @param function3 the function that the middle 2 type convert to the middle 3 type
-//     * @param function4 the function that the middle 3 type convert to the destination type
-//     *
-//     * @throws NullPointerException if <b>sourceType</b>, <b>destinType</b>, <b>function1</b>, <b>function2</b>, <b>function3</b> or <b>function4</b> is <b>null</b>
-//     *
-//     * @since 3.0.0
-//     */
-//    public <MT1, MT2, MT3> TypeConverter(Class<ST> sourceType, Class<DT> destinType,
-//            Function<? super ST, ? extends MT1> function1,
-//            Function<? super MT1, ? extends MT2> function2,
-//            Function<? super MT2, ? extends MT3> function3,
-//            Function<? super MT3, ? extends DT> function4) {
-//        this(
-//            sourceType,
-//            destinType,
-//            Objects.requireNonNull(function1, "function1 is null")
-//                .andThen(Objects.requireNonNull(function2, "function2 is null"))
-//                .andThen(Objects.requireNonNull(function3, "function3 is null"))
-//                .andThen(Objects.requireNonNull(function4, "function4 is null"))
-//        );
-//    }
-////
-
     /**
      * Returns the type of the source.
      *
@@ -1222,7 +1127,7 @@ public class TypeConverter<ST, DT> {
                     return object.byteValueExact();
                 }
                 catch (ArithmeticException e) {
-                    throw new ConvertException(BigDecimal.class, object, Byte.class, null, e);
+                    throw new ConvertException(BigDecimal.class, object, Byte.class, e);
                 }
             })
         );
@@ -1295,7 +1200,7 @@ public class TypeConverter<ST, DT> {
                     return object.shortValueExact();
                 }
                 catch (ArithmeticException e) {
-                    throw new ConvertException(BigDecimal.class, object, Short.class, null, e);
+                    throw new ConvertException(BigDecimal.class, object, Short.class, e);
                 }
             })
         );
@@ -1358,7 +1263,7 @@ public class TypeConverter<ST, DT> {
                     return object.intValueExact();
                 }
                 catch (ArithmeticException e) {
-                    throw new ConvertException(BigDecimal.class, object, Integer.class, null, e);
+                    throw new ConvertException(BigDecimal.class, object, Integer.class, e);
                 }
             })
         );
@@ -1416,7 +1321,7 @@ public class TypeConverter<ST, DT> {
                     return object.longValueExact();
                 }
                 catch (ArithmeticException e) {
-                    throw new ConvertException(BigDecimal.class, object, Long.class, null, e);
+                    throw new ConvertException(BigDecimal.class, object, Long.class, e);
                 }
             })
         );
@@ -1615,7 +1520,7 @@ public class TypeConverter<ST, DT> {
                     return (char)value;
                 }
                 catch (ArithmeticException e) {
-                    throw new ConvertException(BigDecimal.class, object, Character.class, null, e);
+                    throw new ConvertException(BigDecimal.class, object, Character.class, e);
                 }
             })
         );
@@ -1628,35 +1533,17 @@ public class TypeConverter<ST, DT> {
 
         // Enum -> Byte (since 1.4.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Enum.class, Byte.class,
-        //        get(typeConverterMap, Enum.class, Integer.class).function,
-        //        get(typeConverterMap, Integer.class, Byte.class).function
-        //    )
             of(typeConverterMap, Enum.class, Integer.class, Byte.class)
-        ////
         );
 
         // Enum -> Short (since 1.4.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Enum.class, Short.class,
-        //        get(typeConverterMap, Enum.class, Integer.class).function,
-        //        get(typeConverterMap, Integer.class, Short.class).function
-        //    )
             of(typeConverterMap, Enum.class, Integer.class, Short.class)
-        ////
         );
 
         // Enum -> Long (since 1.4.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Enum.class, Long.class,
-        //        get(typeConverterMap, Enum.class, Integer.class).function,
-        //        get(typeConverterMap, Integer.class, Long.class).function
-        //    )
             of(typeConverterMap, Enum.class, Integer.class, Long.class)
-        ////
         );
 
     // Date, Time, ... -> Long
@@ -1672,13 +1559,7 @@ public class TypeConverter<ST, DT> {
         // (java.sql.Date -> Integer)
         // (Time -> Integer)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(java.util.Date.class, Integer.class,
-        //        get(typeConverterMap, java.util.Date.class, Long.class).function,
-        //        get(typeConverterMap, Long.class, Integer.class).function
-        //    )
             of(typeConverterMap, java.util.Date.class, Long.class, Integer.class)
-        ////
         );
 
         // LocalDate -> Long (millisecond) (since 3.0.0)
@@ -1695,13 +1576,7 @@ public class TypeConverter<ST, DT> {
 
         // LocalTime -> Integer (millisecond) (since 3.0.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalTime.class, Integer.class,
-        //        get(typeConverterMap, LocalTime.class, Long.class).function,
-        //        get(typeConverterMap, Long.class, Integer.class).function
-        //    )
             of(typeConverterMap, LocalTime.class, Long.class, Integer.class)
-        ////
         );
 
         // LocalDateTime -> Long (millisecond) (since 3.0.0)
@@ -1737,13 +1612,7 @@ public class TypeConverter<ST, DT> {
 
         // BigDecimal -> java.util.Date (since 1.8.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(BigDecimal.class, java.util.Date.class,
-        //        get(typeConverterMap, BigDecimal.class, Long.class).function,
-        //        get(typeConverterMap, Long.class, java.util.Date.class).function
-        //    )
             of(typeConverterMap, BigDecimal.class, Long.class, java.util.Date.class)
-        ////
         );
 
         // LocalDate -> java.util.Date (since 3.0.0)
@@ -1766,13 +1635,7 @@ public class TypeConverter<ST, DT> {
 
         // BigDecimal -> java.sql.Date (since 1.8.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(BigDecimal.class, Date.class,
-        //        get(typeConverterMap, BigDecimal.class, Long.class).function,
-        //        get(typeConverterMap, Long.class, Date.class).function
-        //    )
             of(typeConverterMap, BigDecimal.class, Long.class, Date.class)
-        ////
         );
 
         // java.util.Date -> java.sql.Date
@@ -1800,13 +1663,7 @@ public class TypeConverter<ST, DT> {
 
         // BigDecimal -> Time (since 1.8.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(BigDecimal.class, Time.class,
-        //        get(typeConverterMap, BigDecimal.class, Long.class).function,
-        //        get(typeConverterMap, Long.class, Time.class).function
-        //    )
             of(typeConverterMap, BigDecimal.class, Long.class, Time.class)
-        ////
         );
 
         // java.util.Date -> Time
@@ -1818,13 +1675,7 @@ public class TypeConverter<ST, DT> {
 
         // LocalTime -> Long -> Time (since 3.0.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalTime.class, Time.class,
-        //        get(typeConverterMap, LocalTime.class, Long.class).function,
-        //        get(typeConverterMap, Long.class, Time.class).function
-        //    )
             of(typeConverterMap, LocalTime.class, Long.class, Time.class)
-        ////
         );
 
     // * -> Timestamp
@@ -1840,13 +1691,7 @@ public class TypeConverter<ST, DT> {
 
         // BigDecimal -> Timestamp (since 1.8.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(BigDecimal.class, Timestamp.class,
-        //        get(typeConverterMap, BigDecimal.class, Long.class).function,
-        //        get(typeConverterMap, Long.class, Timestamp.class).function
-        //    )
             of(typeConverterMap, BigDecimal.class, Long.class, Timestamp.class)
-        ////
         );
 
         // java.util.Date -> Timestamp
@@ -1945,13 +1790,7 @@ public class TypeConverter<ST, DT> {
         // java.util.Date -> java.sql.Date -> LocalDate
         // (Time -> java.sql.Date -> LocalDate)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(java.util.Date.class, LocalDate.class,
-        //        get(typeConverterMap, java.util.Date.class, Date.class).function,
-        //        get(typeConverterMap, Date.class, LocalDate.class).function
-        //    )
             of(typeConverterMap, java.util.Date.class, Date.class, LocalDate.class)
-        ////
         );
 
         // LocalTime -> LocalDate
@@ -1979,13 +1818,7 @@ public class TypeConverter<ST, DT> {
 
         // Instant -> LocalDateTime -> LocalDate
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Instant.class, LocalDate.class,
-        //        get(typeConverterMap, Instant.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, LocalDate.class).function
-        //    )
             of(typeConverterMap, Instant.class, LocalDateTime.class, LocalDate.class)
-        ////
         );
 
     // * -> LocalTime (since 3.0.0)
@@ -2005,13 +1838,7 @@ public class TypeConverter<ST, DT> {
         // (java.sql.Date -> Timestamp -> LocalTime)
         // (Time -> Timestamp -> LocalTime)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(java.util.Date.class, LocalTime.class,
-        //        get(typeConverterMap, java.util.Date.class, Timestamp.class).function,
-        //        get(typeConverterMap, Timestamp.class, LocalTime.class).function
-        //    )
             of(typeConverterMap, java.util.Date.class, Timestamp.class, LocalTime.class)
-        ////
         );
 
         // LocalDate -> LocalTime
@@ -2034,13 +1861,7 @@ public class TypeConverter<ST, DT> {
 
         // Instant -> LocalDateTime -> LocalTime
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Instant.class, LocalTime.class,
-        //        get(typeConverterMap, Instant.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, LocalTime.class).function
-        //    )
             of(typeConverterMap, Instant.class, LocalDateTime.class, LocalTime.class)
-        ////
         );
 
     // * -> OffsetDateTime (since 3.0.0)
@@ -2053,59 +1874,29 @@ public class TypeConverter<ST, DT> {
 
         // Long -> LocalDateTime -> OffsetDateTime
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Long.class, OffsetDateTime.class,
-        //        get(typeConverterMap, Long.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, OffsetDateTime.class).function
-        //    )
             of(typeConverterMap, Long.class, LocalDateTime.class, OffsetDateTime.class)
-        ////
         );
 
         // java.util.Date -> LocalDateTime -> OffsetDateTime
         // (java.sql.Date -> LocalDateTime -> OffsetDateTime)
         // (Time -> OffsetDateTime)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(java.util.Date.class, OffsetDateTime.class,
-        //        get(typeConverterMap, java.util.Date.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, OffsetDateTime.class).function
-        //    )
             of(typeConverterMap, java.util.Date.class, LocalDateTime.class, OffsetDateTime.class)
-        ////
         );
 
         // Timestamp -> LocalDateTime -> OffsetDateTime
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Timestamp.class, OffsetDateTime.class,
-        //        get(typeConverterMap, Timestamp.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, OffsetDateTime.class).function
-        //    )
             of(typeConverterMap, Timestamp.class, LocalDateTime.class, OffsetDateTime.class)
-        ////
         );
 
         // LocalDate -> LocalDateTime -> OffsetDateTime
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalDate.class, OffsetDateTime.class,
-        //        get(typeConverterMap, LocalDate.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, OffsetDateTime.class).function
-        //    )
             of(typeConverterMap, LocalDate.class, LocalDateTime.class, OffsetDateTime.class)
-        ////
         );
 
         // LocalTime -> LocalDateTime -> OffsetDateTime
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalTime.class, OffsetDateTime.class,
-        //        get(typeConverterMap, LocalTime.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, OffsetDateTime.class).function
-        //    )
             of(typeConverterMap, LocalTime.class, LocalDateTime.class, OffsetDateTime.class)
-        ////
         );
 
         // ZonedDateTime -> OffsetDateTime
@@ -2128,59 +1919,29 @@ public class TypeConverter<ST, DT> {
 
         // Long -> LocalDateTime -> ZonedDateTime
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Long.class, ZonedDateTime.class,
-        //        get(typeConverterMap, Long.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, ZonedDateTime.class).function
             of(typeConverterMap, Long.class, LocalDateTime.class, ZonedDateTime.class)
-        ////
-        //    )
         );
 
         // java.util.Date -> LocalDateTime -> ZonedDateTime
         // (java.sql.Date -> LocalDateTime -> ZonedDateTime)
         // (Time -> LocalDateTime -> ZonedDateTime)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(java.util.Date.class, ZonedDateTime.class,
-        //        get(typeConverterMap, java.util.Date.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, ZonedDateTime.class).function
             of(typeConverterMap, java.util.Date.class, LocalDateTime.class, ZonedDateTime.class)
-        ////
-        //    )
         );
 
         // Timestamp -> LocalDateTime -> ZonedDateTime
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Timestamp.class, ZonedDateTime.class,
-        //        get(typeConverterMap, Timestamp.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, ZonedDateTime.class).function
             of(typeConverterMap, Timestamp.class, LocalDateTime.class, ZonedDateTime.class)
-        ////
-        //    )
         );
 
         // LocalDate -> LocalDateTime -> ZonedDateTime
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalDate.class, ZonedDateTime.class,
-        //        get(typeConverterMap, LocalDate.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, ZonedDateTime.class).function
             of(typeConverterMap, LocalDate.class, LocalDateTime.class, ZonedDateTime.class)
-        ////
-        //    )
         );
 
         // LocalTime -> LocalDateTime -> ZonedDateTime
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalTime.class, ZonedDateTime.class,
-        //        get(typeConverterMap, LocalTime.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, ZonedDateTime.class).function
             of(typeConverterMap, LocalTime.class, LocalDateTime.class, ZonedDateTime.class)
-        ////
-        //    )
         );
 
         // OffsetDateTime -> ZonedDateTime
@@ -2224,24 +1985,12 @@ public class TypeConverter<ST, DT> {
 
         // LocalDate -> LocalDateTime -> Instant
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalDate.class, Instant.class,
-        //        get(typeConverterMap, LocalDate.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, Instant.class).function
-        //    )
             of(typeConverterMap, LocalDate.class, LocalDateTime.class, Instant.class)
-        ////
         );
 
         // LocalTime -> LocalDateTime -> Instant
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalTime.class, Instant.class,
-        //        get(typeConverterMap, LocalTime.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, Instant.class).function
-        //    )
             of(typeConverterMap, LocalTime.class, LocalDateTime.class, Instant.class)
-        ////
         );
 
         // OffsetDateTime -> Instant
@@ -2271,7 +2020,7 @@ public class TypeConverter<ST, DT> {
                     return Byte.valueOf(object);
                 }
                 catch (NumberFormatException e) {
-                    throw new ConvertException(String.class, object, Byte.class, null, e);
+                    throw new ConvertException(String.class, object, Byte.class, e);
                 }
             })
         );
@@ -2283,7 +2032,7 @@ public class TypeConverter<ST, DT> {
                     return Short.valueOf(object);
                 }
                 catch (NumberFormatException e) {
-                    throw new ConvertException(String.class, object, Short.class, null, e);
+                    throw new ConvertException(String.class, object, Short.class, e);
                 }
             })
         );
@@ -2295,7 +2044,7 @@ public class TypeConverter<ST, DT> {
                     return Integer.valueOf(object);
                 }
                 catch (NumberFormatException e) {
-                    throw new ConvertException(String.class, object, Integer.class, null, e);
+                    throw new ConvertException(String.class, object, Integer.class, e);
                 }
             })
         );
@@ -2307,7 +2056,7 @@ public class TypeConverter<ST, DT> {
                     return Long.valueOf(object);
                 }
                 catch (NumberFormatException e) {
-                    throw new ConvertException(String.class, object, Long.class, null, e);
+                    throw new ConvertException(String.class, object, Long.class, e);
                 }
             })
         );
@@ -2319,7 +2068,7 @@ public class TypeConverter<ST, DT> {
                     return Float.valueOf(object);
                 }
                 catch (NumberFormatException e) {
-                    throw new ConvertException(String.class, object, Float.class, null, e);
+                    throw new ConvertException(String.class, object, Float.class, e);
                 }
             })
         );
@@ -2331,7 +2080,7 @@ public class TypeConverter<ST, DT> {
                     return Double.valueOf(object);
                 }
                 catch (NumberFormatException e) {
-                    throw new ConvertException(String.class, object, Double.class, null, e);
+                    throw new ConvertException(String.class, object, Double.class, e);
                 }
             })
         );
@@ -2342,7 +2091,7 @@ public class TypeConverter<ST, DT> {
                 try {
                     return new BigDecimal(object);
                 } catch (NumberFormatException e) {
-                    throw new ConvertException(String.class, object, BigDecimal.class, null, e);
+                    throw new ConvertException(String.class, object, BigDecimal.class, e);
                 }
             })
         );
@@ -2418,57 +2167,27 @@ public class TypeConverter<ST, DT> {
 
         // String -> Instant (since 3.0.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(String.class, Instant.class,
-        //        get(typeConverterMap, String.class, OffsetDateTime.class).function,
-        //        get(typeConverterMap, OffsetDateTime.class, Instant.class).function
-        //    )
             of(typeConverterMap, String.class, OffsetDateTime.class, Instant.class)
-        ////
         );
 
         // String -> java.util.Date (since 1.4.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(String.class, java.util.Date.class,
-        //        get(typeConverterMap, String.class, LocalDate.class).function,
-        //        get(typeConverterMap, LocalDate.class, java.util.Date.class).function
-        //    )
             of(typeConverterMap, String.class, LocalDate.class, java.util.Date.class)
-        ////
         );
 
         // String -> java.sql.Date
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(String.class, Date.class,
-        //        get(typeConverterMap, String.class, LocalDate.class).function,
-        //        get(typeConverterMap, LocalDate.class, Date.class).function
-        //    )
             of(typeConverterMap, String.class, LocalDate.class, Date.class)
-        ////
         );
 
         // String -> Time
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(String.class, Time.class,
-        //        get(typeConverterMap, String.class, LocalTime.class).function,
-        //        get(typeConverterMap, LocalTime.class, Time.class).function
-        //    )
             of(typeConverterMap, String.class, LocalTime.class, Time.class)
-        ////
         );
 
         // String -> Timestamp
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(String.class, Timestamp.class,
-        //        get(typeConverterMap, String.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, Timestamp.class).function
-        //    )
             of(typeConverterMap, String.class, LocalDateTime.class, Timestamp.class)
-        ////
         );
 
     // * -> String
@@ -2517,57 +2236,27 @@ public class TypeConverter<ST, DT> {
 
         // Instant -> String (since 3.0.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Instant.class, String.class,
-        //        get(typeConverterMap, Instant.class, OffsetDateTime.class).function,
-        //        get(typeConverterMap, OffsetDateTime.class, String.class).function
-        //    )
             of(typeConverterMap, Instant.class, OffsetDateTime.class, String.class)
-        ////
         );
 
         // java.util.Date -> String (since 1.4.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(java.util.Date.class, String.class,
-        //        get(typeConverterMap, java.util.Date.class, LocalDate.class).function,
-        //        get(typeConverterMap, LocalDate.class, String.class).function
-        //    )
             of(typeConverterMap, java.util.Date.class, LocalDate.class, String.class)
-        ////
         );
 
         // java.sql.Date -> String (since 1.4.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Date.class, String.class,
-        //        get(typeConverterMap, Date.class, LocalDate.class).function,
-        //        get(typeConverterMap, LocalDate.class, String.class).function
-        //    )
             of(typeConverterMap, Date.class, LocalDate.class, String.class)
-        ////
         );
 
         // Time -> String (since 1.4.0)
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Time.class, String.class,
-        //        get(typeConverterMap, Time.class, LocalTime.class).function,
-        //        get(typeConverterMap, LocalTime.class, String.class).function
-        //    )
             of(typeConverterMap, Time.class, LocalTime.class, String.class)
-        ////
         );
 
         // Timestamp -> String
         put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Timestamp.class, String.class,
-        //        get(typeConverterMap, Timestamp.class, LocalDateTime.class).function,
-        //        get(typeConverterMap, LocalDateTime.class, String.class).function
-        //    )
             of(typeConverterMap, Timestamp.class, LocalDateTime.class, String.class)
-        ////
         );
 
     }

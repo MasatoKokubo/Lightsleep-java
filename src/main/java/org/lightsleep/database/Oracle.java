@@ -84,27 +84,14 @@ public class Oracle extends Standard {
 
         // Time -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Time.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
-        //        toTimeSqlString
-        //    )
             TypeConverter.of(typeConverterMap, Time.class, String.class, SqlString.class, toTimeSqlString)
-        ////
         );
 
         // LocalTime -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalTime.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
-        //        toTimeSqlString
-        //    )
             TypeConverter.of(typeConverterMap, LocalTime.class, String.class, SqlString.class, toTimeSqlString)
-        ////
         );
 
-        // 1.7.0
         // byte[] -> SqlString (since 1.7.0)
         TypeConverter.put(typeConverterMap,
             new TypeConverter<>(byte[].class, SqlString.class, object ->

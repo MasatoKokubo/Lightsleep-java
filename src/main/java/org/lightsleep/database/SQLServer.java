@@ -185,7 +185,6 @@ public class SQLServer extends Standard {
             })
         );
 
-        // 4.0.0
         // Character -> String -> SqlString
         TypeConverter.put(typeConverterMap,
             TypeConverter.of(typeConverterMap, Character.class, String.class, SqlString.class)
@@ -198,112 +197,52 @@ public class SQLServer extends Standard {
 
         // java.util.Date -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(java.util.Date.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, java.util.Date.class, String.class).function(),
-        //        toDateSqlString
-        //    )
             TypeConverter.of(typeConverterMap, java.util.Date.class, String.class, SqlString.class, toDateSqlString)
-        ////
         );
 
         // java.sql.Date -> String -> SqlString
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Date.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, Date.class, String.class).function(),
-        //        toDateSqlString
-        //    )
             TypeConverter.of(typeConverterMap, Date.class, String.class, SqlString.class, toDateSqlString)
-        ////
         );
 
         // Time -> String -> SqlString
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Time.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, Time.class, String.class).function(),
-        //        toTimeSqlString
-        //    )
             TypeConverter.of(typeConverterMap, Time.class, String.class, SqlString.class, toTimeSqlString)
-        ////
         );
 
         // Timestamp -> String -> SqlString
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Timestamp.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, Timestamp.class, String.class).function(),
-        //        toTimestampSqlString
-        //    )
             TypeConverter.of(typeConverterMap, Timestamp.class, String.class, SqlString.class, toTimestampSqlString)
-        ////
         );
 
         // LocalDate -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalDate.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, LocalDate.class, String.class).function(),
-        //        toDateSqlString
-        //    )
             TypeConverter.of(typeConverterMap, LocalDate.class, String.class, SqlString.class, toDateSqlString)
-        ////
         );
 
         // LocalTime -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalTime.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, LocalTime.class, String.class).function(),
-        //        toTimeSqlString
-        //    )
             TypeConverter.of(typeConverterMap, LocalTime.class, String.class, SqlString.class, toTimeSqlString)
-        ////
         );
 
         // LocalDateTime -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(LocalDateTime.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, LocalDateTime.class, String.class).function(),
-        //        toTimestampSqlString
-        //    )
             TypeConverter.of(typeConverterMap, LocalDateTime.class, String.class, SqlString.class, toTimestampSqlString)
-        ////
         );
 
         // OffsetDateTime -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(OffsetDateTime.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, OffsetDateTime.class, String.class).function(),
-        //        toTimestampWTZSqlString
-        //    )
             TypeConverter.of(typeConverterMap, OffsetDateTime.class, String.class, SqlString.class, toTimestampWTZSqlString)
-        ////
         );
 
         // ZonedDateTime -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(ZonedDateTime.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, ZonedDateTime.class, String.class).function(),
-        //        toTimestampWTZSqlString
-        //    )
             TypeConverter.of(typeConverterMap, ZonedDateTime.class, String.class, SqlString.class, toTimestampWTZSqlString)
-        ////
         );
 
         // Instant -> String -> SqlString (since 3.0.0)
         TypeConverter.put(typeConverterMap,
-        // 4.0.0
-        //    new TypeConverter<>(Instant.class, SqlString.class,
-        //        TypeConverter.get(typeConverterMap, Instant.class, String.class).function(),
-        //        toTimestampWTZSqlString
-        //    )
             TypeConverter.of(typeConverterMap, Instant.class, String.class, SqlString.class, toTimestampWTZSqlString)
-        ////
         );
 
         // byte[] -> SqlString (since 1.7.0)
@@ -313,41 +252,16 @@ public class SQLServer extends Standard {
     }
 
     @Override
-// 4.0.0
-//  public <E> String selectSql(Sql<E> sql, List<Object> parameters) {
     public <E> CharSequence selectSql(Sql<E> sql, List<Object> parameters) {
-////
         StringBuilder buff = new StringBuilder();
 
-    // 4.0.0
-    //   if (!sql.getUnionSqls().isEmpty()) {
-    //      // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-    //      // UNION or UNION ALL
-    //      // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-    //      // ...
-    //      String delimiter = "";
-    //      for (Sql<?> unionSql : sql.getUnionSqls()) {
-    //      // 4.0.0
-    //      //  buff.append(delimiter).append(subSelectSql(unionSql, parameters));
-    //          buff.append(delimiter).append(subSelectSql(unionSql, sql, parameters));
-    //      ////
-    //          delimiter = sql.isUnionAll() ? " UNION ALL " : " UNION ";
-    //      }
-    //  } else {
-    //      // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
-    //      buff.append(subSelectSql(sql, parameters));
-    //  }
        // SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ...
         buff.append(subSelectSql(sql, null, parameters));
-    ////
 
         // ORDER BY ...
         appendOrderBy(buff, sql, parameters);
 
-    // 4.0.0
-    //  return buff.toString();
         return buff;
-    ////
     }
 
     @Override
@@ -356,10 +270,7 @@ public class SQLServer extends Standard {
     }
 
     @Override
-// 4.0.0
-//  public <E> String subSelectSql(Sql<E> sql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
     public <E, OE> CharSequence subSelectSql(Sql<E> sql, Sql<OE> outerSql, Supplier<CharSequence> columnsSupplier, List<Object> parameters) {
-////
         StringBuilder buff = new StringBuilder();
 
         // SELECT
@@ -374,21 +285,8 @@ public class SQLServer extends Standard {
         // FROM
         buff.append(" FROM ");
 
-    // 4.0.0
-    //  if (sql.getFrom() == null) {
-    //      // main table name and alias
-    //      appendMainTable(buff, sql);
-    //
-    //  } else {
-    //      // (SELECT ...) table alias
-    //      buff.append("(")
-    //          .append(subSelectSql(sql.getFrom(), parameters))
-    //          .append(") ")
-    //          .append(sql.tableAlias().isEmpty() ? sql.entityInfo().tableName() : sql.tableAlias());
-    //  }
         // main table
         appendFrom(buff, sql, outerSql, parameters);
-    ////
 
         // FOR UPDATE
         appendForUpdate(buff, sql);
@@ -405,20 +303,14 @@ public class SQLServer extends Standard {
         // HAVING ...
         appendHaving(buff, sql, parameters);
 
-    // 4.0.0
-    //  return buff.toString();
         return buff;
-    ////
     }
 
     /**
      * @since 1.8.4
      */
     @Override
-// 4.0.0
-//  public <E> String updateSql(Sql<E> sql, List<Object> parameters) {
     public <E> CharSequence updateSql(Sql<E> sql, List<Object> parameters) {
-////
         if (sql.getJoinInfos().size() == 0)
             return super.updateSql(sql, parameters);
 
@@ -440,10 +332,7 @@ public class SQLServer extends Standard {
         buff.append("UPDATE ");
 
         // main table name and alias
-    // 4.0.0
-    //  appendMainTable(buff, sql2);
         appendMainTable(buff, sql2);
-    ////
 
         // SET column name =  value, ...
         appendUpdateColumnsAndValues(buff, sql2, parameters);
@@ -452,10 +341,7 @@ public class SQLServer extends Standard {
         buff.append(" FROM ");
 
         // main table name and alias
-    // 4.0.0
-    //  appendMainTable(buff, sql);
         appendMainTable(buff, sql);
-    ////
 
         // INNER / OUTER JOIN ...
         appendJoinTables(buff, sql, parameters);
@@ -466,10 +352,7 @@ public class SQLServer extends Standard {
         // ORDER BY ...
         appendOrderBy(buff, sql, parameters);
 
-    // 4.0.0
-    //  return buff.toString();
         return buff;
-    ////
     }
 
     /**
